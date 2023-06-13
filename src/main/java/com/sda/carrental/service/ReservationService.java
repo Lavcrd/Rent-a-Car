@@ -11,7 +11,7 @@ import com.sda.carrental.model.users.User;
 import com.sda.carrental.repository.ReservationRepository;
 import com.sda.carrental.service.auth.CustomUserDetails;
 import com.sda.carrental.web.mvc.form.IndexForm;
-import com.sda.carrental.web.mvc.form.ShowCarsForm;
+import com.sda.carrental.web.mvc.form.SelectCarForm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -34,7 +34,7 @@ public class ReservationService {
     private final RentingService rentingService;
 
     @Transactional
-    public HttpStatus createReservation(@RequestBody CustomUserDetails cud, @RequestBody ShowCarsForm form) {
+    public HttpStatus createReservation(@RequestBody CustomUserDetails cud, @RequestBody SelectCarForm form) {
         try {
             IndexForm index = form.getIndexData();
 
@@ -48,7 +48,6 @@ public class ReservationService {
                     depRepFrom, depRepTo,
                     index.getDateFrom(), index.getDateTo(),
                     index.getDateCreated());
-            reservationRepository.save(reservation);
 
             //payment method here linked with methods below this comment vvv
             reservation.setStatus(Reservation.ReservationStatus.STATUS_RESERVED);
@@ -107,7 +106,6 @@ public class ReservationService {
                 }
                 paymentDetailsService.securePayment(payment.get());
                 updateReservationStatus(r, status);
-                carService.updateCarStatus(r.getCar(), Car.CarStatus.STATUS_RENTED);
                 rentingService.createRent(r);
                 return HttpStatus.ACCEPTED;
             }
@@ -121,5 +119,17 @@ public class ReservationService {
     public List<Reservation> getUserReservationsByDepartmentTake(String username, Long departmentId) {
         return reservationRepository
                 .findAllByUsernameAndDepartmentId(username, departmentId);
+    }
+
+    @Transactional
+    public HttpStatus substituteCar(Long reservationId, Long customerId, Long carId) {
+        try {
+            Reservation r = getCustomerReservation(customerId, reservationId);
+            r.setCar(carService.findAvailableCar(r.getDateFrom(), r.getDateTo(), r.getDepartmentTake().getDepartmentId(), carId));
+            reservationRepository.save(r);
+            return HttpStatus.ACCEPTED;
+        } catch (RuntimeException err) {
+            return HttpStatus.NOT_FOUND;
+        }
     }
 }

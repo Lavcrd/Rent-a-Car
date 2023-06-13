@@ -6,7 +6,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class ShowCarsForm {
+public class SelectCarForm {
 
     private Long carId;
 

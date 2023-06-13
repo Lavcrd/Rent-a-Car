@@ -4,7 +4,7 @@ import com.sda.carrental.model.property.Car;
 import com.sda.carrental.service.CarService;
 import com.sda.carrental.web.mvc.form.CarFilterForm;
 import com.sda.carrental.web.mvc.form.IndexForm;
-import com.sda.carrental.web.mvc.form.ShowCarsForm;
+import com.sda.carrental.web.mvc.form.SelectCarForm;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Controller;
@@ -20,7 +20,7 @@ import java.util.Map;
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/cars")
-public class ShowCarsController {
+public class SelectCarController {
 
     private final CarService carService;
 
@@ -29,7 +29,7 @@ public class ShowCarsController {
         if (indexData.getDateCreated() == null) {
             return "redirect:/";
         }
-        List<Car> carList = carService.findAvailableCarsInDepartment(
+        List<Car> carList = carService.findAvailableDistinctCarsInDepartment(
                 indexData.getDateFrom(),
                 indexData.getDateTo(),
                 indexData.getDepartmentIdFrom());
@@ -47,24 +47,24 @@ public class ShowCarsController {
 
         map.addAttribute("days", (indexData.getDateFrom().until(indexData.getDateTo(), ChronoUnit.DAYS) + 1));
 
-        ShowCarsForm showCarsForm = new ShowCarsForm();
+        SelectCarForm selectCarForm = new SelectCarForm();
         CarFilterForm carFilterForm = new CarFilterForm();
 
-        showCarsForm.setIndexData(indexData);
+        selectCarForm.setIndexData(indexData);
         carFilterForm.setIndexData(indexData);
 
-        map.addAttribute("showCarsForm", showCarsForm);
+        map.addAttribute("selectCarForm", selectCarForm);
         map.addAttribute("carFilterForm", carFilterForm);
-        return "core/showCars";
+        return "core/selectCar";
     }
 
     @RequestMapping(value="/proceed", method = RequestMethod.POST)
-    public String showHandler(@ModelAttribute("showCarsForm") ShowCarsForm showCarsData, @RequestParam(value = "car_button") Long carId, RedirectAttributes redirectAttributes) {
-        if (showCarsData == null) return "redirect:/";
-        showCarsData.setCarId(carId);
-        if (showCarsData.getIndexData() == null) return "redirect:/";
+    public String showHandler(@ModelAttribute("selectCarForm") SelectCarForm selectCarData, @RequestParam(value = "car_button") Long carId, RedirectAttributes redirectAttributes) {
+        if (selectCarData == null) return "redirect:/";
+        selectCarData.setCarId(carId);
+        if (selectCarData.getIndexData() == null) return "redirect:/";
 
-        redirectAttributes.addFlashAttribute("showData", showCarsData);
+        redirectAttributes.addFlashAttribute("showData", selectCarData);
         return "redirect:/reservation";
     }
 

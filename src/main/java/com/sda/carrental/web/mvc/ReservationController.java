@@ -8,7 +8,7 @@ import com.sda.carrental.service.CarService;
 import com.sda.carrental.service.DepartmentService;
 import com.sda.carrental.service.ReservationService;
 import com.sda.carrental.service.auth.CustomUserDetails;
-import com.sda.carrental.web.mvc.form.ShowCarsForm;
+import com.sda.carrental.web.mvc.form.SelectCarForm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -32,7 +32,7 @@ public class ReservationController {
     private final GlobalValues gv;
 
     @RequestMapping(method = RequestMethod.GET)
-    public String sumReservationPage(final ModelMap map, @ModelAttribute("showData") ShowCarsForm reservationData, RedirectAttributes redAtt) {
+    public String sumReservationPage(final ModelMap map, @ModelAttribute("showData") SelectCarForm reservationData, RedirectAttributes redAtt) {
         if (reservationData == null) return "redirect:/";
         if (reservationData.getIndexData() == null) return "redirect:/";
 
@@ -68,7 +68,7 @@ public class ReservationController {
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public String reservationConfirmation(@ModelAttribute("reservationData") ShowCarsForm form, RedirectAttributes redAtt) {
+    public String reservationConfirmation(@ModelAttribute("reservationData") SelectCarForm form, RedirectAttributes redAtt) {
         CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         HttpStatus status = resService.createReservation(cud, form);
 

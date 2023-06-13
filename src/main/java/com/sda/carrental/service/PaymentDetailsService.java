@@ -19,6 +19,7 @@ public class PaymentDetailsService {
     private final PaymentDetailsRepository paymentDetailsRepository;
     private final GlobalValues gv;
 
+    @Transactional
     public void createReservationPayment(Reservation reservation) {
         long days = reservation.getDateFrom().until(reservation.getDateTo(), ChronoUnit.DAYS) + 1;
 

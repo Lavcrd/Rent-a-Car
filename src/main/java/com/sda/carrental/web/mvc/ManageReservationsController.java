@@ -3,13 +3,13 @@ package com.sda.carrental.web.mvc;
 import com.sda.carrental.constants.GlobalValues;
 import com.sda.carrental.exceptions.ResourceNotFoundException;
 import com.sda.carrental.model.operational.Reservation;
+import com.sda.carrental.model.property.Car;
 import com.sda.carrental.model.property.PaymentDetails;
 import com.sda.carrental.model.users.Customer;
 import com.sda.carrental.model.users.Verification;
 import com.sda.carrental.service.*;
 import com.sda.carrental.service.auth.CustomUserDetails;
-import com.sda.carrental.web.mvc.form.SearchCustomerForm;
-import com.sda.carrental.web.mvc.form.VerificationForm;
+import com.sda.carrental.web.mvc.form.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -21,6 +21,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Controller
@@ -33,6 +35,8 @@ public class ManageReservationsController {
     private final ReservationService reservationService;
     private final PaymentDetailsService paymentDetailsService;
     private final VerificationService verificationService;
+
+    private final CarService carService;
 
     private final GlobalValues gv;
 
@@ -120,6 +124,31 @@ public class ManageReservationsController {
             redAtt.addFlashAttribute("message", "An unexpected error occurred. Please try again.");
             return "redirect:/mg-res";
         }
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/reservation/{reservation}/car")
+    public String substituteCarPage(final ModelMap map, RedirectAttributes redAtt, @PathVariable(value = "reservation") Long reservationId, @ModelAttribute("customer") Long customerId) {
+
+        Reservation reservation = reservationService.getCustomerReservation(customerId, reservationId);
+        List<Car> carList = carService.findAvailableCarsInDepartment(reservation);
+
+        if (!map.containsKey("filteredCars")) {
+            map.addAttribute("cars", carList);
+        } else {
+            map.addAttribute("cars", map.getAttribute("filteredCars"));
+        }
+        Map<String, Object> carProperties = carService.getFilterProperties(carList);
+
+        map.addAttribute("brand", carProperties.get("brand"));
+        map.addAttribute("type", carProperties.get("type"));
+        map.addAttribute("seats", carProperties.get("seats"));
+
+        map.addAttribute("days", (reservation.getDateFrom().until(reservation.getDateTo(), ChronoUnit.DAYS) + 1));
+
+        SubstituteCarFilterForm carFilterForm = new SubstituteCarFilterForm();
+
+        map.addAttribute("carFilterForm", carFilterForm);
+        return "management/substituteCar";
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/verify")
@@ -282,22 +311,39 @@ public class ManageReservationsController {
 
         redAtt.addAttribute("reservation", reservationId);
         redAtt.addFlashAttribute("customer", customerId);
+        return "redirect:/mg-res/reservation/{reservation}/car";
+    }
+
+    //Substitute car buttons
+    @RequestMapping(method = RequestMethod.POST, value = "/reservation/{reservation}/back")
+    public String substituteCarBackButton(RedirectAttributes redAtt, @RequestParam("reservation") Long reservationId, @RequestParam("customer") Long customerId) {
+        redAtt.addFlashAttribute("customer", customerId);
+        redAtt.addAttribute("reservation", reservationId);
         return "redirect:/mg-res/reservation/{reservation}";
     }
 
-    @RequestMapping(method = RequestMethod.POST, value = "/reservation/reserve")
-    public String reservationReserveButton(RedirectAttributes redAtt, @RequestParam("reservation") Long reservationId, @RequestParam("customer") Long customerId) {
-        HttpStatus response = reservationService.handleReservationStatus(customerId, reservationId, Reservation.ReservationStatus.STATUS_RESERVED);
+    @RequestMapping(method = RequestMethod.POST, value = "/reservation/{reservation}/filter")
+    public String substituteCarFilterButton(@ModelAttribute("carFilterForm") SubstituteCarFilterForm filterData, RedirectAttributes redAtt, @RequestParam("reservation") Long reservationId, @RequestParam("customer") Long customerId) {
+        redAtt.addFlashAttribute("filteredCars", carService.filterCars(filterData, reservationService.getCustomerReservation(customerId, reservationId)));
+        redAtt.addFlashAttribute("customer", customerId);
+        redAtt.addAttribute("reservation", reservationId);
+        return "redirect:/mg-res/reservation/{reservation}/car";
+    }
 
-        //TODO requires guest/dummy account
+    @RequestMapping(method = RequestMethod.POST, value = "/reservation/{reservation}/select")
+    public String substituteCarSelectButton(@RequestParam("select") Long carId, RedirectAttributes redAtt, @RequestParam("reservation") Long reservationId, @RequestParam("customer") Long customerId) {
 
-        if (response.equals(HttpStatus.ACCEPTED)) {
-            redAtt.addAttribute("reservation", reservationId);
-            redAtt.addFlashAttribute("customer", customerId);
-            redAtt.addFlashAttribute("message", "Reservation completed successfully!");
+        HttpStatus status = reservationService.substituteCar(reservationId, customerId, carId);
+
+        redAtt.addFlashAttribute("customer", customerId);
+        redAtt.addAttribute("reservation", reservationId);
+
+        if (status.equals(HttpStatus.ACCEPTED)) {
+            redAtt.addFlashAttribute("message", "Car successfully substituted.");
             return "redirect:/mg-res/reservation/{reservation}";
         }
-        redAtt.addFlashAttribute("message", "An unexpected error occurred. Please try again later or contact customer service.");
+        redAtt.addFlashAttribute("message", "An unexpected error occurred. Please try again later.");
         return "redirect:/mg-res";
     }
+
 }

@@ -1,9 +1,11 @@
 package com.sda.carrental.service;
 
 import com.sda.carrental.exceptions.ResourceNotFoundException;
+import com.sda.carrental.model.operational.Reservation;
 import com.sda.carrental.model.property.Car;
 import com.sda.carrental.repository.CarRepository;
 import com.sda.carrental.web.mvc.form.CarFilterForm;
+import com.sda.carrental.web.mvc.form.SubstituteCarFilterForm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,8 +23,12 @@ public class CarService {
         return repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Car", "id", id));
     }
 
-    public List<Car> findAvailableCarsInDepartment(LocalDate dateFrom, LocalDate dateTo, Long department) {
-        return repository.findAvailableCarsInDepartment(dateFrom, dateTo, department);
+    public List<Car> findAvailableDistinctCarsInDepartment(LocalDate dateFrom, LocalDate dateTo, Long department) {
+        return repository.findAvailableDistinctCarsInDepartment(dateFrom, dateTo, department);
+    }
+
+    public List<Car> findAvailableCarsInDepartment(Reservation r) {
+        return repository.findAvailableCarsInDepartment(r.getDateFrom(), r.getDateTo(), r.getDepartmentTake().getDepartmentId());
     }
 
     public Car findAvailableCar(LocalDate dateFrom, LocalDate dateTo, Long department, long carId) {
@@ -30,10 +36,39 @@ public class CarService {
     }
 
     public List<Car> filterCars(CarFilterForm filterForm) {
-        ArrayList<Car> filteredCars = (ArrayList<Car>) repository.findAvailableCarsInDepartment(
+        ArrayList<Car> filteredCars = (ArrayList<Car>) repository.findAvailableDistinctCarsInDepartment(
                 filterForm.getIndexData().getDateFrom(),
                 filterForm.getIndexData().getDateTo(),
                 filterForm.getIndexData().getDepartmentIdFrom());
+
+        if (filterForm.getPriceMin() != null) {
+            filteredCars.removeIf(car -> car.getPrice_day() < filterForm.getPriceMin());
+        }
+
+        if (filterForm.getPriceMax() != null) {
+            filteredCars.removeIf(car -> car.getPrice_day() > filterForm.getPriceMax());
+        }
+
+        if (filterForm.getBrands() != null) {
+            filteredCars.removeIf(car -> !filterForm.getBrands().contains(car.getBrand()));
+        }
+
+        if (filterForm.getSeats() != null) {
+            filteredCars.removeIf(car -> !filterForm.getSeats().contains(car.getSeats()));
+        }
+
+        if (filterForm.getTypes() != null) {
+            filteredCars.removeIf(car -> !filterForm.getTypes().contains(car.getCarType()));
+        }
+
+        return filteredCars;
+    }
+
+    public List<Car> filterCars(SubstituteCarFilterForm filterForm, Reservation r) {
+        ArrayList<Car> filteredCars = (ArrayList<Car>) repository.findAvailableCarsInDepartment(
+                r.getDateFrom(),
+                r.getDateTo(),
+                r.getDepartmentTake().getDepartmentId());
 
         if (filterForm.getPriceMin() != null) {
             filteredCars.removeIf(car -> car.getPrice_day() < filterForm.getPriceMin());

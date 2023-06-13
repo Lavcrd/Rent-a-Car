@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="Content-Type" content="text/html"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    <title>Rent-a-Car</title>
+
+    <link rel="stylesheet" type="text/css" href="/css/styles.css"/>
+    <link rel="stylesheet" href="/webjars/bootstrap/5.2.3/css/bootstrap.min.css">
+</head>
+
+<body>
+<div id="container">
+
+    <div th:include="fragments/top::top-menu"></div>
+    <div th:include="fragments/top::reg-options"></div>
+
+    <div class="row">
+        <div class="col-sm-3">
+            <form th:object="${carFilterForm}" th:action="@{/cars/filter}" th:method="POST">
+
+                <input type="hidden" th:field="*{indexData.departmentIdFrom}" th:value="*{indexData.getDepartmentIdFrom()}">
+                <input type="hidden" th:field="*{indexData.departmentIdTo}" th:value="*{indexData.getDepartmentIdTo()}">
+                <input type="hidden" th:field="*{indexData.firstBranchChecked}" th:value="*{indexData.isFirstBranchChecked()}">
+                <input type="hidden" th:field="*{indexData.dateFrom}" th:value="*{indexData.getDateFrom()}">
+                <input type="hidden" th:field="*{indexData.dateTo}" th:value="*{indexData.getDateTo()}">
+                <input type="hidden" th:field="*{indexData.dateCreated}" th:value="*{indexData.getDateCreated()}">
+
+                <button class="btn btn-dark bg-dark bi bi-search w-100"
+                        style="text-align: center"
+                        type="submit">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor"
+                         class="bi bi-search" viewBox="0 0 16 16">
+                        <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"></path>
+                    </svg>
+                    Filter
+                </button>
+                <div><br></div>
+                <div class="accordion" id="accordionPanelsStayOpen">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="price-heading">
+                            <button class="accordion-button collapsed text-light bg-dark" type="button"
+                                    data-bs-toggle="collapse"
+                                    data-bs-target="#priceAcc" aria-expanded="true"
+                                    aria-controls="priceAcc">
+                                Price per day
+                            </button>
+                        </h2>
+                        <div id="priceAcc" class="collapse"
+                             aria-labelledby="price-heading">
+                            <div class="accordion-body">
+                                <div class="form-group" style="text-align: center">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" name="priceMin" placeholder="Min">
+                                        <input type="text" class="form-control" name="priceMax" placeholder="Max">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="brand-heading">
+                            <button class="accordion-button collapsed text-light bg-dark" type="button"
+                                    data-bs-toggle="collapse"
+                                    data-bs-target="#brandAcc" aria-expanded="true"
+                                    aria-controls="brandAcc">
+                                Brand
+                            </button>
+                        </h2>
+                        <div id="brandAcc" class="collapse"
+                             aria-labelledby="brand-heading">
+                            <div class="accordion-body">
+                                <div class="form-check" th:each="brand : ${brand}">
+                                    <input class="form-check-input" type="checkbox" th:value="${brand}" id="checkBrandId" name="brands">
+                                    <label class="form-check-label" for="checkBrandId" th:text="${brand}"></label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="type-heading">
+                            <button class="accordion-button collapsed text-light bg-dark" type="button"
+                                    data-bs-toggle="collapse"
+                                    data-bs-target="#typeAcc" aria-expanded="false"
+                                    aria-controls="typeAcc">
+                                Car type
+                            </button>
+                        </h2>
+                        <div id="typeAcc" class="accordion-collapse collapse"
+                             aria-labelledby="type-heading">
+                            <div class="accordion-body">
+                                <div class="form-check" th:each="type : ${type}">
+                                    <input class="form-check-input" type="checkbox" th:value="${type}" id="checkTypeId" name="types">
+                                    <label class="form-check-label" for="checkTypeId" th:text="${type.getName()}"></label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="seats-heading">
+                            <button class="accordion-button collapsed text-light bg-dark" type="button"
+                                    data-bs-toggle="collapse"
+                                    data-bs-target="#seatsAcc" aria-expanded="false"
+                                    aria-controls="seatsAcc">
+                                Seats
+                            </button>
+                        </h2>
+                        <div id="seatsAcc" class="accordion-collapse collapse"
+                             aria-labelledby="seats-heading">
+                            <div class="accordion-body">
+                                <div class="form-check" th:each="seats : ${seats}">
+                                    <input class="form-check-input" type="checkbox" th:value="${seats}" id="checkSeatsId" name="seats">
+                                    <label class="form-check-label" for="checkSeatsId" th:text="${seats}"></label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div th:insert="fragments/bottom::form-error-handler"></div>
+            </form>
+        </div>
+
+        <div class="col-sm-9">
+            <form th:action="@{/cars/proceed}" th:object="${selectCarForm}" th:method="POST">
+                <input type="hidden" th:field="*{indexData.departmentIdFrom}" th:value="*{indexData.getDepartmentIdFrom()}">
+                <input type="hidden" th:field="*{indexData.departmentIdTo}" th:value="*{indexData.getDepartmentIdTo()}">
+                <input type="hidden" th:field="*{indexData.firstBranchChecked}" th:value="*{indexData.isFirstBranchChecked()}">
+                <input type="hidden" th:field="*{indexData.dateFrom}" th:value="*{indexData.getDateFrom()}">
+                <input type="hidden" th:field="*{indexData.dateTo}" th:value="*{indexData.getDateTo()}">
+                <input type="hidden" th:field="*{indexData.dateCreated}" th:value="*{indexData.getDateCreated()}">
+
+                <div th:each="car : ${cars}" id="car-list">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h4 th:text="${car.brand}"></h4>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4">
+                            <img th:src="${car.jpgLink}" alt="Picture" width="255" height="150"/>
+
+                        </div>
+                        <div class="col-md-6">
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item" th:text="'Model: ' + ${car.model}"></li>
+                                <li class="list-group-item" th:text="'Type: ' + ${car.carType.getName()}"></li>
+                                <li class="list-group-item" th:text="'Production date: ' + ${car.year}"></li>
+                                <li class="list-group-item" th:text="'Seats: ' + ${car.seats}"></li>
+                                <li class="list-group-item"
+                                    th:text="'Price per day: ' + ${#numbers.formatDecimal((car.price_day), 1, 2, 'POINT')} + ' PLN'"></li>
+                            </ul>
+                            <br>
+                        </div>
+
+                        <div class="col-md-2">
+                            <div class="vstack gap-3">
+                                <div class="bg-light border"
+                                     th:text="${#numbers.formatDecimal((days*car.price_day), 1, 2, 'POINT')} + ' PLN'">
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-dark" th:text="Select" name="car_button"
+                                    th:value="${car.getCarId()}"></button>
+                        </div>
+                    </div>
+                </div>
+                <div th:insert="fragments/bottom::form-error-handler"></div>
+            </form>
+        </div>
+    </div>
+    <div th:include="fragments/bottom::bottom-footer"></div>
+</div>
+<div th:include="fragments/bottom::common-scripts"></div>
+</body>
+</html>
