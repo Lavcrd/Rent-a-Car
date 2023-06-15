@@ -128,27 +128,34 @@ public class ManageReservationsController {
 
     @RequestMapping(method = RequestMethod.GET, value = "/reservation/{reservation}/car")
     public String substituteCarPage(final ModelMap map, RedirectAttributes redAtt, @PathVariable(value = "reservation") Long reservationId, @ModelAttribute("customer") Long customerId) {
+        try {
+            Reservation reservation = reservationService.getCustomerReservation(customerId, reservationId);
+            List<Car> carList = carService.findAvailableCarsInDepartment(reservation);
 
-        Reservation reservation = reservationService.getCustomerReservation(customerId, reservationId);
-        List<Car> carList = carService.findAvailableCarsInDepartment(reservation);
+            if (!map.containsKey("filteredCars")) {
+                map.addAttribute("cars", carList);
+            } else {
+                map.addAttribute("cars", map.getAttribute("filteredCars"));
+            }
+            Map<String, Object> carProperties = carService.getFilterProperties(carList);
 
-        if (!map.containsKey("filteredCars")) {
-            map.addAttribute("cars", carList);
-        } else {
-            map.addAttribute("cars", map.getAttribute("filteredCars"));
+            map.addAttribute("brand", carProperties.get("brand"));
+            map.addAttribute("type", carProperties.get("type"));
+            map.addAttribute("seats", carProperties.get("seats"));
+
+            map.addAttribute("days", (reservation.getDateFrom().until(reservation.getDateTo(), ChronoUnit.DAYS) + 1));
+
+            SubstituteCarFilterForm carFilterForm = new SubstituteCarFilterForm();
+            carFilterForm.setDateFrom(reservation.getDateFrom());
+            carFilterForm.setDateTo(reservation.getDateTo());
+            carFilterForm.setDepartmentId(reservation.getDepartmentTake().getDepartmentId());
+
+            map.addAttribute("carFilterForm", carFilterForm);
+            return "management/substituteCar";
+        } catch (ResourceNotFoundException err) {
+            redAtt.addFlashAttribute("message", "Error occurred. Resource not found.");
+            return "redirect:/mg-res";
         }
-        Map<String, Object> carProperties = carService.getFilterProperties(carList);
-
-        map.addAttribute("brand", carProperties.get("brand"));
-        map.addAttribute("type", carProperties.get("type"));
-        map.addAttribute("seats", carProperties.get("seats"));
-
-        map.addAttribute("days", (reservation.getDateFrom().until(reservation.getDateTo(), ChronoUnit.DAYS) + 1));
-
-        SubstituteCarFilterForm carFilterForm = new SubstituteCarFilterForm();
-
-        map.addAttribute("carFilterForm", carFilterForm);
-        return "management/substituteCar";
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/verify")
@@ -199,7 +206,7 @@ public class ManageReservationsController {
 
     @RequestMapping(method = RequestMethod.POST, value = "/unverify")
     public String unverifyButton(RedirectAttributes redAtt, @RequestParam("customer") Long customerId, @RequestParam("department") Long departmentId) {
-        HttpStatus status = verificationService.deleteByCustomerId(customerId);
+        HttpStatus status = verificationService.verificationDelete(customerId);
         if (status.equals(HttpStatus.OK)) {
             redAtt.addAttribute("customer", customerId);
             redAtt.addFlashAttribute("department", departmentId);
@@ -306,9 +313,6 @@ public class ManageReservationsController {
 
     @RequestMapping(method = RequestMethod.POST, value = "/reservation/car")
     public String reservationCarButton(RedirectAttributes redAtt, @RequestParam("reservation") Long reservationId, @RequestParam("customer") Long customerId) {
-
-        //TODO page
-
         redAtt.addAttribute("reservation", reservationId);
         redAtt.addFlashAttribute("customer", customerId);
         return "redirect:/mg-res/reservation/{reservation}/car";
@@ -324,7 +328,7 @@ public class ManageReservationsController {
 
     @RequestMapping(method = RequestMethod.POST, value = "/reservation/{reservation}/filter")
     public String substituteCarFilterButton(@ModelAttribute("carFilterForm") SubstituteCarFilterForm filterData, RedirectAttributes redAtt, @RequestParam("reservation") Long reservationId, @RequestParam("customer") Long customerId) {
-        redAtt.addFlashAttribute("filteredCars", carService.filterCars(filterData, reservationService.getCustomerReservation(customerId, reservationId)));
+        redAtt.addFlashAttribute("filteredCars", carService.filterCars(filterData));
         redAtt.addFlashAttribute("customer", customerId);
         redAtt.addAttribute("reservation", reservationId);
         return "redirect:/mg-res/reservation/{reservation}/car";
@@ -345,5 +349,4 @@ public class ManageReservationsController {
         redAtt.addFlashAttribute("message", "An unexpected error occurred. Please try again later.");
         return "redirect:/mg-res";
     }
-
 }

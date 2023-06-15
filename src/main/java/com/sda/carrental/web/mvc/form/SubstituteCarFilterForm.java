@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Getter
@@ -20,4 +21,10 @@ public class SubstituteCarFilterForm {
     private List<Car.CarType> types;
 
     private List<Integer> seats;
+
+    private LocalDate dateFrom;
+
+    private LocalDate dateTo;
+
+    private Long departmentId;
 }

@@ -87,9 +87,9 @@ public class CustomerService {
         return user;
     }
 
-    public HttpStatus selfDeleteCustomer(HttpStatus verificationStatus, CustomUserDetails cud) {
+    public HttpStatus deleteCustomer(HttpStatus verificationStatus, Long customerId) {
         try {
-            Customer customer = findByUsername(cud.getUsername());
+            Customer customer = findById(customerId);
 
             if (verificationStatus.equals(HttpStatus.OK)) {
                 if (reservationRepository.findAllByUser(customer).isEmpty()) {
