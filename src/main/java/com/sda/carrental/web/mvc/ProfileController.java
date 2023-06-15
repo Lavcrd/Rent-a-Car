@@ -67,7 +67,7 @@ public class ProfileController {
         CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         map.addAttribute("user", cud.getUsername());
-        map.addAttribute("delete_form", new DeleteAccountForm());
+        map.addAttribute("delete_form", new ConfirmationForm());
         return "user/deleteCustomer";
     }
 
@@ -154,14 +154,14 @@ public class ProfileController {
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/delete")
-    public String deleteAccountAction(RedirectAttributes redAtt, @ModelAttribute("delete_form") @Valid DeleteAccountForm form, Errors errors) {
+    public String deleteAccountAction(RedirectAttributes redAtt, @ModelAttribute("delete_form") @Valid ConfirmationForm form, Errors errors) {
         if (errors.hasErrors()) {
             return "user/deleteCustomer";
         }
 
         CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        HttpStatus response = customerService.deleteCustomer(verificationService.verificationDelete(cud.getId()), cud.getId());
 
-        HttpStatus response = customerService.selfDeleteCustomer(verificationService.deleteByCustomerId(cud.getId()), cud);
         if (response.equals(HttpStatus.ACCEPTED)) {
             redAtt.addFlashAttribute("message", "Account has been successfully deleted.");
         } else if (response.equals(HttpStatus.NOT_FOUND)) {

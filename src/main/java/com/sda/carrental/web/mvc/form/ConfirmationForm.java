@@ -8,7 +8,7 @@ import javax.validation.constraints.NotEmpty;
 
 @Getter
 @Setter
-public class DeleteAccountForm {
+public class ConfirmationForm {
 
     @NotEmpty(message = "Field cannot be empty")
     @CurrentPassword(message = "Provided current password is incorrect")

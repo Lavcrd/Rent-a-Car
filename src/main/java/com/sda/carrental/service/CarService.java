@@ -64,11 +64,11 @@ public class CarService {
         return filteredCars;
     }
 
-    public List<Car> filterCars(SubstituteCarFilterForm filterForm, Reservation r) {
+    public List<Car> filterCars(SubstituteCarFilterForm filterForm) {
         ArrayList<Car> filteredCars = (ArrayList<Car>) repository.findAvailableCarsInDepartment(
-                r.getDateFrom(),
-                r.getDateTo(),
-                r.getDepartmentTake().getDepartmentId());
+                filterForm.getDateFrom(),
+                filterForm.getDateTo(),
+                filterForm.getDepartmentId());
 
         if (filterForm.getPriceMin() != null) {
             filteredCars.removeIf(car -> car.getPrice_day() < filterForm.getPriceMin());

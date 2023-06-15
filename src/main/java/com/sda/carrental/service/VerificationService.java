@@ -17,13 +17,13 @@ public class VerificationService {
     private final VerificationRepository repository;
     private final CustomerService customerService;
 
-    public HttpStatus deleteByCustomerId(Long customerId) {
+    public HttpStatus verificationDelete(Long customerId) {
         try {
             repository.delete(repository.findByCustomer(customerService.findById(customerId)).orElseThrow(ResourceNotFoundException::new));
             return HttpStatus.OK;
         } catch (ResourceNotFoundException err) {
             return HttpStatus.OK;
-        } catch (Error err) {
+        } catch (RuntimeException err) {
             err.printStackTrace();
             return HttpStatus.INTERNAL_SERVER_ERROR;
         }

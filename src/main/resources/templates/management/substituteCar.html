@@ -23,6 +23,9 @@
 
                 <input type="hidden" name="customer" th:value="${customer}">
                 <input type="hidden" name="reservation" th:value="${reservation}">
+                <input type="hidden" th:field="*{dateFrom}">
+                <input type="hidden" th:field="*{dateTo}">
+                <input type="hidden" th:field="*{departmentId}">
 
                 <div style="display: grid; grid-template-columns: repeat(2, 1fr);">
                     <button class="btn btn-dark bg-dark bi bi-search"
