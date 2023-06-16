@@ -34,27 +34,34 @@
             <tr>
                 <th scope="row">Name</th>
                 <td th:text="${user.getName()} + ' ' + ${user.getSurname()}"></td>
+                <td style="width: min-content;">
+                    <a href="/profile/password" type="button" class="btn btn-dark w-100" th:text="'Change password'"></a>
+                </td>
             </tr>
             <tr>
                 <th scope="row">Contact number</th>
                 <td th:text="${user.getCountry().getContactCode()} + ' ' + ${user.getContactNumber()}"></td>
-                <td><a href="/profile/contact" type="button" class="btn btn-dark" th:text="'Change contact number'"></a></td>
+                <td style="width: min-content;"><a href="/profile/contact" type="button" class="btn btn-dark w-100"
+                                                   th:text="'Change contact number'"></a></td>
             </tr>
             <tr>
                 <th scope="row">E-mail</th>
                 <td th:text="${user.getEmail()}"></td>
-                <td><a href="/profile/email" type="button" class="btn btn-dark" th:text="'Change e-mail'"></a></td>
+                <td style="width: min-content;"><a href="/profile/email" type="button" class="btn btn-dark w-100" th:text="'Change e-mail'"></a>
+                </td>
             </tr>
 
             <tr>
                 <th scope="row">Address</th>
                 <td th:text="${user.getCountry().getCode()} + ' — ' + ${user.getCity()} + ' ' + ${user.getAddress()}"></td>
-                <td><a href="/profile/address" type="button" class="btn btn-dark" th:text="'Change address'"></a></td>
+                <td style="width: min-content;"><a href="/profile/address" type="button" class="btn btn-dark w-100" th:text="'Change address'"></a>
+                </td>
             </tr>
             <tr>
-                <td>
-                    <a href="/profile/password" type="button" class="btn btn-dark" th:text="'Change password'"></a>
-                    <a href="/profile/delete" type="button" class="btn btn-dark" th:text="'Delete account'"></a>
+                <td></td>
+                <td></td>
+                <td style="width: min-content;">
+                    <a href="/profile/delete" type="button" class="btn btn-dark w-100" th:text="'Delete account'"></a>
                 </td>
             </tr>
             </tbody>

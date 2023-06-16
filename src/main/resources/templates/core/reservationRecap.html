@@ -21,20 +21,21 @@
         <br>
 
         <form th:object="${reservationData}" th:action="@{/reservation}" th:method="POST">
-            <input type="hidden" th:field="*{indexData.departmentIdFrom}" th:value="*{indexData.getDepartmentIdFrom()}">
-            <input type="hidden" th:field="*{indexData.departmentIdTo}" th:value="*{indexData.getDepartmentIdTo()}">
-            <input type="hidden" th:field="*{indexData.firstBranchChecked}" th:value="*{indexData.isFirstBranchChecked()}">
-            <input type="hidden" th:field="*{indexData.dateFrom}" th:value="*{indexData.getDateFrom()}">
-            <input type="hidden" th:field="*{indexData.dateTo}" th:value="*{indexData.getDateTo()}">
-            <input type="hidden" th:field="*{indexData.dateCreated}" th:value="*{indexData.getDateCreated()}">
-            <input type="hidden" th:field="*{carId}" th:value="*{getCarId()}">
+            <input type="hidden" th:field="*{indexData.departmentIdFrom}">
+            <input type="hidden" th:field="*{indexData.departmentIdTo}">
+            <input type="hidden" th:field="*{indexData.firstBranchChecked}">
+            <input type="hidden" th:field="*{indexData.dateFrom}">
+            <input type="hidden" th:field="*{indexData.dateTo}">
+            <input type="hidden" th:field="*{indexData.dateCreated}">
+            <input type="hidden" th:field="*{carId}">
 
             <div class="container text-center">
                 <div class="row">
                     <div class="col">
                         <dl style="text-align: left">
                             <dt style="font-weight: bold">Vehicle pick-up:</dt>
-                            <dt style="font-weight: normal" th:text="${branchFrom.getCity()} + ' ' + ${branchFrom.getPostcode()} + ', '"></dt>
+                            <dt style="font-weight: normal"
+                                th:text="${branchFrom.getCity()} + ' ' + ${branchFrom.getPostcode()} + ', '"></dt>
                             <dt style="font-weight: normal" th:text="${branchFrom.getAddress()}"></dt>
                         </dl>
                         <ul style="text-align: left; list-style-type:none">
@@ -44,7 +45,8 @@
                         <br>
                         <dl style="text-align: left">
                             <dt style="font-weight: bold">Vehicle return:</dt>
-                            <dt style="font-weight: normal" th:text="${branchTo.getCity()} + ' ' + ${branchTo.getPostcode()} + ', '"></dt>
+                            <dt style="font-weight: normal"
+                                th:text="${branchTo.getCity()} + ' ' + ${branchTo.getPostcode()} + ', '"></dt>
                             <dt style="font-weight: normal" th:text="${branchTo.getAddress()}"></dt>
                         </dl>
                         <ul style="text-align: left; list-style-type:none">
@@ -83,15 +85,17 @@
                         <br>
                     </div>
                     <div class="col">
-                        <button class="btn btn-dark text-info bg-dark bi bi-search"
-                                type="submit">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                 class="bi bi-check-circle" viewBox="0 0 16 16">
-                                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
-                                <path d="M10.97 4.97a.235.235 0 0 0-.02.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05z"/>
-                            </svg>
-                            Reserve
-                        </button>
+                        <div class="d-flex flex-column">
+                            <button class="btn btn-dark bg-dark bi bi-search"
+                                    type="submit">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                     class="bi bi-check-circle" viewBox="0 0 16 16">
+                                    <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                                    <path d="M10.97 4.97a.235.235 0 0 0-.02.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05z"/>
+                                </svg>
+                                Reserve
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>

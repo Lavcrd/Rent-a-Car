@@ -125,8 +125,10 @@ public class ReservationService {
     public HttpStatus substituteCar(Long reservationId, Long customerId, Long carId) {
         try {
             Reservation r = getCustomerReservation(customerId, reservationId);
-            r.setCar(carService.findAvailableCar(r.getDateFrom(), r.getDateTo(), r.getDepartmentTake().getDepartmentId(), carId));
+            Car c = carService.findAvailableCar(r.getDateFrom(), r.getDateTo(), r.getDepartmentTake().getDepartmentId(), carId);
+            r.setCar(c);
             reservationRepository.save(r);
+            paymentDetailsService.adjustRequiredDeposit(r, c.getDepositValue());
             return HttpStatus.ACCEPTED;
         } catch (RuntimeException err) {
             return HttpStatus.NOT_FOUND;

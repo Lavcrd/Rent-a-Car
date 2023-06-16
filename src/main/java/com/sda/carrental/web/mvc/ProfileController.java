@@ -29,6 +29,7 @@ public class ProfileController {
     private final VerificationService verificationService;
     private final UserService userService;
 
+    //Profile page
     @RequestMapping(method = RequestMethod.GET)
     public String profilePage(ModelMap map) {
         CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -41,6 +42,7 @@ public class ProfileController {
         return "user/profileEmployee";
     }
 
+    //Pages from profile buttons
     @RequestMapping(method = RequestMethod.GET, value = "/password")
     public String changePasswordPage(final ModelMap map) {
         map.addAttribute("password_form", new ChangePasswordForm());
@@ -78,8 +80,9 @@ public class ProfileController {
         return "user/addressCustomer";
     }
 
+    //Confirmation buttons
     @RequestMapping(method = RequestMethod.POST, value = "/contact")
-    public String changeContactAction(RedirectAttributes redAtt, @ModelAttribute("contact_form") @Valid ChangeContactForm form, Errors errors) {
+    public String changeContactConfirmButton(RedirectAttributes redAtt, @ModelAttribute("contact_form") @Valid ChangeContactForm form, Errors errors) {
         if (errors.hasErrors()) {
             return "user/contactCustomer";
         }
@@ -98,7 +101,7 @@ public class ProfileController {
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/address")
-    public String changeAddressAction(RedirectAttributes redAtt, @ModelAttribute("address_form") @Valid ChangeAddressForm form, Errors errors) {
+    public String changeAddressConfirmButton(RedirectAttributes redAtt, @ModelAttribute("address_form") @Valid ChangeAddressForm form, Errors errors) {
         if (errors.hasErrors()) {
             return "user/addressCustomer";
         }
@@ -117,7 +120,7 @@ public class ProfileController {
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/email")
-    public String changeEmailAction(RedirectAttributes redAtt, @ModelAttribute("email_form") @Valid ChangeEmailForm form, Errors errors) {
+    public String changeEmailConfirmButton(RedirectAttributes redAtt, @ModelAttribute("email_form") @Valid ChangeEmailForm form, Errors errors) {
         if (errors.hasErrors()) {
             return "user/emailCustomer";
         }
@@ -135,7 +138,7 @@ public class ProfileController {
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/password")
-    public String changePasswordAction(RedirectAttributes redAtt, @ModelAttribute("password_form") @Valid ChangePasswordForm form, Errors errors) {
+    public String changePasswordConfirmButton(RedirectAttributes redAtt, @ModelAttribute("password_form") @Valid ChangePasswordForm form, Errors errors) {
         if (errors.hasErrors()) {
             return "user/passwordCustomer";
         }
@@ -154,7 +157,7 @@ public class ProfileController {
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/delete")
-    public String deleteAccountAction(RedirectAttributes redAtt, @ModelAttribute("delete_form") @Valid ConfirmationForm form, Errors errors) {
+    public String deleteAccountConfirmButton(RedirectAttributes redAtt, @ModelAttribute("delete_form") @Valid ConfirmationForm form, Errors errors) {
         if (errors.hasErrors()) {
             return "user/deleteCustomer";
         }

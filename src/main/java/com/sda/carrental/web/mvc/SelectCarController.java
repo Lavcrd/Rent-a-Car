@@ -1,5 +1,6 @@
 package com.sda.carrental.web.mvc;
 
+import com.sda.carrental.exceptions.ResourceNotFoundException;
 import com.sda.carrental.model.property.Car;
 import com.sda.carrental.service.CarService;
 import com.sda.carrental.web.mvc.form.CarFilterForm;
@@ -24,47 +25,53 @@ public class SelectCarController {
 
     private final CarService carService;
 
+    //Pages
     @RequestMapping(method = RequestMethod.GET)
-    public String showPage(final ModelMap map, @ModelAttribute("indexData") IndexForm indexData) {
-        if (indexData.getDateCreated() == null) {
+    public String selectCarPage(final ModelMap map, RedirectAttributes redAtt, @ModelAttribute("indexData") IndexForm indexData) {
+        try {
+            if (indexData.getDateCreated() == null) throw new NullPointerException();
+            List<Car> carList = carService.findAvailableDistinctCarsInDepartment(
+                    indexData.getDateFrom(),
+                    indexData.getDateTo(),
+                    indexData.getDepartmentIdFrom());
+            if (carList.isEmpty()) throw new ResourceNotFoundException();
+
+            if (!map.containsKey("filteredCars")) {
+                map.addAttribute("cars", carList);
+            } else {
+                map.addAttribute("cars", map.getAttribute("filteredCars"));
+            }
+            Map<String,Object> carProperties = carService.getFilterProperties(carList);
+
+            map.addAttribute("brand", carProperties.get("brand"));
+            map.addAttribute("type", carProperties.get("type"));
+            map.addAttribute("seats", carProperties.get("seats"));
+
+            map.addAttribute("days", (indexData.getDateFrom().until(indexData.getDateTo(), ChronoUnit.DAYS) + 1));
+
+            SelectCarForm selectCarForm = new SelectCarForm();
+            CarFilterForm carFilterForm = new CarFilterForm();
+
+            selectCarForm.setIndexData(indexData);
+            carFilterForm.setIndexData(indexData);
+
+            map.addAttribute("selectCarForm", selectCarForm);
+            map.addAttribute("carFilterForm", carFilterForm);
+            return "core/selectCar";
+        } catch (NullPointerException err ) {
+            redAtt.addFlashAttribute("message", "An unexpected error occurred. Please try again later or contact customer service.");
+            return "redirect:/";
+        } catch (ResourceNotFoundException err) {
+            redAtt.addFlashAttribute("message", "No cars available for selected department and dates.");
             return "redirect:/";
         }
-        List<Car> carList = carService.findAvailableDistinctCarsInDepartment(
-                indexData.getDateFrom(),
-                indexData.getDateTo(),
-                indexData.getDepartmentIdFrom());
-
-        if (!map.containsKey("filteredCars")) {
-            map.addAttribute("cars", carList);
-        } else {
-            map.addAttribute("cars", map.getAttribute("filteredCars"));
-        }
-        Map<String,Object> carProperties = carService.getFilterProperties(carList);
-
-        map.addAttribute("brand", carProperties.get("brand"));
-        map.addAttribute("type", carProperties.get("type"));
-        map.addAttribute("seats", carProperties.get("seats"));
-
-        map.addAttribute("days", (indexData.getDateFrom().until(indexData.getDateTo(), ChronoUnit.DAYS) + 1));
-
-        SelectCarForm selectCarForm = new SelectCarForm();
-        CarFilterForm carFilterForm = new CarFilterForm();
-
-        selectCarForm.setIndexData(indexData);
-        carFilterForm.setIndexData(indexData);
-
-        map.addAttribute("selectCarForm", selectCarForm);
-        map.addAttribute("carFilterForm", carFilterForm);
-        return "core/selectCar";
     }
 
+    //Select car buttons
     @RequestMapping(value="/proceed", method = RequestMethod.POST)
-    public String showHandler(@ModelAttribute("selectCarForm") SelectCarForm selectCarData, @RequestParam(value = "car_button") Long carId, RedirectAttributes redirectAttributes) {
-        if (selectCarData == null) return "redirect:/";
+    public String selectHandler(@ModelAttribute("selectCarForm") SelectCarForm selectCarData, @RequestParam(value = "select") Long carId, RedirectAttributes redAtt) {
         selectCarData.setCarId(carId);
-        if (selectCarData.getIndexData() == null) return "redirect:/";
-
-        redirectAttributes.addFlashAttribute("showData", selectCarData);
+        redAtt.addFlashAttribute("showData", selectCarData);
         return "redirect:/reservation";
     }
 

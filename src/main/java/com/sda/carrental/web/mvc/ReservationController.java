@@ -31,12 +31,13 @@ public class ReservationController {
     private final ReservationService resService;
     private final GlobalValues gv;
 
+    //Pages
     @RequestMapping(method = RequestMethod.GET)
-    public String sumReservationPage(final ModelMap map, @ModelAttribute("showData") SelectCarForm reservationData, RedirectAttributes redAtt) {
-        if (reservationData == null) return "redirect:/";
-        if (reservationData.getIndexData() == null) return "redirect:/";
-
+    public String reservationRecapPage(final ModelMap map, @ModelAttribute("showData") SelectCarForm reservationData, RedirectAttributes redAtt) {
         try {
+            if (reservationData == null) throw new NullPointerException();
+            if (reservationData.getIndexData() == null) throw new NullPointerException();
+
             Car car = carService.findCarById(reservationData.getCarId());
             Department depFrom = depService.findDepartmentWhereId(reservationData.getIndexData().getDepartmentIdFrom());
             Department depTo = depService.findDepartmentWhereId(reservationData.getIndexData().getDepartmentIdTo());
@@ -59,16 +60,16 @@ public class ReservationController {
             map.addAttribute("deposit_percentage", gv.getDepositPercentage() * 100);
             map.addAttribute("refund_fee_days", gv.getRefundSubtractDaysDuration());
 
-            return "core/reservation";
-        } catch (ResourceNotFoundException err) {
-            err.printStackTrace();
-            redAtt.addFlashAttribute("message", "Server error! \nPlease contact customer service or try again later.");
+            return "core/reservationRecap";
+        } catch (NullPointerException | ResourceNotFoundException err) {
+            redAtt.addFlashAttribute("message", "An unexpected error occurred. Please try again later or contact customer service.");
             return "redirect:/";
         }
     }
 
+    //Reservation summary buttons
     @RequestMapping(method = RequestMethod.POST)
-    public String reservationConfirmation(@ModelAttribute("reservationData") SelectCarForm form, RedirectAttributes redAtt) {
+    public String reservationConfirmationButton(@ModelAttribute("reservationData") SelectCarForm form, RedirectAttributes redAtt) {
         CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         HttpStatus status = resService.createReservation(cud, form);
 

@@ -21,12 +21,12 @@
         <div class="col-sm-3">
             <form th:object="${carFilterForm}" th:action="@{/cars/filter}" th:method="POST">
 
-                <input type="hidden" th:field="*{indexData.departmentIdFrom}" th:value="*{indexData.getDepartmentIdFrom()}">
-                <input type="hidden" th:field="*{indexData.departmentIdTo}" th:value="*{indexData.getDepartmentIdTo()}">
-                <input type="hidden" th:field="*{indexData.firstBranchChecked}" th:value="*{indexData.isFirstBranchChecked()}">
-                <input type="hidden" th:field="*{indexData.dateFrom}" th:value="*{indexData.getDateFrom()}">
-                <input type="hidden" th:field="*{indexData.dateTo}" th:value="*{indexData.getDateTo()}">
-                <input type="hidden" th:field="*{indexData.dateCreated}" th:value="*{indexData.getDateCreated()}">
+                <input type="hidden" th:field="*{indexData.departmentIdFrom}">
+                <input type="hidden" th:field="*{indexData.departmentIdTo}">
+                <input type="hidden" th:field="*{indexData.firstBranchChecked}">
+                <input type="hidden" th:field="*{indexData.dateFrom}">
+                <input type="hidden" th:field="*{indexData.dateTo}">
+                <input type="hidden" th:field="*{indexData.dateCreated}">
 
                 <button class="btn btn-dark bg-dark bi bi-search w-100"
                         style="text-align: center"
@@ -124,12 +124,12 @@
 
         <div class="col-sm-9">
             <form th:action="@{/cars/proceed}" th:object="${selectCarForm}" th:method="POST">
-                <input type="hidden" th:field="*{indexData.departmentIdFrom}" th:value="*{indexData.getDepartmentIdFrom()}">
-                <input type="hidden" th:field="*{indexData.departmentIdTo}" th:value="*{indexData.getDepartmentIdTo()}">
-                <input type="hidden" th:field="*{indexData.firstBranchChecked}" th:value="*{indexData.isFirstBranchChecked()}">
-                <input type="hidden" th:field="*{indexData.dateFrom}" th:value="*{indexData.getDateFrom()}">
-                <input type="hidden" th:field="*{indexData.dateTo}" th:value="*{indexData.getDateTo()}">
-                <input type="hidden" th:field="*{indexData.dateCreated}" th:value="*{indexData.getDateCreated()}">
+                <input type="hidden" th:field="*{indexData.departmentIdFrom}">
+                <input type="hidden" th:field="*{indexData.departmentIdTo}">
+                <input type="hidden" th:field="*{indexData.firstBranchChecked}">
+                <input type="hidden" th:field="*{indexData.dateFrom}">
+                <input type="hidden" th:field="*{indexData.dateTo}">
+                <input type="hidden" th:field="*{indexData.dateCreated}">
 
                 <div th:each="car : ${cars}" id="car-list">
                     <div class="row">
@@ -156,13 +156,18 @@
                         </div>
 
                         <div class="col-md-2">
-                            <div class="vstack gap-3">
-                                <div class="bg-light border"
-                                     th:text="${#numbers.formatDecimal((days*car.price_day), 1, 2, 'POINT')} + ' PLN'">
+                            <div style="display: grid;grid-template-rows: repeat(2, 1fr);">
+                                <div class="border border-dark rounded" style="text-align: center; margin-bottom: 10px;">
+                                    <p style="margin-bottom: 0;" th:text="'Rental:'"></p>
+                                    <p style="margin-bottom: 0;" th:text="${#numbers.formatDecimal((days*car.price_day), 1, 2, 'POINT')} + ' PLN'"></p>
                                 </div>
+                                <div class="border border-dark rounded" style="text-align: center; margin-bottom: 10px;">
+                                    <p style="margin-bottom: 0;" th:text="'Deposit:'"></p>
+                                    <p style="margin-bottom: 0;" th:text="${#numbers.formatDecimal((car.depositValue), 1, 2, 'POINT')} + ' PLN'"></p>
+                                </div>
+                                <button type="submit" class="btn btn-dark" th:text="Select" name="select"
+                                        th:value="${car.getCarId()}"></button>
                             </div>
-                            <button type="submit" class="btn btn-dark" th:text="Select" name="car_button"
-                                    th:value="${car.getCarId()}"></button>
                         </div>
                     </div>
                 </div>

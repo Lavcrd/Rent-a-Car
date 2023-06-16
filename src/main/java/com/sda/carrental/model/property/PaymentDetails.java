@@ -36,6 +36,7 @@ public class PaymentDetails {
     @Column(name = "archival_return_value", nullable = false)
     private double requiredReturnValue;
 
+    @Setter
     @Column(name = "archival_deposit", nullable = false)
     private double requiredDeposit;
 
