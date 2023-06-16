@@ -26,7 +26,6 @@ p {
     width: 942px;
     height: 45px;
     margin-top: 40px;
-    background: #34393b url('../images/header-left.gif') left no-repeat;
 }
 
 #main {
@@ -92,12 +91,10 @@ p {
     padding-top: 4px;
     padding-right: 15px;
     float: right;
-    background: #34393b url('../images/header-right.gif') right no-repeat;
 }
 
 input {
     border: 1px solid #ccc;
-/*    background: #34393b;*/
     margin: 5px;
     padding: 5px;
     color: #CCC;
@@ -178,8 +175,12 @@ input {
 }
 
 h2 {
+    color: #000000;
+}
+
+h3 {
     font-size: 20px;
-    color: #6a8db7;
+    color: #000000;
 }
 
 #sell {
@@ -359,8 +360,6 @@ h2.address {
 #colorCircle {
     width: 80px;
     height: 25px;
-    /*background-color: #F34A53;*/
-    /*border-radius: 100%;*/
     margin: 40px auto 0;
 }
 

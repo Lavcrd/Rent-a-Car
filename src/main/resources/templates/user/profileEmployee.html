@@ -27,6 +27,9 @@
             <tr>
                 <th scope="row">Name</th>
                 <td th:text="${user.getName()} + ' ' + ${user.getSurname()}"></td>
+                <td style="width: min-content;">
+                    <a href="/profile/password" type="button" class="btn btn-dark w-100" th:text="'Change password'"></a>
+                </td>
             </tr>
             <tr>
                 <th scope="row">E-mail</th>
@@ -48,11 +51,6 @@
                     <td th:text="${user.getTerminationDate()}"></td>
                 </tr>
             </th:block>
-            <tr>
-                <td>
-                    <a href="/profile/password" type="button" class="btn btn-dark" th:text="'Change password'"></a>
-                </td>
-            </tr>
             </tbody>
         </table>
         <div th:include="fragments/bottom::bottom-footer"></div>

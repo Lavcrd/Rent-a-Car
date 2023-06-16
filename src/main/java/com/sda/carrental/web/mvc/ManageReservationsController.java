@@ -131,6 +131,7 @@ public class ManageReservationsController {
         try {
             Reservation reservation = reservationService.getCustomerReservation(customerId, reservationId);
             List<Car> carList = carService.findAvailableCarsInDepartment(reservation);
+            if (carList.isEmpty()) throw new RuntimeException();
 
             if (!map.containsKey("filteredCars")) {
                 map.addAttribute("cars", carList);
@@ -155,6 +156,11 @@ public class ManageReservationsController {
         } catch (ResourceNotFoundException err) {
             redAtt.addFlashAttribute("message", "Error occurred. Resource not found.");
             return "redirect:/mg-res";
+        } catch (RuntimeException err) {
+            redAtt.addFlashAttribute("customer", customerId);
+            redAtt.addAttribute("reservation", reservationId);
+            redAtt.addFlashAttribute("message", "No cars available for selected department and dates.");
+            return "redirect:/mg-res/reservation/{reservation}";
         }
     }
 

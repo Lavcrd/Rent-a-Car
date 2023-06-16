@@ -19,6 +19,7 @@ import java.time.LocalDate;
 public class IndexController {
     private final DepartmentService departmentService;
 
+    //Pages
     @RequestMapping(method = RequestMethod.GET)
     public String indexPage(final ModelMap map) {
         map.addAttribute("department", departmentService.findAll());
@@ -30,7 +31,7 @@ public class IndexController {
         return "core/index";
     }
 
-
+    //Index buttons
     @RequestMapping(method = RequestMethod.POST)
     public String handleRequest(@ModelAttribute("indexForm") @Valid IndexForm form, Errors errors, RedirectAttributes redirectAttributes, ModelMap map) {
         if (errors.hasErrors()) {
