@@ -212,7 +212,7 @@ public class ManageReservationsController {
 
     @RequestMapping(method = RequestMethod.POST, value = "/unverify")
     public String unverifyButton(RedirectAttributes redAtt, @RequestParam("customer") Long customerId, @RequestParam("department") Long departmentId) {
-        HttpStatus status = verificationService.verificationDelete(customerId);
+        HttpStatus status = verificationService.deleteVerification(customerId);
         if (status.equals(HttpStatus.OK)) {
             redAtt.addAttribute("customer", customerId);
             redAtt.addFlashAttribute("department", departmentId);

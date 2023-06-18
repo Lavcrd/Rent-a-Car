@@ -6,6 +6,7 @@ import com.sda.carrental.web.mvc.form.validation.constraint.UniqueEmail;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.Email;
@@ -19,9 +20,11 @@ import javax.validation.constraints.Size;
 public class RegisterCustomerForm {
 
     @NotBlank(message = "Name field cannot be empty!")
+    @Length(min = 1, max = 50, message = "Please enter a valid name.")
     private String name;
 
     @NotBlank(message = "Surname field cannot be empty!")
+    @Length(min = 1, max = 50, message = "Please enter a valid surname.")
     private String surname;
 
     @NotBlank(message = "Contact field cannot be empty!")
@@ -32,9 +35,11 @@ public class RegisterCustomerForm {
     private Country country;
 
     @NotBlank(message = "City field cannot be empty!")
+    @Length(min = 1, max = 50, message = "Please enter a valid city.")
     private String city;
 
     @NotBlank(message = "Address field cannot be empty!")
+    @Length(min = 1, max = 50, message = "Please enter a valid address.")
     private String address;
 
     @NotBlank(message = "E-mail field cannot be empty!")
@@ -43,10 +48,9 @@ public class RegisterCustomerForm {
     private String email;
 
     @NotBlank(message = "Password field cannot be empty!")
-    @Size(min = 8, message = "Minimum password size: 8")
+    @Size(min = 8, max = 64, message = "Passwords must be between 8 and 64 characters in length.")
     private String password;
 
     @NotBlank(message = "Repeat password field cannot be empty!")
-    @Size(min = 8, message = "Minimum password size: 8")
     private String confirmPassword;
 }

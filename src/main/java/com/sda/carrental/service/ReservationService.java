@@ -7,16 +7,13 @@ import com.sda.carrental.model.property.Car;
 import com.sda.carrental.model.property.Department;
 import com.sda.carrental.model.property.PaymentDetails;
 import com.sda.carrental.model.users.Customer;
-import com.sda.carrental.model.users.User;
 import com.sda.carrental.repository.ReservationRepository;
-import com.sda.carrental.service.auth.CustomUserDetails;
 import com.sda.carrental.web.mvc.form.IndexForm;
 import com.sda.carrental.web.mvc.form.SelectCarForm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 import java.util.Optional;
@@ -25,7 +22,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ReservationService {
     private final ReservationRepository reservationRepository;
-    private final UserService userService;
     private final CustomerService customerService;
     private final CarService carService;
     private final DepartmentService departmentService;
@@ -34,17 +30,17 @@ public class ReservationService {
     private final RentingService rentingService;
 
     @Transactional
-    public HttpStatus createReservation(@RequestBody CustomUserDetails cud, @RequestBody SelectCarForm form) {
+    public HttpStatus createReservation(Long customerId, SelectCarForm form) {
         try {
             IndexForm index = form.getIndexData();
 
-            User user = userService.findByUsername(cud.getUsername());
+            Customer customer = customerService.findById(customerId);
             Car car = carService.findAvailableCar(index.getDateFrom(), index.getDateTo(), index.getDepartmentIdFrom(), form.getCarId());
             Department depRepFrom = departmentService.findDepartmentWhereId(index.getDepartmentIdFrom());
             Department depRepTo = departmentService.findDepartmentWhereId(index.getDepartmentIdTo());
 
             Reservation reservation = new Reservation(
-                    (Customer) user, car,
+                    customer, car,
                     depRepFrom, depRepTo,
                     index.getDateFrom(), index.getDateTo(),
                     index.getDateCreated());
@@ -66,12 +62,12 @@ public class ReservationService {
         }
     }
 
-    public List<Reservation> getUserReservations(@RequestBody String username) {
+    public List<Reservation> getCustomerReservations(Long customerId) {
         return reservationRepository
-                .findAllByUser(userService.findByUsername(username));
+                .findAllByUser(customerService.findById(customerId));
     }
 
-    public Reservation getCustomerReservation(@RequestBody Long customerId, Long reservationId) {
+    public Reservation getCustomerReservation(Long customerId, Long reservationId) {
         return reservationRepository
                 .findByUserAndId(customerService.findById(customerId), reservationId)
                 .orElseThrow(ResourceNotFoundException::new);

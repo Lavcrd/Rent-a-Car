@@ -71,7 +71,7 @@ public class ReservationController {
     @RequestMapping(method = RequestMethod.POST)
     public String reservationConfirmationButton(@ModelAttribute("reservationData") SelectCarForm form, RedirectAttributes redAtt) {
         CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        HttpStatus status = resService.createReservation(cud, form);
+        HttpStatus status = resService.createReservation(cud.getId(), form);
 
         if (status == HttpStatus.CREATED) {
             redAtt.addFlashAttribute("message", "Reservation has been successfully registered!");

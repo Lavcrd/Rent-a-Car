@@ -11,6 +11,10 @@ import com.sda.carrental.model.users.User;
 import com.sda.carrental.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDate;
+import java.util.Optional;
 
 
 @Service
@@ -18,6 +22,10 @@ import lombok.RequiredArgsConstructor;
 public class UserService {
     private final UserRepository repository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final VerificationService verificationService;
+    private final CustomerService customerService;
+    private final ReservationService reservationService;
+
 
     public User findByUsername(String username) {
         return repository.findByEmail(username).orElseThrow(() -> new RuntimeException("User with username: " + username + " not found"));
@@ -32,7 +40,7 @@ public class UserService {
         try {
             String storedPassword = repository.getPasswordByUsername(cud.getUsername()).orElseThrow(() -> new RuntimeException("User with username: " + cud.getUsername() + " not found"));
             return bCryptPasswordEncoder.matches(inputPassword, storedPassword);
-        } catch (ResourceNotFoundException err) {
+        } catch (RuntimeException err) {
             return false;
         }
     }
@@ -45,10 +53,8 @@ public class UserService {
             repository.save(user);
             return HttpStatus.ACCEPTED;
         } catch (ResourceNotFoundException err) {
-            err.printStackTrace();
             return HttpStatus.NOT_FOUND;
-        } catch (Error err) {
-            err.printStackTrace();
+        } catch (RuntimeException err) {
             return HttpStatus.INTERNAL_SERVER_ERROR;
         }
     }
@@ -60,15 +66,43 @@ public class UserService {
             repository.save(user);
             return HttpStatus.ACCEPTED;
         } catch (ResourceNotFoundException err) {
-            err.printStackTrace();
             return HttpStatus.NOT_FOUND;
-        } catch (Error err) {
-            err.printStackTrace();
+        } catch (RuntimeException err) {
             return HttpStatus.INTERNAL_SERVER_ERROR;
         }
     }
 
     public boolean isEmailUnique(String input) {
         return repository.findByEmail(input).isEmpty();
+    }
+
+    private User scrambleUser(User user) {
+        user.setName("—");
+        user.setSurname("—");
+        user.setPassword(customerService.generateRandomString(30));
+        return user;
+    }
+
+    @Transactional
+    public HttpStatus deleteUser(Long userId) {
+        try {
+            Optional<User> user =  repository.findById(userId);
+            if(user.isEmpty()) throw new ResourceNotFoundException();
+            User.Roles role = user.get().getRole();
+
+            if (role.equals(User.Roles.ROLE_CUSTOMER)) {
+                verificationService.deleteVerification(userId);
+                return customerService.deleteCustomer(userId, reservationService.getCustomerReservations(userId).isEmpty());
+            } else {
+                user.get().setTerminationDate(LocalDate.now());
+                repository.save(scrambleUser(user.get()));
+                return HttpStatus.OK;
+            }
+        } catch (ResourceNotFoundException err) {
+            return HttpStatus.NOT_FOUND;
+        } catch (RuntimeException err) {
+            return HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+
     }
 }

@@ -33,7 +33,7 @@ public class CustomerReservationsController {
     public String reservationsPage(ModelMap map) {
         CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        map.addAttribute("reservations", reservationService.getUserReservations(cud.getUsername()));
+        map.addAttribute("reservations", reservationService.getCustomerReservations(cud.getId()));
         return "user/reservationsCustomer";
     }
 
