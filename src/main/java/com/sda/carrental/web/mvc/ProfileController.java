@@ -163,9 +163,9 @@ public class ProfileController {
         }
 
         CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        HttpStatus response = customerService.deleteCustomer(verificationService.verificationDelete(cud.getId()), cud.getId());
+        HttpStatus response = userService.deleteUser(cud.getId());
 
-        if (response.equals(HttpStatus.ACCEPTED)) {
+        if (response.equals(HttpStatus.OK)) {
             redAtt.addFlashAttribute("message", "Account has been successfully deleted.");
         } else if (response.equals(HttpStatus.NOT_FOUND)) {
             redAtt.addFlashAttribute("message", "User not recognized. Please login again.");

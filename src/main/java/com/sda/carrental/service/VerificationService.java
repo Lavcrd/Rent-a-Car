@@ -8,6 +8,7 @@ import com.sda.carrental.web.mvc.form.VerificationForm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -17,14 +18,13 @@ public class VerificationService {
     private final VerificationRepository repository;
     private final CustomerService customerService;
 
-    public HttpStatus verificationDelete(Long customerId) {
+    @Transactional
+    public HttpStatus deleteVerification(Long customerId) {
         try {
-            repository.delete(repository.findByCustomer(customerService.findById(customerId)).orElseThrow(ResourceNotFoundException::new));
-            return HttpStatus.OK;
-        } catch (ResourceNotFoundException err) {
+            Optional<Verification> verification = repository.findByCustomer(customerService.findById(customerId));
+            verification.ifPresent(repository::delete);
             return HttpStatus.OK;
         } catch (RuntimeException err) {
-            err.printStackTrace();
             return HttpStatus.INTERNAL_SERVER_ERROR;
         }
     }

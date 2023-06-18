@@ -2,7 +2,6 @@ package com.sda.carrental.model.operational;
 
 import java.time.LocalDate;
 
-import com.sda.carrental.model.users.User;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -12,8 +11,8 @@ import javax.persistence.*;
 @Getter
 @NoArgsConstructor
 public class Renting {
-    public Renting(User employee_id, Reservation reservation) {
-        this.employee_id = employee_id;
+    public Renting(Long employeeId, Reservation reservation) {
+        this.employeeId = employeeId;
         this.reservation = reservation;
         this.actualDateFrom = LocalDate.now();
         this.remarks = "";
@@ -22,11 +21,10 @@ public class Renting {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "rent_id", nullable = false)
-    private Long rent_id;
+    private Long rentId;
 
-    @ManyToOne
-    @JoinColumn(name = "employee_id", referencedColumnName = "id")
-    private User employee_id;
+    @Column(name = "employee_id")
+    private Long employeeId;
 
     @OneToOne
     @JoinColumn(name = "reservation_id", referencedColumnName = "reservation_id")

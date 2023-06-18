@@ -3,7 +3,6 @@ package com.sda.carrental.service;
 import com.sda.carrental.exceptions.ResourceNotFoundException;
 import com.sda.carrental.model.users.Customer;
 import com.sda.carrental.repository.CustomerRepository;
-import com.sda.carrental.repository.ReservationRepository;
 import com.sda.carrental.service.auth.CustomUserDetails;
 import com.sda.carrental.web.mvc.form.ChangeAddressForm;
 import com.sda.carrental.web.mvc.form.SearchCustomerForm;
@@ -11,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -20,7 +20,6 @@ import java.util.Random;
 @RequiredArgsConstructor
 public class CustomerService {
     private final CustomerRepository repository;
-    private final ReservationRepository reservationRepository;
 
     public Customer findByUsername(String username) {
         return repository.findByEmail(username).orElseThrow(() -> new RuntimeException("User with username: " + username + " not found"));
@@ -61,8 +60,7 @@ public class CustomerService {
         }
     }
 
-    private String generateRandomString() {
-        final int length = 30;
+    public String generateRandomString(int length) {
         final String CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()-_=+`~";
         StringBuilder sb = new StringBuilder(length);
         Random random = new Random();
@@ -73,46 +71,46 @@ public class CustomerService {
         return sb.toString();
     }
 
-    private Customer scrambleCustomer(Customer user) {
-        user.setPassword(generateRandomString());
-        user.setName(generateRandomString());
-        user.setSurname(generateRandomString());
-        user.setAddress(generateRandomString());
-        user.setContactNumber(generateRandomString());
-        user.setTerminationDate(LocalDate.now());
-        do {
-            user.setEmail(generateRandomString());
-        } while (repository.findByEmail(user.getEmail()).isPresent());
+    private Customer scrambleCustomer(Customer customer) {
+        customer.setPassword(generateRandomString(30));
+        customer.setName("—");
+        customer.setSurname("—");
+        customer.setAddress("—");
+        customer.setContactNumber("—");
+        customer.setTerminationDate(LocalDate.now());
 
-        return user;
+        String uniqueEmail;
+        do {
+            uniqueEmail = generateRandomString(30);
+        } while (repository.findByEmail(uniqueEmail).isPresent());
+
+        customer.setEmail(uniqueEmail);
+
+        return customer;
     }
 
-    public HttpStatus deleteCustomer(HttpStatus verificationStatus, Long customerId) {
+    @Transactional
+    public HttpStatus deleteCustomer(Long customerId, boolean hasNoReservations) {
         try {
             Customer customer = findById(customerId);
 
-            if (verificationStatus.equals(HttpStatus.OK)) {
-                if (reservationRepository.findAllByUser(customer).isEmpty()) {
-                    repository.delete(customer);
-                } else {
-                    repository.save(scrambleCustomer(customer));
-                }
-                return HttpStatus.ACCEPTED;
+            if (hasNoReservations) {
+                repository.delete(customer);
             } else {
-                return verificationStatus;
+                repository.save(scrambleCustomer(customer));
             }
+            return HttpStatus.OK;
+
         } catch (ResourceNotFoundException err) {
-            err.printStackTrace();
             return HttpStatus.NOT_FOUND;
-        } catch (Error err) {
-            err.printStackTrace();
+        } catch (RuntimeException err) {
             return HttpStatus.INTERNAL_SERVER_ERROR;
         }
     }
 
     public List<Customer> findCustomersByDepartmentAndName(SearchCustomerForm customersData) {
-        if(customersData.getName().isEmpty()) customersData.setName(null);
-        if(customersData.getSurname().isEmpty()) customersData.setSurname(null);
+        if (customersData.getName().isEmpty()) customersData.setName(null);
+        if (customersData.getSurname().isEmpty()) customersData.setSurname(null);
         return repository.findCustomersByDepartmentAndName(customersData.getDepartmentId(), customersData.getName(), customersData.getSurname());
     }
 
