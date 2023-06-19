@@ -1,7 +1,7 @@
 package com.sda.carrental.service;
 
 
-import com.sda.carrental.constants.enums.Country;
+import com.sda.carrental.global.enums.Country;
 import com.sda.carrental.exceptions.ResourceNotFoundException;
 import com.sda.carrental.model.property.Department;
 import com.sda.carrental.model.users.User;

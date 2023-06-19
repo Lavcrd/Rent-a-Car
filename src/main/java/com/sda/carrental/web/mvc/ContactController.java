@@ -1,6 +1,6 @@
 package com.sda.carrental.web.mvc;
 
-import com.sda.carrental.constants.enums.Country;
+import com.sda.carrental.global.enums.Country;
 import com.sda.carrental.service.DepartmentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -13,9 +13,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @RequiredArgsConstructor
 @RequestMapping("/contact")
 public class ContactController {
-
     private final DepartmentService departmentService;
 
+    //Pages
     @RequestMapping(method = RequestMethod.GET)
     public String welcomePage(final ModelMap map) {
         //User IP for geolocation?

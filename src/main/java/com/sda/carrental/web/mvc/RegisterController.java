@@ -1,6 +1,6 @@
 package com.sda.carrental.web.mvc;
 
-import com.sda.carrental.constants.enums.Country;
+import com.sda.carrental.global.enums.Country;
 import com.sda.carrental.model.users.User;
 import com.sda.carrental.service.UserService;
 import com.sda.carrental.web.mvc.form.RegisterCustomerForm;
@@ -19,6 +19,7 @@ import javax.validation.Valid;
 public class RegisterController {
     private final UserService userService;
 
+    //Pages
     @RequestMapping(method = RequestMethod.GET)
     public String createCustomerPage(final ModelMap map) {
         map.addAttribute("customer", new RegisterCustomerForm());
@@ -28,6 +29,7 @@ public class RegisterController {
         return "user/registerCustomer";
     }
 
+    //Create customer page buttons
     @RequestMapping(method = RequestMethod.POST)
     public String createCustomer(@ModelAttribute("customer") @Valid RegisterCustomerForm form, Errors errors, final ModelMap map) {
         if (errors.hasErrors()) {

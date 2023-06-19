@@ -1,6 +1,6 @@
 package com.sda.carrental.service;
 
-import com.sda.carrental.constants.GlobalValues;
+import com.sda.carrental.global.ConstantValues;
 import com.sda.carrental.model.operational.Reservation;
 import com.sda.carrental.model.property.PaymentDetails;
 import com.sda.carrental.repository.PaymentDetailsRepository;
@@ -17,7 +17,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class PaymentDetailsService {
     private final PaymentDetailsRepository repository;
-    private final GlobalValues gv;
+    private final ConstantValues cv;
 
     @Transactional
     public void createReservationPayment(Reservation reservation) {
@@ -27,8 +27,8 @@ public class PaymentDetailsService {
         double payment = rawValue;
         double depositValue = reservation.getCar().getDepositValue();
         if (!reservation.getDepartmentBack().equals(reservation.getDepartmentTake())) {
-            payment += gv.getDeptReturnPriceDiff();
-            repository.save(new PaymentDetails(rawValue, gv.getDeptReturnPriceDiff(), depositValue, payment, depositValue, reservation));
+            payment += cv.getDeptReturnPriceDiff();
+            repository.save(new PaymentDetails(rawValue, cv.getDeptReturnPriceDiff(), depositValue, payment, depositValue, reservation));
         } else {
             repository.save(new PaymentDetails(rawValue, 0.0, depositValue, payment, depositValue, reservation));
         }
@@ -41,8 +41,8 @@ public class PaymentDetailsService {
             return;
         }
         PaymentDetails paymentDetails = paymentDetailsOptional.get();
-        if (LocalDate.now().isAfter(reservation.getDateFrom().minusDays(gv.getRefundSubtractDaysDuration())) && requestType.equals(Reservation.ReservationStatus.STATUS_REFUNDED)) {
-            paymentDetails.setSecuredValue(paymentDetails.getMainValue() * gv.getDepositPercentage());
+        if (LocalDate.now().isAfter(reservation.getDateFrom().minusDays(cv.getRefundSubtractDaysDuration())) && requestType.equals(Reservation.ReservationStatus.STATUS_REFUNDED)) {
+            paymentDetails.setSecuredValue(paymentDetails.getMainValue() * cv.getDepositPercentage());
         }
 
         //some method here that would return money to the customer

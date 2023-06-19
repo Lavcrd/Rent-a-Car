@@ -1,6 +1,6 @@
 package com.sda.carrental.web.mvc;
 
-import com.sda.carrental.constants.GlobalValues;
+import com.sda.carrental.global.ConstantValues;
 import com.sda.carrental.exceptions.ResourceNotFoundException;
 import com.sda.carrental.model.operational.Reservation;
 import com.sda.carrental.model.property.PaymentDetails;
@@ -27,20 +27,15 @@ import java.util.Optional;
 public class CustomerReservationsController {
     private final ReservationService reservationService;
     private final PaymentDetailsService paymentDetailsService;
-    private final GlobalValues gv;
+    private final ConstantValues cv;
 
+    //Pages
     @RequestMapping(method = RequestMethod.GET)
     public String reservationsPage(ModelMap map) {
         CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         map.addAttribute("reservations", reservationService.getCustomerReservations(cud.getId()));
         return "user/reservationsCustomer";
-    }
-
-    @RequestMapping(method = RequestMethod.POST)
-    public String reservationsDetailButton(RedirectAttributes redAtt, @RequestParam("details_button") Long reservationId) {
-        redAtt.addAttribute("details_button", reservationId);
-        return "redirect:/reservations/{details_button}";
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/{details_button}")
@@ -58,8 +53,8 @@ public class CustomerReservationsController {
             } else {
                 long days = reservation.getDateFrom().until(reservation.getDateTo(), ChronoUnit.DAYS) + 1;
                 if (!reservation.getDepartmentTake().equals(reservation.getDepartmentBack())) {
-                    map.addAttribute("diff_return_price", gv.getDeptReturnPriceDiff());
-                    map.addAttribute("total_price", gv.getDeptReturnPriceDiff() + (days * reservation.getCar().getPrice_day()));
+                    map.addAttribute("diff_return_price", cv.getDeptReturnPriceDiff());
+                    map.addAttribute("total_price", cv.getDeptReturnPriceDiff() + (days * reservation.getCar().getPrice_day()));
                 } else {
                     map.addAttribute("diff_return_price", 0.0);
                     map.addAttribute("total_price", days * reservation.getCar().getPrice_day());
@@ -69,8 +64,8 @@ public class CustomerReservationsController {
             }
 
             map.addAttribute("reservation", reservation);
-            map.addAttribute("deposit_percentage", gv.getDepositPercentage() * 100);
-            map.addAttribute("refund_fee_days", gv.getRefundSubtractDaysDuration());
+            map.addAttribute("deposit_percentage", cv.getDepositPercentage() * 100);
+            map.addAttribute("refund_fee_days", cv.getRefundSubtractDaysDuration());
             return "user/reservationDetailsCustomer";
         } catch (ResourceNotFoundException err) {
             redAtt.addFlashAttribute("message", "An unexpected error occurred. Please try again later or contact customer service.");
@@ -78,6 +73,14 @@ public class CustomerReservationsController {
         }
     }
 
+    //Reservations page buttons
+    @RequestMapping(method = RequestMethod.POST)
+    public String reservationsDetailButton(RedirectAttributes redAtt, @RequestParam("details_button") Long reservationId) {
+        redAtt.addAttribute("details_button", reservationId);
+        return "redirect:/reservations/{details_button}";
+    }
+
+    //Reservation details page buttons
     @RequestMapping(method = RequestMethod.POST, value = "/refund")
     public String reservationRefundButton(RedirectAttributes redAtt, @RequestParam(value = "id") Long reservationId) {
         CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();

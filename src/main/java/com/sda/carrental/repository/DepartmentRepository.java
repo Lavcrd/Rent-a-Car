@@ -1,6 +1,6 @@
 package com.sda.carrental.repository;
 
-import com.sda.carrental.constants.enums.Country;
+import com.sda.carrental.global.enums.Country;
 import com.sda.carrental.model.property.Department;
 import org.springframework.data.repository.CrudRepository;
 

@@ -1,4 +1,4 @@
-package com.sda.carrental.constants.enums;
+package com.sda.carrental.global.enums;
 
 import lombok.Getter;
 

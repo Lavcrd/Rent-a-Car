@@ -1,4 +1,4 @@
-package com.sda.carrental.constants;
+package com.sda.carrental.global;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 @Getter
 @Setter
 @NoArgsConstructor
-public class GlobalValues {
+public class ConstantValues {
     private double deptReturnPriceDiff = 120;
     private long refundSubtractDaysDuration = 4;
     private double depositPercentage = 0.2;

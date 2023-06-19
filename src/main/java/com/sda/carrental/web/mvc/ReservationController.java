@@ -1,6 +1,6 @@
 package com.sda.carrental.web.mvc;
 
-import com.sda.carrental.constants.GlobalValues;
+import com.sda.carrental.global.ConstantValues;
 import com.sda.carrental.exceptions.ResourceNotFoundException;
 import com.sda.carrental.model.property.Car;
 import com.sda.carrental.model.property.Department;
@@ -29,7 +29,7 @@ public class ReservationController {
     private final CarService carService;
     private final DepartmentService depService;
     private final ReservationService resService;
-    private final GlobalValues gv;
+    private final ConstantValues cv;
 
     //Pages
     @RequestMapping(method = RequestMethod.GET)
@@ -44,8 +44,8 @@ public class ReservationController {
             long days = reservationData.getIndexData().getDateFrom().until(reservationData.getIndexData().getDateTo(), ChronoUnit.DAYS) + 1;
 
             if (reservationData.getIndexData().isFirstBranchChecked()) {
-                map.addAttribute("diff_return_price", gv.getDeptReturnPriceDiff());
-                map.addAttribute("total_price", gv.getDeptReturnPriceDiff() + (days * car.getPrice_day()));
+                map.addAttribute("diff_return_price", cv.getDeptReturnPriceDiff());
+                map.addAttribute("total_price", cv.getDeptReturnPriceDiff() + (days * car.getPrice_day()));
             } else {
                 map.addAttribute("diff_return_price", 0.0);
                 map.addAttribute("total_price", days * car.getPrice_day());
@@ -57,8 +57,8 @@ public class ReservationController {
             map.addAttribute("reservationData", reservationData);
             map.addAttribute("car", car);
             map.addAttribute("raw_price", days * car.getPrice_day());
-            map.addAttribute("deposit_percentage", gv.getDepositPercentage() * 100);
-            map.addAttribute("refund_fee_days", gv.getRefundSubtractDaysDuration());
+            map.addAttribute("deposit_percentage", cv.getDepositPercentage() * 100);
+            map.addAttribute("refund_fee_days", cv.getRefundSubtractDaysDuration());
 
             return "core/reservationRecap";
         } catch (NullPointerException | ResourceNotFoundException err) {

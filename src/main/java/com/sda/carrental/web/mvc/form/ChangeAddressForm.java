@@ -1,6 +1,6 @@
 package com.sda.carrental.web.mvc.form;
 
-import com.sda.carrental.constants.enums.Country;
+import com.sda.carrental.global.enums.Country;
 import lombok.Getter;
 import lombok.Setter;
 

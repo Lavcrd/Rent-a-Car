@@ -1,13 +1,12 @@
 package com.sda.carrental.clr;
 
-import com.sda.carrental.constants.GlobalValues;
-import com.sda.carrental.constants.enums.Country;
+import com.sda.carrental.global.ConstantValues;
+import com.sda.carrental.global.enums.Country;
 import com.sda.carrental.model.Company;
 import com.sda.carrental.model.operational.Renting;
 import com.sda.carrental.model.operational.Reservation;
 import com.sda.carrental.model.property.Car;
 import com.sda.carrental.model.property.Department;
-import com.sda.carrental.model.property.PaymentDetails;
 import com.sda.carrental.model.users.*;
 import com.sda.carrental.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +15,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -35,7 +33,7 @@ public class PredefiniedData implements CommandLineRunner {
     private final RentingRepository rentingRepository;
     private final PaymentDetailsRepository paymentDetailsRepository;
     private final VerificationRepository verificationRepository;
-    private final GlobalValues gv;
+    private final ConstantValues cv;
 
     @Override
     public void run(String... args) {

@@ -1,6 +1,7 @@
 package com.sda.carrental.service;
 
 import com.sda.carrental.exceptions.ResourceNotFoundException;
+import com.sda.carrental.global.Utility;
 import com.sda.carrental.service.auth.CustomUserDetails;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -21,6 +22,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository repository;
+    private final Utility utility;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final VerificationService verificationService;
     private final CustomerService customerService;
@@ -79,7 +81,7 @@ public class UserService {
     private User scrambleUser(User user) {
         user.setName("—");
         user.setSurname("—");
-        user.setPassword(customerService.generateRandomString(30));
+        user.setPassword(utility.generateRandomString(30));
         return user;
     }
 
