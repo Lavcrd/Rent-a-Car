@@ -1,6 +1,6 @@
 package com.sda.carrental.web.mvc.form;
 
-import com.sda.carrental.constants.enums.Country;
+import com.sda.carrental.global.enums.Country;
 import com.sda.carrental.web.mvc.form.validation.constraint.MatchingPassword;
 import com.sda.carrental.web.mvc.form.validation.constraint.UniqueEmail;
 import lombok.Getter;

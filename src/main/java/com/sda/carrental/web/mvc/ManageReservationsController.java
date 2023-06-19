@@ -1,6 +1,6 @@
 package com.sda.carrental.web.mvc;
 
-import com.sda.carrental.constants.GlobalValues;
+import com.sda.carrental.global.ConstantValues;
 import com.sda.carrental.exceptions.ResourceNotFoundException;
 import com.sda.carrental.model.operational.Reservation;
 import com.sda.carrental.model.property.Car;
@@ -38,7 +38,7 @@ public class ManageReservationsController {
 
     private final CarService carService;
 
-    private final GlobalValues gv;
+    private final ConstantValues cv;
 
     //Pages
     @RequestMapping(method = RequestMethod.GET)
@@ -106,8 +106,8 @@ public class ManageReservationsController {
             } else {
                 long days = reservation.getDateFrom().until(reservation.getDateTo(), ChronoUnit.DAYS) + 1;
                 if (!reservation.getDepartmentTake().equals(reservation.getDepartmentBack())) {
-                    map.addAttribute("diff_return_price", gv.getDeptReturnPriceDiff());
-                    map.addAttribute("total_price", gv.getDeptReturnPriceDiff() + (days * reservation.getCar().getPrice_day()));
+                    map.addAttribute("diff_return_price", cv.getDeptReturnPriceDiff());
+                    map.addAttribute("total_price", cv.getDeptReturnPriceDiff() + (days * reservation.getCar().getPrice_day()));
                 } else {
                     map.addAttribute("diff_return_price", 0.0);
                     map.addAttribute("total_price", days * reservation.getCar().getPrice_day());
@@ -117,8 +117,8 @@ public class ManageReservationsController {
             }
 
             map.addAttribute("reservation", reservation);
-            map.addAttribute("deposit_percentage", gv.getDepositPercentage() * 100);
-            map.addAttribute("refund_fee_days", gv.getRefundSubtractDaysDuration());
+            map.addAttribute("deposit_percentage", cv.getDepositPercentage() * 100);
+            map.addAttribute("refund_fee_days", cv.getRefundSubtractDaysDuration());
             return "management/reservationDetailsManagement";
         } catch (ResourceNotFoundException err) {
             redAtt.addFlashAttribute("message", "An unexpected error occurred. Please try again.");

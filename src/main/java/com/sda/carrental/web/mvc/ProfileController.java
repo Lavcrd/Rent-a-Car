@@ -1,6 +1,6 @@
 package com.sda.carrental.web.mvc;
 
-import com.sda.carrental.constants.enums.Country;
+import com.sda.carrental.global.enums.Country;
 import com.sda.carrental.model.users.User;
 import com.sda.carrental.service.CustomerService;
 import com.sda.carrental.service.UserService;
@@ -29,7 +29,7 @@ public class ProfileController {
     private final VerificationService verificationService;
     private final UserService userService;
 
-    //Profile page
+    //Pages
     @RequestMapping(method = RequestMethod.GET)
     public String profilePage(ModelMap map) {
         CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -59,7 +59,7 @@ public class ProfileController {
     public String changeContactPage(final ModelMap map) {
         CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        map.addAttribute("customer", customerService.findByUsername(cud.getUsername()));
+        map.addAttribute("customer", customerService.findById(cud.getId()));
         map.addAttribute("contact_form", new ChangeContactForm());
         return "user/contactCustomer";
     }
@@ -87,7 +87,8 @@ public class ProfileController {
             return "user/contactCustomer";
         }
 
-        HttpStatus response = customerService.changeContact(form.getContactNumber());
+        CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        HttpStatus response = customerService.changeContact(form.getContactNumber(), cud.getId());
         if (response.equals(HttpStatus.ACCEPTED)) {
             redAtt.addFlashAttribute("message", "Contact number has been changed successfully.");
             return "redirect:/profile";
@@ -106,7 +107,8 @@ public class ProfileController {
             return "user/addressCustomer";
         }
 
-        HttpStatus response = customerService.changeAddress(form);
+        CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        HttpStatus response = customerService.changeAddress(form, cud.getId());
         if (response.equals(HttpStatus.ACCEPTED)) {
             redAtt.addFlashAttribute("message", "The mailing address has been successfully changed.");
             return "redirect:/profile";
