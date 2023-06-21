@@ -69,14 +69,14 @@ public class SelectCarController {
 
     //Select car buttons
     @RequestMapping(value="/proceed", method = RequestMethod.POST)
-    public String selectHandler(@ModelAttribute("selectCarForm") SelectCarForm selectCarData, @RequestParam(value = "select") Long carId, RedirectAttributes redAtt) {
+    public String selectButton(@ModelAttribute("selectCarForm") SelectCarForm selectCarData, @RequestParam(value = "select") Long carId, RedirectAttributes redAtt) {
         selectCarData.setCarId(carId);
         redAtt.addFlashAttribute("showData", selectCarData);
         return "redirect:/reservation";
     }
 
     @RequestMapping(value="/filter", method = RequestMethod.POST)
-    public String filterCars(@ModelAttribute("carFilterForm") CarFilterForm filterData, RedirectAttributes redirect) {
+    public String filterCarsButton(@ModelAttribute("carFilterForm") CarFilterForm filterData, RedirectAttributes redirect) {
         redirect.addFlashAttribute("filteredCars", carService.filterCars(filterData));
         redirect.addFlashAttribute("indexData", filterData.getIndexData());
         return "redirect:/cars";

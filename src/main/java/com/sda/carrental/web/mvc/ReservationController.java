@@ -68,7 +68,7 @@ public class ReservationController {
     }
 
     //Reservation summary buttons
-    @RequestMapping(method = RequestMethod.POST)
+    @RequestMapping(value="/confirm", method = RequestMethod.POST)
     public String reservationConfirmationButton(@ModelAttribute("reservationData") SelectCarForm form, RedirectAttributes redAtt) {
         CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         HttpStatus status = resService.createReservation(cud.getId(), form);
@@ -83,5 +83,11 @@ public class ReservationController {
             redAtt.addFlashAttribute("message", "Server error! \nPlease contact customer service or try again later.");
             return "redirect:/";
         }
+    }
+
+    @RequestMapping(value="/back", method = RequestMethod.POST)
+    public String reservationBackButton(@ModelAttribute("reservationData") SelectCarForm form, RedirectAttributes redAtt) {
+        redAtt.addFlashAttribute("indexData", form.getIndexData());
+        return "redirect:/cars";
     }
 }

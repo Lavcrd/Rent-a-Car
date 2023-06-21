@@ -15,6 +15,7 @@ public interface CustomerRepository extends CrudRepository<Customer, Long> {
             "WHERE r.departmentTake.departmentId = :departmentId " +
             "AND (:name IS NULL OR LOWER(c.name) = LOWER(:name)) " +
             "AND (:surname IS NULL OR LOWER(c.surname) = LOWER(:surname)) " +
+            "AND (c.name != '—' AND c.surname != '—') " +
             "GROUP BY c.id")
     List<Customer> findCustomersByDepartmentAndName(@Param("departmentId") Long departmentId, @Param("name") String name, @Param("surname") String surname);
 }
