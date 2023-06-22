@@ -127,6 +127,8 @@ public class ManageReservationsController {
             map.addAttribute("reservation", reservation);
             map.addAttribute("deposit_percentage", cv.getDepositPercentage() * 100);
             map.addAttribute("refund_fee_days", cv.getRefundSubtractDaysDuration());
+
+            map.addAttribute("confirmation_form", new ConfirmationForm());
             return "management/reservationDetailsManagement";
         } catch (ResourceNotFoundException err) {
             redAtt.addFlashAttribute("message", "An unexpected error occurred. Please try again.");
@@ -314,7 +316,7 @@ public class ManageReservationsController {
     }
 
 
-    //Reservation page buttons
+    //Reservation details page buttons
     @RequestMapping(method = RequestMethod.POST, value = "/reservation/back")
     public String reservationBackButton(RedirectAttributes redAtt, @RequestParam("reservation") Long reservationId, @RequestParam("customer") Long customerId) {
         reservationService.getCustomerReservation(customerId, reservationId);
@@ -324,11 +326,18 @@ public class ManageReservationsController {
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/reservation/refund")
-    public String reservationRefundButton(RedirectAttributes redAtt, @RequestParam("reservation") Long reservationId, @RequestParam("customer") Long customerId) {
+    public String reservationRefundButton(@ModelAttribute("confirmation_form") @Valid ConfirmationForm form, Errors err, RedirectAttributes redAtt, @RequestParam("reservation") Long reservationId, @RequestParam("customer") Long customerId) {
         CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (userService.hasNoAccessToUserReservation(cud, customerId, reservationId)) {
             redAtt.addFlashAttribute("message", "Access rejected.");
             return "redirect:/mg-res";
+        }
+
+        if (err.hasErrors()) {
+            redAtt.addAttribute("reservation", reservationId);
+            redAtt.addFlashAttribute("customer", customerId);
+            redAtt.addFlashAttribute("message", err.getAllErrors().get(0).getDefaultMessage());
+            return "redirect:/mg-res/reservation/{reservation}";
         }
 
         HttpStatus response = reservationService.handleReservationStatus(customerId, reservationId, Reservation.ReservationStatus.STATUS_REFUNDED);
@@ -344,11 +353,18 @@ public class ManageReservationsController {
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/reservation/cancel")
-    public String reservationCancelButton(RedirectAttributes redAtt, @RequestParam("reservation") Long reservationId, @RequestParam("customer") Long customerId) {
+    public String reservationCancelButton(@ModelAttribute("confirmation_form") @Valid ConfirmationForm form, Errors err, RedirectAttributes redAtt, @RequestParam("reservation") Long reservationId, @RequestParam("customer") Long customerId) {
         CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (userService.hasNoAccessToUserReservation(cud, customerId, reservationId)) {
             redAtt.addFlashAttribute("message", "Access rejected.");
             return "redirect:/mg-res";
+        }
+
+        if (err.hasErrors()) {
+            redAtt.addAttribute("reservation", reservationId);
+            redAtt.addFlashAttribute("customer", customerId);
+            redAtt.addFlashAttribute("message", err.getAllErrors().get(0).getDefaultMessage());
+            return "redirect:/mg-res/reservation/{reservation}";
         }
 
         HttpStatus response = reservationService.handleReservationStatus(customerId, reservationId, Reservation.ReservationStatus.STATUS_CANCELED);
@@ -364,11 +380,18 @@ public class ManageReservationsController {
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/reservation/rent")
-    public String reservationRentButton(RedirectAttributes redAtt, @RequestParam("reservation") Long reservationId, @RequestParam("customer") Long customerId) {
+    public String reservationRentButton(@ModelAttribute("confirmation_form") @Valid ConfirmationForm form, Errors err, RedirectAttributes redAtt, @RequestParam("reservation") Long reservationId, @RequestParam("customer") Long customerId) {
         CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (userService.hasNoAccessToUserReservation(cud, customerId, reservationId)) {
             redAtt.addFlashAttribute("message", "Access rejected.");
             return "redirect:/mg-res";
+        }
+
+        if (err.hasErrors()) {
+            redAtt.addAttribute("reservation", reservationId);
+            redAtt.addFlashAttribute("customer", customerId);
+            redAtt.addFlashAttribute("message", err.getAllErrors().get(0).getDefaultMessage());
+            return "redirect:/mg-res/reservation/{reservation}";
         }
 
         HttpStatus response = reservationService.handleReservationStatus(customerId, reservationId, Reservation.ReservationStatus.STATUS_PROGRESS);
