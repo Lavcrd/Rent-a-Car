@@ -158,6 +158,6 @@ public class PredefiniedData implements CommandLineRunner {
     }
 
     private void createVerification() {
-        verificationRepository.save(new Verification((Customer) userRepository.findById(1L).orElse(null), "123123", "678678"));
+        verificationRepository.save(new Verification( 1L, "123123", "678678"));
     }
 }

@@ -11,6 +11,6 @@ import javax.validation.constraints.NotEmpty;
 public class ConfirmationForm {
 
     @NotEmpty(message = "Field cannot be empty")
-    @CurrentPassword(message = "Provided current password is incorrect")
+    @CurrentPassword(message = "Provided password confirmation is not valid")
     private String currentPassword;
 }

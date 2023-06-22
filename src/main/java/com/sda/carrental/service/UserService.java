@@ -2,6 +2,7 @@ package com.sda.carrental.service;
 
 import com.sda.carrental.exceptions.ResourceNotFoundException;
 import com.sda.carrental.global.Utility;
+import com.sda.carrental.model.operational.Reservation;
 import com.sda.carrental.service.auth.CustomUserDetails;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -27,6 +28,7 @@ public class UserService {
     private final VerificationService verificationService;
     private final CustomerService customerService;
     private final ReservationService reservationService;
+    private final DepartmentService departmentService;
 
 
     public User findByUsername(String username) {
@@ -105,6 +107,17 @@ public class UserService {
         } catch (RuntimeException err) {
             return HttpStatus.INTERNAL_SERVER_ERROR;
         }
+    }
 
+    public boolean hasNoAccessToUserData(CustomUserDetails cud, Long customerId, Long departmentId) {
+        if (departmentService.departmentAccess(cud, departmentId).equals(HttpStatus.ACCEPTED)) {
+            return reservationService.getUserReservationsByDepartmentTake(customerId, departmentId).isEmpty();
+        }
+        return true;
+    }
+
+    public boolean hasNoAccessToUserReservation(CustomUserDetails cud, Long customerId, Long reservationId) {
+        Reservation r = reservationService.getCustomerReservation(customerId, reservationId);
+        return departmentService.departmentAccess(cud, r.getDepartmentTake().getDepartmentId()).equals(HttpStatus.FORBIDDEN);
     }
 }

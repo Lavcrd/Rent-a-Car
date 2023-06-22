@@ -12,8 +12,8 @@ import javax.persistence.*;
 @NoArgsConstructor
 public class Verification {
 
-    public Verification(Customer customer, String personalId, String driverId) {  //TODO should be encrypted
-        this.customer = customer;
+    public Verification(Long customerId, String personalId, String driverId) {  //TODO should be encrypted
+        this.customerId = customerId;
         this.personalId = personalId;
         this.driverId = driverId;
     }
@@ -23,14 +23,12 @@ public class Verification {
     @Column(name = "verification_id", nullable = false)
     private Long verificationId;
 
+    @Column(name = "customer_id", unique = true)
+    private Long customerId;
 
-    @OneToOne
-    @JoinColumn(name = "customer_id", referencedColumnName = "id")
-    private Customer customer;
-
-    @Column(name = "personal_id")
+    @Column(name = "personal_id", unique = true)
     private String personalId;
 
-    @Column(name = "driver_id")
+    @Column(name = "driver_id", unique = true)
     private String driverId;
 }
