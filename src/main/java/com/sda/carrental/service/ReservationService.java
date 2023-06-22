@@ -94,7 +94,7 @@ public class ReservationService {
                 return HttpStatus.ACCEPTED;
             } else if (status.equals(Reservation.ReservationStatus.STATUS_PROGRESS) && r.getStatus().equals(Reservation.ReservationStatus.STATUS_RESERVED)) {
                 Optional<PaymentDetails> payment = paymentDetailsService.getOptionalPaymentDetails(r);
-                if (verificationService.getOptionalVerificationByCustomer(r.getCustomer()).isEmpty()) {
+                if (verificationService.getOptionalVerificationByCustomer(r.getCustomer().getId()).isEmpty()) {
                     return HttpStatus.PRECONDITION_REQUIRED;
                 }
                 if (payment.isEmpty()) {
@@ -112,9 +112,9 @@ public class ReservationService {
         }
     }
 
-    public List<Reservation> getUserReservationsByDepartmentTake(String username, Long departmentId) {
+    public List<Reservation> getUserReservationsByDepartmentTake(Long customerId, Long departmentId) {
         return reservationRepository
-                .findAllByUsernameAndDepartmentId(username, departmentId);
+                .findAllByUsernameAndDepartmentId(customerId, departmentId);
     }
 
     @Transactional
