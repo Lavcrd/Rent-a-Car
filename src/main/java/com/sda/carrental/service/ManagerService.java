@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 public class ManagerService {
     private final ManagerRepository repository;
 
-    public Manager findManagerByUsername(String username) {
-        return repository.findManagerByUsername(username).orElseThrow(ResourceNotFoundException::new);
+    public Manager findManagerById(Long id) {
+        return repository.findManagerById(id).orElseThrow(ResourceNotFoundException::new);
     }
 }

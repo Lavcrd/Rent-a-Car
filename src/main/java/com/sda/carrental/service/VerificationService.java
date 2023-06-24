@@ -1,7 +1,7 @@
 package com.sda.carrental.service;
 
 import com.sda.carrental.exceptions.ResourceNotFoundException;
-import com.sda.carrental.model.users.Verification;
+import com.sda.carrental.model.users.auth.Verification;
 import com.sda.carrental.repository.VerificationRepository;
 import com.sda.carrental.web.mvc.form.VerificationForm;
 import lombok.RequiredArgsConstructor;

@@ -1,10 +1,10 @@
 package com.sda.carrental.service;
 
 import com.sda.carrental.exceptions.ResourceNotFoundException;
-import com.sda.carrental.global.Utility;
 import com.sda.carrental.model.users.Customer;
 import com.sda.carrental.repository.CustomerRepository;
 import com.sda.carrental.web.mvc.form.ChangeAddressForm;
+import com.sda.carrental.web.mvc.form.RegisterCustomerForm;
 import com.sda.carrental.web.mvc.form.SearchCustomerForm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,7 +18,24 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CustomerService {
     private final CustomerRepository repository;
-    private final Utility utility;
+    private final CredentialsService credentialsService;
+
+    public Customer findById(Long customerId) {
+        return repository.findById(customerId).orElseThrow(ResourceNotFoundException::new);
+    }
+
+    @Transactional
+    public HttpStatus createCustomer(RegisterCustomerForm form) {
+        try { //TODO update form
+            Customer customer = new Customer(form.getName(), form.getSurname(), form.getCountry(), form.getCity(), form.getAddress(), form.getContactNumber());
+            repository.save(customer);
+            credentialsService.createCredentials(customer.getId(), form.getUsername(), form.getPassword());
+            return HttpStatus.CREATED;
+        } catch (RuntimeException err) {
+            err.printStackTrace();
+         return HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+    }
 
     @Transactional
     public HttpStatus changeContact(String inputContact, long customerId) {
@@ -52,19 +69,11 @@ public class CustomerService {
     }
 
     private Customer scrambleCustomer(Customer customer) {
-        customer.setPassword(utility.generateRandomString(30));
         customer.setName("—");
         customer.setSurname("—");
         customer.setAddress("—");
         customer.setContactNumber("—");
         customer.setTerminationDate(LocalDate.now());
-
-        String uniqueEmail;
-        do {
-            uniqueEmail = utility.generateRandomString(30);
-        } while (repository.findByEmail(uniqueEmail).isPresent());
-
-        customer.setEmail(uniqueEmail);
 
         return customer;
     }
@@ -92,9 +101,5 @@ public class CustomerService {
         if (customersData.getName().isEmpty()) customersData.setName(null);
         if (customersData.getSurname().isEmpty()) customersData.setSurname(null);
         return repository.findCustomersByDepartmentAndName(customersData.getDepartmentId(), customersData.getName(), customersData.getSurname());
-    }
-
-    public Customer findById(Long customerId) {
-        return repository.findById(customerId).orElseThrow(ResourceNotFoundException::new);
     }
 }

@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 public class EmployeeService {
     private final EmployeeRepository repository;
 
-    public Employee findEmployeeByUsername(String username) {
-        return repository.findEmployeeByUsername(username).orElseThrow(ResourceNotFoundException::new);
+    public Employee findEmployeeById(Long id) {
+        return repository.findEmployeeById(id).orElseThrow(ResourceNotFoundException::new);
     }
 }

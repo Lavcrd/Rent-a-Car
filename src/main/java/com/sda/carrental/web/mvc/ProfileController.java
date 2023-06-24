@@ -1,10 +1,11 @@
 package com.sda.carrental.web.mvc;
 
+import com.sda.carrental.exceptions.ResourceNotFoundException;
 import com.sda.carrental.global.enums.Country;
 import com.sda.carrental.model.users.User;
+import com.sda.carrental.service.CredentialsService;
 import com.sda.carrental.service.CustomerService;
 import com.sda.carrental.service.UserService;
-import com.sda.carrental.service.VerificationService;
 import com.sda.carrental.service.auth.CustomUserDetails;
 import com.sda.carrental.web.mvc.form.*;
 import lombok.RequiredArgsConstructor;
@@ -26,15 +27,22 @@ import javax.validation.Valid;
 @RequestMapping("/profile")
 public class ProfileController {
     private final CustomerService customerService;
-    private final VerificationService verificationService;
+    private final CredentialsService credentialsService;
     private final UserService userService;
 
     //Pages
     @RequestMapping(method = RequestMethod.GET)
-    public String profilePage(ModelMap map) {
+    public String profilePage(ModelMap map, RedirectAttributes redAtt) {
         CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        map.addAttribute("user", userService.findByUsername(cud.getUsername()));
+        try {
+            map.addAttribute("user", userService.findById(cud.getId()));
+            map.addAttribute("username", credentialsService.findById(cud.getId()).getUsername());
+        } catch (ResourceNotFoundException err) {
+            SecurityContextHolder.getContext().setAuthentication(null);
+            redAtt.addFlashAttribute("message", "User not recognized. Please login again.");
+            return "redirect:/";
+        }
 
         if(cud.getAuthorities().contains(new SimpleGrantedAuthority(User.Roles.ROLE_CUSTOMER.name()))) {
             return "user/profileCustomer";
@@ -127,7 +135,7 @@ public class ProfileController {
             return "user/emailCustomer";
         }
 
-        HttpStatus response = userService.changeEmail(form.getNewEmail());
+        HttpStatus response = credentialsService.changeUsername(form.getNewEmail());
         if (response.equals(HttpStatus.ACCEPTED)) {
             redAtt.addFlashAttribute("message", "The email has been successfully changed. Please login again.");
         } else if (response.equals(HttpStatus.NOT_FOUND)) {
@@ -142,10 +150,10 @@ public class ProfileController {
     @RequestMapping(method = RequestMethod.POST, value = "/password")
     public String changePasswordConfirmButton(RedirectAttributes redAtt, @ModelAttribute("password_form") @Valid ChangePasswordForm form, Errors errors) {
         if (errors.hasErrors()) {
-            return "user/passwordCustomer";
+            return "user/passwordUser";
         }
 
-        HttpStatus response = userService.changePassword(form.getNewPassword());
+        HttpStatus response = credentialsService.changePassword(form.getNewPassword());
         if (response.equals(HttpStatus.ACCEPTED)) {
             redAtt.addFlashAttribute("message", "Password has been changed successfully.");
             return "redirect:/profile";

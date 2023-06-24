@@ -1,6 +1,6 @@
 package com.sda.carrental.repository;
 
-import com.sda.carrental.model.users.Verification;
+import com.sda.carrental.model.users.auth.Verification;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.Optional;

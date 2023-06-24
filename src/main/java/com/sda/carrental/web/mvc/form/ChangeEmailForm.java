@@ -2,7 +2,7 @@ package com.sda.carrental.web.mvc.form;
 
 import com.sda.carrental.web.mvc.form.validation.constraint.CurrentEmail;
 import com.sda.carrental.web.mvc.form.validation.constraint.MatchingEmail;
-import com.sda.carrental.web.mvc.form.validation.constraint.UniqueEmail;
+import com.sda.carrental.web.mvc.form.validation.constraint.UniqueUsername;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -20,7 +20,7 @@ public class ChangeEmailForm {
 
     @NotEmpty(message = "Field cannot be empty")
     @Email(message = "Login should be a valid email address format")
-    @UniqueEmail(message = "E-mail is already taken")
+    @UniqueUsername(message = "E-mail is already taken")
     private String newEmail;
 
     @NotEmpty(message = "Field cannot be empty")

@@ -9,8 +9,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface CustomerRepository extends CrudRepository<Customer, Long> {
-    Optional<Customer> findByEmail(String email);
-
     @Query(value = "SELECT c FROM customer c JOIN reservation r ON c.id = r.customer.id " +
             "WHERE r.departmentTake.departmentId = :departmentId " +
             "AND (:name IS NULL OR LOWER(c.name) = LOWER(:name)) " +

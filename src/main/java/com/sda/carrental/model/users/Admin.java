@@ -12,7 +12,7 @@ import java.time.LocalDate;
 @PrimaryKeyJoinColumn(foreignKey = @ForeignKey(name = "admin_id"))
 
 public class Admin extends User {
-    public Admin(String email, String password, String name, String surname) {
-        super(email, password, Roles.ROLE_ADMIN, name, surname, LocalDate.ofYearDay(9999, 1));
+    public Admin(String name, String surname) {
+        super(Roles.ROLE_ADMIN, name, surname, LocalDate.ofYearDay(9999, 1));
     }
 }

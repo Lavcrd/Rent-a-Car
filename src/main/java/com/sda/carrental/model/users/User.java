@@ -12,9 +12,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Inheritance(strategy = InheritanceType.JOINED)
 public class User {
-    public User(String email, String password, Roles role, String name, String surname, LocalDate terminationDate) {
-        this.email = email;
-        this.password = password;
+    public User(Roles role, String name, String surname, LocalDate terminationDate) {
         this.role = role;
         this.name = name;
         this.surname = surname;
@@ -34,13 +32,6 @@ public class User {
     @Setter
     @Column(name = "surname")
     private String surname;
-    @Setter
-    @Column(name = "email", nullable = false, unique = true)
-    private String email;
-
-    @Setter
-    @Column(name = "password", nullable = false)
-    private String password;
 
     @Column(name = "creation_date")
     private LocalDate creationDate;
