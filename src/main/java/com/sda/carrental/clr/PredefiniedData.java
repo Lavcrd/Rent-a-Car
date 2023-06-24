@@ -8,6 +8,8 @@ import com.sda.carrental.model.operational.Reservation;
 import com.sda.carrental.model.property.Car;
 import com.sda.carrental.model.property.Department;
 import com.sda.carrental.model.users.*;
+import com.sda.carrental.model.users.auth.Credentials;
+import com.sda.carrental.model.users.auth.Verification;
 import com.sda.carrental.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
@@ -33,6 +35,7 @@ public class PredefiniedData implements CommandLineRunner {
     private final RentingRepository rentingRepository;
     private final PaymentDetailsRepository paymentDetailsRepository;
     private final VerificationRepository verificationRepository;
+    private final CredentialsRepository credentialsRepository;
     private final ConstantValues cv;
 
     @Override
@@ -41,6 +44,7 @@ public class PredefiniedData implements CommandLineRunner {
         createCompany();
 
         createUsers();
+        createCredentials();
         createCars();
 
         createReservation();
@@ -51,26 +55,48 @@ public class PredefiniedData implements CommandLineRunner {
     }
 
     private void createUsers() {
-        userRepository.save(new Customer("user1@gmail.com", encoder.encode("password1"), "Anna", "Nazwiskowa", Country.COUNTRY_PL, "Kraków", "ul. Ulica 123", "123312891"));
-        userRepository.save(new Customer("user2@gmail.com", encoder.encode("password1"), "Jakub", "Kowalski", Country.COUNTRY_PL, "Katowice", "ul. Ulica 12", "123312892"));
-        userRepository.save(new Customer("user3@gmail.com", encoder.encode("password1"), "Maciek", "Masło", Country.COUNTRY_PL, "Gdynia", "ul. Ulica 1", "123312893"));
-        userRepository.save(new Customer("user4@gmail.com", encoder.encode("password1"), "Jan", "Orzech", Country.COUNTRY_PL, "Gdańsk", "ul. Ulica 124", "123312894"));
-        userRepository.save(new Customer("user5@gmail.com", encoder.encode("password1"), "Katarzyna", "Kasztan", Country.COUNTRY_PL, "Warszawa", "ul. Ulica 133", "123312895"));
-        userRepository.save(new Customer("user6@gmail.com", encoder.encode("password1"), "Igor", "Kasztan", Country.COUNTRY_PL, "Białystok", "ul. Ulica 137", "123312896"));
-        userRepository.save(new Customer("user7@gmail.com", encoder.encode("password1"), "Anna", "Kowalska", Country.COUNTRY_PL, "Opole", "ul. Ulica 138", "123312897"));
+        userRepository.save(new Customer("Anna", "Nazwiskowa", Country.COUNTRY_PL, "Kraków", "ul. Ulica 123", "123312891"));
+        userRepository.save(new Customer("Jakub", "Kowalski", Country.COUNTRY_PL, "Katowice", "ul. Ulica 12", "123312892"));
+        userRepository.save(new Customer("Maciek", "Masło", Country.COUNTRY_PL, "Gdynia", "ul. Ulica 1", "123312893"));
+        userRepository.save(new Customer("Jan", "Orzech", Country.COUNTRY_PL, "Gdańsk", "ul. Ulica 124", "123312894"));
+        userRepository.save(new Customer("Katarzyna", "Kasztan", Country.COUNTRY_PL, "Warszawa", "ul. Ulica 133", "123312895"));
+        userRepository.save(new Customer("Igor", "Kasztan", Country.COUNTRY_PL, "Białystok", "ul. Ulica 137", "123312896"));
+        userRepository.save(new Customer("Anna", "Kowalska", Country.COUNTRY_PL, "Opole", "ul. Ulica 138", "123312897"));
 
 
-        userRepository.save(new Manager("manager1@gmail.com", encoder.encode("manager1"), "Maria", "Fajna", departmentRepository.findById(1L).orElse(null), LocalDate.ofYearDay(9999, 1)));
-        userRepository.save(new Manager("manager2@gmail.com", encoder.encode("manager1"), "Aleksandra", "Ładna", departmentRepository.findById(2L).orElse(null), LocalDate.ofYearDay(2023, 1)));
-        userRepository.save(new Manager("manager3@gmail.com", encoder.encode("manager1"), "Katarzyna", "Nieładna", departmentRepository.findById(3L).orElse(null), LocalDate.ofYearDay(9999, 1)));
+        userRepository.save(new Manager("Maria", "Fajna", departmentRepository.findById(1L).orElse(null), LocalDate.ofYearDay(9999, 1)));
+        userRepository.save(new Manager("Aleksandra", "Ładna", departmentRepository.findById(2L).orElse(null), LocalDate.ofYearDay(2023, 1)));
+        userRepository.save(new Manager("Katarzyna", "Nieładna", departmentRepository.findById(3L).orElse(null), LocalDate.ofYearDay(9999, 1)));
 
-        userRepository.save(new Employee("employee1@gmail.com", encoder.encode("employee1"), "Anna", "Mniejfajna", departmentRepository.findById(1L).orElse(null), LocalDate.ofYearDay(9999, 1)));
-        userRepository.save(new Employee("employee2@gmail.com", encoder.encode("employee1"), "Magda", "Piąta", departmentRepository.findById(2L).orElse(null), LocalDate.ofYearDay(9999, 1)));
-        userRepository.save(new Employee("employee3@gmail.com", encoder.encode("employee1"), "Wioletta", "Fioletowa", departmentRepository.findById(3L).orElse(null), LocalDate.ofYearDay(9999, 1)));
+        userRepository.save(new Employee("Anna", "Mniejfajna", departmentRepository.findById(1L).orElse(null), LocalDate.ofYearDay(9999, 1)));
+        userRepository.save(new Employee("Magda", "Piąta", departmentRepository.findById(2L).orElse(null), LocalDate.ofYearDay(9999, 1)));
+        userRepository.save(new Employee("Wioletta", "Fioletowa", departmentRepository.findById(3L).orElse(null), LocalDate.ofYearDay(9999, 1)));
 
-        userRepository.save(new Coordinator("coordinator1@gmail.com", encoder.encode("coordinator1"), "Jacek", "Gruby", departmentRepository.findDepartmentsByCountry(Country.COUNTRY_PL), LocalDate.ofYearDay(9999, 1)));
+        userRepository.save(new Coordinator("Jacek", "Gruby", departmentRepository.findDepartmentsByCountry(Country.COUNTRY_PL), LocalDate.ofYearDay(9999, 1)));
 
-        userRepository.save(new Admin("admin@gmail.com", encoder.encode("admin"), "admin", "admin"));
+        userRepository.save(new Admin("admin", "admin"));
+    }
+
+    private void createCredentials() {
+        credentialsRepository.save(new Credentials(1L, "user1@gmail.com", encoder.encode("password1")));
+        credentialsRepository.save(new Credentials(2L, "user2@gmail.com", encoder.encode("password1")));
+        credentialsRepository.save(new Credentials(3L, "user3@gmail.com", encoder.encode("password1")));
+        credentialsRepository.save(new Credentials(4L, "user4@gmail.com", encoder.encode("password1")));
+        credentialsRepository.save(new Credentials(5L, "user5@gmail.com", encoder.encode("password1")));
+        credentialsRepository.save(new Credentials(6L, "user6@gmail.com", encoder.encode("password1")));
+        /*credentialsRepository.save(new Credentials(7L, "user7@gmail.com", encoder.encode("password1")));*/
+
+        credentialsRepository.save(new Credentials(8L, "manager1@gmail.com", encoder.encode("manager1")));
+        credentialsRepository.save(new Credentials(9L, "manager2@gmail.com", encoder.encode("manager1")));
+        credentialsRepository.save(new Credentials(10L, "manager3@gmail.com", encoder.encode("manager1")));
+
+        credentialsRepository.save(new Credentials(11L, "employee1@gmail.com", encoder.encode("employee1")));
+        credentialsRepository.save(new Credentials(12L, "employee2@gmail.com", encoder.encode("employee1")));
+        credentialsRepository.save(new Credentials(13L, "employee3@gmail.com", encoder.encode("employee1")));
+
+        credentialsRepository.save(new Credentials(14L, "coordinator1@gmail.com", encoder.encode("coordinator1")));
+
+        credentialsRepository.save(new Credentials(15L, "admin@gmail.com", encoder.encode("admin")));
     }
 
     private void createCompany() {

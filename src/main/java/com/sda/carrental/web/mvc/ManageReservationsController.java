@@ -6,7 +6,7 @@ import com.sda.carrental.model.operational.Reservation;
 import com.sda.carrental.model.property.Car;
 import com.sda.carrental.model.property.PaymentDetails;
 import com.sda.carrental.model.users.Customer;
-import com.sda.carrental.model.users.Verification;
+import com.sda.carrental.model.users.auth.Verification;
 import com.sda.carrental.service.*;
 import com.sda.carrental.service.auth.CustomUserDetails;
 import com.sda.carrental.web.mvc.form.*;

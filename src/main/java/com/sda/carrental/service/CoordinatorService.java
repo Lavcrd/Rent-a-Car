@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 public class CoordinatorService {
     private final CoordinatorRepository repository;
 
-    public Coordinator findCoordinatorByUsername(String username) {
-        return repository.findCoordinatorByUsername(username).orElseThrow(ResourceNotFoundException::new);
+    public Coordinator findCoordinatorById(Long id) {
+        return repository.findCoordinatorById(id).orElseThrow(ResourceNotFoundException::new);
     }
 }

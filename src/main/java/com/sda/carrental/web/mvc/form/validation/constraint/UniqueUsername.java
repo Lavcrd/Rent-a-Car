@@ -1,6 +1,6 @@
 package com.sda.carrental.web.mvc.form.validation.constraint;
 
-import com.sda.carrental.web.mvc.form.validation.validator.UniqueEmailValidator;
+import com.sda.carrental.web.mvc.form.validation.validator.UniqueUsernameValidator;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
@@ -11,8 +11,8 @@ import java.lang.annotation.Target;
 
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
-@Constraint(validatedBy = {UniqueEmailValidator.class})
-public @interface UniqueEmail {
+@Constraint(validatedBy = {UniqueUsernameValidator.class})
+public @interface UniqueUsername {
     String message() default "{com.sda.carrental.web.mvc.form.validation.constraints.UniqueEmail.message}";
 
     Class<?>[] groups() default {};

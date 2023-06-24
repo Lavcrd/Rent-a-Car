@@ -1,4 +1,4 @@
-package com.sda.carrental.model.users;
+package com.sda.carrental.model.users.auth;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,10 +19,6 @@ public class Verification {
     }
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "verification_id", nullable = false)
-    private Long verificationId;
-
     @Column(name = "customer_id", unique = true)
     private Long customerId;
 

@@ -19,7 +19,7 @@ import javax.validation.Valid;
 public class RegisterController {
     private final UserService userService;
 
-    //Pages
+    //Pages //TODO update to credentials change
     @RequestMapping(method = RequestMethod.GET)
     public String createCustomerPage(final ModelMap map) {
         map.addAttribute("customer", new RegisterCustomerForm());
@@ -38,7 +38,7 @@ public class RegisterController {
             return "user/registerCustomer";
         }
         userService.save(CustomerMapper.toEntity(form));
-        map.addAttribute("message", "User " + form.getName() + " " + form.getSurname() + " with login " + form.getEmail() + " has been added.");
+        map.addAttribute("message", "User " + form.getName() + " " + form.getSurname() + " with login " + form.getUsername() + " has been added.");
 
         return "core/login";
     }

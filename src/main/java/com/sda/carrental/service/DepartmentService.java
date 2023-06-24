@@ -46,15 +46,15 @@ public class DepartmentService {
 
     public List<Department> getDepartmentsByRole(CustomUserDetails cud) {
         if(cud.getAuthorities().contains(new SimpleGrantedAuthority(User.Roles.ROLE_EMPLOYEE.name()))) {
-            return List.of(employeeService.findEmployeeByUsername(cud.getUsername()).getDepartment());
+            return List.of(employeeService.findEmployeeById(cud.getId()).getDepartment());
         }
 
         if(cud.getAuthorities().contains(new SimpleGrantedAuthority(User.Roles.ROLE_MANAGER.name()))) {
-            return List.of(managerService.findManagerByUsername(cud.getUsername()).getDepartment());
+            return List.of(managerService.findManagerById(cud.getId()).getDepartment());
         }
 
         if(cud.getAuthorities().contains(new SimpleGrantedAuthority(User.Roles.ROLE_COORDINATOR.name()))) {
-            return coordinatorService.findCoordinatorByUsername(cud.getUsername()).getDepartments();
+            return coordinatorService.findCoordinatorById(cud.getId()).getDepartments();
         }
 
         if(cud.getAuthorities().contains(new SimpleGrantedAuthority(User.Roles.ROLE_ADMIN.name()))) {

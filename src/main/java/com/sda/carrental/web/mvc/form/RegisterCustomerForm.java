@@ -2,7 +2,7 @@ package com.sda.carrental.web.mvc.form;
 
 import com.sda.carrental.global.enums.Country;
 import com.sda.carrental.web.mvc.form.validation.constraint.MatchingPassword;
-import com.sda.carrental.web.mvc.form.validation.constraint.UniqueEmail;
+import com.sda.carrental.web.mvc.form.validation.constraint.UniqueUsername;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -44,8 +44,8 @@ public class RegisterCustomerForm {
 
     @NotBlank(message = "E-mail field cannot be empty!")
     @Email(message = "E-mail has incorrect format")
-    @UniqueEmail(message = "E-mail is taken")
-    private String email;
+    @UniqueUsername(message = "Username is taken")
+    private String username;
 
     @NotBlank(message = "Password field cannot be empty!")
     @Size(min = 8, max = 64, message = "Passwords must be between 8 and 64 characters in length.")

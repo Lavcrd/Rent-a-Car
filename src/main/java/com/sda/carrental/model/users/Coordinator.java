@@ -14,8 +14,8 @@ import java.util.List;
 @PrimaryKeyJoinColumn(foreignKey = @ForeignKey(name = "coordinator_id"))
 
 public class Coordinator extends User {
-    public Coordinator(String email, String password, String name, String surname, List<Department> departments, LocalDate terminationDate) {
-        super(email, password, Roles.ROLE_COORDINATOR, name, surname, terminationDate);
+    public Coordinator(String name, String surname, List<Department> departments, LocalDate terminationDate) {
+        super(Roles.ROLE_COORDINATOR, name, surname, terminationDate);
         this.departments = departments;
     }
 

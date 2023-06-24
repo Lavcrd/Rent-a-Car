@@ -1,6 +1,6 @@
 package com.sda.carrental.web.mvc.form.validation.validator;
 
-import com.sda.carrental.service.UserService;
+import com.sda.carrental.service.CredentialsService;
 import com.sda.carrental.service.auth.CustomUserDetails;
 import com.sda.carrental.web.mvc.form.validation.constraint.CurrentPassword;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +12,7 @@ import javax.validation.ConstraintValidatorContext;
 public class CurrentPasswordValidator implements ConstraintValidator<CurrentPassword, String> {
 
     @Autowired
-    private UserService userService;
+    private CredentialsService credentialsService;
 
     @Override
     public void initialize(CurrentPassword constraint) {
@@ -21,6 +21,6 @@ public class CurrentPasswordValidator implements ConstraintValidator<CurrentPass
     @Override
     public boolean isValid(String input, ConstraintValidatorContext cvc) {
         CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return userService.isCurrentPassword(cud, input);
+        return credentialsService.isCurrentPassword(cud, input);
     }
 }

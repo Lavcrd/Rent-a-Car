@@ -9,6 +9,6 @@ import java.util.Optional;
 
 public interface CoordinatorRepository extends CrudRepository<Coordinator, Long> {
 
-    @Query(value = "FROM coordinator c WHERE c.email=:username")
-    Optional<Coordinator> findCoordinatorByUsername(@Param("username") String username);
+    @Query(value = "FROM coordinator c WHERE c.id=:id")
+    Optional<Coordinator> findCoordinatorById(@Param("id") Long id);
 }
