@@ -3,6 +3,7 @@ package com.sda.carrental.service;
 import com.sda.carrental.exceptions.ResourceNotFoundException;
 import com.sda.carrental.model.users.Customer;
 import com.sda.carrental.repository.CustomerRepository;
+import com.sda.carrental.service.mappers.CustomerMapper;
 import com.sda.carrental.web.mvc.form.ChangeAddressForm;
 import com.sda.carrental.web.mvc.form.RegisterCustomerForm;
 import com.sda.carrental.web.mvc.form.SearchCustomerForm;
@@ -26,8 +27,8 @@ public class CustomerService {
 
     @Transactional
     public HttpStatus createCustomer(RegisterCustomerForm form) {
-        try { //TODO update form
-            Customer customer = new Customer(form.getName(), form.getSurname(), form.getCountry(), form.getCity(), form.getAddress(), form.getContactNumber());
+        try {
+            Customer customer = CustomerMapper.toEntity(form);
             repository.save(customer);
             credentialsService.createCredentials(customer.getId(), form.getUsername(), form.getPassword());
             return HttpStatus.CREATED;
@@ -68,7 +69,7 @@ public class CustomerService {
         }
     }
 
-    private Customer scrambleCustomer(Customer customer) {
+    private Customer redactCustomer(Customer customer) {
         customer.setName("—");
         customer.setSurname("—");
         customer.setAddress("—");
@@ -86,7 +87,7 @@ public class CustomerService {
             if (hasNoReservations) {
                 repository.delete(customer);
             } else {
-                repository.save(scrambleCustomer(customer));
+                repository.save(redactCustomer(customer));
             }
             return HttpStatus.OK;
 

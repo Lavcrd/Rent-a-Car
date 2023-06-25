@@ -44,7 +44,7 @@ public class RegisterCustomerForm {
 
     @NotBlank(message = "E-mail field cannot be empty!")
     @Email(message = "E-mail has incorrect format")
-    @UniqueUsername(message = "Username is taken")
+    @UniqueUsername(message = "E-mail is taken")
     private String username;
 
     @NotBlank(message = "Password field cannot be empty!")

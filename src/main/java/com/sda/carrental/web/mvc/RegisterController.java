@@ -2,14 +2,15 @@ package com.sda.carrental.web.mvc;
 
 import com.sda.carrental.global.enums.Country;
 import com.sda.carrental.model.users.User;
-import com.sda.carrental.service.UserService;
+import com.sda.carrental.service.CustomerService;
 import com.sda.carrental.web.mvc.form.RegisterCustomerForm;
-import com.sda.carrental.service.mappers.CustomerMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
 
@@ -17,9 +18,9 @@ import javax.validation.Valid;
 @RequiredArgsConstructor
 @RequestMapping("/register")
 public class RegisterController {
-    private final UserService userService;
+    private final CustomerService customerService;
 
-    //Pages //TODO update to credentials change
+    //Pages
     @RequestMapping(method = RequestMethod.GET)
     public String createCustomerPage(final ModelMap map) {
         map.addAttribute("customer", new RegisterCustomerForm());
@@ -31,17 +32,19 @@ public class RegisterController {
 
     //Create customer page buttons
     @RequestMapping(method = RequestMethod.POST)
-    public String createCustomer(@ModelAttribute("customer") @Valid RegisterCustomerForm form, Errors errors, final ModelMap map) {
+    public String createCustomer(@ModelAttribute("customer") @Valid RegisterCustomerForm form, Errors errors, final ModelMap map, RedirectAttributes redAtt) {
         if (errors.hasErrors()) {
             map.addAttribute("roles", User.Roles.values());
             map.addAttribute("countries", Country.values());
             return "user/registerCustomer";
         }
-        userService.save(CustomerMapper.toEntity(form));
+
+        HttpStatus status = customerService.createCustomer(form);
+        if (status.equals(HttpStatus.CREATED)) {
         map.addAttribute("message", "User " + form.getName() + " " + form.getSurname() + " with login " + form.getUsername() + " has been added.");
-
-        return "core/login";
+            return "core/login";
+        }
+        redAtt.addFlashAttribute("message", "Something went wrong. Please try again or contact customer service.");
+        return "redirect:/register";
     }
-
-
 }
