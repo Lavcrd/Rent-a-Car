@@ -74,7 +74,7 @@ public class CredentialsService {
 
     @Transactional
     public void deleteCredentials(Long id) {
-        repository.deleteById(id);
+        repository.findById(id).ifPresent(repository::delete);
     }
 
     @Transactional
