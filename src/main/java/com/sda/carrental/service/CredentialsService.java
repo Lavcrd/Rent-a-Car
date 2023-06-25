@@ -16,8 +16,8 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class CredentialsService {
     private final CredentialsRepository repository;
+    private final BCryptPasswordEncoder encoder;
     private final Utility utility;
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     public Credentials findById(Long id) {
         return repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Credentials", "ID", id));
@@ -26,7 +26,7 @@ public class CredentialsService {
     public boolean isCurrentPassword(CustomUserDetails cud, String inputPassword) {
         try {
             String storedPassword = repository.getPasswordById(cud.getId()).orElseThrow(() -> new ResourceNotFoundException("Credentials", "ID", cud.getId()));
-            return bCryptPasswordEncoder.matches(inputPassword, storedPassword);
+            return encoder.matches(inputPassword, storedPassword);
         } catch (ResourceNotFoundException err) {
             err.printStackTrace();
             return false;
@@ -38,7 +38,7 @@ public class CredentialsService {
         try {
             CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             Credentials credentials = findById(cud.getId());
-            credentials.setPassword(bCryptPasswordEncoder.encode(inputPassword));
+            credentials.setPassword(encoder.encode(inputPassword));
             repository.save(credentials);
             return HttpStatus.ACCEPTED;
         } catch (ResourceNotFoundException err) {
@@ -69,7 +69,7 @@ public class CredentialsService {
 
     @Transactional
     public void createCredentials(Long id, String username, String password) {
-        repository.save(new Credentials(id, username, password));
+        repository.save(new Credentials(id, username, encoder.encode(password)));
     }
 
     @Transactional
