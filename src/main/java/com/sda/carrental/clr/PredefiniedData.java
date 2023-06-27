@@ -49,19 +49,19 @@ public class PredefiniedData implements CommandLineRunner {
 
         createReservation();
         createRent();
-/*        createInvoice();*/ // currently creates duplicates due to not automated reservation statuses.
+        /*        createInvoice();*/ // currently creates duplicates due to not automated reservation statuses.
 
         createVerification();
     }
 
     private void createUsers() {
-        userRepository.save(new Customer("Anna", "Nazwiskowa", Country.COUNTRY_PL, "Kraków", "ul. Ulica 123", "123312891"));
-        userRepository.save(new Customer("Jakub", "Kowalski", Country.COUNTRY_PL, "Katowice", "ul. Ulica 12", "123312892"));
-        userRepository.save(new Customer("Maciek", "Masło", Country.COUNTRY_PL, "Gdynia", "ul. Ulica 1", "123312893"));
-        userRepository.save(new Customer("Jan", "Orzech", Country.COUNTRY_PL, "Gdańsk", "ul. Ulica 124", "123312894"));
-        userRepository.save(new Customer("Katarzyna", "Kasztan", Country.COUNTRY_PL, "Warszawa", "ul. Ulica 133", "123312895"));
-        userRepository.save(new Customer("Igor", "Kasztan", Country.COUNTRY_PL, "Białystok", "ul. Ulica 137", "123312896"));
-        userRepository.save(new Customer("Anna", "Kowalska", Country.COUNTRY_PL, "Opole", "ul. Ulica 138", "123312897"));
+        userRepository.save(new Customer("Anna", "Nazwiskowa", Country.COUNTRY_PL, "Kraków", Customer.CustomerStatus.STATUS_REGISTERED, "ul. Ulica 123", "123312891"));
+        userRepository.save(new Customer("Jakub", "Kowalski", Country.COUNTRY_PL, "Katowice", Customer.CustomerStatus.STATUS_REGISTERED, "ul. Ulica 12", "123312892"));
+        userRepository.save(new Customer("Maciek", "Masło", Country.COUNTRY_PL, "Gdynia", Customer.CustomerStatus.STATUS_REGISTERED, "ul. Ulica 1", "123312893"));
+        userRepository.save(new Customer("Jan", "Orzech", Country.COUNTRY_PL, "Gdańsk", Customer.CustomerStatus.STATUS_REGISTERED, "ul. Ulica 124", "123312894"));
+        userRepository.save(new Customer("Katarzyna", "Kasztan", Country.COUNTRY_PL, "Warszawa", Customer.CustomerStatus.STATUS_REGISTERED, "ul. Ulica 133", "123312895"));
+        userRepository.save(new Customer("Igor", "Kasztan", Country.COUNTRY_PL, "Białystok", Customer.CustomerStatus.STATUS_REGISTERED, "ul. Ulica 137", "123312896"));
+        userRepository.save(new Customer("Anna", "Kowalska", Country.COUNTRY_PL, "Opole", Customer.CustomerStatus.STATUS_REGISTERED, "ul. Ulica 138", "123312897"));
 
 
         userRepository.save(new Manager("Maria", "Fajna", departmentRepository.findById(1L).orElse(null), LocalDate.ofYearDay(9999, 1)));
@@ -161,7 +161,7 @@ public class PredefiniedData implements CommandLineRunner {
         reservationList.add(new Reservation((Customer) userRepository.findById(1L).orElse(null), carRepository.findById(23L).orElse(null), departmentRepository.findById(6L).orElse(null), departmentRepository.findById(5L).orElse(null), LocalDate.now().plusDays(0), LocalDate.now().plusDays(4), LocalDate.of(2022, 12, 5)));
         reservationList.add(new Reservation((Customer) userRepository.findById(1L).orElse(null), carRepository.findById(28L).orElse(null), departmentRepository.findById(7L).orElse(null), departmentRepository.findById(6L).orElse(null), LocalDate.now().minusDays(2), LocalDate.now().plusDays(8), LocalDate.of(2022, 12, 9)));
 
-        for (Reservation r:reservationList) {
+        for (Reservation r : reservationList) {
             r.setStatus(Reservation.ReservationStatus.STATUS_RESERVED);
             reservationRepository.save(r);
         }
@@ -184,6 +184,6 @@ public class PredefiniedData implements CommandLineRunner {
     }
 
     private void createVerification() {
-        verificationRepository.save(new Verification( 1L, "123123", "678678"));
+        verificationRepository.save(new Verification(1L, "123123", "678678"));
     }
 }

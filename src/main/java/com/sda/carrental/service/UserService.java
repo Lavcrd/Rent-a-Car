@@ -1,5 +1,6 @@
 package com.sda.carrental.service;
 
+import com.sda.carrental.exceptions.IllegalActionException;
 import com.sda.carrental.exceptions.ResourceNotFoundException;
 import com.sda.carrental.model.operational.Reservation;
 import com.sda.carrental.service.auth.CustomUserDetails;
@@ -11,6 +12,7 @@ import com.sda.carrental.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import java.time.LocalDate;
 import java.util.Optional;
@@ -40,14 +42,17 @@ public class UserService {
         return user;
     }
 
-    @Transactional
+    @Transactional(rollbackFor = {Exception.class})
     public HttpStatus deleteUser(Long userId) {
         try {
-            Optional<User> user =  repository.findById(userId);
-            if(user.isEmpty()) throw new ResourceNotFoundException();
+            Optional<User> user = repository.findById(userId);
+            if (user.isEmpty()) throw new ResourceNotFoundException();
             User.Roles role = user.get().getRole();
 
             if (role.equals(User.Roles.ROLE_CUSTOMER)) {
+                if (reservationService.hasActiveReservations(userId)) {
+                    throw new IllegalActionException();
+                }
                 verificationService.deleteVerification(userId);
                 credentialsService.deleteCredentials(user.get().getId());
                 return customerService.deleteCustomer(userId, reservationService.getCustomerReservations(userId).isEmpty());
@@ -58,8 +63,13 @@ public class UserService {
                 return HttpStatus.OK;
             }
         } catch (ResourceNotFoundException err) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return HttpStatus.NOT_FOUND;
+        } catch (IllegalActionException err) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            return HttpStatus.CONFLICT;
         } catch (RuntimeException err) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return HttpStatus.INTERNAL_SERVER_ERROR;
         }
     }

@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -25,16 +26,16 @@ public class CustomerService {
         return repository.findById(customerId).orElseThrow(ResourceNotFoundException::new);
     }
 
-    @Transactional
+    @Transactional(rollbackFor = {Exception.class})
     public HttpStatus createCustomer(RegisterCustomerForm form) {
         try {
             Customer customer = CustomerMapper.toEntity(form);
             repository.save(customer);
             credentialsService.createCredentials(customer.getId(), form.getUsername(), form.getPassword());
             return HttpStatus.CREATED;
-        } catch (RuntimeException err) {
-            err.printStackTrace();
-         return HttpStatus.INTERNAL_SERVER_ERROR;
+        } catch (Exception err) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            return HttpStatus.INTERNAL_SERVER_ERROR;
         }
     }
 
@@ -79,7 +80,7 @@ public class CustomerService {
         return customer;
     }
 
-    @Transactional
+    @Transactional(rollbackFor = {Exception.class})
     public HttpStatus deleteCustomer(Long customerId, boolean hasNoReservations) {
         try {
             Customer customer = findById(customerId);
@@ -90,7 +91,6 @@ public class CustomerService {
                 repository.save(redactCustomer(customer));
             }
             return HttpStatus.OK;
-
         } catch (ResourceNotFoundException err) {
             return HttpStatus.NOT_FOUND;
         } catch (RuntimeException err) {

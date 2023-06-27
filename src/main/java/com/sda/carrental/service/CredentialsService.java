@@ -72,7 +72,7 @@ public class CredentialsService {
         repository.save(new Credentials(id, username, encoder.encode(password)));
     }
 
-    @Transactional
+    @Transactional(rollbackFor = {Exception.class})
     public void deleteCredentials(Long id) {
         repository.findById(id).ifPresent(repository::delete);
     }

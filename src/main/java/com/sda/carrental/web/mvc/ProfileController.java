@@ -179,6 +179,9 @@ public class ProfileController {
             redAtt.addFlashAttribute("message", "Account has been successfully deleted.");
         } else if (response.equals(HttpStatus.NOT_FOUND)) {
             redAtt.addFlashAttribute("message", "User not recognized. Please login again.");
+        } else if (response.equals(HttpStatus.CONFLICT)) {
+            redAtt.addFlashAttribute("message", "Action not allowed due to active reservations.");
+            return "redirect:/profile";
         } else {
             redAtt.addFlashAttribute("message", "An unexpected error occurred. Please try again later or contact customer service.");
         }
