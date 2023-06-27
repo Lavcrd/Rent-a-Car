@@ -10,10 +10,10 @@ import java.util.Optional;
 
 public interface ReservationRepository extends CrudRepository<Reservation, Long> {
     @Query(value = "FROM reservation WHERE customer.id = :customerId ORDER BY reservationId DESC")
-    List<Reservation> findAllByCustomer(@Param("customerId") Long customerId);
+    List<Reservation> findAllByCustomerId(@Param("customerId") Long customerId);
 
     @Query(value = "FROM reservation WHERE customer.id = :customerId AND reservationId = :id")
-    Optional<Reservation> findByCustomerAndId(@Param("customerId") Long customerId, @Param("id") Long id);
+    Optional<Reservation> findByCustomerIdAndId(@Param("customerId") Long customerId, @Param("id") Long id);
 
     @Query(value = "FROM reservation r WHERE r.departmentTake.departmentId = :departmentId AND r.customer.id = :customerId ORDER BY r.reservationId DESC")
     List<Reservation> findAllByCustomerIdAndDepartmentId(@Param("customerId") Long customerId, @Param("departmentId") Long departmentId);

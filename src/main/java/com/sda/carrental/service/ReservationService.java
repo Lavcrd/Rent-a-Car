@@ -64,12 +64,12 @@ public class ReservationService {
 
     public List<Reservation> getCustomerReservations(Long customerId) {
         return repository
-                .findAllByCustomer(customerId);
+                .findAllByCustomerId(customerId);
     }
 
     public Reservation getCustomerReservation(Long customerId, Long reservationId) {
         return repository
-                .findByCustomerAndId(customerId, reservationId)
+                .findByCustomerIdAndId(customerId, reservationId)
                 .orElseThrow(ResourceNotFoundException::new);
     }
 
