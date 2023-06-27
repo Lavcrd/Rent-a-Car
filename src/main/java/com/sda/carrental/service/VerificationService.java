@@ -17,11 +17,10 @@ import java.util.Optional;
 public class VerificationService {
     private final VerificationRepository repository;
 
-    @Transactional
+    @Transactional(rollbackFor = {Exception.class})
     public HttpStatus deleteVerification(Long customerId) {
         try {
-            Optional<Verification> verification = repository.findByCustomerId(customerId);
-            verification.ifPresent(repository::delete);
+            repository.findByCustomerId(customerId).ifPresent(repository::delete);
             return HttpStatus.OK;
         } catch (RuntimeException err) {
             return HttpStatus.INTERNAL_SERVER_ERROR;

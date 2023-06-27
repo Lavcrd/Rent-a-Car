@@ -21,7 +21,7 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class ReservationService {
-    private final ReservationRepository reservationRepository;
+    private final ReservationRepository repository;
     private final CustomerService customerService;
     private final CarService carService;
     private final DepartmentService departmentService;
@@ -47,7 +47,7 @@ public class ReservationService {
 
             //payment method here linked with methods below this comment vvv
             reservation.setStatus(Reservation.ReservationStatus.STATUS_RESERVED);
-            reservationRepository.save(reservation);
+            repository.save(reservation);
             // ^^^
 
             paymentDetailsService.createReservationPayment(reservation);
@@ -56,27 +56,27 @@ public class ReservationService {
         } catch (ResourceNotFoundException err) {
             err.printStackTrace();
             return HttpStatus.NOT_FOUND;
-        } catch (Error err) {
+        } catch (Exception err) {
             err.printStackTrace();
             return HttpStatus.INTERNAL_SERVER_ERROR;
         }
     }
 
     public List<Reservation> getCustomerReservations(Long customerId) {
-        return reservationRepository
-                .findAllByUser(customerService.findById(customerId));
+        return repository
+                .findAllByCustomerId(customerId);
     }
 
     public Reservation getCustomerReservation(Long customerId, Long reservationId) {
-        return reservationRepository
-                .findByUserAndId(customerService.findById(customerId), reservationId)
+        return repository
+                .findByCustomerIdAndId(customerId, reservationId)
                 .orElseThrow(ResourceNotFoundException::new);
     }
 
     @Transactional
     private void updateReservationStatus(Reservation reservation, Reservation.ReservationStatus newStatus) {
         reservation.setStatus(newStatus);
-        reservationRepository.save(reservation);
+        repository.save(reservation);
     }
 
     @Transactional
@@ -113,8 +113,8 @@ public class ReservationService {
     }
 
     public List<Reservation> getUserReservationsByDepartmentTake(Long customerId, Long departmentId) {
-        return reservationRepository
-                .findAllByUsernameAndDepartmentId(customerId, departmentId);
+        return repository
+                .findAllByCustomerIdAndDepartmentId(customerId, departmentId);
     }
 
     @Transactional
@@ -123,11 +123,15 @@ public class ReservationService {
             Reservation r = getCustomerReservation(customerId, reservationId);
             Car c = carService.findAvailableCar(r.getDateFrom(), r.getDateTo(), r.getDepartmentTake().getDepartmentId(), carId);
             r.setCar(c);
-            reservationRepository.save(r);
+            repository.save(r);
             paymentDetailsService.adjustRequiredDeposit(r, c.getDepositValue());
             return HttpStatus.ACCEPTED;
         } catch (RuntimeException err) {
             return HttpStatus.NOT_FOUND;
         }
+    }
+
+    public boolean hasActiveReservations(Long customerId) {
+        return !repository.findAllActiveByCustomerId(customerId).isEmpty();
     }
 }

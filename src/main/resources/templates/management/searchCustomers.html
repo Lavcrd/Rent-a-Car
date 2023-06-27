@@ -85,7 +85,7 @@
                             <td th:text="${customer.getCountry().getCountryName()}"></td>
                             <td th:text="'(' + ${customer.getCountry().getContactCode()} + ') ' + ${customer.getContactNumber()}"></td>
                             <td th:text="${customer.getCity()} + ', ' + ${customer.getAddress()}"></td>
-                            <td th:text="${customer.getRole().name().substring(5)}"></td>
+                            <td th:text="${customer.getStatus().name().substring(7)}"></td>
                             <td style="display: flex; justify-content: end; padding-right: 0;">
                                 <button type="submit" class="btn btn-dark" th:text="Select" th:name="select_button"
                                         th:value="${customer.getId()}"></button>

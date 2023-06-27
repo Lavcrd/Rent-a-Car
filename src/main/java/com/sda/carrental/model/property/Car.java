@@ -68,16 +68,16 @@ public class Car {
     Double depositValue;
 
 
-@Getter
+    @Getter
     public enum CarType {
         TYPE_SEDAN("Sedan"), TYPE_SUV("SUV"), TYPE_COMPACT("Compact"), TYPE_WAGON("Kombi"), TYPE_COUPE("Coupe"), TYPE_VAN("Van"), TYPE_HATCHBACK("Hatchback"), TYPE_PICKUP("Pickup"), TYPE_SPORT("Sport");
 
         final String name;
+
         CarType(String name) {
             this.name = name;
         }
     }
-
 
     public enum CarStatus {
         STATUS_OPEN, STATUS_RENTED, STATUS_UNAVAILABLE
