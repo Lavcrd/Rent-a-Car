@@ -68,5 +68,22 @@
         </div>
     </div>
 </div>
+
+<div th:fragment="logo-bar">
+    <div style="display: grid; grid-template-columns: 20% 60% 20%; margin-top: 3%; margin-bottom: 3%;">
+        <div style="grid-column: 1; place-items: start; display: grid;">
+            <a style="display: block; width: min-content; height: min-content;" href="/">
+                <div class="logo-container bg-dark rounded">
+                    <img style="color: white; text-align: center;" src="path/to/placeholder-image.png" alt="Rent-a-Car">
+                </div>
+            </a>
+        </div>
+        <div style="grid-column: 2; display: grid; place-items: center;">
+            <h1 style="font-weight: bold;" th:text="${title}"></h1>
+        </div>
+        <div style="grid-column: 3;">
+        </div>
+    </div>
+</div>
 </body>
 </html>

@@ -55,37 +55,52 @@ p {
     padding-left: 30px;
 }
 
-#logo p {
+/*#logo p {
     color: #FFFFFF;
     margin: 0;
     text-transform: uppercase;
     padding-left: 10px;
-}
+}*/
 
-#logo a {
+/*#logo a {
     text-decoration: none;
     color: #FFF;
-}
+}*/
 
-#logo a:hover {
+/*#logo a:hover {
     color: #CCC;
-}
+}*/
 
 #logo h1 {
     color: #fff;
     margin: 0;
     font-weight: bold;
+    font-size: 22px;
 }
 
-#logo p {
+/*#logo p {
     margin-top: -4px;
     font-style: italic;
     color: #23658f;
-}
+}*/
 
-#logo h1 {
-    font-size: 22px;
-}
+.logo-container {
+   width: 130px;
+   height: 80px;
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   color: white;
+   text-align: center;
+   font-weight: bold;
+   text-decoration-line: underline;
+   text-decoration-color: inherit;
+ }
+
+ .logo-container img {
+   max-width: 100%;
+   max-height: 100%;
+ }
 
 #login {
     padding-top: 4px;

@@ -1,62 +1,38 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Log in</title>
+    <meta charset="utf-8"/>
+    <meta http-equiv="Content-Type" content="text/html"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
 
-    <meta name="description" content="">
+    <title>Rent-a-Car</title>
 
-    <!-- Tailwind -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/1.8.10/tailwind.min.css"/>
     <link rel="stylesheet" type="text/css" href="/css/styles.css"/>
     <link rel="stylesheet" href="/webjars/bootstrap/5.2.3/css/bootstrap.min.css"/>
-    <style>
-        @import url('https://fonts.googleapis.com/css?family=Karla:400,700&display=swap');
-
-        .font-family-karla {
-            font-family: karla;
-        }
-    </style>
 </head>
-<body class="bg-white font-family-karla h-screen">
 
-<div class="w-full flex flex-wrap">
+<body>
+<div id="container" class="container-md">
+    <div th:include="fragments/top::logo-bar" th:with="title='Log In'"></div>
 
-    <div class="w-1/4 fluid:w-2/3 flex flex-col"></div>
-    <!-- Login Section -->
-    <div class="w-1/2 fluid:w-2/3 flex flex-col">
-
-        <div th:include="fragments/top::click-logo"></div>
-
-        <div class="flex flex-col justify-center md:justify-start my-auto pt-8 md:pt-0 px-8 md:px-24 lg:px-32">
-            <p class="text-center text-3xl">LOG IN</p>
-
-            <form class="flex flex-col pt-3 md:pt-8" th:action="@{/login}" method="post">
-                <div class="flex flex-col pt-4">
-                    <label for="email" class="text-lg">E-mail</label>
-                    <input type="email" id="email" placeholder="user@email.com" name="username"
-                           class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mt-1 leading-tight focus:outline-none focus:shadow-outline">
-                </div>
-
-                <div class="flex flex-col pt-4">
-                    <label for="password" class="text-lg">Password</label>
-                    <input type="password" id="password" placeholder="Password" name="password"
-                           class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mt-1 leading-tight focus:outline-none focus:shadow-outline">
-                </div>
-
-                <input type="submit" value="Log in"
-                       class="bg-black text-white font-bold text-lg hover:bg-gray-700 p-2 mt-8">
-            </form>
-            <div class="text-center pt-12 pb-12">
-                <p>No account? <a href="/register" class="underline font-semibold text-black">Register</a>!</p>
+    <div style="height: 40vh; display: flex; justify-content: center; align-items: center;">
+        <form style="width:50%" th:action="@{/login}" method="post">
+            <div class="mb-3">
+                <label for="email" class="form-label">Login</label>
+                <input type="email" class="form-control" id="email" placeholder="user@email.com" name="username">
             </div>
-        </div>
-        <div th:insert="fragments/bottom::message-handler" style="position: absolute; left: 25%;"></div>
+            <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <input type="password" class="form-control" id="password" name="password">
+            </div>
+            <div class="d-grid gap-2 col-6 mx-auto mt-5">
+                <button type="submit" class="btn btn-dark">Log In</button>
+                <p style="justify-self: center;">No account? <a href="/register" class="underline font-semibold text-black">Register</a>!</p>
+            </div>
+        </form>
+        <div th:insert="fragments/bottom::message-handler" style="width: inherit;"></div>
     </div>
-    <div class="w-1/4 fluid:w-2/3 flex flex-col"></div>
+    <div th:include="fragments/bottom::common-scripts"></div>
 </div>
-<div th:include="fragments/bottom::common-scripts"></div>
 </body>
 </html>
