@@ -4,6 +4,7 @@ import com.sda.carrental.global.ConstantValues;
 import com.sda.carrental.exceptions.ResourceNotFoundException;
 import com.sda.carrental.model.property.Car;
 import com.sda.carrental.model.property.Department;
+import com.sda.carrental.model.users.User;
 import com.sda.carrental.service.CarService;
 import com.sda.carrental.service.DepartmentService;
 import com.sda.carrental.service.ReservationService;
@@ -11,6 +12,7 @@ import com.sda.carrental.service.auth.CustomUserDetails;
 import com.sda.carrental.web.mvc.form.SelectCarForm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -71,7 +73,14 @@ public class ReservationController {
     @RequestMapping(value="/confirm", method = RequestMethod.POST)
     public String reservationConfirmationButton(@ModelAttribute("reservationData") SelectCarForm form, RedirectAttributes redAtt) {
         CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        HttpStatus status = resService.createReservation(cud.getId(), form);
+
+        HttpStatus status;
+        if (cud.getAuthorities().contains(new SimpleGrantedAuthority(User.Roles.ROLE_CUSTOMER.name()))) {
+            status = resService.createReservation(cud.getId(), form);
+        } else {
+            redAtt.addFlashAttribute("message", "Some redirect for future register guest page");
+            return "redirect:/";
+        }
 
         if (status == HttpStatus.CREATED) {
             redAtt.addFlashAttribute("message", "Reservation has been successfully registered!");
