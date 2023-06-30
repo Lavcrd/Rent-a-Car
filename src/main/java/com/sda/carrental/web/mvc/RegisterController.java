@@ -24,7 +24,6 @@ public class RegisterController {
     @RequestMapping(method = RequestMethod.GET)
     public String createCustomerPage(final ModelMap map) {
         map.addAttribute("customer", new RegisterCustomerForm());
-        map.addAttribute("roles", User.Roles.values());
         map.addAttribute("countries", Country.values());
 
         return "user/registerCustomer";
@@ -34,7 +33,7 @@ public class RegisterController {
     @RequestMapping(method = RequestMethod.POST)
     public String createCustomer(@ModelAttribute("customer") @Valid RegisterCustomerForm form, Errors errors, final ModelMap map, RedirectAttributes redAtt) {
         if (errors.hasErrors()) {
-            map.addAttribute("roles", User.Roles.values());
+            map.addAttribute("customer", form);
             map.addAttribute("countries", Country.values());
             return "user/registerCustomer";
         }
