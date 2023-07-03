@@ -140,47 +140,22 @@
             </div>
         </th:block>
 
-        <th:block th:if="${reservations} != null">
+        <th:block th:if="${customer} != null">
             <div class="col-sm-9">
                 <table class="table table-borderless table-hover table-fixed"
                        style="text-align: center; vertical-align: middle;">
                     <thead class="table-dark">
                     <tr>
-                        <th scope="row">From</th>
-                        <th scope="row">To</th>
-                        <th scope="row">Period</th>
-                        <th scope="row">Status</th>
-                        <th scope="row"></th>
+                        <th scope="row">Option</th>
+                        <th scope="row">Description</th>
                     </tr>
                     </thead>
-                    <form th:action="@{/mg-res/reservation}" th:method="POST">
+                    <form th:action="@{submit}" th:method="POST">
                         <input type="hidden" th:if="${customer != null}" th:name="customer"
                                th:value="${customer.getId()}">
                         <tbody>
-                        <th:block th:if="${#lists.isEmpty(reservations)}">
-                            <td th:text="'—'"></td>
-                            <td th:text="'—'"></td>
-                            <td th:text="'—'"></td>
-                            <td th:text="'—'"></td>
-                        </th:block>
-                        <tr th:each="reservation: ${reservations}">
-                            <td>
-                                <div class="overflow-cell-hidden" th:utext="${reservation.getDepartmentTake().getCity()} + ', <br>' + ${reservation.getDepartmentTake().getAddress()}"></div>
-                            </td>
-                            <td>
-                                <div class="overflow-cell-hidden" th:utext="${reservation.getDepartmentBack().getCity()} + ', <br>' + ${reservation.getDepartmentTake().getAddress()}"></div>
-                            </td>
-                            <td>
-                                <div class="overflow-cell-hidden" th:utext="${reservation.getDateFrom()} + '<br> ⟶ ' + ${reservation.getDateTo()}"></div>
-                            </td>
-                            <td>
-                                <div class="overflow-cell-hidden" th:utext="${reservation.status.getText()}"></div>
-                            </td>
-                            <td>
-                                <button type="submit" class="btn btn-dark" th:text="Details" th:name="details_button"
-                                        th:value="${reservation.reservationId}"></button>
-                            </td>
-                        </tr>
+                            <td th:text="'W.I.P.'"></td>
+                            <td th:text="'W.I.P.'"></td>
                         </tbody>
                     </form>
                 </table>
