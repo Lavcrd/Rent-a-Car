@@ -4,6 +4,7 @@ import com.sda.carrental.global.ConstantValues;
 import com.sda.carrental.exceptions.ResourceNotFoundException;
 import com.sda.carrental.model.operational.Reservation;
 import com.sda.carrental.model.property.Car;
+import com.sda.carrental.model.property.Department;
 import com.sda.carrental.model.property.PaymentDetails;
 import com.sda.carrental.model.users.Customer;
 import com.sda.carrental.model.users.auth.Verification;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
+import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Map;
@@ -43,17 +45,22 @@ public class ManageReservationsController {
 
     //Pages
     @RequestMapping(method = RequestMethod.GET)
-    public String searchCustomersPage(ModelMap map, RedirectAttributes redAtt) {
+    public String searchReservationsPage(ModelMap map, RedirectAttributes redAtt) {
         try {
             CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            map.addAttribute("departments", departmentService.getDepartmentsByRole(cud));
+            List<Department> employeeDepartments = departmentService.getDepartmentsByRole(cud);
+            map.addAttribute("departments", employeeDepartments);
+            map.addAttribute("departmentsCountry", departmentService.findAllWhereCountry(employeeDepartments.get(0).getCountry()));
 
-            if (map.containsKey("searchCustomerForm")) {
-                return "management/searchCustomers";
+            if (map.containsKey("searchReservationsForm")) {
+                return "management/searchReservations";
             } else {
-                map.addAttribute("searchCustomerForm", new SearchCustomerForm());
+                SearchReservationsForm form = new SearchReservationsForm();
+                form.setDateFrom(LocalDate.now().minusMonths(1));
+                form.setDateTo(LocalDate.now().plusMonths(1));
+                map.addAttribute("searchReservationsForm", form);
             }
-            return "management/searchCustomers";
+            return "management/searchReservations";
         } catch (ResourceNotFoundException err) {
             redAtt.addFlashAttribute("message", "An unexpected error occurred. Please try again.");
             return "redirect:/";
@@ -193,20 +200,20 @@ public class ManageReservationsController {
         return "management/verifyCustomer";
     }
 
-    //Search customers page buttons
+    //Search reservation page buttons
     @RequestMapping(value = "/search", method = RequestMethod.POST)
-    public String customerSearchButton(@ModelAttribute("searchCustomerForm") SearchCustomerForm customersData, RedirectAttributes redAtt) {
+    public String customerSearchButton(@ModelAttribute("searchReservationsForm") SearchReservationsForm reservationsData, RedirectAttributes redAtt) {
         try {
             CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            if (departmentService.departmentAccess(cud, customersData.getDepartmentId()).equals(HttpStatus.FORBIDDEN)) {
+            if (departmentService.departmentAccess(cud, reservationsData.getDepartmentTake()).equals(HttpStatus.FORBIDDEN)) {
                 redAtt.addFlashAttribute("message", "Incorrect data provided. Search rejected.");
                 return "redirect:/mg-res";
             }
 
-            redAtt.addFlashAttribute("searchCustomerForm", customersData);
+            redAtt.addFlashAttribute("searchReservationsForm", reservationsData);
             redAtt.addFlashAttribute("departments", departmentService.getDepartmentsByRole(cud));
 
-            redAtt.addFlashAttribute("customers", customerService.findCustomersByDepartmentAndName(customersData));
+            redAtt.addFlashAttribute("reservations", reservationService.findReservationsByDetails(reservationsData));
             return "redirect:/mg-res";
         } catch (ResourceNotFoundException err) {
             redAtt.addFlashAttribute("message", "An unexpected error occurred. Please try again.");

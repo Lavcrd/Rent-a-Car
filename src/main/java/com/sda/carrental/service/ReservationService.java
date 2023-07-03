@@ -9,6 +9,7 @@ import com.sda.carrental.model.property.PaymentDetails;
 import com.sda.carrental.model.users.Customer;
 import com.sda.carrental.repository.ReservationRepository;
 import com.sda.carrental.web.mvc.form.IndexForm;
+import com.sda.carrental.web.mvc.form.SearchReservationsForm;
 import com.sda.carrental.web.mvc.form.SelectCarForm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -115,6 +116,17 @@ public class ReservationService {
     public List<Reservation> getUserReservationsByDepartmentTake(Long customerId, Long departmentId) {
         return repository
                 .findAllByCustomerIdAndDepartmentId(customerId, departmentId);
+    }
+
+    public List<Reservation> findReservationsByDetails(SearchReservationsForm reservationsData) {
+        if (reservationsData.getCustomerName().isEmpty()) reservationsData.setCustomerName(null);
+        if (reservationsData.getCustomerSurname().isEmpty()) reservationsData.setCustomerSurname(null);
+        if (reservationsData.getDepartmentBack() == -1) reservationsData.setDepartmentBack(null);
+        return repository.findReservationByDetails(
+                reservationsData.getCustomerName(), reservationsData.getCustomerSurname(),
+                reservationsData.getDepartmentTake(), reservationsData.getDepartmentBack(),
+                reservationsData.getDateFrom(), reservationsData.getDateTo(),
+                reservationsData.getStatus());
     }
 
     @Transactional

@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="Content-Type" content="text/html"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    <title>Rent-a-Car</title>
+
+    <link rel="stylesheet" type="text/css" href="/css/styles.css"/>
+    <link rel="stylesheet" href="/webjars/bootstrap/5.2.3/css/bootstrap.min.css">
+</head>
+
+<body>
+<div id="container">
+
+    <div th:include="fragments/top::top-menu"></div>
+    <div th:include="fragments/top::reg-options"></div>
+
+    <div class="row">
+        <form th:action="@{/mg-res/search}" th:object="${searchReservationsForm}" th:method="POST"
+              class="form-inline">
+            <div class="row mb-2" style="margin-top: 5%">
+
+                <div class="row" style="width: 100%; flex-shrink: 1; display:inline-flex; flex-wrap: nowrap;">
+                    <div class="col-sm-3" style="width: fit-content;">
+                        <select type="text" id="departmentTake" th:field="*{departmentTake}" class="form-control">
+                            <div th:each="department:${departments}">
+                                <option th:text="${department.getCity()} + ', ' + ${department.getAddress()}"
+                                        th:value="${department.getDepartmentId()}"></option>
+                            </div>
+                        </select>
+                    </div>
+                    <div class="col-sm-3" style="width: fit-content;">
+                        <input type="date" name="surname" class="form-control"
+                               th:field="*{dateFrom}">
+                    </div>
+                    <div th:text="' ⟶ '" style="text-align: center; flex-shrink: 1;"></div>
+
+                    <div class="col-sm-3" style="width: fit-content;">
+                        <select type="text" id="departmentBack" th:field="*{departmentBack}" class="form-control">
+                            <option value="-1" th:text="Any"></option>
+                            <div th:each="departmentBack:${departmentsCountry}">
+                                <option th:text="${departmentBack.getCity()} + ', ' + ${departmentBack.getAddress()}"
+                                        th:value="${departmentBack.getDepartmentId()}"></option>
+                            </div>
+                        </select>
+                    </div>
+                    <div class="col-sm-3" style="width: fit-content;">
+                        <input type="date" name="surname" class="form-control"
+                               th:field="*{dateTo}">
+                    </div>
+                </div>
+                <div class="row" style="margin-top: 1%; flex-wrap: nowrap;">
+                    <div class="col-sm-3">
+                        <input type="text" name="name" class="form-control" placeholder="Name"
+                               th:field="*{customerName}">
+                    </div>
+                    <div class="col-sm-3">
+                        <input type="text" name="surname" class="form-control" placeholder="Surname"
+                               th:field="*{customerSurname}">
+                    </div>
+                    <div class="col-sm-3" style="width: fit-content;">
+                        <input name="surname" class="form-control" placeholder="Status"
+                               th:field="*{status}">
+                    </div>
+                    <div class="col-sm-3" style="display: flex; justify-content: end;">
+                        <button class="btn btn-dark bg-dark"
+                                type="submit">
+
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                 class="bi bi-search" viewBox="0 0 16 16">
+                                <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"></path>
+                            </svg>
+                            Search
+                        </button>
+
+                    </div>
+                </div>
+            </div>
+
+            <div th:insert="fragments/bottom::form-error-handler"></div>
+        </form>
+        <br>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-12">
+            <table class="table table-borderless table-hover table-fixed"
+                   style="text-align: center; vertical-align: middle;">
+                <thead class="table-dark">
+                <tr>
+                    <th scope="row">Customer</th>
+                    <th scope="row">From</th>
+                    <th scope="row">To</th>
+                    <th scope="row">Period</th>
+                    <th scope="row">Status</th>
+                    <th scope="row"></th>
+                </tr>
+                </thead>
+                <form th:action="@{/mg-res/reservation}" th:method="POST">
+                    <input type="hidden" th:if="${searchReservationsForm.departmentTake != null}" th:name="department"
+                           th:value="${searchReservationsForm.getDepartmentTake()}">
+                    <tbody>
+                    <th:block th:if="${#lists.isEmpty(reservations)}">
+                        <td th:text="'—'"></td>
+                        <td th:text="'—'"></td>
+                        <td th:text="'—'"></td>
+                        <td th:text="'—'"></td>
+                        <td th:text="'—'"></td>
+                    </th:block>
+                    <tr th:each="reservation: ${reservations}">
+                        <td>
+                            <div class="overflow-cell-hs"
+                                 th:utext="${reservation.getCustomer().getName()} + '<br>' + ${reservation.getCustomer().getSurname()}"></div>
+                        </td>
+                        <td>
+                            <div class="overflow-cell-hidden"
+                                 th:utext="${reservation.getDepartmentTake().getCity()} + ', <br>' + ${reservation.getDepartmentTake().getAddress()}"></div>
+                        </td>
+                        <td>
+                            <div class="overflow-cell-hidden"
+                                 th:utext="${reservation.getDepartmentBack().getCity()} + ', <br>' + ${reservation.getDepartmentTake().getAddress()}"></div>
+                        </td>
+                        <td>
+                            <div class="overflow-cell-hidden"
+                                 th:utext="${reservation.getDateFrom()} + '<br> ⟶ ' + ${reservation.getDateTo()}"></div>
+                        </td>
+                        <td>
+                            <div class="overflow-cell-hidden" th:utext="${reservation.status.getText()}"></div>
+                        </td>
+                        <td>
+                            <button type="submit" class="btn btn-dark" th:text="Details" th:name="details_button"
+                                    th:value="${reservation.reservationId}"></button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </form>
+            </table>
+        </div>
+    </div>
+    <div th:include="fragments/bottom::bottom-footer"></div>
+    <div th:insert="fragments/bottom::message-handler"></div>
+</div>
+<div th:include="fragments/bottom::common-scripts"></div>
+</body>
+</html>

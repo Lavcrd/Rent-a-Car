@@ -55,34 +55,12 @@ p {
     padding-left: 30px;
 }
 
-/*#logo p {
-    color: #FFFFFF;
-    margin: 0;
-    text-transform: uppercase;
-    padding-left: 10px;
-}*/
-
-/*#logo a {
-    text-decoration: none;
-    color: #FFF;
-}*/
-
-/*#logo a:hover {
-    color: #CCC;
-}*/
-
 #logo h1 {
     color: #fff;
     margin: 0;
     font-weight: bold;
     font-size: 22px;
 }
-
-/*#logo p {
-    margin-top: -4px;
-    font-style: italic;
-    color: #23658f;
-}*/
 
 .logo-container {
    width: 130px;
@@ -399,4 +377,20 @@ h2.address {
     opacity: .5;
     border-style: none;
     background: none;
+}
+
+.table-fixed {
+    width: 100%;
+    table-layout: fixed;
+}
+
+.overflow-cell-hs {
+    overflow: auto;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.overflow-cell-hidden {
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
