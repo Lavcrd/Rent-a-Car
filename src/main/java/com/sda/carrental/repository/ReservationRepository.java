@@ -35,5 +35,5 @@ public interface ReservationRepository extends CrudRepository<Reservation, Long>
             @Param("customerName") String customerName, @Param("customerSurname") String customerSurname,
             @Param("departmentTake") Long departmentTake, @Param("departmentBack") Long departmentBack,
             @Param("dateFrom") LocalDate dateFrom, @Param("dateTo") LocalDate dateTo,
-            @Param("status") Long status);
+            @Param("status") Reservation.ReservationStatus status);
 }

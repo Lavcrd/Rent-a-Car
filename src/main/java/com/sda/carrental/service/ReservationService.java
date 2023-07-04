@@ -119,9 +119,6 @@ public class ReservationService {
     }
 
     public List<Reservation> findReservationsByDetails(SearchReservationsForm reservationsData) {
-        if (reservationsData.getCustomerName().isEmpty()) reservationsData.setCustomerName(null);
-        if (reservationsData.getCustomerSurname().isEmpty()) reservationsData.setCustomerSurname(null);
-        if (reservationsData.getDepartmentBack() == -1) reservationsData.setDepartmentBack(null);
         return repository.findReservationByDetails(
                 reservationsData.getCustomerName(), reservationsData.getCustomerSurname(),
                 reservationsData.getDepartmentTake(), reservationsData.getDepartmentBack(),

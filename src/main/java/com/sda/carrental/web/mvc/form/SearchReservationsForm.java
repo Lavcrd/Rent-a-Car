@@ -1,5 +1,6 @@
 package com.sda.carrental.web.mvc.form;
 
+import com.sda.carrental.model.operational.Reservation;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -26,5 +27,5 @@ public class SearchReservationsForm {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate dateTo;
 
-    private Long status;
+    private Reservation.ReservationStatus status;
 }
