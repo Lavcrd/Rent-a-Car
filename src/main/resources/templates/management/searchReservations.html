@@ -22,7 +22,7 @@
               class="form-inline">
             <div class="row mb-2" style="margin-top: 5%">
 
-                <div class="row" style="width: 100%; flex-shrink: 1; display:inline-flex; flex-wrap: nowrap;">
+                <div class="row" style="width: 100%; flex-shrink: 1; display:inline-flex; flex-wrap: nowrap; padding-right: 0;">
                     <div class="col-sm-3" style="width: fit-content;">
                         <select type="text" id="departmentTake" th:field="*{departmentTake}" class="form-control">
                             <div th:each="department:${departments}">
@@ -32,39 +32,44 @@
                         </select>
                     </div>
                     <div class="col-sm-3" style="width: fit-content;">
-                        <input type="date" name="surname" class="form-control"
+                        <input type="date" class="form-control"
                                th:field="*{dateFrom}">
                     </div>
                     <div th:text="' ⟶ '" style="text-align: center; flex-shrink: 1;"></div>
 
                     <div class="col-sm-3" style="width: fit-content;">
                         <select type="text" id="departmentBack" th:field="*{departmentBack}" class="form-control">
-                            <option value="-1" th:text="Any"></option>
+                            <option th:value="null" th:text="Any"></option>
                             <div th:each="departmentBack:${departmentsCountry}">
                                 <option th:text="${departmentBack.getCity()} + ', ' + ${departmentBack.getAddress()}"
                                         th:value="${departmentBack.getDepartmentId()}"></option>
                             </div>
                         </select>
                     </div>
-                    <div class="col-sm-3" style="width: fit-content;">
-                        <input type="date" name="surname" class="form-control"
+                    <div class="col-sm-3" style="width: fit-content; padding-right: 0;">
+                        <input type="date" class="form-control"
                                th:field="*{dateTo}">
                     </div>
                 </div>
-                <div class="row" style="margin-top: 1%; flex-wrap: nowrap;">
+                <div class="row" style="margin-top: 1%; flex-wrap: nowrap; padding-right: 0;">
                     <div class="col-sm-3">
-                        <input type="text" name="name" class="form-control" placeholder="Name"
+                        <input type="text" class="form-control" placeholder="Name"
                                th:field="*{customerName}">
                     </div>
                     <div class="col-sm-3">
-                        <input type="text" name="surname" class="form-control" placeholder="Surname"
+                        <input type="text" class="form-control" placeholder="Surname"
                                th:field="*{customerSurname}">
                     </div>
                     <div class="col-sm-3" style="width: fit-content;">
-                        <input name="surname" class="form-control" placeholder="Status"
-                               th:field="*{status}">
+                        <select th:field="*{status}" class="form-control">
+                            <option th:value="null" th:text="'Status: Any'"></option>
+                            <div th:each="status:${reservationStatuses}">
+                                <option th:text="'Status: ' + ${status.getText()}"
+                                        th:value="${status}"></option>
+                            </div>
+                        </select>
                     </div>
-                    <div class="col-sm-3" style="display: flex; justify-content: end;">
+                    <div class="col" style="display: flex; justify-content: end; padding-right: 0;">
                         <button class="btn btn-dark bg-dark"
                                 type="submit">
 
@@ -98,7 +103,7 @@
                     <th scope="row"></th>
                 </tr>
                 </thead>
-                <form th:action="@{/mg-res/reservation}" th:method="POST">
+                <form th:action="@{/mg-res/reservations}" th:method="POST">
                     <input type="hidden" th:if="${searchReservationsForm.departmentTake != null}" th:name="department"
                            th:value="${searchReservationsForm.getDepartmentTake()}">
                     <tbody>
@@ -129,9 +134,9 @@
                         <td>
                             <div class="overflow-cell-hidden" th:utext="${reservation.status.getText()}"></div>
                         </td>
-                        <td>
-                            <button type="submit" class="btn btn-dark" th:text="Details" th:name="details_button"
-                                    th:value="${reservation.reservationId}"></button>
+                        <td style="position: relative;">
+                            <button type="submit" class="btn btn-dark list-button" th:text="Profile" th:name="select_button"
+                                    th:value="${reservation.customer.id}"></button>
                         </td>
                     </tr>
                     </tbody>

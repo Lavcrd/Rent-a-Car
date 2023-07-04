@@ -51,17 +51,18 @@ public class ManageReservationsController {
             List<Department> employeeDepartments = departmentService.getDepartmentsByRole(cud);
             map.addAttribute("departments", employeeDepartments);
             map.addAttribute("departmentsCountry", departmentService.findAllWhereCountry(employeeDepartments.get(0).getCountry()));
+            map.addAttribute("reservationStatuses", Reservation.ReservationStatus.values());
 
             if (map.containsKey("searchReservationsForm")) {
                 return "management/searchReservations";
             } else {
                 SearchReservationsForm form = new SearchReservationsForm();
-                form.setDateFrom(LocalDate.now().minusMonths(1));
-                form.setDateTo(LocalDate.now().plusMonths(1));
+                form.setDateFrom(LocalDate.now().minusWeeks(1));
+                form.setDateTo(LocalDate.now().plusWeeks(1));
                 map.addAttribute("searchReservationsForm", form);
             }
             return "management/searchReservations";
-        } catch (ResourceNotFoundException err) {
+        } catch (ResourceNotFoundException |  IndexOutOfBoundsException err) {
             redAtt.addFlashAttribute("message", "An unexpected error occurred. Please try again.");
             return "redirect:/";
         }
@@ -200,9 +201,9 @@ public class ManageReservationsController {
         return "management/verifyCustomer";
     }
 
-    //Search reservation page buttons
+    //Search reservations page buttons
     @RequestMapping(value = "/search", method = RequestMethod.POST)
-    public String customerSearchButton(@ModelAttribute("searchReservationsForm") SearchReservationsForm reservationsData, RedirectAttributes redAtt) {
+    public String reservationSearchButton(@ModelAttribute("searchReservationsForm") SearchReservationsForm reservationsData, RedirectAttributes redAtt) {
         try {
             CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             if (departmentService.departmentAccess(cud, reservationsData.getDepartmentTake()).equals(HttpStatus.FORBIDDEN)) {
