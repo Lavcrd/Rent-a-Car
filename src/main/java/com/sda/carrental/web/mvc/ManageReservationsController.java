@@ -83,10 +83,8 @@ public class ManageReservationsController {
             map.addAttribute("reservations", reservationService.getUserReservationsByDepartmentTake(customer.getId(), departmentId));
 
             Optional<Verification> verification = verificationService.getOptionalVerificationByCustomer(customerId);
-            map.addAttribute("is_verified", verification.isPresent());
             if (verification.isPresent()) {
                 map.addAttribute("verification", verificationService.maskVerification(verification.get()));
-                map.addAttribute("unverifyConfirmationForm", new ConfirmationForm());
             } else {
                 map.addAttribute("verification", new Verification(customerId, "N/D", "N/D"));
             }
@@ -189,18 +187,6 @@ public class ManageReservationsController {
         }
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "/verify")
-    public String verifyPage(ModelMap map, @ModelAttribute("customer") Long customerId, @ModelAttribute("department") Long departmentId, RedirectAttributes redAtt) {
-        CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (userService.hasNoAccessToUserData(cud, customerId, departmentId)) {
-            redAtt.addFlashAttribute("message", "Access rejected.");
-            return "redirect:/mg-res";
-        }
-
-        map.addAttribute("verification_form", new VerificationForm(customerId));
-        return "management/verifyCustomer";
-    }
-
     //Search reservations page buttons
     @RequestMapping(value = "/search", method = RequestMethod.POST)
     public String reservationSearchButton(@ModelAttribute("searchReservationsForm") SearchReservationsForm reservationsData, RedirectAttributes redAtt) {
@@ -243,86 +229,12 @@ public class ManageReservationsController {
         return "redirect:/mg-res/reservation/{reservation}";
     }
 
-    @RequestMapping(method = RequestMethod.POST, value = "/verify")
-    public String verifyButton(RedirectAttributes redAtt, @RequestParam("customer") Long customerId, @RequestParam("department") Long departmentId) {
-        redAtt.addFlashAttribute("customer", customerId);
+    @RequestMapping(method = RequestMethod.POST, value = "/mg-cus")
+    public String manageCustomerButton(RedirectAttributes redAtt, @RequestParam("customer") Long customerId, @RequestParam("department") Long departmentId) {
+        redAtt.addAttribute("customer", customerId);
         redAtt.addFlashAttribute("department", departmentId);
-        return "redirect:/mg-res/verify";
+        return "redirect:/mg-cus/{customer}";
     }
-
-    @RequestMapping(method = RequestMethod.POST, value = "/unverify")
-    public String unverifyConfirmButton(RedirectAttributes redAtt, @ModelAttribute("unverifyConfirmationForm") @Valid ConfirmationForm form, Errors err, @RequestParam("customer") Long customerId, @RequestParam("department") Long departmentId) {
-        CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (userService.hasNoAccessToUserData(cud, customerId, departmentId)) {
-            redAtt.addFlashAttribute("message", "Access rejected.");
-            return "redirect:/mg-res";
-        }
-
-        if (err.hasErrors()) {
-            redAtt.addFlashAttribute("department", departmentId);
-            redAtt.addAttribute("customer", customerId);
-            redAtt.addFlashAttribute("message", err.getAllErrors().get(0).getDefaultMessage());
-            return "redirect:/mg-res/{customer}";
-        }
-
-        HttpStatus status = verificationService.deleteVerification(customerId);
-        if (status.equals(HttpStatus.OK)) {
-            redAtt.addAttribute("customer", customerId);
-            redAtt.addFlashAttribute("department", departmentId);
-            redAtt.addFlashAttribute("message", "Verification successfully removed");
-        } else {
-            redAtt.addFlashAttribute("message", "An unexpected error occurred. Please try again.");
-            return "redirect:/mg-res";
-        }
-        return "redirect:/mg-res/{customer}";
-    }
-
-
-    //Verification page buttons
-    @RequestMapping(method = RequestMethod.POST, value = "/verify/create")
-    public String verifyConfirmButton(RedirectAttributes redAtt, @ModelAttribute("verification_form") @Valid VerificationForm form, Errors errors, @RequestParam("department") Long departmentId) {
-        if (errors.hasErrors()) {
-            redAtt.addFlashAttribute("department", departmentId);
-            redAtt.addFlashAttribute("customer", form.getCustomerId());
-
-            redAtt.addFlashAttribute("message", "Provided values are incorrect.");
-            return "redirect:/mg-res/verify";
-        }
-
-        CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (userService.hasNoAccessToUserData(cud, form.getCustomerId(), departmentId)) {
-            redAtt.addFlashAttribute("message", "Access rejected.");
-            return "redirect:/mg-res";
-        }
-
-        HttpStatus status = verificationService.createVerification(form);
-        if (status.equals(HttpStatus.CREATED)) {
-            redAtt.addFlashAttribute("message", "Verification successfully registered.");
-        } else if (status.equals(HttpStatus.EXPECTATION_FAILED)) {
-            redAtt.addFlashAttribute("message", "Customer is already verified.");
-        } else if (status.equals(HttpStatus.NOT_FOUND)) {
-            redAtt.addFlashAttribute("message", "Customer not found. Try again.");
-            return "redirect:/mg-res";
-        } else if (status.equals(HttpStatus.CONFLICT)) {
-            redAtt.addFlashAttribute("department", departmentId);
-            redAtt.addFlashAttribute("customer", form.getCustomerId());
-
-            redAtt.addFlashAttribute("message", "The identification is already linked to another account.");
-            return "redirect:/mg-res/verify";
-        }
-
-        redAtt.addAttribute("customer", form.getCustomerId());
-        redAtt.addFlashAttribute("department", departmentId);
-        return "redirect:/mg-res/{customer}";
-    }
-
-    @RequestMapping(method = RequestMethod.POST, value = "/verify/back")
-    public String verifyBackButton(RedirectAttributes redAtt, @ModelAttribute("verification_form") VerificationForm form, @RequestParam("department") Long departmentId) {
-        redAtt.addAttribute("customer", form.getCustomerId());
-        redAtt.addFlashAttribute("department", departmentId);
-        return "redirect:/mg-res/{customer}";
-    }
-
 
     //Reservation details page buttons
     @RequestMapping(method = RequestMethod.POST, value = "/reservation/back")

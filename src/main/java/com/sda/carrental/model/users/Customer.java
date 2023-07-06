@@ -42,6 +42,6 @@ public class Customer extends User
     private String contactNumber;
 
     public enum CustomerStatus {
-        STATUS_REGISTERED(), STATUS_UNREGISTERED(), STATUS_HIDDEN()
+        STATUS_REGISTERED(), STATUS_UNREGISTERED(), STATUS_DELETED()
     }
 }

@@ -76,6 +76,7 @@ public class CustomerService {
         customer.setAddress("—");
         customer.setContactNumber("—");
         customer.setTerminationDate(LocalDate.now());
+        customer.setStatus(Customer.CustomerStatus.STATUS_DELETED);
 
         return customer;
     }
