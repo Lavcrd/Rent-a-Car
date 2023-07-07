@@ -400,4 +400,18 @@ h2.address {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
+    white-space: nowrap;
+}
+
+.button-cell {
+    min-width: 12em;
+    max-width: 12em;
+    width: 12em;
+    position: relative;
+}
+
+.short-description-cell {
+    white-space: nowrap;
+    overflow: hidden;
+    max-width: 30em;
 }

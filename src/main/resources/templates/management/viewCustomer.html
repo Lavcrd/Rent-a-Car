@@ -84,12 +84,12 @@
 
         <th:block th:if="${customer} != null">
             <div class="col-sm-9">
-                <table class="table table-borderless table-hover table-fixed"
+                <table class="table table-borderless"
                        style="text-align: center; vertical-align: middle;">
                     <thead class="table-dark">
                     <tr>
-                        <th scope="row">Option</th>
-                        <th scope="row">Description</th>
+                        <th scope="row" class="button-cell">Option</th>
+                        <th scope="row" class="short-description-cell">Description</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -97,69 +97,145 @@
                         <input type="hidden" th:if="${customer != null}" th:name="customer"
                                th:value="${customer.getId()}">
                         <tr>
-                            <td>
-                                <button type="submit" class="btn btn-dark bg-dark" name="department" th:value="${department}" onclick="setFormAction('/mg-cus/mg-res', 0)">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person" viewBox="0 0 16 16">
+                            <td class="button-cell">
+                                <button type="submit" class="btn btn-dark bg-dark mt-1 list-button w-100"
+                                        name="department" th:value="${department}"
+                                        onclick="setFormAction('/mg-cus/mg-res', 0)">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                         class="bi bi-person" viewBox="0 0 16 16">
                                         <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0Zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4Zm-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10Z"/>
                                     </svg>
                                     Reservations
                                 </button>
                             </td>
-                            <td th:text="'View customer list of reservations'"></td>
+                            <td class="short-description-cell" th:text="'View list of customer reservations'"></td>
+                        </tr>
+
+                        <tr>
+                            <td class="button-cell">
+                                <button type="submit" class="btn btn-dark bg-dark mt-1 list-button w-100"
+                                        name="department" th:value="${department}"
+                                        onclick="setFormAction('/mg-cus/mg-ren', 0)">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                         class="bi bi-person" viewBox="0 0 16 16">
+                                        <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0Zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4Zm-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10Z"/>
+                                    </svg>
+                                    Rentals
+                                </button>
+                            </td>
+                            <td class="short-description-cell" th:text="'View list of customer rentals'"></td>
                         </tr>
                     </form>
 
-                    <th:block th:if="${!is_verified}">
-                        <form th:action="@{/mg-cus/verify}" th:method="POST">
-                            <input type="hidden" th:name="department" th:value="${department}">
-                            <tr>
-                                <td style="padding-left:0;">
-                                    <button class="btn btn-dark bg-dark"
-                                            type="submit" name="customer" th:value="${customer.getId()}">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                             fill="currentColor" class="bi bi-person-check" viewBox="0 0 16 16">
-                                            <path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Zm1.679-4.493-1.335 2.226a.75.75 0 0 1-1.174.144l-.774-.773a.5.5 0 0 1 .708-.708l.547.548 1.17-1.951a.5.5 0 1 1 .858.514ZM11 5a3 3 0 1 1-6 0 3 3 0 0 1 6 0ZM8 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z"/>
-                                            <path d="M8.256 14a4.474 4.474 0 0 1-.229-1.004H3c.001-.246.154-.986.832-1.664C4.484 10.68 5.711 10 8 10c.26 0 .507.009.74.025.226-.341.496-.65.804-.918C9.077 9.038 8.564 9 8 9c-5 0-6 3-6 4s1 1 1 1h5.256Z"/>
-                                        </svg>
-                                        Verify
-                                    </button>
-                                </td>
-                                <td th:text="'Register verification details'"></td>
-                            </tr>
-                        </form>
+                    <th:block th:if="${!is_deleted}">
+                        <th:block th:if="${!is_verified}">
+                            <form th:action="@{/mg-cus/verify}" th:method="POST">
+                                <input type="hidden" th:name="department" th:value="${department}">
+                                <tr>
+                                    <td class="button-cell">
+                                        <button class="btn btn-dark bg-dark mt-1 list-button w-100"
+                                                type="submit" name="customer" th:value="${customer.getId()}">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                 fill="currentColor" class="bi bi-person-check" viewBox="0 0 16 16">
+                                                <path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Zm1.679-4.493-1.335 2.226a.75.75 0 0 1-1.174.144l-.774-.773a.5.5 0 0 1 .708-.708l.547.548 1.17-1.951a.5.5 0 1 1 .858.514ZM11 5a3 3 0 1 1-6 0 3 3 0 0 1 6 0ZM8 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z"/>
+                                                <path d="M8.256 14a4.474 4.474 0 0 1-.229-1.004H3c.001-.246.154-.986.832-1.664C4.484 10.68 5.711 10 8 10c.26 0 .507.009.74.025.226-.341.496-.65.804-.918C9.077 9.038 8.564 9 8 9c-5 0-6 3-6 4s1 1 1 1h5.256Z"/>
+                                            </svg>
+                                            Verify
+                                        </button>
+                                    </td>
+                                    <td class="short-description-cell" th:text="'Register verification details'"></td>
+                                </tr>
+                            </form>
+                        </th:block>
+                        <th:block th:if="${is_verified}">
+                            <form th:action="@{/mg-cus/unverify}" th:object="${unverifyConfirmationForm}"
+                                  th:method="POST">
+                                <input type="hidden" th:name="department" th:value="${department}">
+                                <input type="hidden" th:name="customer" th:value="${customer.getId()}">
+                                <tr>
+                                    <td class="button-cell">
+                                        <!--Trigger for modal-->
+                                        <button type="button" class="btn btn-dark bg-dark mt-1 list-button w-100"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#unverifyModal">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                 fill="currentColor" class="bi bi-person-dash" viewBox="0 0 16 16">
+                                                <path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7ZM11 12h3a.5.5 0 0 1 0 1h-3a.5.5 0 0 1 0-1Zm0-7a3 3 0 1 1-6 0 3 3 0 0 1 6 0ZM8 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z"/>
+                                                <path d="M8.256 14a4.474 4.474 0 0 1-.229-1.004H3c.001-.246.154-.986.832-1.664C4.484 10.68 5.711 10 8 10c.26 0 .507.009.74.025.226-.341.496-.65.804-.918C9.077 9.038 8.564 9 8 9c-5 0-6 3-6 4s1 1 1 1h5.256Z"/>
+                                            </svg>
+                                            Unverify
+                                        </button>
+
+                                        <!--Modal unverify-->
+                                        <div class="modal fade" id="unverifyModal" tabindex="-1" role="dialog"
+                                             aria-hidden="true">
+                                            <div class="modal-dialog modal-dialog-centered" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title">Unverify</h5>
+                                                        <button type="button" class="close" data-bs-dismiss="modal"
+                                                                aria-label="Close">
+                                                            <span aria-hidden="true">×</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <p>Confirm removal of verification with a password.</p>
+                                                        <input id="confirmPassword" class="text-black bg-white"
+                                                               th:placeholder="'Confirm with password'"
+                                                               th:type="password" th:field="*{currentPassword}"
+                                                               autocomplete="new-password"
+                                                               required/>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-dark"
+                                                                data-bs-dismiss="modal">
+                                                            Close
+                                                        </button>
+                                                        <button type="submit" class="btn btn-dark">Confirm</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="short-description-cell"
+                                        th:text="'Remove verification details (P-ID, D-ID)'"></td>
+                                </tr>
+                            </form>
+                        </th:block>
                     </th:block>
-                    <th:block th:if="${is_verified}">
-                        <form th:action="@{/mg-cus/unverify}" th:object="${unverifyConfirmationForm}" th:method="POST">
+
+                    <th:block th:if="${!is_deleted}">
+                        <form th:action="@{/mg-cus/delete}" th:object="${deleteConfirmationForm}" th:method="POST">
                             <input type="hidden" th:name="department" th:value="${department}">
                             <input type="hidden" th:name="customer" th:value="${customer.getId()}">
                             <tr>
-                                <td style="padding-left:0;">
-                                    <!--Trigger for modal-->
-                                    <button type="button" class="btn btn-dark bg-dark" data-bs-toggle="modal"
-                                            data-bs-target="#unverifyModal">
+                                <td class="button-cell">
+                                    <button type="button" class="btn btn-dark bg-dark mt-1 list-button w-100"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#deleteModal">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                             fill="currentColor" class="bi bi-person-dash" viewBox="0 0 16 16">
-                                            <path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7ZM11 12h3a.5.5 0 0 1 0 1h-3a.5.5 0 0 1 0-1Zm0-7a3 3 0 1 1-6 0 3 3 0 0 1 6 0ZM8 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z"/>
-                                            <path d="M8.256 14a4.474 4.474 0 0 1-.229-1.004H3c.001-.246.154-.986.832-1.664C4.484 10.68 5.711 10 8 10c.26 0 .507.009.74.025.226-.341.496-.65.804-.918C9.077 9.038 8.564 9 8 9c-5 0-6 3-6 4s1 1 1 1h5.256Z"/>
+                                             fill="currentColor"
+                                             class="bi bi-person-slash" viewBox="0 0 16 16">
+                                            <path d="M13.879 10.414a2.501 2.501 0 0 0-3.465 3.465l3.465-3.465Zm.707.707-3.465 3.465a2.501 2.501 0 0 0 3.465-3.465Zm-4.56-1.096a3.5 3.5 0 1 1 4.949 4.95 3.5 3.5 0 0 1-4.95-4.95ZM11 5a3 3 0 1 1-6 0 3 3 0 0 1 6 0ZM8 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4Zm.256 7a4.474 4.474 0 0 1-.229-1.004H3c.001-.246.154-.986.832-1.664C4.484 10.68 5.711 10 8 10c.26 0 .507.009.74.025.226-.341.496-.65.804-.918C9.077 9.038 8.564 9 8 9c-5 0-6 3-6 4s1 1 1 1h5.256Z"/>
                                         </svg>
-                                        Unverify
+                                        Delete
                                     </button>
 
-                                    <!--Modal-->
-                                    <div class="modal fade" id="unverifyModal" tabindex="-1" role="dialog"
+                                    <!--Modal delete-->
+                                    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog"
                                          aria-hidden="true">
                                         <div class="modal-dialog modal-dialog-centered" role="document">
                                             <div class="modal-content">
                                                 <div class="modal-header">
-                                                    <h5 class="modal-title">Unverify</h5>
+                                                    <h5 class="modal-title">Delete data</h5>
                                                     <button type="button" class="close" data-bs-dismiss="modal"
                                                             aria-label="Close">
                                                         <span aria-hidden="true">×</span>
                                                     </button>
                                                 </div>
                                                 <div class="modal-body">
-                                                    <p>Confirm removal of verification with a password.</p>
-                                                    <input id="confirmPassword" class="text-black bg-white"
+                                                    <p>Confirm removal of data with a password.</p>
+                                                    <input name="confirmPassword" class="text-black bg-white"
                                                            th:placeholder="'Confirm with password'"
                                                            th:type="password" th:field="*{currentPassword}"
                                                            autocomplete="new-password"
@@ -175,17 +251,12 @@
                                         </div>
                                     </div>
                                 </td>
-                                <td th:text="'Remove verification details (P-ID, D-ID)'"></td>
+                                <td class="short-description-cell"
+                                    th:text="'Permanently removes customer details'"></td>
                             </tr>
                         </form>
                     </th:block>
-
-                    <tr>
-                        <td>WIP</td>
-                        <td>WIP</td>
-                    </tr>
                     </tbody>
-                    </form>
                 </table>
             </div>
         </th:block>

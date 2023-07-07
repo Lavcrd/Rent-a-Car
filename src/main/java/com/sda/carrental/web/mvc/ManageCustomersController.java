@@ -69,6 +69,12 @@ public class ManageCustomersController {
             } else {
                 map.addAttribute("verification", new Verification(customerId, "N/D", "N/D"));
             }
+            if (!customer.getStatus().equals(Customer.CustomerStatus.STATUS_DELETED)) {
+                map.addAttribute("is_deleted", false);
+                map.addAttribute("deleteConfirmationForm", new ConfirmationForm());
+            } else {
+                map.addAttribute("is_deleted", true);
+            }
             return "management/viewCustomer";
         } catch (ResourceNotFoundException err) {
             redAtt.addFlashAttribute("message", "An unexpected error occurred. Please try again.");
@@ -164,6 +170,41 @@ public class ManageCustomersController {
         return "redirect:/mg-res/{customer}";
     }
 
+    @RequestMapping(method = RequestMethod.POST, value = "/mg-ren")
+    public String manageRentalsButton(RedirectAttributes redAtt, @RequestParam("customer") Long customerId, @RequestParam("department") Long departmentId) {
+        redAtt.addAttribute("customer", customerId);
+        redAtt.addFlashAttribute("department", departmentId);
+        return "redirect:/mg-ren/{customer}";
+    }
+
+    @RequestMapping(method = RequestMethod.POST, value = "/delete")
+    public String deleteCustomerButton(RedirectAttributes redAtt, @ModelAttribute("deleteConfirmationForm") @Valid ConfirmationForm form, Errors err, @RequestParam("customer") Long customerId, @RequestParam("department") Long departmentId) {
+        CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (userService.hasNoAccessToUserData(cud, customerId, departmentId)) {
+            redAtt.addFlashAttribute("message", "Access rejected.");
+            return "redirect:/mg-cus";
+        }
+
+        redAtt.addFlashAttribute("department", departmentId);
+        redAtt.addAttribute("customer", customerId);
+
+        if (err.hasErrors()) {
+            redAtt.addFlashAttribute("message", err.getAllErrors().get(0).getDefaultMessage());
+            return "redirect:/mg-cus/{customer}";
+        }
+
+        HttpStatus status = userService.deleteUser(customerId);
+
+        if (status.equals(HttpStatus.OK)) {
+            redAtt.addFlashAttribute("message", "Data successfully removed");
+        } else if (status.equals(HttpStatus.CONFLICT)) {
+            redAtt.addFlashAttribute("message", "Removal unsuccessful: Active reservations");
+        } else {
+            redAtt.addFlashAttribute("message", "Removal unsuccessful: Temporary error");
+        }
+        return "redirect:/mg-cus/{customer}";
+    }
+
     //Verification page buttons
     @RequestMapping(method = RequestMethod.POST, value = "/verify/create")
     public String verifyConfirmButton(RedirectAttributes redAtt, @ModelAttribute("verification_form") @Valid VerificationForm form, Errors errors, @RequestParam("department") Long departmentId) {
@@ -208,5 +249,4 @@ public class ManageCustomersController {
         redAtt.addFlashAttribute("department", departmentId);
         return "redirect:/mg-cus/{customer}";
     }
-
 }
