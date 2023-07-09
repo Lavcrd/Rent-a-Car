@@ -1,5 +1,6 @@
 package com.sda.carrental.web.mvc;
 
+import com.sda.carrental.exceptions.IllegalActionException;
 import com.sda.carrental.global.ConstantValues;
 import com.sda.carrental.exceptions.ResourceNotFoundException;
 import com.sda.carrental.model.property.Car;
@@ -37,8 +38,8 @@ public class ReservationController {
     @RequestMapping(method = RequestMethod.GET)
     public String reservationRecapPage(final ModelMap map, @ModelAttribute("showData") SelectCarForm reservationData, RedirectAttributes redAtt) {
         try {
-            if (reservationData == null) throw new NullPointerException();
-            if (reservationData.getIndexData() == null) throw new NullPointerException();
+            if (reservationData == null) throw new IllegalActionException();
+            if (reservationData.getIndexData() == null) throw new IllegalActionException();
 
             Car car = carService.findCarById(reservationData.getCarId());
             Department depFrom = depService.findDepartmentWhereId(reservationData.getIndexData().getDepartmentIdFrom());
@@ -63,7 +64,7 @@ public class ReservationController {
             map.addAttribute("refund_fee_days", cv.getRefundSubtractDaysDuration());
 
             return "core/reservationRecap";
-        } catch (NullPointerException | ResourceNotFoundException err) {
+        } catch (IllegalActionException | ResourceNotFoundException err) {
             redAtt.addFlashAttribute("message", "An unexpected error occurred. Please try again later or contact customer service.");
             return "redirect:/";
         }
@@ -78,7 +79,7 @@ public class ReservationController {
         if (cud.getAuthorities().contains(new SimpleGrantedAuthority(User.Roles.ROLE_CUSTOMER.name()))) {
             status = resService.createReservation(cud.getId(), form);
         } else {
-            redAtt.addFlashAttribute("message", "Some redirect for future register guest page");
+            redAtt.addFlashAttribute("message", "Action is not allowed for employees.");
             return "redirect:/";
         }
 

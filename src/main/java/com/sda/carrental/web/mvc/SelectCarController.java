@@ -1,5 +1,6 @@
 package com.sda.carrental.web.mvc;
 
+import com.sda.carrental.exceptions.IllegalActionException;
 import com.sda.carrental.exceptions.ResourceNotFoundException;
 import com.sda.carrental.model.property.Car;
 import com.sda.carrental.service.CarService;
@@ -29,7 +30,7 @@ public class SelectCarController {
     @RequestMapping(method = RequestMethod.GET)
     public String selectCarPage(final ModelMap map, RedirectAttributes redAtt, @ModelAttribute("indexData") IndexForm indexData) {
         try {
-            if (indexData.getDateCreated() == null) throw new NullPointerException();
+            if (indexData.getDateCreated() == null) throw new IllegalActionException();
             List<Car> carList = carService.findAvailableDistinctCarsInDepartment(
                     indexData.getDateFrom(),
                     indexData.getDateTo(),
@@ -58,7 +59,7 @@ public class SelectCarController {
             map.addAttribute("selectCarForm", selectCarForm);
             map.addAttribute("carFilterForm", carFilterForm);
             return "core/selectCar";
-        } catch (NullPointerException err ) {
+        } catch (IllegalActionException err ) {
             redAtt.addFlashAttribute("message", "An unexpected error occurred. Please try again later or contact customer service.");
             return "redirect:/";
         } catch (ResourceNotFoundException err) {
