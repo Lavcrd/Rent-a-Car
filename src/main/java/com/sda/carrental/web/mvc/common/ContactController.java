@@ -1,4 +1,4 @@
-package com.sda.carrental.web.mvc;
+package com.sda.carrental.web.mvc.common;
 
 import com.sda.carrental.global.enums.Country;
 import com.sda.carrental.service.DepartmentService;
@@ -21,6 +21,6 @@ public class ContactController {
         //User IP for geolocation?
         map.addAttribute("dealer", departmentService.findAllWhereCountry(Country.COUNTRY_PL));
         map.addAttribute("hq", departmentService.findAllWhereCountryAndHq(Country.COUNTRY_PL));
-        return "core/contact";
+        return "common/contact";
     }
 }

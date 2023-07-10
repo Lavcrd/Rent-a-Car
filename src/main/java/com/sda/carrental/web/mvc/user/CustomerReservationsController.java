@@ -1,4 +1,4 @@
-package com.sda.carrental.web.mvc;
+package com.sda.carrental.web.mvc.user;
 
 import com.sda.carrental.global.ConstantValues;
 import com.sda.carrental.exceptions.ResourceNotFoundException;

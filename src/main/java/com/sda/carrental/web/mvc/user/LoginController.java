@@ -1,4 +1,4 @@
-package com.sda.carrental.web.mvc;
+package com.sda.carrental.web.mvc.user;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,7 +11,7 @@ public class LoginController {
 
     @RequestMapping(method = RequestMethod.GET)
     public String loginPage() {
-        return "core/login";
+        return "user/login";
     }
 
 }

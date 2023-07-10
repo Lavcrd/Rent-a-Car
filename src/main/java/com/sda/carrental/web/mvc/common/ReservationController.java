@@ -1,4 +1,4 @@
-package com.sda.carrental.web.mvc;
+package com.sda.carrental.web.mvc.common;
 
 import com.sda.carrental.exceptions.IllegalActionException;
 import com.sda.carrental.global.ConstantValues;
@@ -63,7 +63,7 @@ public class ReservationController {
             map.addAttribute("deposit_percentage", cv.getDepositPercentage() * 100);
             map.addAttribute("refund_fee_days", cv.getRefundSubtractDaysDuration());
 
-            return "core/reservationRecap";
+            return "common/reservationRecap";
         } catch (IllegalActionException | ResourceNotFoundException err) {
             redAtt.addFlashAttribute("message", "An unexpected error occurred. Please try again later or contact customer service.");
             return "redirect:/";

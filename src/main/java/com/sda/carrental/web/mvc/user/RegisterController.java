@@ -1,4 +1,4 @@
-package com.sda.carrental.web.mvc;
+package com.sda.carrental.web.mvc.user;
 
 import com.sda.carrental.global.enums.Country;
 import com.sda.carrental.model.users.User;
@@ -41,7 +41,7 @@ public class RegisterController {
         HttpStatus status = customerService.createCustomer(form);
         if (status.equals(HttpStatus.CREATED)) {
         map.addAttribute("message", "User " + form.getName() + " " + form.getSurname() + " with login " + form.getUsername() + " has been added.");
-            return "core/login";
+            return "user/login";
         }
         redAtt.addFlashAttribute("message", "Something went wrong. Please try again or contact customer service.");
         return "redirect:/register";

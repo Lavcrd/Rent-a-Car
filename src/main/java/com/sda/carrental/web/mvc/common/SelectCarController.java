@@ -1,4 +1,4 @@
-package com.sda.carrental.web.mvc;
+package com.sda.carrental.web.mvc.common;
 
 import com.sda.carrental.exceptions.IllegalActionException;
 import com.sda.carrental.exceptions.ResourceNotFoundException;
@@ -58,7 +58,7 @@ public class SelectCarController {
 
             map.addAttribute("selectCarForm", selectCarForm);
             map.addAttribute("carFilterForm", carFilterForm);
-            return "core/selectCar";
+            return "common/selectCar";
         } catch (IllegalActionException err ) {
             redAtt.addFlashAttribute("message", "An unexpected error occurred. Please try again later or contact customer service.");
             return "redirect:/";

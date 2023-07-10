@@ -28,7 +28,6 @@ public class ReservationService {
     private final DepartmentService departmentService;
     private final PaymentDetailsService paymentDetailsService;
     private final VerificationService verificationService;
-    private final RentingService rentingService;
 
     @Transactional
     public HttpStatus createReservation(Long customerId, SelectCarForm form) {
@@ -102,8 +101,8 @@ public class ReservationService {
                     return HttpStatus.PAYMENT_REQUIRED;
                 }
                 paymentDetailsService.securePayment(payment.get());
+                carService.updateCarStatus(r.getCar(), Car.CarStatus.STATUS_RENTED);
                 updateReservationStatus(r, status);
-                rentingService.createRent(r);
                 return HttpStatus.ACCEPTED;
             }
             return HttpStatus.BAD_REQUEST;
