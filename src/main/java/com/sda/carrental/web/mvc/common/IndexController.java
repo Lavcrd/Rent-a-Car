@@ -1,4 +1,4 @@
-package com.sda.carrental.web.mvc;
+package com.sda.carrental.web.mvc.common;
 
 
 import com.sda.carrental.service.DepartmentService;
@@ -28,7 +28,7 @@ public class IndexController {
         form.setDateFrom(LocalDate.now());
         form.setDateTo(LocalDate.now().plusDays(2));
         map.addAttribute("indexForm", form);
-        return "core/index";
+        return "common/index";
     }
 
     //Index buttons
@@ -37,7 +37,7 @@ public class IndexController {
         if (errors.hasErrors()) {
             if (form.isFirstBranchChecked()) form.setFirstBranchChecked(false);
             map.addAttribute("department", departmentService.findAll());
-            return "core/index";
+            return "common/index";
         }
 
         if (!form.isFirstBranchChecked()) form.setDepartmentIdTo(form.getDepartmentIdFrom());

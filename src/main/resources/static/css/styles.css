@@ -415,3 +415,10 @@ h2.address {
     overflow: hidden;
     max-width: 30em;
 }
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    margin-top: 2%;
+}

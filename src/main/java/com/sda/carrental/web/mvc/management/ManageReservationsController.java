@@ -1,4 +1,4 @@
-package com.sda.carrental.web.mvc;
+package com.sda.carrental.web.mvc.management;
 
 import com.sda.carrental.global.ConstantValues;
 import com.sda.carrental.exceptions.ResourceNotFoundException;
@@ -39,6 +39,7 @@ public class ManageReservationsController {
     private final VerificationService verificationService;
 
     private final CarService carService;
+    private final RentingService rentingService;
     private final UserService userService;
 
     private final ConstantValues cv;
@@ -135,6 +136,9 @@ public class ManageReservationsController {
             map.addAttribute("refund_fee_days", cv.getRefundSubtractDaysDuration());
 
             map.addAttribute("confirmation_form", new ConfirmationForm());
+            if (reservation.getStatus().equals(Reservation.ReservationStatus.STATUS_RESERVED)) {
+                map.addAttribute("rental_confirmation_form", new ConfirmRentalForm());
+            }
             return "management/reservationDetailsManagement";
         } catch (ResourceNotFoundException err) {
             redAtt.addFlashAttribute("message", "An unexpected error occurred. Please try again.");
@@ -300,7 +304,7 @@ public class ManageReservationsController {
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/reservation/rent")
-    public String reservationRentButton(@ModelAttribute("confirmation_form") @Valid ConfirmationForm form, Errors err, RedirectAttributes redAtt, @RequestParam("reservation") Long reservationId, @RequestParam("customer") Long customerId) {
+    public String reservationRentButton(@ModelAttribute("rental_confirmation_form") @Valid ConfirmRentalForm form, Errors err, RedirectAttributes redAtt, @RequestParam("reservation") Long reservationId, @RequestParam("customer") Long customerId) {
         CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (userService.hasNoAccessToUserReservation(cud, customerId, reservationId)) {
             redAtt.addFlashAttribute("message", "Access rejected.");
@@ -314,7 +318,7 @@ public class ManageReservationsController {
             return "redirect:/mg-res/reservation/{reservation}";
         }
 
-        HttpStatus response = reservationService.handleReservationStatus(customerId, reservationId, Reservation.ReservationStatus.STATUS_PROGRESS);
+        HttpStatus response = rentingService.createRent(customerId, reservationId, form.getRemarks());
 
         redAtt.addAttribute("reservation", reservationId);
         redAtt.addFlashAttribute("customer", customerId);

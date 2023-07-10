@@ -75,14 +75,23 @@ public class UserService {
     }
 
     public boolean hasNoAccessToUserData(CustomUserDetails cud, Long customerId, Long departmentId) {
-        if (departmentService.departmentAccess(cud, departmentId).equals(HttpStatus.ACCEPTED)) {
-            return reservationService.getUserReservationsByDepartmentTake(customerId, departmentId).isEmpty();
+        try {
+            if (departmentService.departmentAccess(cud, departmentId).equals(HttpStatus.ACCEPTED)) {
+                return reservationService.getUserReservationsByDepartmentTake(customerId, departmentId).isEmpty();
+            }
+            return true;
+        } catch (ResourceNotFoundException err) {
+            return true;
         }
-        return true;
     }
 
     public boolean hasNoAccessToUserReservation(CustomUserDetails cud, Long customerId, Long reservationId) {
-        Reservation r = reservationService.getCustomerReservation(customerId, reservationId);
-        return departmentService.departmentAccess(cud, r.getDepartmentTake().getDepartmentId()).equals(HttpStatus.FORBIDDEN);
+        try {
+            Reservation r = reservationService.getCustomerReservation(customerId, reservationId);
+            return departmentService.departmentAccess(cud, r.getDepartmentTake().getDepartmentId()).equals(HttpStatus.FORBIDDEN);
+        } catch (ResourceNotFoundException err) {
+            return true;
+        }
+
     }
 }
