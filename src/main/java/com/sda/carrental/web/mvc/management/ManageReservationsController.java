@@ -138,6 +138,8 @@ public class ManageReservationsController {
             map.addAttribute("confirmation_form", new ConfirmationForm());
             if (reservation.getStatus().equals(Reservation.ReservationStatus.STATUS_RESERVED)) {
                 map.addAttribute("rental_confirmation_form", new ConfirmRentalForm());
+            } else if (reservation.getStatus().equals(Reservation.ReservationStatus.STATUS_PROGRESS)) {
+                map.addAttribute("rent_details", rentingService.findById(reservation.getReservationId()));
             }
             return "management/reservationDetailsManagement";
         } catch (ResourceNotFoundException err) {
