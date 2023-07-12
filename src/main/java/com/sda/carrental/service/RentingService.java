@@ -1,5 +1,6 @@
 package com.sda.carrental.service;
 
+import com.sda.carrental.exceptions.ResourceNotFoundException;
 import com.sda.carrental.model.operational.Renting;
 import com.sda.carrental.model.operational.Reservation;
 import com.sda.carrental.repository.RentingRepository;
@@ -29,5 +30,9 @@ public class RentingService {
         } catch (DataAccessException err) {
             return HttpStatus.INTERNAL_SERVER_ERROR;
         }
+    }
+
+    public Object findById(Long id) throws ResourceNotFoundException {
+        return repository.findById(id).orElseThrow(ResourceNotFoundException::new);
     }
 }
