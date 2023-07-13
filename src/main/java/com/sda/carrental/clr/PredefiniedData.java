@@ -5,6 +5,7 @@ import com.sda.carrental.global.enums.Country;
 import com.sda.carrental.model.Company;
 import com.sda.carrental.model.operational.Renting;
 import com.sda.carrental.model.operational.Reservation;
+import com.sda.carrental.model.operational.Returning;
 import com.sda.carrental.model.property.Car;
 import com.sda.carrental.model.property.Department;
 import com.sda.carrental.model.users.*;
@@ -36,6 +37,7 @@ public class PredefiniedData implements CommandLineRunner {
     private final PaymentDetailsRepository paymentDetailsRepository;
     private final VerificationRepository verificationRepository;
     private final CredentialsRepository credentialsRepository;
+    private final ReturningRepository returningRepository;
     private final ConstantValues cv;
 
     @Override
@@ -49,6 +51,7 @@ public class PredefiniedData implements CommandLineRunner {
 
         createReservation();
         createRent();
+        createReturn();
         /*        createInvoice();*/ // currently creates duplicates due to not automated reservation statuses.
 
         createVerification();
@@ -173,6 +176,10 @@ public class PredefiniedData implements CommandLineRunner {
         rentingRepository.save(new Renting(14L, 3L, "N/D"));
         rentingRepository.save(new Renting(14L, 4L, "N/D"));
         rentingRepository.save(new Renting(13L, 5L, "N/D"));
+    }
+
+    private void createReturn() {
+        returningRepository.save(new Returning(1L, 13L, LocalDate.now().plusWeeks(1), "Some notes after return of the car."));
     }
 
     private void createPayments() {

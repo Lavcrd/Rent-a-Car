@@ -37,9 +37,9 @@ public class ManageReservationsController {
     private final ReservationService reservationService;
     private final PaymentDetailsService paymentDetailsService;
     private final VerificationService verificationService;
-
     private final CarService carService;
     private final RentingService rentingService;
+    private final ReturningService returningService;
     private final UserService userService;
 
     private final ConstantValues cv;
@@ -63,7 +63,7 @@ public class ManageReservationsController {
                 map.addAttribute("searchReservationsForm", form);
             }
             return "management/searchReservations";
-        } catch (ResourceNotFoundException |  IndexOutOfBoundsException err) {
+        } catch (ResourceNotFoundException | IndexOutOfBoundsException err) {
             redAtt.addFlashAttribute("message", "An unexpected error occurred. Please try again.");
             return "redirect:/";
         }
@@ -140,6 +140,9 @@ public class ManageReservationsController {
                 map.addAttribute("rental_confirmation_form", new ConfirmRentalForm());
             } else if (reservation.getStatus().equals(Reservation.ReservationStatus.STATUS_PROGRESS)) {
                 map.addAttribute("rent_details", rentingService.findById(reservation.getReservationId()));
+            } else if (reservation.getStatus().equals(Reservation.ReservationStatus.STATUS_COMPLETED)) {
+                map.addAttribute("rent_details", rentingService.findById(reservation.getReservationId()));
+                map.addAttribute("return_details", returningService.findById(reservation.getReservationId()));
             }
             return "management/reservationDetailsManagement";
         } catch (ResourceNotFoundException err) {
