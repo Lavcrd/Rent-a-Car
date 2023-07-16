@@ -45,19 +45,19 @@ public class DepartmentService {
     }
 
     public List<Department> getDepartmentsByRole(CustomUserDetails cud) {
-        if(cud.getAuthorities().contains(new SimpleGrantedAuthority(User.Roles.ROLE_EMPLOYEE.name()))) {
+        if (cud.getAuthorities().contains(new SimpleGrantedAuthority(User.Roles.ROLE_EMPLOYEE.name()))) {
             return List.of(employeeService.findEmployeeById(cud.getId()).getDepartment());
         }
 
-        if(cud.getAuthorities().contains(new SimpleGrantedAuthority(User.Roles.ROLE_MANAGER.name()))) {
+        if (cud.getAuthorities().contains(new SimpleGrantedAuthority(User.Roles.ROLE_MANAGER.name()))) {
             return List.of(managerService.findManagerById(cud.getId()).getDepartment());
         }
 
-        if(cud.getAuthorities().contains(new SimpleGrantedAuthority(User.Roles.ROLE_COORDINATOR.name()))) {
+        if (cud.getAuthorities().contains(new SimpleGrantedAuthority(User.Roles.ROLE_COORDINATOR.name()))) {
             return coordinatorService.findCoordinatorById(cud.getId()).getDepartments();
         }
 
-        if(cud.getAuthorities().contains(new SimpleGrantedAuthority(User.Roles.ROLE_ADMIN.name()))) {
+        if (cud.getAuthorities().contains(new SimpleGrantedAuthority(User.Roles.ROLE_ADMIN.name()))) {
             return findAll();
         }
 
@@ -66,7 +66,7 @@ public class DepartmentService {
 
     public HttpStatus departmentAccess(CustomUserDetails cud, Long departmentId) {
         Department department = findDepartmentWhereId(departmentId);
-        if(getDepartmentsByRole(cud).contains(department)) {
+        if (getDepartmentsByRole(cud).contains(department)) {
             return HttpStatus.ACCEPTED;
         } else {
             return HttpStatus.FORBIDDEN;

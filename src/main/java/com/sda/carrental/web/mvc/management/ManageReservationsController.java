@@ -82,6 +82,7 @@ public class ManageReservationsController {
             map.addAttribute("department", departmentId);
             map.addAttribute("customer", customer);
             map.addAttribute("reservations", reservationService.getUserReservationsByDepartmentTake(customer.getId(), departmentId));
+            map.addAttribute("returns", reservationService.getUserReservationsByDepartmentBack(customer.getId(), departmentId));
 
             Optional<Verification> verification = verificationService.getOptionalVerificationByCustomer(customerId);
             if (verification.isPresent()) {

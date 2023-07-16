@@ -19,18 +19,7 @@
     <!-- Bootstrap JavaScript -->
     <script th:src="@{/js/bootstrap.js}"></script>
     <!-- Tooltips for title tags -->
-    <script th:inline="javascript">
-        $(function () {
-            $('[data-toggle="tooltip"]').tooltip();
-        });
-
-    function setFormAction(action, index) {
-        var forms = document.getElementsByClassName('change_action_form');
-        var form = forms[index];
-        form.action = action;
-    };
-
-    </script>
+    <script th:src="@{/js/custom.js}"></script>
 
 </div>
 

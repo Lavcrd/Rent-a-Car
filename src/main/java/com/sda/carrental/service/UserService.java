@@ -77,7 +77,10 @@ public class UserService {
     public boolean hasNoAccessToUserData(CustomUserDetails cud, Long customerId, Long departmentId) {
         try {
             if (departmentService.departmentAccess(cud, departmentId).equals(HttpStatus.ACCEPTED)) {
-                return reservationService.getUserReservationsByDepartmentTake(customerId, departmentId).isEmpty();
+                boolean hasReservationsDepTake = reservationService.getUserReservationsByDepartmentTake(customerId, departmentId).isEmpty();
+                boolean hasReservationsDepBack = reservationService.getUserReservationsByDepartmentBack(customerId, departmentId).isEmpty();
+
+                return hasReservationsDepTake && hasReservationsDepBack;
             }
             return true;
         } catch (ResourceNotFoundException err) {
@@ -88,10 +91,13 @@ public class UserService {
     public boolean hasNoAccessToUserReservation(CustomUserDetails cud, Long customerId, Long reservationId) {
         try {
             Reservation r = reservationService.getCustomerReservation(customerId, reservationId);
-            return departmentService.departmentAccess(cud, r.getDepartmentTake().getDepartmentId()).equals(HttpStatus.FORBIDDEN);
+
+            HttpStatus accessDepFrom = departmentService.departmentAccess(cud, r.getDepartmentTake().getDepartmentId());
+            HttpStatus accessDepTo = departmentService.departmentAccess(cud, r.getDepartmentBack().getDepartmentId());
+
+            return accessDepFrom == HttpStatus.FORBIDDEN && accessDepTo == HttpStatus.FORBIDDEN;
         } catch (ResourceNotFoundException err) {
             return true;
         }
-
     }
 }
