@@ -114,7 +114,12 @@ public class ReservationService {
 
     public List<Reservation> getUserReservationsByDepartmentTake(Long customerId, Long departmentId) {
         return repository
-                .findAllByCustomerIdAndDepartmentId(customerId, departmentId);
+                .findAllByCustomerIdAndDepartmentTakeId(customerId, departmentId);
+    }
+
+    public List<Reservation> getUserReservationsByDepartmentBack(Long customerId, Long departmentId) {
+        return repository
+                .findAllByCustomerIdAndDepartmentBackId(customerId, departmentId);
     }
 
     public List<Reservation> findReservationsByDetails(SearchReservationsForm reservationsData) {

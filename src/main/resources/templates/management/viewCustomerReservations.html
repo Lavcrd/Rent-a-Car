@@ -17,7 +17,7 @@
     <div th:include="fragments/top::reg-options"></div>
 
     <div class="row">
-        <th:block th:if="${customer} != null">
+        <th:block>
             <div class="col-sm-3">
                 <table class="table table-borderless table-fixed">
                     <thead class="table-dark">
@@ -83,7 +83,8 @@
                             <td style="padding-left:0;">
                                 <button class="btn btn-dark bg-dark mt-2"
                                         type="submit" name="customer" th:value="${customer.getId()}">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person" viewBox="0 0 16 16">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                         class="bi bi-person" viewBox="0 0 16 16">
                                         <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0Zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4Zm-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10Z"/>
                                     </svg>
                                     Manage
@@ -96,29 +97,32 @@
             </div>
         </th:block>
 
-        <th:block th:if="${reservations} != null">
+        <th:block>
             <div class="col-sm-9">
-                <table class="table table-borderless table-hover table-fixed"
-                       style="text-align: center; vertical-align: middle;">
-                    <thead class="table-dark">
-                    <tr>
-                        <th scope="row">From</th>
-                        <th scope="row">To</th>
-                        <th scope="row">Period</th>
-                        <th scope="row">Status</th>
-                        <th scope="row"></th>
-                    </tr>
-                    </thead>
-                    <form th:action="@{/mg-res/reservation}" th:method="POST">
-                        <input type="hidden" th:if="${customer != null}" th:name="customer"
-                               th:value="${customer.getId()}">
-                        <tbody>
-                        <th:block th:if="${#lists.isEmpty(reservations)}">
+                <form th:action="@{/mg-res/reservation}" th:method="POST">
+                    <input type="hidden" th:if="${customer != null}" th:name="customer"
+                           th:value="${customer.getId()}">
+                    <table class="table table-borderless table-hover table-fixed"
+                           style="text-align: center; vertical-align: middle;">
+                        <thead class="table-dark">
+                        <tr>
+                            <th scope="row">From</th>
+                            <th scope="row">To</th>
+                            <th scope="row">Period</th>
+                            <th scope="row">Status</th>
+                            <th scope="row" style="position: relative;">
+                                <button onclick="swapContent('res_l', 'ret_l');" id="swap_button" class="btn btn-outline-light list-center-button btn-sm" type="button">Departure/Arrival</button>
+                            </th>
+                        </tr>
+                        </thead>
+
+                        <tbody id="res_l">
+                        <tr th:if="${#lists.isEmpty(reservations)}">
                             <td th:text="'—'"></td>
                             <td th:text="'—'"></td>
                             <td th:text="'—'"></td>
                             <td th:text="'—'"></td>
-                        </th:block>
+                        </tr>
                         <tr th:each="reservation: ${reservations}">
                             <td>
                                 <div class="overflow-cell-hidden"
@@ -141,8 +145,37 @@
                             </td>
                         </tr>
                         </tbody>
-                    </form>
-                </table>
+                        <tbody id="ret_l" style="display: none;">
+                        <tr th:if="${#lists.isEmpty(returns)}">
+                            <td th:text="'—'"></td>
+                            <td th:text="'—'"></td>
+                            <td th:text="'—'"></td>
+                            <td th:text="'—'"></td>
+                        </tr>
+                        <tr th:each="return: ${returns}">
+                            <td>
+                                <div class="overflow-cell-hidden"
+                                     th:utext="${return.getDepartmentTake().getCity()} + ', <br>' + ${return.getDepartmentTake().getAddress()}"></div>
+                            </td>
+                            <td>
+                                <div class="overflow-cell-hidden"
+                                     th:utext="${return.getDepartmentBack().getCity()} + ', <br>' + ${return.getDepartmentTake().getAddress()}"></div>
+                            </td>
+                            <td>
+                                <div class="overflow-cell-hidden"
+                                     th:utext="${return.getDateFrom()} + '<br> ⟶ ' + ${return.getDateTo()}"></div>
+                            </td>
+                            <td>
+                                <div class="overflow-cell-hidden" th:utext="${return.status.getText()}"></div>
+                            </td>
+                            <td>
+                                <button type="submit" class="btn btn-dark" th:text="Details" th:name="details_button"
+                                        th:value="${return.reservationId}"></button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </form>
             </div>
         </th:block>
         <div th:insert="fragments/bottom::message-handler"></div>

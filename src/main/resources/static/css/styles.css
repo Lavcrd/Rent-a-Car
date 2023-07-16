@@ -403,6 +403,13 @@ h2.address {
     white-space: nowrap;
 }
 
+.list-center-button {
+    position: absolute;
+    top: 50%;
+    white-space: nowrap;
+    transform: translate(-50%, -50%);
+}
+
 .button-cell {
     min-width: 12em;
     max-width: 12em;
