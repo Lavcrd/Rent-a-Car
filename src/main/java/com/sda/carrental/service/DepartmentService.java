@@ -40,7 +40,7 @@ public class DepartmentService {
         return departmentRepository.findDepartmentByCountryAndHq(country, true).orElse(new Department(Country.COUNTRY_PL, "—", "—", "—", "—", "—", true));
     }
 
-    public Department findDepartmentWhereId(long id) {
+    public Department findDepartmentWhereId(long id) throws ResourceNotFoundException {
         return departmentRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Department", "id", id));
     }
 

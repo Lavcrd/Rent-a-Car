@@ -23,6 +23,7 @@
 
                 <input type="hidden" name="customer" th:value="${customer}">
                 <input type="hidden" name="reservation" th:value="${reservation}">
+                <input type="hidden" name="department" th:value="${department}">
                 <input type="hidden" th:field="*{dateFrom}">
                 <input type="hidden" th:field="*{dateTo}">
                 <input type="hidden" th:field="*{departmentId}">
@@ -135,6 +136,7 @@
             <form th:action="@{/mg-res/reservation/{reservation}/select}" th:method="POST">
                 <input type="hidden" name="customer" th:value="${customer}">
                 <input type="hidden" name="reservation" th:value="${reservation}">
+                <input type="hidden" name="department" th:value="${department}">
 
                 <div th:each="car : ${cars}" id="car-list">
                     <div class="row">

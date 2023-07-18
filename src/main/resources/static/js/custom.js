@@ -1,4 +1,4 @@
-    //tooltip js from bootstrap instruction
+    //tooltip js from bootstrap docs
     $(function () {
         $('[data-toggle="tooltip"]').tooltip();
     });
