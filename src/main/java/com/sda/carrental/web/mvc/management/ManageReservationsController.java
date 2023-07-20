@@ -138,9 +138,16 @@ public class ManageReservationsController {
 
             map.addAttribute("confirmation_form", new ConfirmationForm());
             if (reservation.getStatus().equals(Reservation.ReservationStatus.STATUS_RESERVED)) {
-                map.addAttribute("rental_confirmation_form", new ConfirmRentalForm());
+                ConfirmRentalForm form = new ConfirmRentalForm();
+                form.setDateFrom(LocalDate.now());
+                map.addAttribute("rental_confirmation_form", form);
             } else if (reservation.getStatus().equals(Reservation.ReservationStatus.STATUS_PROGRESS)) {
                 map.addAttribute("rent_details", rentingService.findById(reservation.getReservationId()));
+                if (departmentId.equals(reservation.getDepartmentBack().getDepartmentId())) {
+                    ConfirmReturnForm form = new ConfirmReturnForm();
+                    form.setDateTo(LocalDate.now());
+                    map.addAttribute("return_confirmation_form", form);
+                }
             } else if (reservation.getStatus().equals(Reservation.ReservationStatus.STATUS_COMPLETED)) {
                 map.addAttribute("rent_details", rentingService.findById(reservation.getReservationId()));
                 map.addAttribute("return_details", returningService.findById(reservation.getReservationId()));
@@ -330,7 +337,7 @@ public class ManageReservationsController {
             return "redirect:/mg-res/reservation/{reservation}";
         }
 
-        HttpStatus response = rentingService.createRent(customerId, reservationId, form.getRemarks());
+        HttpStatus response = rentingService.createRent(customerId, reservationId, form);
 
         redAtt.addAttribute("reservation", reservationId);
         redAtt.addFlashAttribute("customer", customerId);

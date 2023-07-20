@@ -11,10 +11,10 @@ import javax.persistence.*;
 @Getter
 @NoArgsConstructor
 public class Renting {
-    public Renting(Long employeeId, Long reservationId, String remarks) {
+    public Renting(Long employeeId, Long reservationId, String remarks, LocalDate dateFrom) {
         this.rentId = reservationId;
         this.employeeId = employeeId;
-        this.dateFrom = LocalDate.now();
+        this.dateFrom = dateFrom;
         this.remarks = remarks;
     }
 

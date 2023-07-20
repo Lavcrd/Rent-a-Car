@@ -171,11 +171,11 @@ public class PredefiniedData implements CommandLineRunner {
     }
 
     private void createRent() {
-        rentingRepository.save(new Renting(12L, 1L, "N/D"));
-        rentingRepository.save(new Renting(13L, 2L, "N/D"));
-        rentingRepository.save(new Renting(14L, 3L, "N/D"));
-        rentingRepository.save(new Renting(14L, 4L, "N/D"));
-        rentingRepository.save(new Renting(13L, 5L, "N/D"));
+        rentingRepository.save(new Renting(12L, 1L, "N/D", LocalDate.now()));
+        rentingRepository.save(new Renting(13L, 2L, "N/D", LocalDate.now()));
+        rentingRepository.save(new Renting(14L, 3L, "N/D", LocalDate.now()));
+        rentingRepository.save(new Renting(14L, 4L, "N/D", LocalDate.now()));
+        rentingRepository.save(new Renting(13L, 5L, "N/D", LocalDate.now()));
     }
 
     private void createReturn() {

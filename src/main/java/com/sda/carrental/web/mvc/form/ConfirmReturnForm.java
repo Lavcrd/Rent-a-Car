@@ -10,10 +10,10 @@ import java.time.LocalDate;
 
 @Getter
 @Setter
-public class ConfirmRentalForm {
+public class ConfirmReturnForm {
     @NotEmpty(message = "Field must contain a valid date")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private LocalDate dateFrom;
+    private LocalDate dateTo;
 
     @NotEmpty(message = "Field must contain a statement or description")
     private String remarks;
