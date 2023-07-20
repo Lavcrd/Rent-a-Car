@@ -5,6 +5,7 @@ import com.sda.carrental.model.operational.Renting;
 import com.sda.carrental.model.operational.Reservation;
 import com.sda.carrental.repository.RentingRepository;
 import com.sda.carrental.service.auth.CustomUserDetails;
+import com.sda.carrental.web.mvc.form.ConfirmRentalForm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
@@ -19,12 +20,12 @@ public class RentingService {
     private final ReservationService reservationService;
 
     @Transactional
-    public HttpStatus createRent(Long customerId, Long reservationId, String remarks) {
+    public HttpStatus createRent(Long customerId, Long reservationId, ConfirmRentalForm form) {
         try {
             CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             HttpStatus status = reservationService.handleReservationStatus(customerId, reservationId, Reservation.ReservationStatus.STATUS_PROGRESS);
             if (status.equals(HttpStatus.ACCEPTED)) {
-                repository.save(new Renting(cud.getId(), reservationId, remarks));
+                repository.save(new Renting(cud.getId(), reservationId, form.getRemarks(), form.getDateFrom()));
             }
             return status;
         } catch (DataAccessException err) {
