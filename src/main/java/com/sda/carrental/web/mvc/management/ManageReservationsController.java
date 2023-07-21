@@ -54,13 +54,12 @@ public class ManageReservationsController {
             map.addAttribute("departmentsCountry", departmentService.findAllWhereCountry(employeeDepartments.get(0).getCountry()));
             map.addAttribute("reservationStatuses", Reservation.ReservationStatus.values());
 
-            if (map.containsKey("searchReservationsForm")) {
-                return "management/searchReservations";
-            } else {
+            if (!map.containsKey("searchReservationsForm")) {
                 SearchReservationsForm form = new SearchReservationsForm();
                 form.setDateFrom(LocalDate.now().minusWeeks(1));
                 form.setDateTo(LocalDate.now().plusWeeks(1));
                 map.addAttribute("searchReservationsForm", form);
+                map.addAttribute("isArrival", false);
             }
             return "management/searchReservations";
         } catch (ResourceNotFoundException | IndexOutOfBoundsException err) {
@@ -206,8 +205,8 @@ public class ManageReservationsController {
     }
 
     //Search reservations page buttons
-    @RequestMapping(value = "/search", method = RequestMethod.POST)
-    public String reservationSearchButton(@ModelAttribute("searchReservationsForm") SearchReservationsForm reservationsData, RedirectAttributes redAtt) {
+    @RequestMapping(value = "/search-departure", method = RequestMethod.POST)
+    public String reservationSearchDepartureButton(@ModelAttribute("searchReservationsForm") SearchReservationsForm reservationsData, RedirectAttributes redAtt) {
         try {
             CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             if (departmentService.departmentAccess(cud, reservationsData.getDepartmentTake()).equals(HttpStatus.FORBIDDEN)) {
@@ -217,8 +216,31 @@ public class ManageReservationsController {
 
             redAtt.addFlashAttribute("searchReservationsForm", reservationsData);
             redAtt.addFlashAttribute("departments", departmentService.getDepartmentsByRole(cud));
+            redAtt.addFlashAttribute("isArrival", false);
 
-            redAtt.addFlashAttribute("reservations", reservationService.findReservationsByDetails(reservationsData));
+            redAtt.addFlashAttribute("reservations", reservationService.findDeparturesByDetails(reservationsData));
+            return "redirect:/mg-res";
+        } catch (ResourceNotFoundException err) {
+            redAtt.addFlashAttribute("message", "An unexpected error occurred. Please try again.");
+            return "redirect:/";
+        }
+    }
+
+    @RequestMapping(value = "/search-arrival", method = RequestMethod.POST)
+    public String reservationSearchArrivalButton(@ModelAttribute("searchReservationsForm") SearchReservationsForm reservationsData, RedirectAttributes redAtt) {
+        try {
+            CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            if (departmentService.departmentAccess(cud, reservationsData.getDepartmentBack()).equals(HttpStatus.FORBIDDEN)) {
+                redAtt.addFlashAttribute("message", "Incorrect data provided. Search rejected.");
+                return "redirect:/mg-res";
+            }
+
+            redAtt.addFlashAttribute("searchReservationsForm", reservationsData);
+            redAtt.addFlashAttribute("departments", departmentService.getDepartmentsByRole(cud));
+            redAtt.addFlashAttribute("isArrival", true);
+
+
+            redAtt.addFlashAttribute("reservations", reservationService.findArrivalsByDetails(reservationsData));
             return "redirect:/mg-res";
         } catch (ResourceNotFoundException err) {
             redAtt.addFlashAttribute("message", "An unexpected error occurred. Please try again.");
