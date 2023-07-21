@@ -122,8 +122,16 @@ public class ReservationService {
                 .findAllByCustomerIdAndDepartmentBackId(customerId, departmentId);
     }
 
-    public List<Reservation> findReservationsByDetails(SearchReservationsForm reservationsData) {
-        return repository.findReservationByDetails(
+    public List<Reservation> findDeparturesByDetails(SearchReservationsForm reservationsData) {
+        return repository.findDeparturesByDetails(
+                reservationsData.getCustomerName(), reservationsData.getCustomerSurname(),
+                reservationsData.getDepartmentTake(), reservationsData.getDepartmentBack(),
+                reservationsData.getDateFrom(), reservationsData.getDateTo(),
+                reservationsData.getStatus());
+    }
+
+    public List<Reservation> findArrivalsByDetails(SearchReservationsForm reservationsData) {
+        return repository.findArrivalsByDetails(
                 reservationsData.getCustomerName(), reservationsData.getCustomerSurname(),
                 reservationsData.getDepartmentTake(), reservationsData.getDepartmentBack(),
                 reservationsData.getDateFrom(), reservationsData.getDateTo(),

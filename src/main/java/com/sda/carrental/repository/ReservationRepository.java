@@ -26,17 +26,35 @@ public interface ReservationRepository extends CrudRepository<Reservation, Long>
     List<Reservation> findAllActiveByCustomerId(@Param("customerId") Long customerId);
 
     @Query(value = "SELECT r FROM reservation r JOIN customer c ON c.id = r.customer.id " +
-            "WHERE r.departmentTake.departmentId = :departmentTake AND r.dateFrom >= :dateFrom " +
+            "WHERE r.departmentTake.departmentId = :departmentTake " +
+            "AND r.dateFrom >= :dateFrom " +
+            "AND r.dateFrom <= :dateTo " +
             "AND (:customerName IS NULL OR LOWER(c.name) LIKE LOWER(CONCAT(:customerName, '%'))) " +
             "AND (:customerSurname IS NULL OR LOWER(c.surname) LIKE LOWER(CONCAT(:customerSurname, '%'))) " +
             "AND (:departmentBack IS NULL OR r.departmentBack.departmentId = :departmentBack) " +
             "AND (:status IS NULL OR r.status = :status) " +
-            "AND (:dateTo IS NULL OR r.dateTo <= :dateTo) " +
             "GROUP BY r.id " +
             "ORDER BY r.dateFrom DESC")
-    List<Reservation> findReservationByDetails(
+    List<Reservation> findDeparturesByDetails(
             @Param("customerName") String customerName, @Param("customerSurname") String customerSurname,
             @Param("departmentTake") Long departmentTake, @Param("departmentBack") Long departmentBack,
             @Param("dateFrom") LocalDate dateFrom, @Param("dateTo") LocalDate dateTo,
             @Param("status") Reservation.ReservationStatus status);
+
+    @Query(value = "SELECT r FROM reservation r JOIN customer c ON c.id = r.customer.id " +
+            "WHERE r.departmentBack.departmentId = :departmentBack " +
+            "AND r.dateTo >= :dateFrom " +
+            "AND r.dateTo <= :dateTo " +
+            "AND (:customerName IS NULL OR LOWER(c.name) LIKE LOWER(CONCAT(:customerName, '%'))) " +
+            "AND (:customerSurname IS NULL OR LOWER(c.surname) LIKE LOWER(CONCAT(:customerSurname, '%'))) " +
+            "AND (:departmentTake IS NULL OR r.departmentTake.departmentId = :departmentTake) " +
+            "AND (:status IS NULL OR r.status = :status) " +
+            "GROUP BY r.id " +
+            "ORDER BY r.dateFrom DESC")
+    List<Reservation> findArrivalsByDetails(
+            @Param("customerName") String customerName, @Param("customerSurname") String customerSurname,
+            @Param("departmentTake") Long departmentTake, @Param("departmentBack") Long departmentBack,
+            @Param("dateFrom") LocalDate dateFrom, @Param("dateTo") LocalDate dateTo,
+            @Param("status") Reservation.ReservationStatus status);
+
 }

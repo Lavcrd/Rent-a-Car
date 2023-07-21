@@ -429,3 +429,15 @@ h2.address {
     text-align: left;
     margin-top: 2%;
 }
+
+.between-fields {
+    text-align: center;
+    display: flex;
+    align-items: center;
+    flex-shrink: 1 !important;
+}
+
+.c-input {
+    display: flex;
+    align-items: center;
+}
