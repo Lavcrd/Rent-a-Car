@@ -16,7 +16,7 @@ public interface CarRepository extends CrudRepository<Car, Long> {
             "SELECT c.carId " +
             "FROM car c " +
             "LEFT JOIN reservation r ON c.carId = r.car.carId " +
-            "WHERE c.department.departmentId = :department " +
+            "WHERE c.departmentId = :department " +
             "   AND c.carStatus <> 3 " +
             "   AND (" +
             "       r.reservationId IS NULL " +
@@ -35,7 +35,7 @@ public interface CarRepository extends CrudRepository<Car, Long> {
             "SELECT c.carId " +
             "FROM car c " +
             "LEFT JOIN reservation r ON c.carId = r.car.carId " +
-            "WHERE c.department.departmentId = :department " +
+            "WHERE c.departmentId = :department " +
             "   AND c.carStatus <> 3 " +
             "   AND (" +
             "       r.reservationId IS NULL " +
@@ -54,7 +54,7 @@ public interface CarRepository extends CrudRepository<Car, Long> {
             "SELECT c.carId " +
             "FROM car c " +
             "LEFT JOIN reservation r ON c.carId = r.car.carId " +
-            "WHERE c.department.departmentId = :department " +
+            "WHERE c.departmentId = :department " +
             "   AND c.carStatus <> 3 " +
             "   AND (" +
             "       r.reservationId IS NULL " +

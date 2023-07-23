@@ -19,6 +19,10 @@ public class RentingService {
     private final RentingRepository repository;
     private final ReservationService reservationService;
 
+    public Object findById(Long id) throws ResourceNotFoundException {
+        return repository.findById(id).orElseThrow(ResourceNotFoundException::new);
+    }
+
     @Transactional
     public HttpStatus createRent(Long customerId, Long reservationId, ConfirmRentalForm form) {
         try {
@@ -31,9 +35,5 @@ public class RentingService {
         } catch (DataAccessException err) {
             return HttpStatus.INTERNAL_SERVER_ERROR;
         }
-    }
-
-    public Object findById(Long id) throws ResourceNotFoundException {
-        return repository.findById(id).orElseThrow(ResourceNotFoundException::new);
     }
 }

@@ -11,7 +11,6 @@ import java.time.LocalDate;
 @Getter
 @Setter
 public class ConfirmRentalForm {
-    @NotEmpty(message = "Field must contain a valid date")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate dateFrom;
 

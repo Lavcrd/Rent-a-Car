@@ -123,4 +123,10 @@ public class CarService {
         car.setCarStatus(status);
         repository.save(car);
     }
+
+    @Transactional
+    public void updateCarLocation(Car car, Long departmentBack) {
+        car.setDepartmentId(departmentBack);
+        repository.save(car);
+    }
 }

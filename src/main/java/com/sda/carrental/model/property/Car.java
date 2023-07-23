@@ -10,8 +10,8 @@ import javax.persistence.*;
 @Getter
 @NoArgsConstructor
 public class Car {
-    public Car(Department department, String jpgLink, String brand, String model, Integer year, Long mileage, Integer seats, Double price_day, CarType carType, CarStatus carStatus, Double depositValue) {
-        this.department = department;
+    public Car (Long departmentId, String jpgLink, String brand, String model, Integer year, Long mileage, Integer seats, Double price_day, CarType carType, CarStatus carStatus, Double depositValue) {
+        this.departmentId = departmentId;
         this.jpgLink = jpgLink;
         this.brand = brand;
         this.model = model;
@@ -29,9 +29,9 @@ public class Car {
     @Column(name = "car_id", nullable = false)
     private Long carId;
 
-    @ManyToOne
-    @JoinColumn(name = "department_id", referencedColumnName = "department_id")
-    Department department;
+    @Setter
+    @Column(name = "department_id")
+    Long departmentId;
 
     @Setter
     @Column(name = "jpg_link")

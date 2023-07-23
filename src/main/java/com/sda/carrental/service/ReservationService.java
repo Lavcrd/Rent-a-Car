@@ -93,15 +93,20 @@ public class ReservationService {
                 updateReservationStatus(r, status);
                 return HttpStatus.ACCEPTED;
             } else if (status.equals(Reservation.ReservationStatus.STATUS_PROGRESS) && r.getStatus().equals(Reservation.ReservationStatus.STATUS_RESERVED)) {
-                Optional<PaymentDetails> payment = paymentDetailsService.getOptionalPaymentDetails(r);
                 if (verificationService.getOptionalVerificationByCustomer(r.getCustomer().getId()).isEmpty()) {
                     return HttpStatus.PRECONDITION_REQUIRED;
                 }
+                Optional<PaymentDetails> payment = paymentDetailsService.getOptionalPaymentDetails(r);
                 if (payment.isEmpty()) {
                     return HttpStatus.PAYMENT_REQUIRED;
                 }
                 paymentDetailsService.securePayment(payment.get());
                 carService.updateCarStatus(r.getCar(), Car.CarStatus.STATUS_RENTED);
+                updateReservationStatus(r, status);
+                return HttpStatus.ACCEPTED;
+            } else if (status.equals(Reservation.ReservationStatus.STATUS_COMPLETED) && r.getStatus().equals(Reservation.ReservationStatus.STATUS_PROGRESS)) {
+                carService.updateCarStatus(r.getCar(), Car.CarStatus.STATUS_OPEN);
+                carService.updateCarLocation(r.getCar(), r.getDepartmentBack().getDepartmentId());
                 updateReservationStatus(r, status);
                 return HttpStatus.ACCEPTED;
             }
