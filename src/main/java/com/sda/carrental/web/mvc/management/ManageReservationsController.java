@@ -377,6 +377,36 @@ public class ManageReservationsController {
         return "redirect:/mg-res/reservation/{reservation}";
     }
 
+    @RequestMapping(method = RequestMethod.POST, value = "/reservation/return")
+    public String reservationReturnButton(@ModelAttribute("return_confirmation_form") @Valid ConfirmReturnForm form, Errors err, RedirectAttributes redAtt, @RequestParam("reservation") Long reservationId, @RequestParam("customer") Long customerId, @RequestParam("department") Long departmentId) {
+        CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (userService.hasNoAccessToUserReservation(cud, customerId, reservationId)) {
+            redAtt.addFlashAttribute("message", "Access rejected.");
+            return "redirect:/mg-res";
+        }
+
+        if (err.hasErrors()) {
+            redAtt.addAttribute("reservation", reservationId);
+            redAtt.addFlashAttribute("customer", customerId);
+            redAtt.addFlashAttribute("department", departmentId);
+            redAtt.addFlashAttribute("message", err.getAllErrors().get(0).getDefaultMessage());
+            return "redirect:/mg-res/reservation/{reservation}";
+        }
+
+        HttpStatus response = returningService.createReturn(customerId, reservationId, form);
+
+        redAtt.addAttribute("reservation", reservationId);
+        redAtt.addFlashAttribute("customer", customerId);
+        redAtt.addFlashAttribute("department", departmentId);
+
+        if (response.equals(HttpStatus.ACCEPTED)) {
+            redAtt.addFlashAttribute("message", "Return completed successfully!");
+        } else {
+            redAtt.addFlashAttribute("message", "An unexpected error occurred. Please try again later.");
+        }
+        return "redirect:/mg-res/reservation/{reservation}";
+    }
+
     @RequestMapping(method = RequestMethod.POST, value = "/reservation/car")
     public String reservationCarButton(RedirectAttributes redAtt, @RequestParam("reservation") Long reservationId, @RequestParam("customer") Long customerId, @RequestParam("department") Long departmentId) {
         redAtt.addAttribute("reservation", reservationId);

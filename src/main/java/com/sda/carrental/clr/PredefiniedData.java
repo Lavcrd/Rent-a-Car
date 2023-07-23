@@ -117,40 +117,40 @@ public class PredefiniedData implements CommandLineRunner {
     }
 
     private void createCars() {
-        carRepository.save(new Car(departmentRepository.findById(1L).orElse(null), "https://cdn2.rcstatic.com/images/car_images/web/fiat/500_lrg.jpg", "Fiat", "Fiat 500", 2007, 150000L, 2, 85.0, Car.CarType.TYPE_HATCHBACK, Car.CarStatus.STATUS_OPEN, 750.0));
-        carRepository.save(new Car(departmentRepository.findById(1L).orElse(null), "/cars/bmw3.jpg", "BMW", "F34", 2013, 140000L, 5, 95.0, Car.CarType.TYPE_HATCHBACK, Car.CarStatus.STATUS_OPEN, 1500.0));
-        carRepository.save(new Car(departmentRepository.findById(1L).orElse(null), "/cars/yaris.png", "Toyota", "Yaris", 1999, 130000L, 4, 102.0, Car.CarType.TYPE_HATCHBACK, Car.CarStatus.STATUS_OPEN, 1500.0));
-        carRepository.save(new Car(departmentRepository.findById(1L).orElse(null), "/cars/hyundai-elantra.jpg", "Hyundai", "Lantra", 1990, 120000L, 5, 81.0, Car.CarType.TYPE_COMPACT, Car.CarStatus.STATUS_UNAVAILABLE, 500.0));
+        carRepository.save(new Car(1L, "https://cdn2.rcstatic.com/images/car_images/web/fiat/500_lrg.jpg", "Fiat", "Fiat 500", 2007, 150000L, 2, 85.0, Car.CarType.TYPE_HATCHBACK, Car.CarStatus.STATUS_OPEN, 750.0));
+        carRepository.save(new Car(1L, "/cars/bmw3.jpg", "BMW", "F34", 2013, 140000L, 5, 95.0, Car.CarType.TYPE_HATCHBACK, Car.CarStatus.STATUS_OPEN, 1500.0));
+        carRepository.save(new Car(1L, "/cars/yaris.png", "Toyota", "Yaris", 1999, 130000L, 4, 102.0, Car.CarType.TYPE_HATCHBACK, Car.CarStatus.STATUS_OPEN, 1500.0));
+        carRepository.save(new Car(1L, "/cars/hyundai-elantra.jpg", "Hyundai", "Lantra", 1990, 120000L, 5, 81.0, Car.CarType.TYPE_COMPACT, Car.CarStatus.STATUS_UNAVAILABLE, 500.0));
 
-        carRepository.save(new Car(departmentRepository.findById(2L).orElse(null), "https://cdn2.rcstatic.com/images/car_images/web/fiat/500_lrg.jpg", "Fiat", "Fiat 500", 2007, 150000L, 2, 86.0, Car.CarType.TYPE_HATCHBACK, Car.CarStatus.STATUS_UNAVAILABLE, 750.0));
-        carRepository.save(new Car(departmentRepository.findById(2L).orElse(null), "/cars/bmw3.jpg", "BMW", "F34", 2013, 140000L, 5, 90.0, Car.CarType.TYPE_HATCHBACK, Car.CarStatus.STATUS_OPEN, 1500.0));
-        carRepository.save(new Car(departmentRepository.findById(2L).orElse(null), "/cars/yaris.png", "Toyota", "Yaris", 1999, 130000L, 4, 90.0, Car.CarType.TYPE_HATCHBACK, Car.CarStatus.STATUS_RENTED, 1500.0));
-        carRepository.save(new Car(departmentRepository.findById(2L).orElse(null), "/cars/hyundai-elantra.jpg", "Hyundai", "Lantra", 1990, 120000L, 5, 82.0, Car.CarType.TYPE_COMPACT, Car.CarStatus.STATUS_OPEN, 500.0));
+        carRepository.save(new Car(2L, "https://cdn2.rcstatic.com/images/car_images/web/fiat/500_lrg.jpg", "Fiat", "Fiat 500", 2007, 150000L, 2, 86.0, Car.CarType.TYPE_HATCHBACK, Car.CarStatus.STATUS_UNAVAILABLE, 750.0));
+        carRepository.save(new Car(2L, "/cars/bmw3.jpg", "BMW", "F34", 2013, 140000L, 5, 90.0, Car.CarType.TYPE_HATCHBACK, Car.CarStatus.STATUS_OPEN, 1500.0));
+        carRepository.save(new Car(2L, "/cars/yaris.png", "Toyota", "Yaris", 1999, 130000L, 4, 90.0, Car.CarType.TYPE_HATCHBACK, Car.CarStatus.STATUS_RENTED, 1500.0));
+        carRepository.save(new Car(2L, "/cars/hyundai-elantra.jpg", "Hyundai", "Lantra", 1990, 120000L, 5, 82.0, Car.CarType.TYPE_COMPACT, Car.CarStatus.STATUS_OPEN, 500.0));
 
-        carRepository.save(new Car(departmentRepository.findById(3L).orElse(null), "https://cdn2.rcstatic.com/images/car_images/web/fiat/500_lrg.jpg", "Fiat", "Fiat 500", 2007, 150000L, 2, 88.0, Car.CarType.TYPE_HATCHBACK, Car.CarStatus.STATUS_OPEN, 750.0));
-        carRepository.save(new Car(departmentRepository.findById(3L).orElse(null), "/cars/bmw3.jpg", "BMW", "F34", 2013, 140000L, 5, 100.0, Car.CarType.TYPE_HATCHBACK, Car.CarStatus.STATUS_RENTED, 1500.0));
-        carRepository.save(new Car(departmentRepository.findById(3L).orElse(null), "/cars/yaris.png", "Toyota", "Yaris", 1999, 130000L, 4, 100.0, Car.CarType.TYPE_HATCHBACK, Car.CarStatus.STATUS_OPEN, 1500.0));
-        carRepository.save(new Car(departmentRepository.findById(3L).orElse(null), "/cars/hyundai-elantra.jpg", "Hyundai", "Lantra", 1990, 120000L, 5, 84.0, Car.CarType.TYPE_COMPACT, Car.CarStatus.STATUS_UNAVAILABLE, 1000.0));
+        carRepository.save(new Car(3L, "https://cdn2.rcstatic.com/images/car_images/web/fiat/500_lrg.jpg", "Fiat", "Fiat 500", 2007, 150000L, 2, 88.0, Car.CarType.TYPE_HATCHBACK, Car.CarStatus.STATUS_OPEN, 750.0));
+        carRepository.save(new Car(3L, "/cars/bmw3.jpg", "BMW", "F34", 2013, 140000L, 5, 100.0, Car.CarType.TYPE_HATCHBACK, Car.CarStatus.STATUS_RENTED, 1500.0));
+        carRepository.save(new Car(3L, "/cars/yaris.png", "Toyota", "Yaris", 1999, 130000L, 4, 100.0, Car.CarType.TYPE_HATCHBACK, Car.CarStatus.STATUS_OPEN, 1500.0));
+        carRepository.save(new Car(3L, "/cars/hyundai-elantra.jpg", "Hyundai", "Lantra", 1990, 120000L, 5, 84.0, Car.CarType.TYPE_COMPACT, Car.CarStatus.STATUS_UNAVAILABLE, 1000.0));
 
-        carRepository.save(new Car(departmentRepository.findById(4L).orElse(null), "https://cdn2.rcstatic.com/images/car_images/web/fiat/500_lrg.jpg", "Fiat", "Fiat 500", 2007, 150000L, 2, 89.0, Car.CarType.TYPE_HATCHBACK, Car.CarStatus.STATUS_OPEN, 750.0));
-        carRepository.save(new Car(departmentRepository.findById(4L).orElse(null), "/cars/bmw3.jpg", "BMW", "F34", 2013, 140000L, 5, 98.0, Car.CarType.TYPE_HATCHBACK, Car.CarStatus.STATUS_OPEN, 1500.0));
-        carRepository.save(new Car(departmentRepository.findById(4L).orElse(null), "/cars/yaris.png", "Toyota", "Yaris", 1999, 130000L, 4, 99.0, Car.CarType.TYPE_HATCHBACK, Car.CarStatus.STATUS_OPEN, 1500.0));
-        carRepository.save(new Car(departmentRepository.findById(4L).orElse(null), "/cars/hyundai-elantra.jpg", "Hyundai", "Lantra", 1990, 120000L, 5, 84.0, Car.CarType.TYPE_COMPACT, Car.CarStatus.STATUS_UNAVAILABLE, 500.0));
+        carRepository.save(new Car(4L, "https://cdn2.rcstatic.com/images/car_images/web/fiat/500_lrg.jpg", "Fiat", "Fiat 500", 2007, 150000L, 2, 89.0, Car.CarType.TYPE_HATCHBACK, Car.CarStatus.STATUS_OPEN, 750.0));
+        carRepository.save(new Car(4L, "/cars/bmw3.jpg", "BMW", "F34", 2013, 140000L, 5, 98.0, Car.CarType.TYPE_HATCHBACK, Car.CarStatus.STATUS_OPEN, 1500.0));
+        carRepository.save(new Car(4L, "/cars/yaris.png", "Toyota", "Yaris", 1999, 130000L, 4, 99.0, Car.CarType.TYPE_HATCHBACK, Car.CarStatus.STATUS_OPEN, 1500.0));
+        carRepository.save(new Car(4L, "/cars/hyundai-elantra.jpg", "Hyundai", "Lantra", 1990, 120000L, 5, 84.0, Car.CarType.TYPE_COMPACT, Car.CarStatus.STATUS_UNAVAILABLE, 500.0));
 
-        carRepository.save(new Car(departmentRepository.findById(5L).orElse(null), "https://cdn2.rcstatic.com/images/car_images/web/fiat/500_lrg.jpg", "Fiat", "Fiat 500", 2007, 150000L, 2, 82.0, Car.CarType.TYPE_HATCHBACK, Car.CarStatus.STATUS_OPEN, 750.0));
-        carRepository.save(new Car(departmentRepository.findById(5L).orElse(null), "/cars/bmw3.jpg", "BMW", "F34", 2013, 140000L, 5, 90.0, Car.CarType.TYPE_HATCHBACK, Car.CarStatus.STATUS_OPEN, 2000.0));
-        carRepository.save(new Car(departmentRepository.findById(5L).orElse(null), "/cars/yaris.png", "Toyota", "Yaris", 1999, 130000L, 4, 90.0, Car.CarType.TYPE_HATCHBACK, Car.CarStatus.STATUS_RENTED, 2000.0));
-        carRepository.save(new Car(departmentRepository.findById(5L).orElse(null), "/cars/hyundai-elantra.jpg", "Hyundai", "Lantra", 1990, 120000L, 5, 82.0, Car.CarType.TYPE_COMPACT, Car.CarStatus.STATUS_UNAVAILABLE, 1000.0));
+        carRepository.save(new Car(5L, "https://cdn2.rcstatic.com/images/car_images/web/fiat/500_lrg.jpg", "Fiat", "Fiat 500", 2007, 150000L, 2, 82.0, Car.CarType.TYPE_HATCHBACK, Car.CarStatus.STATUS_OPEN, 750.0));
+        carRepository.save(new Car(5L, "/cars/bmw3.jpg", "BMW", "F34", 2013, 140000L, 5, 90.0, Car.CarType.TYPE_HATCHBACK, Car.CarStatus.STATUS_OPEN, 2000.0));
+        carRepository.save(new Car(5L, "/cars/yaris.png", "Toyota", "Yaris", 1999, 130000L, 4, 90.0, Car.CarType.TYPE_HATCHBACK, Car.CarStatus.STATUS_RENTED, 2000.0));
+        carRepository.save(new Car(5L, "/cars/hyundai-elantra.jpg", "Hyundai", "Lantra", 1990, 120000L, 5, 82.0, Car.CarType.TYPE_COMPACT, Car.CarStatus.STATUS_UNAVAILABLE, 1000.0));
 
-        carRepository.save(new Car(departmentRepository.findById(6L).orElse(null), "https://cdn2.rcstatic.com/images/car_images/web/fiat/500_lrg.jpg", "Fiat", "Fiat 500", 2007, 150000L, 2, 81.0, Car.CarType.TYPE_HATCHBACK, Car.CarStatus.STATUS_OPEN, 750.0));
-        carRepository.save(new Car(departmentRepository.findById(6L).orElse(null), "/cars/hyundai-elantra.jpg", "Hyundai", "Lantra", 1990, 120000L, 5, 95.0, Car.CarType.TYPE_COMPACT, Car.CarStatus.STATUS_UNAVAILABLE, 2000.0));
-        carRepository.save(new Car(departmentRepository.findById(6L).orElse(null), "/cars/bmw3.jpg", "BMW", "F34", 2013, 140000L, 5, 100.0, Car.CarType.TYPE_HATCHBACK, Car.CarStatus.STATUS_RENTED, 2000.0));
-        carRepository.save(new Car(departmentRepository.findById(6L).orElse(null), "/cars/yaris.png", "Toyota", "Yaris", 1999, 130000L, 4, 81.0, Car.CarType.TYPE_HATCHBACK, Car.CarStatus.STATUS_OPEN, 500.0));
+        carRepository.save(new Car(6L, "https://cdn2.rcstatic.com/images/car_images/web/fiat/500_lrg.jpg", "Fiat", "Fiat 500", 2007, 150000L, 2, 81.0, Car.CarType.TYPE_HATCHBACK, Car.CarStatus.STATUS_OPEN, 750.0));
+        carRepository.save(new Car(6L, "/cars/hyundai-elantra.jpg", "Hyundai", "Lantra", 1990, 120000L, 5, 95.0, Car.CarType.TYPE_COMPACT, Car.CarStatus.STATUS_UNAVAILABLE, 2000.0));
+        carRepository.save(new Car(6L, "/cars/bmw3.jpg", "BMW", "F34", 2013, 140000L, 5, 100.0, Car.CarType.TYPE_HATCHBACK, Car.CarStatus.STATUS_RENTED, 2000.0));
+        carRepository.save(new Car(6L, "/cars/yaris.png", "Toyota", "Yaris", 1999, 130000L, 4, 81.0, Car.CarType.TYPE_HATCHBACK, Car.CarStatus.STATUS_OPEN, 500.0));
 
-        carRepository.save(new Car(departmentRepository.findById(7L).orElse(null), "https://cdn2.rcstatic.com/images/car_images/web/fiat/500_lrg.jpg", "Fiat", "Fiat 500", 2007, 150000L, 2, 88.0, Car.CarType.TYPE_HATCHBACK, Car.CarStatus.STATUS_OPEN, 750.0));
-        carRepository.save(new Car(departmentRepository.findById(7L).orElse(null), "/cars/hyundai-elantra.jpg", "Hyundai", "Lantra", 1990, 120000L, 5, 100.0, Car.CarType.TYPE_COMPACT, Car.CarStatus.STATUS_UNAVAILABLE, 2000.0));
-        carRepository.save(new Car(departmentRepository.findById(7L).orElse(null), "/cars/bmw3.jpg", "BMW", "F34", 2013, 140000L, 5, 95.0, Car.CarType.TYPE_HATCHBACK, Car.CarStatus.STATUS_OPEN, 2000.0));
-        carRepository.save(new Car(departmentRepository.findById(7L).orElse(null), "/cars/yaris.png", "Toyota", "Yaris", 1999, 130000L, 4, 82.0, Car.CarType.TYPE_HATCHBACK, Car.CarStatus.STATUS_RENTED, 500.0));
+        carRepository.save(new Car(7L, "https://cdn2.rcstatic.com/images/car_images/web/fiat/500_lrg.jpg", "Fiat", "Fiat 500", 2007, 150000L, 2, 88.0, Car.CarType.TYPE_HATCHBACK, Car.CarStatus.STATUS_OPEN, 750.0));
+        carRepository.save(new Car(7L, "/cars/hyundai-elantra.jpg", "Hyundai", "Lantra", 1990, 120000L, 5, 100.0, Car.CarType.TYPE_COMPACT, Car.CarStatus.STATUS_UNAVAILABLE, 2000.0));
+        carRepository.save(new Car(7L, "/cars/bmw3.jpg", "BMW", "F34", 2013, 140000L, 5, 95.0, Car.CarType.TYPE_HATCHBACK, Car.CarStatus.STATUS_OPEN, 2000.0));
+        carRepository.save(new Car(7L, "/cars/yaris.png", "Toyota", "Yaris", 1999, 130000L, 4, 82.0, Car.CarType.TYPE_HATCHBACK, Car.CarStatus.STATUS_RENTED, 500.0));
     }
 
     private void createReservation() {
