@@ -7,14 +7,18 @@ import com.sda.carrental.model.property.Car;
 import com.sda.carrental.model.property.Department;
 import com.sda.carrental.model.property.PaymentDetails;
 import com.sda.carrental.model.users.Customer;
+import com.sda.carrental.model.users.auth.Verification;
 import com.sda.carrental.repository.ReservationRepository;
+import com.sda.carrental.service.auth.CustomUserDetails;
 import com.sda.carrental.web.mvc.form.IndexForm;
+import com.sda.carrental.web.mvc.form.LocalReservationForm;
 import com.sda.carrental.web.mvc.form.SearchReservationsForm;
 import com.sda.carrental.web.mvc.form.SelectCarForm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import java.util.List;
 import java.util.Optional;
@@ -45,7 +49,7 @@ public class ReservationService {
                     index.getDateFrom(), index.getDateTo(),
                     index.getDateCreated());
 
-            //payment method here linked with methods below this comment vvv
+            //payment method here linked with methods below this comment vvv + differ it for customer/employee process
             reservation.setStatus(Reservation.ReservationStatus.STATUS_RESERVED);
             repository.save(reservation);
             // ^^^
@@ -159,5 +163,27 @@ public class ReservationService {
 
     public boolean hasActiveReservations(Long customerId) {
         return !repository.findAllActiveByCustomerId(customerId).isEmpty();
+    }
+
+    @Transactional
+    public HttpStatus createLocalReservation(CustomUserDetails cud, LocalReservationForm form) {
+        try {
+            HttpStatus hasAccess = departmentService.departmentAccess(cud, form.getReservationForm().getIndexData().getDepartmentIdFrom());
+            if (hasAccess.equals(HttpStatus.FORBIDDEN)) return HttpStatus.FORBIDDEN;
+
+            Optional<Verification> verification = verificationService.findOptionalVerificationByIds(form.getPersonalId(), form.getDriverId());
+            if (verification.isEmpty()) {
+                Customer customer = customerService.createGuest(form);
+                verificationService.createVerification(customer.getId(), form.getPersonalId(), form.getDriverId());
+                createReservation(customer.getId(), form.getReservationForm());
+            } else {
+                createReservation(verification.get().getCustomerId(), form.getReservationForm());
+            }
+
+            return HttpStatus.CREATED;
+        } catch (RuntimeException err) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            return HttpStatus.INTERNAL_SERVER_ERROR;
+        }
     }
 }

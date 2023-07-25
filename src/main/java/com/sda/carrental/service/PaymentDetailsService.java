@@ -24,13 +24,12 @@ public class PaymentDetailsService {
         long days = reservation.getDateFrom().until(reservation.getDateTo(), ChronoUnit.DAYS) + 1;
 
         double rawValue = days * reservation.getCar().getPrice_day();
-        double payment = rawValue;
         double depositValue = reservation.getCar().getDepositValue();
         if (!reservation.getDepartmentBack().equals(reservation.getDepartmentTake())) {
-            payment += cv.getDeptReturnPriceDiff();
+            double payment = rawValue + cv.getDeptReturnPriceDiff();
             repository.save(new PaymentDetails(rawValue, cv.getDeptReturnPriceDiff(), depositValue, payment, depositValue, reservation));
         } else {
-            repository.save(new PaymentDetails(rawValue, 0.0, depositValue, payment, depositValue, reservation));
+            repository.save(new PaymentDetails(rawValue, 0.0, depositValue, rawValue, depositValue, reservation));
         }
     }
 

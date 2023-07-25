@@ -71,7 +71,7 @@ public class ReservationController {
     }
 
     //Reservation summary buttons
-    @RequestMapping(value="/confirm", method = RequestMethod.POST)
+    @RequestMapping(value = "/confirm", method = RequestMethod.POST)
     public String reservationConfirmationButton(@ModelAttribute("reservationData") SelectCarForm form, RedirectAttributes redAtt) {
         CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
@@ -79,8 +79,8 @@ public class ReservationController {
         if (cud.getAuthorities().contains(new SimpleGrantedAuthority(User.Roles.ROLE_CUSTOMER.name()))) {
             status = resService.createReservation(cud.getId(), form);
         } else {
-            redAtt.addFlashAttribute("message", "Action is not allowed for employees.");
-            return "redirect:/";
+            redAtt.addFlashAttribute("reservationDetails", form);
+            return "redirect:/loc-res";
         }
 
         if (status == HttpStatus.CREATED) {
@@ -95,7 +95,7 @@ public class ReservationController {
         }
     }
 
-    @RequestMapping(value="/back", method = RequestMethod.POST)
+    @RequestMapping(value = "/back", method = RequestMethod.POST)
     public String reservationBackButton(@ModelAttribute("reservationData") SelectCarForm form, RedirectAttributes redAtt) {
         redAtt.addFlashAttribute("indexData", form.getIndexData());
         return "redirect:/cars";

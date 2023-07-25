@@ -5,6 +5,7 @@ import com.sda.carrental.model.users.Customer;
 import com.sda.carrental.repository.CustomerRepository;
 import com.sda.carrental.service.mappers.CustomerMapper;
 import com.sda.carrental.web.mvc.form.ChangeAddressForm;
+import com.sda.carrental.web.mvc.form.LocalReservationForm;
 import com.sda.carrental.web.mvc.form.RegisterCustomerForm;
 import com.sda.carrental.web.mvc.form.SearchCustomerForm;
 import lombok.RequiredArgsConstructor;
@@ -103,5 +104,15 @@ public class CustomerService {
         if (customersData.getName().isEmpty()) customersData.setName(null);
         if (customersData.getSurname().isEmpty()) customersData.setSurname(null);
         return repository.findCustomersByDepartmentAndName(customersData.getDepartmentId(), customersData.getName(), customersData.getSurname());
+    }
+
+    @Transactional
+    public Customer createGuest(LocalReservationForm form) {
+        Customer customer = CustomerMapper.toGuestEntity(form);
+        return repository.save(customer);
+    }
+
+    public Customer findCustomerByVerification(String personalId, String driverId) {
+        return repository.findByVerification(personalId, driverId).orElseThrow(ResourceNotFoundException::new);
     }
 }
