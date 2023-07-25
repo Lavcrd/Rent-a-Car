@@ -22,9 +22,9 @@ public class Verification {
     @Column(name = "customer_id", unique = true)
     private Long customerId;
 
-    @Column(name = "personal_id", unique = true)
+    @Column(name = "personal_id")
     private String personalId;
 
-    @Column(name = "driver_id", unique = true)
+    @Column(name = "driver_id")
     private String driverId;
 }

@@ -48,4 +48,13 @@ public class VerificationService {
             return HttpStatus.CONFLICT;
         }
     }
+
+    @Transactional
+    public void createVerification(Long customerId, String personalId, String driverId) {
+        repository.save(new Verification(customerId, personalId, driverId));
+    }
+
+    public Optional<Verification> findOptionalVerificationByIds(String personalId, String driverId) {
+        return repository.findByVerificationFields(personalId, driverId);
+    }
 }
