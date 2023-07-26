@@ -33,10 +33,10 @@ public class LocalReservationForm {
     @Length(min = 1, max = 50, message = "Please enter a valid address.")
     private String address;
 
-    @Pattern(regexp = ".{4,}")
+    @Pattern(regexp = ".{4,}", message = "Must contain minimum 4 characters.")
     private String personalId;
 
-    @Pattern(regexp = ".{4,}")
+    @Pattern(regexp = ".{4,}", message = "Must contain minimum 4 characters.")
     private String driverId;
 
     private SelectCarForm reservationForm;

@@ -178,6 +178,7 @@ public class ReservationService {
                 createReservation(customer.getId(), form.getReservationForm());
             } else {
                 createReservation(verification.get().getCustomerId(), form.getReservationForm());
+                customerService.updateCustomerContactData(verification.get().getCustomerId(), form);
             }
 
             return HttpStatus.CREATED;

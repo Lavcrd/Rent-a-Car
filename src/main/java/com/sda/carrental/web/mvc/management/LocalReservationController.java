@@ -3,6 +3,7 @@ package com.sda.carrental.web.mvc.management;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.sda.carrental.exceptions.IllegalActionException;
 import com.sda.carrental.exceptions.ResourceNotFoundException;
 import com.sda.carrental.global.enums.Country;
 import com.sda.carrental.model.users.Customer;
@@ -36,6 +37,7 @@ public class LocalReservationController {
     public String localReservationPage(final ModelMap map, @ModelAttribute("reservationDetails") SelectCarForm form, RedirectAttributes redAtt) {
         try {
             CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            if (form.getIndexData() == null) throw new IllegalActionException();
             if (departmentService.departmentAccess(cud, form.getIndexData().getDepartmentIdFrom()).equals(HttpStatus.FORBIDDEN)) {
                 redAtt.addFlashAttribute("message", "Inaccessible department.");
                 return "redirect:/";
@@ -51,13 +53,16 @@ public class LocalReservationController {
         } catch (JsonProcessingException | ResourceNotFoundException err) {
             redAtt.addFlashAttribute("message", "An unexpected error occurred. Please try again later.");
             return "redirect:/";
+        } catch (IllegalActionException err) {
+            redAtt.addFlashAttribute("message", "Action not allowed.");
+            return "redirect:/";
         }
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/create")
-    public String proceedButton(final ModelMap map, @ModelAttribute("localReservation") @Valid LocalReservationForm form, @RequestParam("reservationData") String reservationData, RedirectAttributes redAtt, Errors err) {
+    public String proceedButton(@ModelAttribute("localReservation") @Valid LocalReservationForm form, Errors errors, final ModelMap map, @RequestParam("reservationData") String reservationData, RedirectAttributes redAtt) {
         try {
-            if (err.hasErrors()) {
+            if (errors.hasErrors()) {
                 map.addAttribute("reservationData", reservationData);
                 map.addAttribute("localReservation", form);
                 map.addAttribute("countries", Country.values());
@@ -81,7 +86,7 @@ public class LocalReservationController {
             redAtt.addFlashAttribute("department", reservation.getIndexData().getDepartmentIdFrom());
             redAtt.addAttribute("customer", customer.getId());
             return "redirect:/mg-res/{customer}";
-        } catch (JsonProcessingException | ResourceNotFoundException e) {
+        } catch (JsonProcessingException | ResourceNotFoundException err) {
             redAtt.addFlashAttribute("message", "An unexpected error occurred. Please try again later.");
             return "redirect:/";
         }
