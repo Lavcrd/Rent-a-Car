@@ -9,6 +9,7 @@ import com.sda.carrental.web.mvc.form.LocalReservationForm;
 import com.sda.carrental.web.mvc.form.RegisterCustomerForm;
 import com.sda.carrental.web.mvc.form.SearchCustomerForm;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -114,5 +115,21 @@ public class CustomerService {
 
     public Customer findCustomerByVerification(String personalId, String driverId) {
         return repository.findByVerification(personalId, driverId).orElseThrow(ResourceNotFoundException::new);
+    }
+
+    @Transactional
+    public void updateCustomerContactData(Long customerId, LocalReservationForm form) {
+        try {
+            Customer customer = repository.findById(customerId).orElseThrow(ResourceNotFoundException::new);
+            if (customer.getStatus().equals(Customer.CustomerStatus.STATUS_REGISTERED)) return;
+            customer.setCountry(form.getCountry());
+            customer.setCity(form.getCity());
+            customer.setAddress(form.getAddress());
+            customer.setContactNumber(form.getContactNumber());
+            repository.save(customer);
+        } catch (ResourceNotFoundException | DataAccessException err) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+        }
+
     }
 }

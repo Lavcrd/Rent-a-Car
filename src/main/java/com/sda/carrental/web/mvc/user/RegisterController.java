@@ -1,7 +1,6 @@
 package com.sda.carrental.web.mvc.user;
 
 import com.sda.carrental.global.enums.Country;
-import com.sda.carrental.model.users.User;
 import com.sda.carrental.service.CustomerService;
 import com.sda.carrental.web.mvc.form.RegisterCustomerForm;
 import lombok.RequiredArgsConstructor;

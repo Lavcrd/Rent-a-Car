@@ -17,9 +17,9 @@ public class VerificationForm {
     @NotNull
     private Long customerId;
 
-    @Pattern(regexp = ".{4,}")
+    @Pattern(regexp = ".{4,}", message = "Must contain minimum 4 characters.")
     private String personalId;
 
-    @Pattern(regexp = ".{4,}")
+    @Pattern(regexp = ".{4,}", message = "Must contain minimum 4 characters.")
     private String driverId;
 }
