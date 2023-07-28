@@ -1,6 +1,5 @@
 package com.sda.carrental.web.mvc.form;
 
-import com.sda.carrental.global.enums.Country;
 import com.sda.carrental.web.mvc.form.validation.constraint.MatchingPassword;
 import com.sda.carrental.web.mvc.form.validation.constraint.UniqueUsername;
 import lombok.Getter;
@@ -8,10 +7,7 @@ import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.validator.constraints.Length;
 
-import javax.validation.constraints.Digits;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 
 @Getter
 @Setter
@@ -28,19 +24,8 @@ public class RegisterCustomerForm {
     private String surname;
 
     @NotBlank(message = "Contact field cannot be empty!")
-    @Size(min=7, max=15, message="Incorrect contact number size")
-    @Digits(integer = 15, fraction = 0, message="Incorrect contact number format")
+    @Pattern(regexp = "^\\+{0,1}[\\s\\d]{6,30}+$", message="Incorrect contact number format")
     private String contactNumber;
-
-    private Country country;
-
-    @NotBlank(message = "City field cannot be empty!")
-    @Length(min = 1, max = 50, message = "Please enter a valid city.")
-    private String city;
-
-    @NotBlank(message = "Address field cannot be empty!")
-    @Length(min = 1, max = 50, message = "Please enter a valid address.")
-    private String address;
 
     @NotBlank(message = "E-mail field cannot be empty!")
     @Email(message = "E-mail has incorrect format")

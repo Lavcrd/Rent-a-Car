@@ -26,10 +26,12 @@
                 </thead>
                 <tbody>
                 <tr>
-                    <td><span th:text="${customer.getCountry().getContactCode()} + ' '"></span><input
-                            id="contact_number" class="text-black bg-white" th:placeholder="'Enter your phone number'"
-                            th:type="text" th:field="*{contactNumber}"
-                            required/></td>
+                    <td>
+                        <input id="contact_number" class="text-black bg-white"
+                               th:placeholder="'Enter your phone number'"
+                               th:type="text" th:field="*{contactNumber}"
+                               required/>
+                    </td>
                 </tr>
                 <tr>
                     <td>

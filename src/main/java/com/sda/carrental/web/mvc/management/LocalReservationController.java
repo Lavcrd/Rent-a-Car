@@ -82,7 +82,7 @@ public class LocalReservationController {
                 return "redirect:/";
             }
 
-            Customer customer = customerService.findCustomerByVerification(form.getPersonalId(), form.getDriverId());
+            Customer customer = customerService.findCustomerByVerification(form.getCountry(), form.getPersonalId(), form.getDriverId());
             redAtt.addFlashAttribute("department", reservation.getIndexData().getDepartmentIdFrom());
             redAtt.addAttribute("customer", customer.getId());
             return "redirect:/mg-res/{customer}";

@@ -22,7 +22,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository repository;
-    private final VerificationService verificationService;
     private final CustomerService customerService;
     private final ReservationService reservationService;
     private final DepartmentService departmentService;
@@ -53,7 +52,6 @@ public class UserService {
                 if (reservationService.hasActiveReservations(userId)) {
                     throw new IllegalActionException();
                 }
-                verificationService.deleteVerification(userId);
                 credentialsService.deleteCredentials(user.get().getId());
                 return customerService.deleteCustomer(userId, reservationService.getCustomerReservations(userId).isEmpty());
             } else {

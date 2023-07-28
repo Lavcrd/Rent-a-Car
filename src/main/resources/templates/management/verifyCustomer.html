@@ -29,6 +29,20 @@
                 <tbody>
                 <tr>
                     <td>
+                        <label for="country" class="form-label">Country</label>
+                    </td>
+                    <td>
+                            <select id="country"
+                                    class="form-select" style="width: fit-content;"
+                                    th:field="*{country}" required>
+                                <div th:each="country:${countries}">
+                                    <option th:text="${country.getCountryName()}" th:value="${country}" th:field="*{country}"></option>
+                                </div>
+                            </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
                         <label for="personal_id" class="text-md">Personal ID</label>
                     </td>
                     <td><input id="personal_id" class="text-black bg-white" th:placeholder="'Personal ID'"
@@ -49,6 +63,7 @@
                 </tr>
                 </tbody>
             </table>
+            <div th:insert="fragments/bottom::form-error-handler"></div>
         </form>
         <div th:include="fragments/bottom::bottom-footer"></div>
         <div th:insert="fragments/bottom::message-handler"></div>

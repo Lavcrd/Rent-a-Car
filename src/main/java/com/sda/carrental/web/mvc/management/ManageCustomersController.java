@@ -1,6 +1,7 @@
 package com.sda.carrental.web.mvc.management;
 
 import com.sda.carrental.exceptions.ResourceNotFoundException;
+import com.sda.carrental.global.enums.Country;
 import com.sda.carrental.model.users.Customer;
 import com.sda.carrental.model.users.auth.Verification;
 import com.sda.carrental.service.*;
@@ -67,7 +68,7 @@ public class ManageCustomersController {
                 map.addAttribute("verification", verificationService.maskVerification(verification.get()));
                 map.addAttribute("unverifyConfirmationForm", new ConfirmationForm());
             } else {
-                map.addAttribute("verification", new Verification(customerId, "N/D", "N/D"));
+                map.addAttribute("verification", new Verification(customerId, Country.COUNTRY_NONE, "N/D", "N/D"));
             }
             if (!customer.getStatus().equals(Customer.CustomerStatus.STATUS_DELETED)) {
                 map.addAttribute("is_deleted", false);
@@ -91,6 +92,7 @@ public class ManageCustomersController {
         }
 
         map.addAttribute("verification_form", new VerificationForm(customerId));
+        map.addAttribute("countries", Country.values());
         return "management/verifyCustomer";
     }
 
@@ -207,13 +209,13 @@ public class ManageCustomersController {
 
     //Verification page buttons
     @RequestMapping(method = RequestMethod.POST, value = "/verify/create")
-    public String verifyConfirmButton(RedirectAttributes redAtt, @ModelAttribute("verification_form") @Valid VerificationForm form, Errors errors, @RequestParam("department") Long departmentId) {
+    public String verifyConfirmButton(ModelMap map, RedirectAttributes redAtt, @ModelAttribute("verification_form") @Valid VerificationForm form, Errors errors, @RequestParam("department") Long departmentId) {
         if (errors.hasErrors()) {
-            redAtt.addFlashAttribute("department", departmentId);
-            redAtt.addFlashAttribute("customer", form.getCustomerId());
-
-            redAtt.addFlashAttribute("message", "Provided values are incorrect.");
-            return "redirect:/mg-cus/verify";
+            map.addAttribute("department", departmentId);
+            map.addAttribute("customer", form.getCustomerId());
+            map.addAttribute("verification_form", form);
+            map.addAttribute("countries", Country.values());
+            return "management/verifyCustomer";
         }
 
         CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();

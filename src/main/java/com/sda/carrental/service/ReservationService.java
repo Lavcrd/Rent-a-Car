@@ -171,14 +171,14 @@ public class ReservationService {
             HttpStatus hasAccess = departmentService.departmentAccess(cud, form.getReservationForm().getIndexData().getDepartmentIdFrom());
             if (hasAccess.equals(HttpStatus.FORBIDDEN)) return HttpStatus.FORBIDDEN;
 
-            Optional<Verification> verification = verificationService.findOptionalVerificationByIds(form.getPersonalId(), form.getDriverId());
+            Optional<Verification> verification = verificationService.findOptionalVerification(form.getCountry(), form.getPersonalId(), form.getDriverId());
             if (verification.isEmpty()) {
                 Customer customer = customerService.createGuest(form);
-                verificationService.createVerification(customer.getId(), form.getPersonalId(), form.getDriverId());
+                verificationService.createVerification(customer.getId(), form.getCountry(), form.getPersonalId(), form.getDriverId());
                 createReservation(customer.getId(), form.getReservationForm());
             } else {
                 createReservation(verification.get().getCustomerId(), form.getReservationForm());
-                customerService.updateCustomerContactData(verification.get().getCustomerId(), form);
+                customerService.updateCustomerContact(verification.get().getCustomerId(), form.getContactNumber());
             }
 
             return HttpStatus.CREATED;

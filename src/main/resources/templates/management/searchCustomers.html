@@ -64,9 +64,7 @@
                 <thead class="table-dark">
                 <tr>
                     <th scope="row">Name</th>
-                    <th scope="row">Country</th>
                     <th scope="row">Number</th>
-                    <th scope="row">Address</th>
                     <th scope="row">Account type</th>
                     <th scope="row"></th>
                 </tr>
@@ -79,8 +77,6 @@
                         <td th:text="'—'"></td>
                         <td th:text="'—'"></td>
                         <td th:text="'—'"></td>
-                        <td th:text="'—'"></td>
-                        <td th:text="'—'"></td>
                     </th:block>
                     <tr th:each="customer: ${customers}">
                         <td>
@@ -88,15 +84,8 @@
                                  th:text="${customer.getName()} + ' ' + ${customer.getSurname()}"></div>
                         </td>
                         <td>
-                            <div class="overflow-cell-hs" th:text="${customer.getCountry().getCountryName()}"></div>
-                        </td>
-                        <td>
                             <div class="overflow-cell-hs"
-                                 th:text="'(' + ${customer.getCountry().getContactCode()} + ') ' + ${customer.getContactNumber()}"></div>
-                        </td>
-                        <td>
-                            <div class="overflow-cell-hidden"
-                                 th:utext="${customer.getCity()} + ',<br> ' + ${customer.getAddress()}"></div>
+                                 th:text="${customer.getContactNumber()}"></div>
                         </td>
                         <td>
                             <div class="overflow-cell-hs" th:text="${customer.getStatus().name().substring(7)}"></div>

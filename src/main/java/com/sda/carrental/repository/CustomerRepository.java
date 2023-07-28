@@ -1,5 +1,6 @@
 package com.sda.carrental.repository;
 
+import com.sda.carrental.global.enums.Country;
 import com.sda.carrental.model.users.Customer;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -18,6 +19,6 @@ public interface CustomerRepository extends CrudRepository<Customer, Long> {
     List<Customer> findCustomersByDepartmentAndName(@Param("departmentId") Long departmentId, @Param("name") String name, @Param("surname") String surname);
 
     @Query(value = "SELECT c FROM verification v LEFT JOIN customer c ON c.id = v.customerId " +
-            "WHERE v.personalId = :personalId AND v.driverId = :driverId")
-    Optional<Customer> findByVerification(@Param("personalId") String personalId, @Param("driverId") String driverId);
+            "WHERE v.personalId = :personalId AND v.driverId = :driverId AND v.country = :country")
+    Optional<Customer> findByVerification(@Param("country") Country country, @Param("personalId") String personalId, @Param("driverId") String driverId);
 }

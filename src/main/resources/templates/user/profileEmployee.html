@@ -27,7 +27,7 @@
             <tr>
                 <th scope="row">Name</th>
                 <td th:text="${user.getName()} + ' ' + ${user.getSurname()}"></td>
-                <td style="width: min-content;">
+                <td style="width: min-content; padding: 0;">
                     <a href="/profile/password" type="button" class="btn btn-dark w-100" th:text="'Change password'"></a>
                 </td>
             </tr>
