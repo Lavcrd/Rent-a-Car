@@ -40,7 +40,7 @@
             </tr>
             <tr>
                 <th scope="row">Contact number</th>
-                <td th:text="${user.getCountry().getContactCode()} + ' ' + ${user.getContactNumber()}"></td>
+                <td th:text="${user.getContactNumber()}"></td>
                 <td style="width: min-content;"><a href="/profile/contact" type="button" class="btn btn-dark w-100"
                                                    th:text="'Change contact number'"></a></td>
             </tr>
@@ -48,13 +48,6 @@
                 <th scope="row">E-mail</th>
                 <td th:text="${username}"></td>
                 <td style="width: min-content;"><a href="/profile/email" type="button" class="btn btn-dark w-100" th:text="'Change e-mail'"></a>
-                </td>
-            </tr>
-
-            <tr>
-                <th scope="row">Address</th>
-                <td th:text="${user.getCountry().getCode()} + ' — ' + ${user.getCity()} + ' ' + ${user.getAddress()}"></td>
-                <td style="width: min-content;"><a href="/profile/address" type="button" class="btn btn-dark w-100" th:text="'Change address'"></a>
                 </td>
             </tr>
             <tr>

@@ -1,5 +1,6 @@
 package com.sda.carrental.model.users.auth;
 
+import com.sda.carrental.global.enums.Country;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -12,8 +13,9 @@ import javax.persistence.*;
 @NoArgsConstructor
 public class Verification {
 
-    public Verification(Long customerId, String personalId, String driverId) {  //TODO should be encrypted
+    public Verification(Long customerId, Country country, String personalId, String driverId) {  //TODO should be encrypted
         this.customerId = customerId;
+        this.country = country;
         this.personalId = personalId;
         this.driverId = driverId;
     }
@@ -27,4 +29,7 @@ public class Verification {
 
     @Column(name = "driver_id")
     private String driverId;
+
+    @Column(name = "country")
+    private Country country;
 }

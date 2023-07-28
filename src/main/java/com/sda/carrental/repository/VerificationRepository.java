@@ -1,5 +1,6 @@
 package com.sda.carrental.repository;
 
+import com.sda.carrental.global.enums.Country;
 import com.sda.carrental.model.users.auth.Verification;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -11,6 +12,6 @@ public interface VerificationRepository extends CrudRepository<Verification, Lon
     Optional<Verification> findByCustomerId(Long customerId);
     void delete(Verification verification);
 
-    @Query(value = "SELECT v FROM verification v WHERE v.personalId = :personalId AND v.driverId = :driverId")
-    Optional<Verification> findByVerificationFields(@Param("personalId") String personalId, @Param("driverId") String driverId);
+    @Query(value = "SELECT v FROM verification v WHERE v.personalId = :personalId AND v.driverId = :driverId AND v.country = :country")
+    Optional<Verification> findByVerificationFields(@Param("country") Country country, @Param("personalId") String personalId, @Param("driverId") String driverId);
 }

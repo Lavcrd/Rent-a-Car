@@ -58,13 +58,13 @@ public class PredefiniedData implements CommandLineRunner {
     }
 
     private void createUsers() {
-        userRepository.save(new Customer("Anna", "Nazwiskowa", Country.COUNTRY_PL, "Kraków", Customer.CustomerStatus.STATUS_REGISTERED, "ul. Ulica 123", "123312891"));
-        userRepository.save(new Customer("Jakub", "Kowalski", Country.COUNTRY_PL, "Katowice", Customer.CustomerStatus.STATUS_REGISTERED, "ul. Ulica 12", "123312892"));
-        userRepository.save(new Customer("Maciek", "Masło", Country.COUNTRY_PL, "Gdynia", Customer.CustomerStatus.STATUS_REGISTERED, "ul. Ulica 1", "123312893"));
-        userRepository.save(new Customer("Jan", "Orzech", Country.COUNTRY_PL, "Gdańsk", Customer.CustomerStatus.STATUS_REGISTERED, "ul. Ulica 124", "123312894"));
-        userRepository.save(new Customer("Katarzyna", "Kasztan", Country.COUNTRY_PL, "Warszawa", Customer.CustomerStatus.STATUS_REGISTERED, "ul. Ulica 133", "123312895"));
-        userRepository.save(new Customer("Igor", "Kasztan", Country.COUNTRY_PL, "Białystok", Customer.CustomerStatus.STATUS_REGISTERED, "ul. Ulica 137", "123312896"));
-        userRepository.save(new Customer("Anna", "Kowalska", Country.COUNTRY_PL, "Opole", Customer.CustomerStatus.STATUS_REGISTERED, "ul. Ulica 138", "123312897"));
+        userRepository.save(new Customer("Anna", "Nazwiskowa", Customer.CustomerStatus.STATUS_REGISTERED, "123312891"));
+        userRepository.save(new Customer("Jakub", "Kowalski", Customer.CustomerStatus.STATUS_REGISTERED, "123312892"));
+        userRepository.save(new Customer("Maciek", "Masło", Customer.CustomerStatus.STATUS_REGISTERED, "123312893"));
+        userRepository.save(new Customer("Jan", "Orzech", Customer.CustomerStatus.STATUS_REGISTERED, "123312894"));
+        userRepository.save(new Customer("Katarzyna", "Kasztan", Customer.CustomerStatus.STATUS_REGISTERED, "123312895"));
+        userRepository.save(new Customer("Igor", "Kasztan", Customer.CustomerStatus.STATUS_REGISTERED, "123312896"));
+        userRepository.save(new Customer("Anna", "Kowalska", Customer.CustomerStatus.STATUS_REGISTERED, "123312897"));
 
 
         userRepository.save(new Manager("Maria", "Fajna", departmentRepository.findById(1L).orElse(null), LocalDate.ofYearDay(9999, 1)));
@@ -191,6 +191,6 @@ public class PredefiniedData implements CommandLineRunner {
     }
 
     private void createVerification() {
-        verificationRepository.save(new Verification(1L, "123123", "678678"));
+        verificationRepository.save(new Verification(1L, Country.COUNTRY_PL, "123123", "678678"));
     }
 }

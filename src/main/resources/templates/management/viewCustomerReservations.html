@@ -51,18 +51,7 @@
                 <tr>
                     <td>
                         <div class="overflow-cell-hs"
-                             th:text="'(' + ${customer.getCountry().getContactCode()} + ') ' + ${customer.getContactNumber()}"></div>
-                    </td>
-                </tr>
-
-                <tr class="table-dark">
-                    <td>Address:</td>
-                </tr>
-                <tr>
-                    <td>
-                        <div class="overflow-cell-hs"
-                             th:utext="${customer.getCountry().getCountryName()} + ' <br>' + ${customer.getCity()} + ', <br>' + ${customer.getAddress()}">
-                        </div>
+                             th:text="${customer.getContactNumber()}"></div>
                     </td>
                 </tr>
 
@@ -72,7 +61,7 @@
                 <tr>
                     <td>
                         <div class="overflow-cell-hs"
-                             th:utext="'P-ID: ' + ${verification.getPersonalId()} + '<br>' + 'D-ID: ' + ${verification.getDriverId()}">
+                             th:utext="${verification.getCountry().getCountryName()} + '<br>' + 'P-ID: ' + ${verification.getPersonalId()} + '<br>' + 'D-ID: ' + ${verification.getDriverId()}">
                         </div>
                     </td>
                 </tr>

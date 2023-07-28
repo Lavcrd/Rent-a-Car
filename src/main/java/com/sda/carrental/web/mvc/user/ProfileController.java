@@ -81,13 +81,6 @@ public class ProfileController {
         return "user/deleteCustomer";
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "/address")
-    public String changeAddressPage(final ModelMap map) {
-        map.addAttribute("countries", Country.values());
-        map.addAttribute("address_form", new ChangeAddressForm());
-        return "user/addressCustomer";
-    }
-
     //Confirmation buttons
     @RequestMapping(method = RequestMethod.POST, value = "/contact")
     public String changeContactConfirmButton(RedirectAttributes redAtt, @ModelAttribute("contact_form") @Valid ChangeContactForm form, Errors errors) {
@@ -99,26 +92,6 @@ public class ProfileController {
         HttpStatus response = customerService.changeContact(form.getContactNumber(), cud.getId());
         if (response.equals(HttpStatus.ACCEPTED)) {
             redAtt.addFlashAttribute("message", "Contact number has been changed successfully.");
-            return "redirect:/profile";
-        } else if (response.equals(HttpStatus.NOT_FOUND)) {
-            redAtt.addFlashAttribute("message", "User not recognized. Please login again.");
-        } else {
-            redAtt.addFlashAttribute("message", "An unexpected error occurred. Please try again later or contact customer service.");
-        }
-        SecurityContextHolder.getContext().setAuthentication(null);
-        return "redirect:/";
-    }
-
-    @RequestMapping(method = RequestMethod.POST, value = "/address")
-    public String changeAddressConfirmButton(RedirectAttributes redAtt, @ModelAttribute("address_form") @Valid ChangeAddressForm form, Errors errors) {
-        if (errors.hasErrors()) {
-            return "user/addressCustomer";
-        }
-
-        CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        HttpStatus response = customerService.changeAddress(form, cud.getId());
-        if (response.equals(HttpStatus.ACCEPTED)) {
-            redAtt.addFlashAttribute("message", "The mailing address has been successfully changed.");
             return "redirect:/profile";
         } else if (response.equals(HttpStatus.NOT_FOUND)) {
             redAtt.addFlashAttribute("message", "User not recognized. Please login again.");

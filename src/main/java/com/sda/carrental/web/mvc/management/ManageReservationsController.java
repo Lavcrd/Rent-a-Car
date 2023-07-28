@@ -2,6 +2,7 @@ package com.sda.carrental.web.mvc.management;
 
 import com.sda.carrental.global.ConstantValues;
 import com.sda.carrental.exceptions.ResourceNotFoundException;
+import com.sda.carrental.global.enums.Country;
 import com.sda.carrental.model.operational.Reservation;
 import com.sda.carrental.model.property.Car;
 import com.sda.carrental.model.property.Department;
@@ -87,7 +88,7 @@ public class ManageReservationsController {
             if (verification.isPresent()) {
                 map.addAttribute("verification", verificationService.maskVerification(verification.get()));
             } else {
-                map.addAttribute("verification", new Verification(customerId, "N/D", "N/D"));
+                map.addAttribute("verification", new Verification(customerId, Country.COUNTRY_NONE, "N/D", "N/D"));
             }
             return "management/viewCustomerReservations";
         } catch (ResourceNotFoundException err) {

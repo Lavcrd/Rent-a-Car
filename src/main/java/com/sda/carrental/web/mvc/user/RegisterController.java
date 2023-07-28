@@ -1,6 +1,5 @@
 package com.sda.carrental.web.mvc.user;
 
-import com.sda.carrental.global.enums.Country;
 import com.sda.carrental.service.CustomerService;
 import com.sda.carrental.web.mvc.form.RegisterCustomerForm;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +22,6 @@ public class RegisterController {
     @RequestMapping(method = RequestMethod.GET)
     public String createCustomerPage(final ModelMap map) {
         map.addAttribute("customer", new RegisterCustomerForm());
-        map.addAttribute("countries", Country.values());
 
         return "user/registerCustomer";
     }
@@ -33,7 +31,6 @@ public class RegisterController {
     public String createCustomer(@ModelAttribute("customer") @Valid RegisterCustomerForm form, Errors errors, final ModelMap map, RedirectAttributes redAtt) {
         if (errors.hasErrors()) {
             map.addAttribute("customer", form);
-            map.addAttribute("countries", Country.values());
             return "user/registerCustomer";
         }
 

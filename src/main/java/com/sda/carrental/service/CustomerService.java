@@ -1,10 +1,10 @@
 package com.sda.carrental.service;
 
 import com.sda.carrental.exceptions.ResourceNotFoundException;
+import com.sda.carrental.global.enums.Country;
 import com.sda.carrental.model.users.Customer;
 import com.sda.carrental.repository.CustomerRepository;
 import com.sda.carrental.service.mappers.CustomerMapper;
-import com.sda.carrental.web.mvc.form.ChangeAddressForm;
 import com.sda.carrental.web.mvc.form.LocalReservationForm;
 import com.sda.carrental.web.mvc.form.RegisterCustomerForm;
 import com.sda.carrental.web.mvc.form.SearchCustomerForm;
@@ -23,6 +23,7 @@ import java.util.List;
 public class CustomerService {
     private final CustomerRepository repository;
     private final CredentialsService credentialsService;
+    private final VerificationService verificationService;
 
     public Customer findById(Long customerId) {
         return repository.findById(customerId).orElseThrow(ResourceNotFoundException::new);
@@ -55,27 +56,9 @@ public class CustomerService {
         }
     }
 
-    @Transactional
-    public HttpStatus changeAddress(ChangeAddressForm form, long customerId) {
-        try {
-            Customer user = findById(customerId);
-
-            user.setCountry(form.getCountry());
-            user.setCity(form.getCity());
-            user.setAddress(form.getAddress());
-            repository.save(user);
-            return HttpStatus.ACCEPTED;
-        } catch (ResourceNotFoundException err) {
-            return HttpStatus.NOT_FOUND;
-        } catch (Error err) {
-            return HttpStatus.INTERNAL_SERVER_ERROR;
-        }
-    }
-
     private Customer redactCustomer(Customer customer) {
         customer.setName("—");
         customer.setSurname("—");
-        customer.setAddress("—");
         customer.setContactNumber("—");
         customer.setTerminationDate(LocalDate.now());
         customer.setStatus(Customer.CustomerStatus.STATUS_DELETED);
@@ -83,11 +66,11 @@ public class CustomerService {
         return customer;
     }
 
-    @Transactional(rollbackFor = {Exception.class})
+    @Transactional
     public HttpStatus deleteCustomer(Long customerId, boolean hasNoReservations) {
         try {
             Customer customer = findById(customerId);
-
+            verificationService.deleteVerification(customerId);
             if (hasNoReservations) {
                 repository.delete(customer);
             } else {
@@ -95,8 +78,10 @@ public class CustomerService {
             }
             return HttpStatus.OK;
         } catch (ResourceNotFoundException err) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return HttpStatus.NOT_FOUND;
         } catch (RuntimeException err) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return HttpStatus.INTERNAL_SERVER_ERROR;
         }
     }
@@ -113,19 +98,16 @@ public class CustomerService {
         return repository.save(customer);
     }
 
-    public Customer findCustomerByVerification(String personalId, String driverId) {
-        return repository.findByVerification(personalId, driverId).orElseThrow(ResourceNotFoundException::new);
+    public Customer findCustomerByVerification(Country country, String personalId, String driverId) {
+        return repository.findByVerification(country, personalId, driverId).orElseThrow(ResourceNotFoundException::new);
     }
 
     @Transactional
-    public void updateCustomerContactData(Long customerId, LocalReservationForm form) {
+    public void updateCustomerContact(Long customerId, String contactNumber) {
         try {
             Customer customer = repository.findById(customerId).orElseThrow(ResourceNotFoundException::new);
             if (customer.getStatus().equals(Customer.CustomerStatus.STATUS_REGISTERED)) return;
-            customer.setCountry(form.getCountry());
-            customer.setCity(form.getCity());
-            customer.setAddress(form.getAddress());
-            customer.setContactNumber(form.getContactNumber());
+            customer.setContactNumber(contactNumber);
             repository.save(customer);
         } catch (ResourceNotFoundException | DataAccessException err) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
