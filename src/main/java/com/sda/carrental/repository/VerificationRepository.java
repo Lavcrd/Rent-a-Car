@@ -12,6 +12,6 @@ public interface VerificationRepository extends CrudRepository<Verification, Lon
     Optional<Verification> findByCustomerId(Long customerId);
     void delete(Verification verification);
 
-    @Query(value = "SELECT v FROM verification v WHERE v.personalId = :personalId AND v.driverId = :driverId AND v.country = :country")
-    Optional<Verification> findByVerificationFields(@Param("country") Country country, @Param("personalId") String personalId, @Param("driverId") String driverId);
+    @Query(value = "SELECT v FROM verification v WHERE v.personalId = :personalId AND v.country = :country")
+    Optional<Verification> findByVerificationFields(@Param("country") Country country, @Param("personalId") String personalId);
 }

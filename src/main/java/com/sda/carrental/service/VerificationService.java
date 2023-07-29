@@ -42,6 +42,8 @@ public class VerificationService {
     public HttpStatus createVerification(VerificationForm form) {
         try {
             if (getOptionalVerificationByCustomer(form.getCustomerId()).isEmpty()) {
+                if (getOptionalVerification(form.getCountry(), form.getPersonalId()).isPresent())
+                    return HttpStatus.CONFLICT;
                 repository.save(new Verification(form.getCustomerId(), form.getCountry(), form.getPersonalId(), form.getDriverId()));
                 return HttpStatus.CREATED;
             }
@@ -60,7 +62,7 @@ public class VerificationService {
         repository.save(new Verification(customerId, country, personalId, driverId));
     }
 
-    public Optional<Verification> findOptionalVerification(Country country, String personalId, String driverId) {
-        return repository.findByVerificationFields(country, personalId, driverId);
+    public Optional<Verification> getOptionalVerification(Country country, String personalId) {
+        return repository.findByVerificationFields(country, personalId);
     }
 }

@@ -80,6 +80,9 @@ public class LocalReservationController {
             if (status.equals(HttpStatus.FORBIDDEN)) {
                 redAtt.addFlashAttribute("message", "Inaccessible department.");
                 return "redirect:/";
+            } else if (status.equals(HttpStatus.INTERNAL_SERVER_ERROR)) {
+                redAtt.addFlashAttribute("message", "Unexpected error. Operation cancelled.");
+                return "redirect:/";
             }
 
             Customer customer = customerService.findCustomerByVerification(form.getCountry(), form.getPersonalId(), form.getDriverId());

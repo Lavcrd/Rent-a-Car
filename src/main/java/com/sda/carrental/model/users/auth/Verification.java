@@ -24,12 +24,12 @@ public class Verification {
     @Column(name = "customer_id", unique = true)
     private Long customerId;
 
-    @Column(name = "personal_id")
+    @Column(name = "personal_id", nullable = false)
     private String personalId;
 
-    @Column(name = "driver_id")
+    @Column(name = "driver_id", nullable = false)
     private String driverId;
 
-    @Column(name = "country")
+    @Column(name = "country", nullable = false)
     private Country country;
 }
