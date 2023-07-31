@@ -98,8 +98,8 @@ public class CustomerService {
         return repository.save(customer);
     }
 
-    public Customer findCustomerByVerification(Country country, String personalId, String driverId) {
-        return repository.findByVerification(country, personalId, driverId).orElseThrow(ResourceNotFoundException::new);
+    public Customer findCustomerByVerification(Country country, String personalId) throws ResourceNotFoundException {
+        return repository.findByVerification(country, personalId).orElseThrow(ResourceNotFoundException::new);
     }
 
     @Transactional

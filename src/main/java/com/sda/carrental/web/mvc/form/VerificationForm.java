@@ -22,7 +22,7 @@ public class VerificationForm {
     @ValidCountry(message = "Provided country is not valid")
     private Country country;
 
-    @Pattern(regexp = "\\S{4,16}", message = "Personal IDN must contain minimum 8 characters.")
+    @Pattern(regexp = "\\S{8,16}", message = "Personal IDN must contain minimum 8 characters.")
     private String personalId;
 
     @Pattern(regexp = "\\S{4,16}", message = "Driver ID must contain minimum 4 characters.")
