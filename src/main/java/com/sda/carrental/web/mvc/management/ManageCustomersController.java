@@ -172,13 +172,6 @@ public class ManageCustomersController {
         return "redirect:/mg-res/{customer}";
     }
 
-    @RequestMapping(method = RequestMethod.POST, value = "/mg-ren")
-    public String manageRentalsButton(RedirectAttributes redAtt, @RequestParam("customer") Long customerId, @RequestParam("department") Long departmentId) {
-        redAtt.addAttribute("customer", customerId);
-        redAtt.addFlashAttribute("department", departmentId);
-        return "redirect:/mg-ren/{customer}";
-    }
-
     @RequestMapping(method = RequestMethod.POST, value = "/delete")
     public String deleteCustomerButton(RedirectAttributes redAtt, @ModelAttribute("deleteConfirmationForm") @Valid ConfirmationForm form, Errors err, @RequestParam("customer") Long customerId, @RequestParam("department") Long departmentId) {
         CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
