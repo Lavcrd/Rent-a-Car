@@ -41,7 +41,7 @@ public class UserService {
         return user;
     }
 
-    @Transactional(rollbackFor = {Exception.class})
+    @Transactional
     public HttpStatus deleteUser(Long userId) {
         try {
             Optional<User> user = repository.findById(userId);
@@ -50,7 +50,8 @@ public class UserService {
 
             if (role.equals(User.Roles.ROLE_CUSTOMER)) {
                 if (reservationService.hasActiveReservations(userId)) {
-                    throw new IllegalActionException();
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                    return HttpStatus.CONFLICT;
                 }
                 credentialsService.deleteCredentials(user.get().getId());
                 return customerService.deleteCustomer(userId, reservationService.getCustomerReservations(userId).isEmpty());
@@ -63,9 +64,6 @@ public class UserService {
         } catch (ResourceNotFoundException err) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return HttpStatus.NOT_FOUND;
-        } catch (IllegalActionException err) {
-            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            return HttpStatus.CONFLICT;
         } catch (RuntimeException err) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return HttpStatus.INTERNAL_SERVER_ERROR;

@@ -7,8 +7,8 @@ import com.sda.carrental.model.property.Car;
 import com.sda.carrental.model.property.Department;
 import com.sda.carrental.model.users.User;
 import com.sda.carrental.service.CarService;
+import com.sda.carrental.service.CustomerService;
 import com.sda.carrental.service.DepartmentService;
-import com.sda.carrental.service.ReservationService;
 import com.sda.carrental.service.auth.CustomUserDetails;
 import com.sda.carrental.web.mvc.form.SelectCarForm;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +31,7 @@ public class ReservationController {
 
     private final CarService carService;
     private final DepartmentService depService;
-    private final ReservationService resService;
+    private final CustomerService customerService;
     private final ConstantValues cv;
 
     //Pages
@@ -77,7 +77,7 @@ public class ReservationController {
 
         HttpStatus status;
         if (cud.getAuthorities().contains(new SimpleGrantedAuthority(User.Roles.ROLE_CUSTOMER.name()))) {
-            status = resService.createReservation(cud.getId(), form);
+            status = customerService.appendReservationToCustomer(cud.getId(), form);
         } else {
             redAtt.addFlashAttribute("reservationDetails", form);
             return "redirect:/loc-res";

@@ -1,5 +1,6 @@
 package com.sda.carrental.service;
 
+import com.sda.carrental.exceptions.IllegalActionException;
 import com.sda.carrental.exceptions.ResourceNotFoundException;
 import com.sda.carrental.global.enums.Country;
 import com.sda.carrental.model.users.auth.Verification;
@@ -64,5 +65,22 @@ public class VerificationService {
 
     public Optional<Verification> getOptionalVerification(Country country, String personalId) {
         return repository.findByVerificationFields(country, personalId);
+    }
+
+    @Transactional
+    public void duplicateVerification(Long mainCustomerId, Long usedCustomerId) throws IllegalActionException {
+        Optional<Verification> verification = repository.findByCustomerId(usedCustomerId);
+        if (verification.isEmpty()) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            throw new IllegalActionException();
+        } else {
+            if (!repository.existsById(mainCustomerId)) {
+                Verification v = verification.get();
+                repository.save(new Verification(mainCustomerId, v.getCountry(), v.getPersonalId(), v.getDriverId()));
+            } else {
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                throw new IllegalActionException();
+            }
+        }
     }
 }

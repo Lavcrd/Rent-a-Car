@@ -7,6 +7,7 @@ import com.sda.carrental.model.users.auth.Verification;
 import com.sda.carrental.service.*;
 import com.sda.carrental.service.auth.CustomUserDetails;
 import com.sda.carrental.web.mvc.form.ConfirmationForm;
+import com.sda.carrental.web.mvc.form.FindVerifiedForm;
 import com.sda.carrental.web.mvc.form.SearchCustomerForm;
 import com.sda.carrental.web.mvc.form.VerificationForm;
 import lombok.RequiredArgsConstructor;
@@ -69,6 +70,8 @@ public class ManageCustomersController {
                 map.addAttribute("unverifyConfirmationForm", new ConfirmationForm());
             } else {
                 map.addAttribute("verification", new Verification(customerId, Country.COUNTRY_NONE, "N/D", "N/D"));
+                map.addAttribute("countries", Country.values());
+                map.addAttribute("findVerifiedForm", new FindVerifiedForm());
             }
             if (!customer.getStatus().equals(Customer.CustomerStatus.STATUS_DELETED)) {
                 map.addAttribute("is_deleted", false);
@@ -94,6 +97,27 @@ public class ManageCustomersController {
         map.addAttribute("verification_form", new VerificationForm(customerId));
         map.addAttribute("countries", Country.values());
         return "management/verifyCustomer";
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/merge")
+    public String mergePage(ModelMap map, @ModelAttribute("customer") Long customerId, @ModelAttribute("department") Long departmentId, RedirectAttributes redAtt, @ModelAttribute("verificationData") FindVerifiedForm verificationData) {
+        try {
+            CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            if (userService.hasNoAccessToUserData(cud, customerId, departmentId)) {
+                redAtt.addFlashAttribute("message", "Access rejected.");
+                return "redirect:/mg-cus";
+            }
+
+            map.addAttribute("unverified_customer", customerService.findById(customerId));
+            map.addAttribute("verified_customer", customerService.findCustomerByVerification(verificationData.getCountry(), verificationData.getPersonalId()));
+            map.addAttribute("confirmation_form", new ConfirmationForm());
+            return "management/mergeCustomer";
+        } catch (ResourceNotFoundException err) {
+            redAtt.addFlashAttribute("message", "No verified account found");
+            redAtt.addAttribute("customer", customerId);
+            redAtt.addFlashAttribute("department", departmentId);
+            return "redirect:/mg-cus/{customer}";
+        }
     }
 
     //Search customers page buttons
@@ -172,6 +196,26 @@ public class ManageCustomersController {
         return "redirect:/mg-res/{customer}";
     }
 
+    @RequestMapping(method = RequestMethod.POST, value = "/merge")
+    public String mergeCustomersButton(@ModelAttribute("findVerifiedForm") @Valid FindVerifiedForm form, Errors err, RedirectAttributes redAtt, @RequestParam("customer") Long customerId, @RequestParam("department") Long departmentId) {
+        CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (userService.hasNoAccessToUserData(cud, customerId, departmentId)) {
+            redAtt.addFlashAttribute("message", "Access rejected.");
+            return "redirect:/mg-cus";
+        }
+
+        redAtt.addFlashAttribute("department", departmentId);
+        if (err.hasErrors()) {
+            redAtt.addFlashAttribute("message", err.getFieldErrors().get(0).getDefaultMessage());
+            redAtt.addAttribute("customer", customerId);
+            return "redirect:/mg-cus/{customer}";
+        }
+
+        redAtt.addFlashAttribute("customer", customerId);
+        redAtt.addFlashAttribute("verificationData", form);
+        return "redirect:/mg-cus/merge";
+    }
+
     @RequestMapping(method = RequestMethod.POST, value = "/delete")
     public String deleteCustomerButton(RedirectAttributes redAtt, @ModelAttribute("deleteConfirmationForm") @Valid ConfirmationForm form, Errors err, @RequestParam("customer") Long customerId, @RequestParam("department") Long departmentId) {
         CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -241,6 +285,42 @@ public class ManageCustomersController {
     @RequestMapping(method = RequestMethod.POST, value = "/verify/back")
     public String verifyBackButton(RedirectAttributes redAtt, @ModelAttribute("verification_form") VerificationForm form, @RequestParam("department") Long departmentId) {
         redAtt.addAttribute("customer", form.getCustomerId());
+        redAtt.addFlashAttribute("department", departmentId);
+        return "redirect:/mg-cus/{customer}";
+    }
+
+    //Merge page buttons
+    @RequestMapping(method = RequestMethod.POST, value = "/merge/proceed")
+    public String mergeConfirmButton(RedirectAttributes redAtt, @ModelAttribute("confirmation_form") @Valid ConfirmationForm form, Errors errors, @RequestParam("customer") Long customerId, @RequestParam("department") Long departmentId, @RequestParam("target") Long verifiedCustomer) {
+        if (errors.hasErrors()) {
+            redAtt.addFlashAttribute("department", departmentId);
+            redAtt.addAttribute("customer", customerId);
+
+            redAtt.addFlashAttribute("message", "Incorrect password. Please repeat process again.");
+            return "redirect:/mg-cus/{customer}";
+        }
+
+        CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (userService.hasNoAccessToUserData(cud, customerId, departmentId)) {
+            redAtt.addFlashAttribute("message", "Access rejected.");
+            return "redirect:/mg-cus";
+        }
+
+        HttpStatus status = customerService.mergeCustomer(customerId, verifiedCustomer);
+        if (status.equals(HttpStatus.OK)) {
+            redAtt.addFlashAttribute("message", "Accounts successfully merged");
+        } else {
+            redAtt.addFlashAttribute("message", "Unexpected error. Action cancelled.");
+        }
+
+        redAtt.addAttribute("customer", customerId);
+        redAtt.addFlashAttribute("department", departmentId);
+        return "redirect:/mg-cus/{customer}";
+    }
+
+    @RequestMapping(method = RequestMethod.POST, value = "/merge/back")
+    public String mergeBackButton(RedirectAttributes redAtt, @ModelAttribute("confirmation_form") ConfirmationForm form, @RequestParam("customer") Long customerId, @RequestParam("department") Long departmentId) {
+        redAtt.addAttribute("customer", customerId);
         redAtt.addFlashAttribute("department", departmentId);
         return "redirect:/mg-cus/{customer}";
     }
