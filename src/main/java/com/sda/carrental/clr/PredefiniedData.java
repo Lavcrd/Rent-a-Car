@@ -191,6 +191,6 @@ public class PredefiniedData implements CommandLineRunner {
     }
 
     private void createVerification() {
-        verificationRepository.save(new Verification(1L, Country.COUNTRY_PL, "123123", "678678"));
+        verificationRepository.save(new Verification(1L, Country.COUNTRY_PL, "123123123", "678678"));
     }
 }

@@ -27,18 +27,16 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ReservationService {
     private final ReservationRepository repository;
-    private final CustomerService customerService;
     private final CarService carService;
     private final DepartmentService departmentService;
     private final PaymentDetailsService paymentDetailsService;
     private final VerificationService verificationService;
 
     @Transactional
-    public HttpStatus createReservation(Long customerId, SelectCarForm form) {
+    public HttpStatus createReservation(Customer customer, SelectCarForm form) {
         try {
             IndexForm index = form.getIndexData();
 
-            Customer customer = customerService.findById(customerId);
             Car car = carService.findAvailableCar(index.getDateFrom(), index.getDateTo(), index.getDepartmentIdFrom(), form.getCarId());
             Department depRepFrom = departmentService.findDepartmentWhereId(index.getDepartmentIdFrom());
             Department depRepTo = departmentService.findDepartmentWhereId(index.getDepartmentIdTo());
@@ -166,25 +164,17 @@ public class ReservationService {
     }
 
     @Transactional
-    public HttpStatus createLocalReservation(CustomUserDetails cud, LocalReservationForm form) {
+    public boolean transferReservations(Customer mainCustomer, Customer usedCustomer) {
         try {
-            HttpStatus hasAccess = departmentService.departmentAccess(cud, form.getReservationForm().getIndexData().getDepartmentIdFrom());
-            if (hasAccess.equals(HttpStatus.FORBIDDEN)) return HttpStatus.FORBIDDEN;
-
-            Optional<Verification> verification = verificationService.getOptionalVerification(form.getCountry(), form.getPersonalId());
-            if (verification.isEmpty()) {
-                Customer customer = customerService.createGuest(form);
-                verificationService.createVerification(customer.getId(), form.getCountry(), form.getPersonalId(), form.getDriverId());
-                createReservation(customer.getId(), form.getReservationForm());
-            } else {
-                createReservation(verification.get().getCustomerId(), form.getReservationForm());
-                customerService.updateCustomerContact(verification.get().getCustomerId(), form.getContactNumber());
+            List<Reservation> reservations = getCustomerReservations(usedCustomer.getId());
+            for (Reservation reservation : reservations) {
+                reservation.setCustomer(mainCustomer);
             }
-
-            return HttpStatus.CREATED;
+            repository.saveAll(reservations);
+            return true;
         } catch (RuntimeException err) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            return HttpStatus.INTERNAL_SERVER_ERROR;
+            return false;
         }
     }
 }

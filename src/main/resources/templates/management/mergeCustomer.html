@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="Content-Type" content="text/html"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    <title>Rent-a-Car</title>
+
+    <link rel="stylesheet" type="text/css" href="/css/styles.css"/>
+    <link rel="stylesheet" href="/webjars/bootstrap/5.2.3/css/bootstrap.min.css"/>
+</head>
+
+<body>
+<div id="container" class="container-md">
+    <div th:include="fragments/top::top-menu"></div>
+    <div th:include="fragments/top::reg-options"></div>
+
+    <div id="main">
+        <form class="change_action_form" th:method="POST" th:object="${confirmation_form}" th:action="@{submit}">
+            <input type="hidden" name="department" th:value="${department}">
+            <input type="hidden" name="customer" th:value="${unverified_customer.getId()}">
+            <input type="hidden" name="target" th:value="${verified_customer.getId()}">
+            <table class="table table-borderless">
+                <thead class="table-dark">
+                <tr>
+                    <th scope="row">Confirm merge</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td th:text="'Verified customer: '"></td>
+                    <td th:text="${verified_customer.getName()} + ' ' + ${verified_customer.getSurname().charAt(0)} + '.'"></td>
+                </tr>
+                <tr>
+                    <td th:text="'Unverified customer: '"></td>
+                    <td th:text="${unverified_customer.getName()} + ' ' + ${unverified_customer.getSurname().charAt(0)} + '.'"></td>
+                </tr>
+                <tr>
+                    <td>
+                        <label for="password_confirmation" class="text-md">Password confirmation</label>
+                    </td>
+                    <td><input id="password_confirmation" class="text-black bg-white" th:placeholder="'Type password'"
+                               th:type="password" th:field="*{currentPassword}" autocomplete="new-password"/></td>
+                </tr>
+                <tr>
+                    <td>
+                        <button type="submit" class="btn btn-dark" th:text="Confirm" onclick="setFormAction('/mg-cus/merge/proceed', 0)"></button>
+                        <button type="submit" class="btn btn-dark" th:text="Back" onclick="setFormAction('/mg-cus/merge/back', 0)"></button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <div th:insert="fragments/bottom::form-error-handler"></div>
+        </form>
+        <div th:include="fragments/bottom::bottom-footer"></div>
+        <div th:insert="fragments/bottom::message-handler"></div>
+    </div>
+</div>
+<div th:include="fragments/bottom::common-scripts"></div>
+</body>
+</html>

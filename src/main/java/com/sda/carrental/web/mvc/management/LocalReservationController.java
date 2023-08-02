@@ -75,7 +75,7 @@ public class LocalReservationController {
             form.setReservationForm(reservation);
 
             CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            HttpStatus status = reservationService.createLocalReservation(cud, form);
+            HttpStatus status = customerService.appendLocalReservationToCustomer(cud, form);
 
             if (status.equals(HttpStatus.FORBIDDEN)) {
                 redAtt.addFlashAttribute("message", "Inaccessible department.");
