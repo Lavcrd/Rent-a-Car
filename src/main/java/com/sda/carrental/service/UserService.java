@@ -1,6 +1,5 @@
 package com.sda.carrental.service;
 
-import com.sda.carrental.exceptions.IllegalActionException;
 import com.sda.carrental.exceptions.ResourceNotFoundException;
 import com.sda.carrental.model.operational.Reservation;
 import com.sda.carrental.service.auth.CustomUserDetails;
