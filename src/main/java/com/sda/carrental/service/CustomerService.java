@@ -109,18 +109,6 @@ public class CustomerService {
     }
 
     @Transactional
-    public void updateCustomerContact(Long customerId, String contactNumber) {
-        try {
-            Customer customer = repository.findById(customerId).orElseThrow(ResourceNotFoundException::new);
-            if (customer.getStatus().equals(Customer.CustomerStatus.STATUS_REGISTERED)) return;
-            customer.setContactNumber(contactNumber);
-            repository.save(customer);
-        } catch (ResourceNotFoundException | DataAccessException err) {
-            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-        }
-    }
-
-    @Transactional
     public HttpStatus appendReservationToCustomer(Long customerId, SelectCarForm form) {
         try {
             Customer customer = findById(customerId);
@@ -142,13 +130,13 @@ public class CustomerService {
                 Customer customer = createGuest(form);
                 verificationService.createVerification(customer.getId(), form.getCountry(), form.getPersonalId(), form.getDriverId());
                 reservationService.createReservation(customer, form.getReservationForm());
+                return HttpStatus.CREATED;
             } else {
                 Customer customer = findById(verification.get().getCustomerId());
                 reservationService.createReservation(customer, form.getReservationForm());
-                updateCustomerContact(verification.get().getCustomerId(), form.getContactNumber());
+                return HttpStatus.OK;
             }
 
-            return HttpStatus.CREATED;
         } catch (RuntimeException err) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return HttpStatus.INTERNAL_SERVER_ERROR;

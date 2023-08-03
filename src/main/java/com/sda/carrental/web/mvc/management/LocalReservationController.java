@@ -2,15 +2,14 @@ package com.sda.carrental.web.mvc.management;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.sda.carrental.exceptions.IllegalActionException;
 import com.sda.carrental.exceptions.ResourceNotFoundException;
 import com.sda.carrental.global.enums.Country;
 import com.sda.carrental.model.users.Customer;
 import com.sda.carrental.service.CustomerService;
 import com.sda.carrental.service.DepartmentService;
-import com.sda.carrental.service.ReservationService;
 import com.sda.carrental.service.auth.CustomUserDetails;
+import com.sda.carrental.service.mappers.CustomObjectMapper;
 import com.sda.carrental.web.mvc.form.LocalReservationForm;
 import com.sda.carrental.web.mvc.form.SelectCarForm;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +27,6 @@ import javax.validation.Valid;
 @RequiredArgsConstructor
 @RequestMapping("/loc-res")
 public class LocalReservationController {
-    private final ReservationService reservationService;
     private final CustomerService customerService;
     private final DepartmentService departmentService;
 
@@ -43,8 +41,7 @@ public class LocalReservationController {
                 return "redirect:/";
             }
 
-            ObjectMapper objectMapper = new ObjectMapper();
-            objectMapper.registerModule(new JavaTimeModule());
+            ObjectMapper objectMapper = new CustomObjectMapper();
             map.addAttribute("reservationData", objectMapper.writeValueAsString(form));
             map.addAttribute("localReservation", new LocalReservationForm());
             map.addAttribute("countries", Country.values());
@@ -59,7 +56,7 @@ public class LocalReservationController {
         }
     }
 
-    @RequestMapping(method = RequestMethod.POST, value = "/create")
+    @RequestMapping(method = RequestMethod.POST, value = "/proceed")
     public String proceedButton(@ModelAttribute("localReservation") @Valid LocalReservationForm form, Errors errors, final ModelMap map, @RequestParam("reservationData") String reservationData, RedirectAttributes redAtt) {
         try {
             if (errors.hasErrors()) {
@@ -69,8 +66,7 @@ public class LocalReservationController {
                 return "management/localReservation";
             }
 
-            ObjectMapper objectMapper = new ObjectMapper();
-            objectMapper.registerModule(new JavaTimeModule());
+            ObjectMapper objectMapper = new CustomObjectMapper();
             SelectCarForm reservation = objectMapper.readValue(reservationData, SelectCarForm.class);
             form.setReservationForm(reservation);
 
@@ -83,6 +79,10 @@ public class LocalReservationController {
             } else if (status.equals(HttpStatus.INTERNAL_SERVER_ERROR)) {
                 redAtt.addFlashAttribute("message", "Unexpected error. Operation cancelled.");
                 return "redirect:/";
+            } else if (status.equals(HttpStatus.CREATED)) {
+                redAtt.addFlashAttribute("message", "Reservation and guest account successfully created.");
+            } else if (status.equals(HttpStatus.OK)) {
+                redAtt.addFlashAttribute("message", "Reservation successfully applied to existing user. Please check personal details again.");
             }
 
             Customer customer = customerService.findCustomerByVerification(form.getCountry(), form.getPersonalId());
@@ -97,14 +97,13 @@ public class LocalReservationController {
 
     @RequestMapping(value="/back", method = RequestMethod.POST)
     public String backButton(@RequestParam("reservationData") String formData, RedirectAttributes redAtt) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new JavaTimeModule());
+        ObjectMapper objectMapper = new CustomObjectMapper();
 
         try {
             redAtt.addFlashAttribute("showData", objectMapper.readValue(formData, SelectCarForm.class));
         } catch (JsonProcessingException err) {
-            err.printStackTrace();
-            redAtt.addFlashAttribute("showData", null);
+            redAtt.addFlashAttribute("message", "An unexpected error occurred. Please try again later.");
+            return "redirect:/";
         }
         return "redirect:/reservation";
     }
