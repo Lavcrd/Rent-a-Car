@@ -6,10 +6,7 @@ import com.sda.carrental.model.users.Customer;
 import com.sda.carrental.model.users.auth.Verification;
 import com.sda.carrental.service.*;
 import com.sda.carrental.service.auth.CustomUserDetails;
-import com.sda.carrental.web.mvc.form.ConfirmationForm;
-import com.sda.carrental.web.mvc.form.FindVerifiedForm;
-import com.sda.carrental.web.mvc.form.SearchCustomerForm;
-import com.sda.carrental.web.mvc.form.VerificationForm;
+import com.sda.carrental.web.mvc.form.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -76,6 +73,7 @@ public class ManageCustomersController {
             if (!customer.getStatus().equals(Customer.CustomerStatus.STATUS_DELETED)) {
                 map.addAttribute("is_deleted", false);
                 map.addAttribute("deleteConfirmationForm", new ConfirmationForm());
+                map.addAttribute("changeContactForm", new ChangeContactForm());
             } else {
                 map.addAttribute("is_deleted", true);
             }
@@ -240,6 +238,35 @@ public class ManageCustomersController {
             redAtt.addFlashAttribute("message", "Removal unsuccessful: Active reservations");
         } else {
             redAtt.addFlashAttribute("message", "Removal unsuccessful: Temporary error");
+        }
+        return "redirect:/mg-cus/{customer}";
+    }
+
+    @RequestMapping(method = RequestMethod.POST, value = "/contact")
+    public String changeContactButton(RedirectAttributes redAtt, @ModelAttribute("changeContactForm") @Valid ChangeContactForm form, Errors err, @RequestParam("customer") Long customerId, @RequestParam("department") Long departmentId) {
+        CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (userService.hasNoAccessToUserData(cud, customerId, departmentId)) {
+            redAtt.addFlashAttribute("message", "Access rejected.");
+            return "redirect:/mg-cus";
+        }
+
+        redAtt.addFlashAttribute("department", departmentId);
+        redAtt.addAttribute("customer", customerId);
+
+        if (err.hasErrors()) {
+            redAtt.addFlashAttribute("message", err.getAllErrors().get(0).getDefaultMessage());
+            return "redirect:/mg-cus/{customer}";
+        }
+
+        HttpStatus status = customerService.changeContact(form.getContactNumber(), customerId);
+
+        if (status.equals(HttpStatus.ACCEPTED)) {
+            redAtt.addFlashAttribute("message", "Data successfully changed");
+        } else if (status.equals(HttpStatus.NOT_FOUND)) {
+            redAtt.addFlashAttribute("message", "Change unsuccessful: Customer not found");
+            return "redirect:/mg-cus";
+        } else {
+            redAtt.addFlashAttribute("message", "Change unsuccessful: Temporary error");
         }
         return "redirect:/mg-cus/{customer}";
     }
