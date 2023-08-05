@@ -116,14 +116,22 @@ public class ReservationService {
         }
     }
 
-    public List<Reservation> getUserReservationsByDepartmentTake(Long customerId, Long departmentId) {
-        return repository
-                .findAllByCustomerIdAndDepartmentTakeId(customerId, departmentId);
+    public List<Reservation> getUserReservationsByDepartmentTake(Long customerId, Long departmentId) throws ResourceNotFoundException {
+        try {
+            return repository
+                    .findAllByCustomerIdAndDepartmentTakeId(customerId, departmentId);
+        } catch (RuntimeException err) {
+            throw new ResourceNotFoundException();
+        }
     }
 
-    public List<Reservation> getUserReservationsByDepartmentBack(Long customerId, Long departmentId) {
-        return repository
-                .findAllByCustomerIdAndDepartmentBackId(customerId, departmentId);
+    public List<Reservation> getUserReservationsByDepartmentBack(Long customerId, Long departmentId) throws ResourceNotFoundException {
+        try {
+            return repository
+                    .findAllByCustomerIdAndDepartmentBackId(customerId, departmentId);
+        } catch (RuntimeException err) {
+            throw new ResourceNotFoundException();
+        }
     }
 
     public List<Reservation> findDeparturesByDetails(SearchReservationsForm reservationsData) {
