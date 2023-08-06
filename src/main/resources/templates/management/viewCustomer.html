@@ -103,12 +103,14 @@
 
                     <th:block th:if="${!is_deleted}">
                         <th:block th:if="${!is_verified}">
-                            <form th:action="@{/mg-cus/verify}" th:method="POST">
+                            <form th:action="@{/mg-cus/verify}" th:object="${verification_form}" th:method="POST">
                                 <input type="hidden" th:name="department" th:value="${department}">
+                                <input type="hidden" th:field="*{customerId}" th:value="${customer.getId()}">
                                 <tr>
                                     <td class="button-cell">
-                                        <button class="btn btn-dark bg-dark mt-1 list-button w-100"
-                                                type="submit" name="customer" th:value="${customer.getId()}">
+                                        <button type="button" class="btn btn-dark bg-dark mt-1 list-button w-100"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#verifyModal">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                                                  fill="currentColor" class="bi bi-person-check cb-svg" viewBox="0 0 16 16">
                                                 <path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Zm1.679-4.493-1.335 2.226a.75.75 0 0 1-1.174.144l-.774-.773a.5.5 0 0 1 .708-.708l.547.548 1.17-1.951a.5.5 0 1 1 .858.514ZM11 5a3 3 0 1 1-6 0 3 3 0 0 1 6 0ZM8 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z"/>
@@ -116,6 +118,54 @@
                                             </svg>
                                             <div class="cb-text">Verify</div>
                                         </button>
+
+                                        <!--Modal verify-->
+                                        <div class="modal fade" id="verifyModal" tabindex="-1" role="dialog"
+                                             aria-hidden="true">
+                                            <div class="modal-dialog modal-dialog-centered" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title">Verify</h5>
+                                                        <button type="button" class="close" data-bs-dismiss="modal"
+                                                                aria-label="Close">
+                                                            <span aria-hidden="true">×</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <p>Please provide nationality, personal ID and driver ID.</p>
+                                                        <div style="grid-template-columns: auto auto; display: grid;">
+                                                            <label style="justify-self: start;" for="v_country" class="form-label">Country: </label>
+                                                            <select id="v_country" class="form-select" style="justify-self: end; width: 15em;"
+                                                                    th:field="*{country}" required>
+                                                                <div th:each="country:${countries}">
+                                                                    <option th:text="${country.getCountryName()}"
+                                                                            th:value="${country}"
+                                                                            th:field="*{country}"></option>
+                                                                </div>
+                                                            </select>
+                                                        </div>
+                                                        <div style="grid-template-columns: auto auto; display: grid; margin-top: 2%;">
+                                                            <label style="justify-self: start;" for="v_personal_id" class="text-md">Personal ID: </label>
+                                                            <input style="justify-self: end; width: 15em;" id="v_personal_id" class="text-black bg-white"
+                                                                   th:placeholder="'Personal ID'"
+                                                                   th:type="text" th:field="*{personalId}" required/>
+                                                        </div>
+                                                        <div style="grid-template-columns: auto auto; display: grid; margin-top: 2%;">
+                                                            <label style="justify-self: start;" for="v_driver_id" class="text-md">Driver License ID: </label>
+                                                            <input style="justify-self: end; width: 15em;" id="v_driver_id" class="text-black bg-white"
+                                                                   th:placeholder="'Driver ID'"
+                                                                   th:type="text" th:field="*{driverId}" required/>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-dark" data-bs-dismiss="modal">
+                                                            Close
+                                                        </button>
+                                                        <button type="submit" class="btn btn-dark">Confirm</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </td>
                                     <td class="short-description-cell" th:text="'Register verification details'"></td>
                                 </tr>
@@ -191,7 +241,7 @@
                                         <div class="cb-text">Update contact</div>
                                     </button>
 
-                                    <!--Modal update-contact-->
+                                    <!--Modal contact-->
                                     <div class="modal fade" id="contactModal" tabindex="-1" role="dialog"
                                          aria-hidden="true">
                                         <div class="modal-dialog modal-dialog-centered" role="document">
@@ -206,8 +256,8 @@
                                                 <div class="modal-body">
                                                     <p>Please provide new contact number.</p>
                                                     <div style="grid-template-columns: auto auto; display: grid; margin-top: 2%;">
-                                                        <label style="justify-self: start;" for="personal_id" class="text-md">Contact number: </label>
-                                                        <input style="justify-self: start; width: 100%;" id="contact_n" class="text-black bg-white"
+                                                        <label style="justify-self: start;" for="c_contact_n" class="text-md">Contact number: </label>
+                                                        <input style="justify-self: end; width: 15em;" id="c_contact_n" class="text-black bg-white"
                                                                th:placeholder="'Enter contact number'"
                                                                th:type="text" th:field="*{contactNumber}" required/></div>
                                                 </div>
@@ -242,7 +292,7 @@
                                         <div class="cb-text">Merge customers</div>
                                     </button>
 
-                                    <!--Modal delete-->
+                                    <!--Modal merge-->
                                     <div class="modal fade" id="mergeModal" tabindex="-1" role="dialog"
                                          aria-hidden="true">
                                         <div class="modal-dialog modal-dialog-centered" role="document">
@@ -257,9 +307,9 @@
                                                 <div class="modal-body">
                                                     <p>Please provide nationality and P-ID of verified account.</p>
                                                     <div style="grid-template-columns: auto auto; display: grid;">
-                                                        <label style="justify-self: start;" for="country" class="form-label">Country: </label>
-                                                        <select id="country"
-                                                                class="form-select" style="justify-self: start; width: 100%;"
+                                                        <label style="justify-self: start;" for="m_country" class="form-label">Country: </label>
+                                                        <select id="m_country"
+                                                                class="form-select" style="justify-self: end; width: 15em;"
                                                                 th:field="*{country}" required>
                                                             <div th:each="country:${countries}">
                                                                 <option th:text="${country.getCountryName()}"
@@ -269,8 +319,8 @@
                                                         </select>
                                                     </div>
                                                     <div style="grid-template-columns: auto auto; display: grid; margin-top: 2%;">
-                                                        <label style="justify-self: start;" for="personal_id" class="text-md">P-ID: </label>
-                                                        <input style="justify-self: start; width: 100%;" id="personal_id" class="text-black bg-white"
+                                                        <label style="justify-self: start;" for="m_personal_id" class="text-md">P-ID: </label>
+                                                        <input style="justify-self: end; width: 15em;" id="m_personal_id" class="text-black bg-white"
                                                                th:placeholder="'Personal ID'"
                                                                th:type="text" th:field="*{personalId}" required/></div>
                                                 </div>
