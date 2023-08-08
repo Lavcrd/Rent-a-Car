@@ -48,7 +48,7 @@
                 <div class="col-5">
                     <h5><strong>Vehicle</strong></h5>
                     <ul class="list-group list-group-flush">
-                        <li class="list-group-item" th:text="'ID: ' + ${reservation.getCar().carId}"></li>
+                        <li class="list-group-item" th:text="'Plate: ' + ${reservation.getCar().plate}"></li>
                         <li class="list-group-item" th:text="'Model: ' + ${reservation.getCar().model}"></li>
                         <li class="list-group-item"
                             th:text="'Car type: ' + ${reservation.getCar().carType.getName()}"></li>
