@@ -123,12 +123,12 @@ public class ManageReservationsController {
                 long days = reservation.getDateFrom().until(reservation.getDateTo(), ChronoUnit.DAYS) + 1;
                 if (!reservation.getDepartmentTake().equals(reservation.getDepartmentBack())) {
                     map.addAttribute("diff_return_price", cv.getDeptReturnPriceDiff());
-                    map.addAttribute("total_price", cv.getDeptReturnPriceDiff() + (days * reservation.getCar().getPrice_day()));
+                    map.addAttribute("total_price", cv.getDeptReturnPriceDiff() + (days * reservation.getCar().getPriceDay()));
                 } else {
                     map.addAttribute("diff_return_price", 0.0);
-                    map.addAttribute("total_price", days * reservation.getCar().getPrice_day());
+                    map.addAttribute("total_price", days * reservation.getCar().getPriceDay());
                 }
-                map.addAttribute("raw_price", days * reservation.getCar().getPrice_day());
+                map.addAttribute("raw_price", days * reservation.getCar().getPriceDay());
                 map.addAttribute("deposit_value", reservation.getCar().getDepositValue());
             }
 

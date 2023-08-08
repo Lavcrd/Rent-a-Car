@@ -48,10 +48,10 @@ public class ReservationController {
 
             if (reservationData.getIndexData().isFirstBranchChecked()) {
                 map.addAttribute("diff_return_price", cv.getDeptReturnPriceDiff());
-                map.addAttribute("total_price", cv.getDeptReturnPriceDiff() + (days * car.getPrice_day()));
+                map.addAttribute("total_price", cv.getDeptReturnPriceDiff() + (days * car.getPriceDay()));
             } else {
                 map.addAttribute("diff_return_price", 0.0);
-                map.addAttribute("total_price", days * car.getPrice_day());
+                map.addAttribute("total_price", days * car.getPriceDay());
             }
 
             map.addAttribute("days", (reservationData.getIndexData().getDateFrom().until(reservationData.getIndexData().getDateTo(), ChronoUnit.DAYS) + 1));
@@ -59,7 +59,7 @@ public class ReservationController {
             map.addAttribute("branchTo", depTo);
             map.addAttribute("reservationData", reservationData);
             map.addAttribute("car", car);
-            map.addAttribute("raw_price", days * car.getPrice_day());
+            map.addAttribute("raw_price", days * car.getPriceDay());
             map.addAttribute("deposit_percentage", cv.getDepositPercentage() * 100);
             map.addAttribute("refund_fee_days", cv.getRefundSubtractDaysDuration());
 

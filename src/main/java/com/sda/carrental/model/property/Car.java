@@ -10,7 +10,8 @@ import javax.persistence.*;
 @Getter
 @NoArgsConstructor
 public class Car {
-    public Car (Long departmentId, String jpgLink, String brand, String model, Integer year, Long mileage, Integer seats, Double price_day, CarType carType, CarStatus carStatus, Double depositValue) {
+    public Car (Long departmentId, String jpgLink, String brand, String model, Integer year, String plate, Long mileage, Integer seats, Double priceDay, CarType carType, CarStatus carStatus, Double depositValue) {
+        this.plate = plate;
         this.departmentId = departmentId;
         this.jpgLink = jpgLink;
         this.brand = brand;
@@ -18,7 +19,7 @@ public class Car {
         this.year = year;
         this.mileage = mileage;
         this.seats = seats;
-        this.price_day = price_day;
+        this.priceDay = priceDay;
         this.carType = carType;
         this.carStatus = carStatus;
         this.depositValue = depositValue;
@@ -27,7 +28,7 @@ public class Car {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "car_id", nullable = false)
-    private Long carId;
+    private Long id;
 
     @Setter
     @Column(name = "department_id")
@@ -47,6 +48,10 @@ public class Car {
     Integer year;
 
     @Setter
+    @Column(name = "plate", unique = true)
+    String plate;
+
+    @Setter
     @Column(name = "mileage")
     Long mileage;
 
@@ -54,7 +59,7 @@ public class Car {
     Integer seats;
 
     @Column(name = "price_day")
-    Double price_day;
+    Double priceDay;
 
     @Column(name = "type")
     CarType carType;

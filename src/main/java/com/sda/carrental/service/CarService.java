@@ -42,11 +42,11 @@ public class CarService {
                 filterForm.getIndexData().getDepartmentIdFrom());
 
         if (filterForm.getPriceMin() != null) {
-            filteredCars.removeIf(car -> car.getPrice_day() < filterForm.getPriceMin());
+            filteredCars.removeIf(car -> car.getPriceDay() < filterForm.getPriceMin());
         }
 
         if (filterForm.getPriceMax() != null) {
-            filteredCars.removeIf(car -> car.getPrice_day() > filterForm.getPriceMax());
+            filteredCars.removeIf(car -> car.getPriceDay() > filterForm.getPriceMax());
         }
 
         if (filterForm.getBrands() != null) {
@@ -71,11 +71,11 @@ public class CarService {
                 filterForm.getDepartmentId());
 
         if (filterForm.getPriceMin() != null) {
-            filteredCars.removeIf(car -> car.getPrice_day() < filterForm.getPriceMin());
+            filteredCars.removeIf(car -> car.getPriceDay() < filterForm.getPriceMin());
         }
 
         if (filterForm.getPriceMax() != null) {
-            filteredCars.removeIf(car -> car.getPrice_day() > filterForm.getPriceMax());
+            filteredCars.removeIf(car -> car.getPriceDay() > filterForm.getPriceMax());
         }
 
         if (filterForm.getBrands() != null) {
