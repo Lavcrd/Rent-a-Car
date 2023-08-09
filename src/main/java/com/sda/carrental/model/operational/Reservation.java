@@ -29,8 +29,8 @@ public class Reservation {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "reservation_id", nullable = false)
-    private Long reservationId;
+    @Column(name = "id", nullable = false)
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name = "customer_id", referencedColumnName = "id")

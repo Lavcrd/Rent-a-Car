@@ -19,7 +19,7 @@ public interface CarRepository extends CrudRepository<Car, Long> {
             "WHERE c.departmentId = :department " +
             "   AND c.carStatus <> 3 " +
             "   AND (" +
-            "       r.reservationId IS NULL " +
+            "       r.id IS NULL " +
             "       OR r.car.id NOT IN (" +
             "       SELECT r2.car.id " +
             "       FROM reservation r2 " +
@@ -38,7 +38,7 @@ public interface CarRepository extends CrudRepository<Car, Long> {
             "WHERE c.departmentId = :department " +
             "   AND c.carStatus <> 3 " +
             "   AND (" +
-            "       r.reservationId IS NULL " +
+            "       r.id IS NULL " +
             "       OR r.car.id NOT IN (" +
             "       SELECT r2.car.id " +
             "       FROM reservation r2 " +
@@ -57,7 +57,7 @@ public interface CarRepository extends CrudRepository<Car, Long> {
             "WHERE c.departmentId = :department " +
             "   AND c.carStatus <> 3 " +
             "   AND (" +
-            "       r.reservationId IS NULL " +
+            "       r.id IS NULL " +
             "       OR r.car.id NOT IN (" +
             "       SELECT r2.car.id " +
             "       FROM reservation r2 " +

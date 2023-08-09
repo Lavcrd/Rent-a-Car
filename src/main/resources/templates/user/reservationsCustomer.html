@@ -44,7 +44,7 @@
                     <td th:text="${reservation.getDateFrom()} + ' ⟶ ' + ${reservation.getDateTo()}"></td>
                     <td th:text="${reservation.status.getText()}"></td>
                     <td><button type="submit" class="btn btn-dark" th:text="Details" th:name="details_button"
-                                th:value="${reservation.reservationId}"></button>
+                                th:value="${reservation.id}"></button>
                     </td>
                 </tr>
             </tbody>

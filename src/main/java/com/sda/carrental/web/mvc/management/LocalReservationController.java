@@ -82,7 +82,7 @@ public class LocalReservationController {
             } else if (status.equals(HttpStatus.CREATED)) {
                 redAtt.addFlashAttribute("message", "Reservation and guest account successfully created.");
             } else if (status.equals(HttpStatus.OK)) {
-                redAtt.addFlashAttribute("message", "Reservation successfully applied to existing user. Please check personal details again.");
+                redAtt.addFlashAttribute("message", "Reservation successfully applied to existing user.");
             }
 
             Customer customer = customerService.findCustomerByVerification(form.getCountry(), form.getPersonalId());

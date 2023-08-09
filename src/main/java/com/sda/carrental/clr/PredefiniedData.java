@@ -122,7 +122,7 @@ public class PredefiniedData implements CommandLineRunner {
         carRepository.save(new Car(1L, "/cars/yaris.png", "Toyota", "Yaris", 1999, Country.COUNTRY_PL.getCode()+"-ABC2314", 130000L, 4, 102.0, Car.CarType.TYPE_HATCHBACK, Car.CarStatus.STATUS_OPEN, 1500.0));
         carRepository.save(new Car(1L, "/cars/hyundai-elantra.jpg", "Hyundai", "Lantra", 1990, Country.COUNTRY_PL.getCode()+"-ABC3214", 120000L, 5, 81.0, Car.CarType.TYPE_COMPACT, Car.CarStatus.STATUS_UNAVAILABLE, 500.0));
 
-        carRepository.save(new Car(2L, "https://cdn2.rcstatic.com/images/car_images/web/fiat/500_lrg.jpg", "Fiat", Country.COUNTRY_GB.getCode()+"Fiat 500", 2007, "-XBC1234", 150000L, 2, 86.0, Car.CarType.TYPE_HATCHBACK, Car.CarStatus.STATUS_UNAVAILABLE, 750.0));
+        carRepository.save(new Car(2L, "https://cdn2.rcstatic.com/images/car_images/web/fiat/500_lrg.jpg", "Fiat", "Fiat 500", 2007, Country.COUNTRY_GB.getCode()+"-XBC1234", 150000L, 2, 86.0, Car.CarType.TYPE_HATCHBACK, Car.CarStatus.STATUS_UNAVAILABLE, 750.0));
         carRepository.save(new Car(2L, "/cars/bmw3.jpg", "BMW", "F34", 2013, Country.COUNTRY_GB.getCode()+"-AXX1234", 140000L, 5, 90.0, Car.CarType.TYPE_HATCHBACK, Car.CarStatus.STATUS_OPEN, 1500.0));
         carRepository.save(new Car(2L, "/cars/yaris.png", "Toyota", "Yaris", 1999, Country.COUNTRY_GB.getCode()+"-ABX1234", 130000L, 4, 90.0, Car.CarType.TYPE_HATCHBACK, Car.CarStatus.STATUS_RENTED, 1500.0));
         carRepository.save(new Car(2L, "/cars/hyundai-elantra.jpg", "Hyundai", "Lantra", 1990, Country.COUNTRY_GB.getCode()+"-AXC1234", 120000L, 5, 82.0, Car.CarType.TYPE_COMPACT, Car.CarStatus.STATUS_OPEN, 500.0));

@@ -124,7 +124,7 @@
                         </td>
                         <td>
                             <button type="submit" class="btn btn-dark" th:text="Details" th:name="details_button"
-                                    th:value="${reservation.reservationId}"></button>
+                                    th:value="${reservation.id}"></button>
                         </td>
                     </tr>
                     </tbody>
@@ -145,30 +145,29 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr th:if="${#lists.isEmpty(returns)}">
+                    <tr th:if="${#lists.isEmpty(reservations_incoming)}">
                         <td th:text="'—'"></td>
                         <td th:text="'—'"></td>
                         <td th:text="'—'"></td>
                     </tr>
-                    <tr th:each="return: ${returns}">
+                    <tr th:each="reservation: ${reservations_incoming}">
                         <td>
                             <div class="overflow-cell-hidden"
-                                 th:utext="${return.getDepartmentTake().getCity()} + ', <br>' + ${return.getDepartmentTake().getAddress()}"></div>
+                                 th:utext="${reservation.getDepartmentTake().getCity()} + ', <br>' + ${reservation.getDepartmentTake().getAddress()}"></div>
                         </td>
                         <td>
                             <div class="overflow-cell-hidden"
-                                 th:utext="${return.getDateFrom()} + '<br> ⟶ ' + ${return.getDateTo()}"></div>
+                                 th:utext="${reservation.getDateFrom()} + '<br> ⟶ ' + ${reservation.getDateTo()}"></div>
                         </td>
                         <td>
-                            <div class="overflow-cell-hidden" th:utext="${return.status.getText()}"></div>
+                            <div class="overflow-cell-hidden" th:utext="${reservation.status.getText()}"></div>
                         </td>
                         <td>
                             <button type="submit" class="btn btn-dark" th:text="Details" th:name="details_button"
-                                    th:value="${return.reservationId}"></button>
+                                    th:value="${reservation.id}"></button>
                         </td>
                     </tr>
                     </tbody>
-                </table>
                 </table>
             </form>
         </div>

@@ -10,19 +10,19 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ReservationRepository extends CrudRepository<Reservation, Long> {
-    @Query(value = "FROM reservation WHERE customer.id = :customerId ORDER BY reservationId DESC")
+    @Query(value = "SELECT r FROM reservation r WHERE r.customer.id = :customerId ORDER BY id DESC")
     List<Reservation> findAllByCustomerId(@Param("customerId") Long customerId);
 
-    @Query(value = "FROM reservation WHERE customer.id = :customerId AND reservationId = :id")
+    @Query(value = "SELECT r FROM reservation r WHERE r.customer.id = :customerId AND id = :id")
     Optional<Reservation> findByCustomerIdAndId(@Param("customerId") Long customerId, @Param("id") Long id);
 
-    @Query(value = "SELECT r FROM reservation r WHERE r.departmentTake.departmentId = :departmentId AND r.customer.id = :customerId ORDER BY r.reservationId DESC")
+    @Query(value = "SELECT r FROM reservation r WHERE r.departmentTake.departmentId = :departmentId AND r.customer.id = :customerId ORDER BY r.id DESC")
     List<Reservation> findAllByCustomerIdAndDepartmentTakeId(@Param("customerId") Long customerId, @Param("departmentId") Long departmentId);
 
-    @Query(value = "SELECT r FROM reservation r WHERE r.departmentBack.departmentId = :departmentId AND r.customer.id = :customerId ORDER BY r.reservationId DESC")
+    @Query(value = "SELECT r FROM reservation r WHERE r.departmentBack.departmentId = :departmentId AND r.customer.id = :customerId ORDER BY r.id DESC")
     List<Reservation> findAllByCustomerIdAndDepartmentBackId(@Param("customerId") Long customerId, @Param("departmentId") Long departmentId);
 
-    @Query(value = "FROM reservation r WHERE r.customer.id = :customerId AND r.status IN (1, 3) ")
+    @Query(value = "SELECT r FROM reservation r WHERE r.customer.id = :customerId AND r.status IN (1, 3) ")
     List<Reservation> findAllActiveByCustomerId(@Param("customerId") Long customerId);
 
     @Query(value = "SELECT r FROM reservation r JOIN customer c ON c.id = r.customer.id " +

@@ -1,6 +1,7 @@
 package com.sda.carrental.service;
 
 import com.sda.carrental.exceptions.ResourceNotFoundException;
+import com.sda.carrental.global.ConstantValues;
 import com.sda.carrental.model.operational.Reservation;
 import com.sda.carrental.model.property.Car;
 import com.sda.carrental.repository.CarRepository;
@@ -18,27 +19,28 @@ import java.util.*;
 public class CarService {
 
     private final CarRepository repository;
+    private final ConstantValues cv;
 
     public Car findCarById(long id) {
         return repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Car", "id", id));
     }
 
     public List<Car> findAvailableDistinctCarsInDepartment(LocalDate dateFrom, LocalDate dateTo, Long department) {
-        return repository.findAvailableDistinctCarsInDepartment(dateFrom, dateTo, department);
+        return repository.findAvailableDistinctCarsInDepartment(dateFrom.minusDays(cv.getReservationGap()), dateTo.plusDays(cv.getReservationGap()), department);
     }
 
     public List<Car> findAvailableCarsInDepartment(Reservation r) {
-        return repository.findAvailableCarsInDepartment(r.getDateFrom(), r.getDateTo(), r.getDepartmentTake().getDepartmentId());
+        return repository.findAvailableCarsInDepartment(r.getDateFrom().minusDays(cv.getReservationGap()), r.getDateTo().plusDays(cv.getReservationGap()), r.getDepartmentTake().getDepartmentId());
     }
 
     public Car findAvailableCar(LocalDate dateFrom, LocalDate dateTo, Long department, long carId) {
-        return repository.findCarByCarIdAndAvailability(dateFrom, dateTo, department, carId).orElseThrow(ResourceNotFoundException::new);
+        return repository.findCarByCarIdAndAvailability(dateFrom.minusDays(cv.getReservationGap()), dateTo.plusDays(cv.getReservationGap()), department, carId).orElseThrow(ResourceNotFoundException::new);
     }
 
     public List<Car> filterCars(CarFilterForm filterForm) {
         ArrayList<Car> filteredCars = (ArrayList<Car>) repository.findAvailableDistinctCarsInDepartment(
-                filterForm.getIndexData().getDateFrom(),
-                filterForm.getIndexData().getDateTo(),
+                filterForm.getIndexData().getDateFrom().minusDays(cv.getReservationGap()),
+                filterForm.getIndexData().getDateTo().plusDays(cv.getReservationGap()),
                 filterForm.getIndexData().getDepartmentIdFrom());
 
         if (filterForm.getPriceMin() != null) {
@@ -67,7 +69,7 @@ public class CarService {
     public List<Car> filterCars(SubstituteCarFilterForm filterForm) {
         ArrayList<Car> filteredCars = (ArrayList<Car>) repository.findAvailableCarsInDepartment(
                 filterForm.getDateFrom(),
-                filterForm.getDateTo(),
+                filterForm.getDateTo().plusDays(cv.getReservationGap()),
                 filterForm.getDepartmentId());
 
         if (filterForm.getPriceMin() != null) {
