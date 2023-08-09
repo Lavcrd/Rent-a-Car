@@ -82,7 +82,7 @@ public class ManageReservationsController {
             map.addAttribute("department", departmentService.findDepartmentWhereId(departmentId));
             map.addAttribute("customer", customer);
             map.addAttribute("reservations", reservationService.getUserReservationsByDepartmentTake(customer.getId(), departmentId));
-            map.addAttribute("returns", reservationService.getUserReservationsByDepartmentBack(customer.getId(), departmentId));
+            map.addAttribute("reservations_incoming", reservationService.getUserReservationsByDepartmentBack(customer.getId(), departmentId));
 
             Optional<Verification> verification = verificationService.getOptionalVerificationByCustomer(customerId);
             if (verification.isPresent()) {
@@ -133,7 +133,7 @@ public class ManageReservationsController {
             }
 
             map.addAttribute("reservation", reservation);
-            map.addAttribute("deposit_percentage", cv.getDepositPercentage() * 100);
+            map.addAttribute("fee_percentage", cv.getCancellationFeePercentage() * 100);
             map.addAttribute("refund_fee_days", cv.getRefundSubtractDaysDuration());
 
             map.addAttribute("confirmation_form", new ConfirmationForm());
@@ -142,15 +142,15 @@ public class ManageReservationsController {
                 form.setDateFrom(LocalDate.now());
                 map.addAttribute("rental_confirmation_form", form);
             } else if (reservation.getStatus().equals(Reservation.ReservationStatus.STATUS_PROGRESS)) {
-                map.addAttribute("rent_details", rentingService.findById(reservation.getReservationId()));
+                map.addAttribute("rent_details", rentingService.findById(reservation.getId()));
                 if (departmentId.equals(reservation.getDepartmentBack().getDepartmentId())) {
                     ConfirmReturnForm form = new ConfirmReturnForm();
                     form.setDateTo(LocalDate.now());
                     map.addAttribute("return_confirmation_form", form);
                 }
             } else if (reservation.getStatus().equals(Reservation.ReservationStatus.STATUS_COMPLETED)) {
-                map.addAttribute("rent_details", rentingService.findById(reservation.getReservationId()));
-                map.addAttribute("return_details", returningService.findById(reservation.getReservationId()));
+                map.addAttribute("rent_details", rentingService.findById(reservation.getId()));
+                map.addAttribute("return_details", returningService.findById(reservation.getId()));
             }
             return "management/reservationDetailsManagement";
         } catch (ResourceNotFoundException err) {

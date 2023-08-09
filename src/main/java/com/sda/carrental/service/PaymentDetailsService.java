@@ -36,12 +36,12 @@ public class PaymentDetailsService {
     @Transactional
     public void retractReservationPayment(Reservation reservation, Reservation.ReservationStatus requestType) {
         Optional<PaymentDetails> paymentDetailsOptional = getOptionalPaymentDetails(reservation);
-        if(paymentDetailsOptional.isEmpty()) {
+        if (paymentDetailsOptional.isEmpty()) {
             return;
         }
         PaymentDetails paymentDetails = paymentDetailsOptional.get();
         if (LocalDate.now().isAfter(reservation.getDateFrom().minusDays(cv.getRefundSubtractDaysDuration())) && requestType.equals(Reservation.ReservationStatus.STATUS_REFUNDED)) {
-            paymentDetails.setSecuredValue(paymentDetails.getMainValue() * cv.getDepositPercentage());
+            paymentDetails.setSecuredValue(paymentDetails.getMainValue() * cv.getCancellationFeePercentage());
         }
 
         //some method here that would return money to the customer
@@ -63,10 +63,10 @@ public class PaymentDetailsService {
     }
 
     @Transactional
-    public void adjustRequiredDeposit(Reservation r, Double dv) {
+    public void adjustRequiredDeposit(Reservation r, Double depositValue) {
         Optional<PaymentDetails> pd = repository.findByReservation(r);
-        if(pd.isEmpty()) return;
-        pd.get().setRequiredDeposit(dv);
+        if (pd.isEmpty()) return;
+        pd.get().setRequiredDeposit(depositValue);
         repository.save(pd.get());
     }
 }

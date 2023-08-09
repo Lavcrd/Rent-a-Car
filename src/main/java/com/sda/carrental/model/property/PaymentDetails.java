@@ -23,11 +23,11 @@ public class PaymentDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "payment_id", nullable = false)
+    @Column(name = "id", nullable = false)
     private Long paymentId;
 
     @OneToOne
-    @JoinColumn(name = "reservation_id", referencedColumnName = "reservation_id")
+    @JoinColumn(name = "reservation", referencedColumnName = "id")
     private Reservation reservation;
 
     @Column(name = "archival_raw_value", nullable = false)

@@ -64,7 +64,7 @@ public class CustomerReservationsController {
             }
 
             map.addAttribute("reservation", reservation);
-            map.addAttribute("deposit_percentage", cv.getDepositPercentage() * 100);
+            map.addAttribute("fee_percentage", cv.getCancellationFeePercentage() * 100);
             map.addAttribute("refund_fee_days", cv.getRefundSubtractDaysDuration());
             return "user/reservationDetailsCustomer";
         } catch (ResourceNotFoundException err) {
