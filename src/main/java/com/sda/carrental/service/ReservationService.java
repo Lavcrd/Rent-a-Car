@@ -182,4 +182,8 @@ public class ReservationService {
             return false;
         }
     }
+
+    public Reservation findActiveReservationByPlate(String plate) throws ResourceNotFoundException {
+        return repository.findActiveReservationByPlate(plate).orElseThrow(ResourceNotFoundException::new);
+    }
 }
