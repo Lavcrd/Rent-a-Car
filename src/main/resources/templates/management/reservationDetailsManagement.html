@@ -346,19 +346,19 @@
                                                     <input id="date_to" class="text-black bg-white" type="date" name="date_to" th:field="*{dateTo}" required/>
                                                 </div>
                                                 <div class="form-group">
-                                                    <label for="message-text"
+                                                    <label for="message-text-ret"
                                                            class="col-form-label">Remarks:</label>
                                                     <textarea name="remarks" th:field="*{remarks}"
-                                                              class="form-control"></textarea>
+                                                              class="form-control" id="message-text-ret"></textarea>
                                                 </div>
                                                 <div class="form-group">
-                                                    <label for="r_confirm_password" class="col-form-label">Confirm
+                                                    <label for="ret_confirm_password" class="col-form-label">Confirm
                                                         action with a password</label>
                                                     <input name="confirmPassword"
                                                            class="text-black bg-white"
                                                            th:placeholder="'Confirm with password'"
                                                            th:type="password" th:field="*{currentPassword}"
-                                                           autocomplete="new-password"/>
+                                                           autocomplete="new-password" id="ret_confirm_password"/>
                                                 </div>
                                             </div>
                                             <div class="modal-footer">
