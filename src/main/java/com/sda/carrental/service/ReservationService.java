@@ -186,4 +186,12 @@ public class ReservationService {
     public Reservation findActiveReservationByPlate(String plate) throws ResourceNotFoundException {
         return repository.findActiveReservationByPlate(plate).orElseThrow(ResourceNotFoundException::new);
     }
+
+    @Transactional
+    public void changeDestination(Long reservationId, Long departmentId) throws ResourceNotFoundException {
+        Reservation r = repository.findById(reservationId).orElseThrow(ResourceNotFoundException::new);
+        Department d = departmentService.findDepartmentWhereId(departmentId);
+        r.setDepartmentBack(d);
+        repository.save(r);
+    }
 }
