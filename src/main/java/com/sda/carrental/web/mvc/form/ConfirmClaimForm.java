@@ -2,15 +2,21 @@ package com.sda.carrental.web.mvc.form;
 
 import com.sda.carrental.web.mvc.form.validation.constraint.CurrentPassword;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
 @Getter
 @Setter
-public class ConfirmReturnForm {
+@NoArgsConstructor
+public class ConfirmClaimForm {
+    @NotNull
+    private Long departmentId;
+
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate dateTo;
 
@@ -20,4 +26,12 @@ public class ConfirmReturnForm {
     @NotEmpty(message = "Field cannot be empty")
     @CurrentPassword(message = "Provided password confirmation is not valid")
     private String currentPassword;
+
+    public ConfirmClaimForm(Long departmentId) {
+        this.departmentId = departmentId;
+    }
+
+    public ConfirmClaimForm(LocalDate dateTo) {
+        this.dateTo = dateTo;
+    }
 }
