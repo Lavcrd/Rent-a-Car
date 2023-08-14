@@ -37,15 +37,15 @@ public class Reservation {
     private Customer customer;
 
     @ManyToOne
-    @JoinColumn(name = "car_id", referencedColumnName = "car_id")
+    @JoinColumn(name = "car_id", referencedColumnName = "id")
     private Car car;
 
     @ManyToOne
-    @JoinColumn(name = "department_id", referencedColumnName = "department_id")
+    @JoinColumn(name = "department_id", referencedColumnName = "id")
     private Department departmentTake;
 
     @ManyToOne
-    @JoinColumn(name = "department_return_id", referencedColumnName = "department_id")
+    @JoinColumn(name = "department_return_id", referencedColumnName = "id")
     private Department departmentBack;
 
     @Column(name = "date_from")

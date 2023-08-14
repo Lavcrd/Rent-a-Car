@@ -23,7 +23,7 @@ public class VerificationService {
     @Transactional
     public HttpStatus deleteVerification(Long customerId) {
         try {
-            repository.findByCustomerId(customerId).ifPresent(repository::delete);
+            repository.findById(customerId).ifPresent(repository::delete);
             return HttpStatus.OK;
         } catch (RuntimeException err) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
@@ -32,11 +32,11 @@ public class VerificationService {
     }
 
     public Optional<Verification> getOptionalVerificationByCustomer(Long customerId) {
-        return repository.findByCustomerId(customerId);
+        return repository.findById(customerId);
     }
 
     public Verification maskVerification(Verification verification) {
-        return new Verification(verification.getCustomerId(), verification.getCountry(), verification.getPersonalId().replaceAll("^...", "XXX"), verification.getDriverId().replaceAll("...$", "XXX"));
+        return new Verification(verification.getId(), verification.getCountry(), verification.getPersonalId().replaceAll("^...", "XXX"), verification.getDriverId().replaceAll("...$", "XXX"));
     }
 
     @Transactional
@@ -69,7 +69,7 @@ public class VerificationService {
 
     @Transactional
     public void duplicateVerification(Long mainCustomerId, Long usedCustomerId) throws IllegalActionException {
-        Optional<Verification> verification = repository.findByCustomerId(usedCustomerId);
+        Optional<Verification> verification = repository.findById(usedCustomerId);
         if (verification.isEmpty()) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             throw new IllegalActionException();

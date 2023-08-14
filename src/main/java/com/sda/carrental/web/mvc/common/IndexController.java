@@ -22,7 +22,7 @@ public class IndexController {
     //Pages
     @RequestMapping(method = RequestMethod.GET)
     public String indexPage(final ModelMap map) {
-        map.addAttribute("department", departmentService.findAll());
+        map.addAttribute("departments", departmentService.findAll());
 
         IndexForm form = new IndexForm();
         form.setDateFrom(LocalDate.now());
@@ -36,7 +36,7 @@ public class IndexController {
     public String handleRequest(@ModelAttribute("indexForm") @Valid IndexForm form, Errors errors, RedirectAttributes redirectAttributes, ModelMap map) {
         if (errors.hasErrors()) {
             if (form.isFirstBranchChecked()) form.setFirstBranchChecked(false);
-            map.addAttribute("department", departmentService.findAll());
+            map.addAttribute("departments", departmentService.findAll());
             return "common/index";
         }
 

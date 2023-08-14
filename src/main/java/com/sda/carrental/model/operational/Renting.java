@@ -12,15 +12,15 @@ import javax.persistence.*;
 @NoArgsConstructor
 public class Renting {
     public Renting(Long employeeId, Long reservationId, String remarks, LocalDate dateFrom) {
-        this.rentId = reservationId;
+        this.id = reservationId;
         this.employeeId = employeeId;
         this.dateFrom = dateFrom;
         this.remarks = remarks;
     }
 
     @Id
-    @Column(name = "rent_id", nullable = false)
-    private Long rentId;
+    @Column(name = "id", nullable = false)
+    private Long id;
 
     @Column(name = "employee_id")
     private Long employeeId;

@@ -9,9 +9,6 @@ import org.springframework.data.repository.query.Param;
 import java.util.Optional;
 
 public interface VerificationRepository extends CrudRepository<Verification, Long> {
-    Optional<Verification> findByCustomerId(Long customerId);
-    void delete(Verification verification);
-
     @Query(value = "SELECT v FROM verification v WHERE v.personalId = :personalId AND v.country = :country")
     Optional<Verification> findByVerificationFields(@Param("country") Country country, @Param("personalId") String personalId);
 }

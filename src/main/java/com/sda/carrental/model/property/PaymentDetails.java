@@ -24,7 +24,7 @@ public class PaymentDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
-    private Long paymentId;
+    private Long id;
 
     @OneToOne
     @JoinColumn(name = "reservation", referencedColumnName = "id")

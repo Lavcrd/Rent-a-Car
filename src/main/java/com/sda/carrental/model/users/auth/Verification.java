@@ -14,15 +14,15 @@ import javax.persistence.*;
 public class Verification {
 
     public Verification(Long customerId, Country country, String personalId, String driverId) {  //TODO should be encrypted
-        this.customerId = customerId;
+        this.id = customerId;
         this.country = country;
         this.personalId = personalId;
         this.driverId = driverId;
     }
 
     @Id
-    @Column(name = "customer_id", unique = true)
-    private Long customerId;
+    @Column(name = "id", unique = true)
+    private Long id;
 
     @Column(name = "personal_id", nullable = false)
     private String personalId;

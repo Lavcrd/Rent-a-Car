@@ -12,7 +12,6 @@ import com.sda.carrental.web.mvc.form.RegisterCustomerForm;
 import com.sda.carrental.web.mvc.form.SearchCustomerForm;
 import com.sda.carrental.web.mvc.form.SelectCarForm;
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -92,6 +91,15 @@ public class CustomerService {
         }
     }
 
+    @Transactional
+    public HttpStatus unverifyCustomer(Long customerId) {
+        if (reservationService.hasActiveReservations(customerId)) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            return HttpStatus.CONFLICT;
+        }
+        return verificationService.deleteVerification(customerId);
+    }
+
     public List<Customer> findCustomersByDepartmentAndName(SearchCustomerForm customersData) {
         if (customersData.getName().isEmpty()) customersData.setName(null);
         if (customersData.getSurname().isEmpty()) customersData.setSurname(null);
@@ -132,7 +140,7 @@ public class CustomerService {
                 reservationService.createReservation(customer, form.getReservationForm());
                 return HttpStatus.CREATED;
             } else {
-                Customer customer = findById(verification.get().getCustomerId());
+                Customer customer = findById(verification.get().getId());
                 reservationService.createReservation(customer, form.getReservationForm());
                 return HttpStatus.OK;
             }
