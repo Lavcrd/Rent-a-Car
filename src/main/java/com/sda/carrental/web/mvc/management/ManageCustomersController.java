@@ -192,11 +192,15 @@ public class ManageCustomersController {
             return "redirect:/mg-cus/{customer}";
         }
 
-        HttpStatus status = verificationService.deleteVerification(customerId);
+        HttpStatus status = customerService.unverifyCustomer(customerId);
         if (status.equals(HttpStatus.OK)) {
             redAtt.addAttribute("customer", customerId);
             redAtt.addFlashAttribute("department", departmentId);
             redAtt.addFlashAttribute("message", "Verification successfully removed");
+        } else if (status.equals(HttpStatus.CONFLICT)) {
+            redAtt.addAttribute("customer", customerId);
+            redAtt.addFlashAttribute("department", departmentId);
+            redAtt.addFlashAttribute("message", "Verification removal unsuccessful: Active reservations");
         } else {
             redAtt.addFlashAttribute("message", "An unexpected error occurred. Please try again.");
             return "redirect:/mg-cus";

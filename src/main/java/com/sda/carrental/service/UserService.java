@@ -43,21 +43,20 @@ public class UserService {
     @Transactional
     public HttpStatus deleteUser(Long userId) {
         try {
-            Optional<User> user = repository.findById(userId);
-            if (user.isEmpty()) throw new ResourceNotFoundException();
-            User.Roles role = user.get().getRole();
+            User user = repository.findById(userId).orElseThrow(ResourceNotFoundException::new);
+            User.Roles role = user.getRole();
 
             if (role.equals(User.Roles.ROLE_CUSTOMER)) {
                 if (reservationService.hasActiveReservations(userId)) {
                     TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
                     return HttpStatus.CONFLICT;
                 }
-                credentialsService.deleteCredentials(user.get().getId());
+                credentialsService.deleteCredentials(userId);
                 return customerService.deleteCustomer(userId, reservationService.getCustomerReservations(userId).isEmpty());
             } else {
-                user.get().setTerminationDate(LocalDate.now());
+                user.setTerminationDate(LocalDate.now());
                 credentialsService.scramblePassword(userId);
-                repository.save(redactUser(user.get()));
+                repository.save(redactUser(user));
                 return HttpStatus.OK;
             }
         } catch (ResourceNotFoundException err) {
@@ -87,8 +86,8 @@ public class UserService {
         try {
             Reservation r = reservationService.getCustomerReservation(customerId, reservationId);
 
-            HttpStatus accessDepFrom = departmentService.departmentAccess(cud, r.getDepartmentTake().getDepartmentId());
-            HttpStatus accessDepTo = departmentService.departmentAccess(cud, r.getDepartmentBack().getDepartmentId());
+            HttpStatus accessDepFrom = departmentService.departmentAccess(cud, r.getDepartmentTake().getId());
+            HttpStatus accessDepTo = departmentService.departmentAccess(cud, r.getDepartmentBack().getId());
 
             return accessDepFrom == HttpStatus.FORBIDDEN && accessDepTo == HttpStatus.FORBIDDEN;
         } catch (ResourceNotFoundException err) {

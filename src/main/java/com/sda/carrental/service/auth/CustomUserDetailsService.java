@@ -25,7 +25,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
         return new CustomUserDetails(
                 credentials,
-                userRepository.findById(credentials.getUserId()).orElseThrow(() -> new ResourceNotFoundException("User", "ID", credentials.getUserId()))
+                userRepository.findById(credentials.getId()).orElseThrow(() -> new ResourceNotFoundException("User", "ID", credentials.getId()))
         );
     }
 }

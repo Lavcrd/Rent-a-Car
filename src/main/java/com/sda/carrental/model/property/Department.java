@@ -25,8 +25,8 @@ public class Department {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "department_id", nullable = false)
-    private Long departmentId;
+    @Column(name = "id", nullable = false)
+    private Long id;
 
     @Column(name = "country_code", nullable = false)
     private Country country;

@@ -30,7 +30,7 @@ public class CarService {
     }
 
     public List<Car> findAvailableCarsInDepartment(Reservation r) {
-        return repository.findAvailableCarsInDepartment(r.getDateFrom().minusDays(cv.getReservationGap()), r.getDateTo().plusDays(cv.getReservationGap()), r.getDepartmentTake().getDepartmentId());
+        return repository.findAvailableCarsInDepartment(r.getDateFrom().minusDays(cv.getReservationGap()), r.getDateTo().plusDays(cv.getReservationGap()), r.getDepartmentTake().getId());
     }
 
     public Car findAvailableCar(LocalDate dateFrom, LocalDate dateTo, Long department, long carId) {

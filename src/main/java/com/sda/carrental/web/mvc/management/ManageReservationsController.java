@@ -107,7 +107,7 @@ public class ManageReservationsController {
 
             Reservation reservation = reservationService.getCustomerReservation(customerId, reservationId);
 
-            if (departmentService.departmentAccess(cud, reservation.getDepartmentTake().getDepartmentId()).equals(HttpStatus.FORBIDDEN)) {
+            if (departmentService.departmentAccess(cud, reservation.getDepartmentTake().getId()).equals(HttpStatus.FORBIDDEN)) {
                 redAtt.addFlashAttribute("message", "Incorrect data. Access not allowed.");
                 return "redirect:/mg-res";
             }
@@ -140,7 +140,7 @@ public class ManageReservationsController {
                 map.addAttribute("rental_confirmation_form", new ConfirmRentalForm(LocalDate.now()));
             } else if (reservation.getStatus().equals(Reservation.ReservationStatus.STATUS_PROGRESS)) {
                 map.addAttribute("rent_details", rentingService.findById(reservation.getId()));
-                if (departmentId.equals(reservation.getDepartmentBack().getDepartmentId())) {
+                if (departmentId.equals(reservation.getDepartmentBack().getId())) {
                     ConfirmClaimForm form = new ConfirmClaimForm(departmentId);
                     form.setDateTo(LocalDate.now());
                     map.addAttribute("return_confirmation_form", form);
@@ -185,7 +185,7 @@ public class ManageReservationsController {
             SubstituteCarFilterForm carFilterForm = new SubstituteCarFilterForm();
             carFilterForm.setDateFrom(reservation.getDateFrom());
             carFilterForm.setDateTo(reservation.getDateTo());
-            carFilterForm.setDepartmentId(reservation.getDepartmentTake().getDepartmentId());
+            carFilterForm.setDepartmentId(reservation.getDepartmentTake().getId());
 
             map.addAttribute("confirmation_form", new ConfirmationForm());
             map.addAttribute("carFilterForm", carFilterForm);

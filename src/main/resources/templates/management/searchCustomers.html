@@ -25,7 +25,7 @@
                     <select type="text" id="department" th:field="*{departmentId}" class="form-control">
                         <div th:each="department:${departments}">
                             <option th:text="${department.getCity()} + ', ' + ${department.getAddress()}"
-                                    th:value="${department.getDepartmentId()}"></option>
+                                    th:value="${department.getId()}"></option>
                         </div>
                     </select>
                 </div>

@@ -11,14 +11,14 @@ import java.util.Optional;
 
 public interface CustomerRepository extends CrudRepository<Customer, Long> {
     @Query(value = "SELECT c FROM customer c JOIN reservation r ON c.id = r.customer.id " +
-            "WHERE r.departmentTake.departmentId = :departmentId " +
+            "WHERE r.departmentTake.id = :departmentId " +
             "AND (:name IS NULL OR LOWER(c.name) LIKE LOWER(CONCAT(:name, '%'))) " +
             "AND (:surname IS NULL OR LOWER(c.surname) LIKE LOWER(CONCAT(:surname, '%'))) " +
             "AND (c.status <> 2) " +
             "GROUP BY c.id")
     List<Customer> findCustomersByDepartmentAndName(@Param("departmentId") Long departmentId, @Param("name") String name, @Param("surname") String surname);
 
-    @Query(value = "SELECT c FROM verification v LEFT JOIN customer c ON c.id = v.customerId " +
+    @Query(value = "SELECT c FROM verification v LEFT JOIN customer c ON c.id = v.id " +
             "WHERE v.personalId = :personalId AND v.country = :country")
     Optional<Customer> findByVerification(@Param("country") Country country, @Param("personalId") String personalId);
 }

@@ -30,9 +30,9 @@
                     <option selected disabled
                             value="">Select...
                     </option>
-                    <option th:each="departments: ${department}"
-                            th:value="${departments.getDepartmentId()}"
-                            th:text="${departments.getCity()+ ', '+ departments.getAddress()}"></option>
+                    <option th:each="department: ${departments}"
+                            th:value="${department.getId()}"
+                            th:text="${department.getCity()+ ', '+ department.getAddress()}"></option>
                 </select><br>
 
                 <div class="form-check form-switch">
@@ -54,9 +54,9 @@
                             <option selected disabled
                                     value="">Select...
                             </option>
-                            <option th:each="departments: ${department}"
-                                    th:value="${departments.getDepartmentId()}"
-                                    th:text="${departments.getCity()+ ', '+ departments.getAddress()}"></option>
+                            <option th:each="department: ${departments}"
+                                    th:value="${department.getId()}"
+                                    th:text="${department.getCity()+ ', '+ department.getAddress()}"></option>
                         </select><br>
                     </div>
                 </div>

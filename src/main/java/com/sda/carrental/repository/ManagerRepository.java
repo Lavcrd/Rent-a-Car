@@ -9,6 +9,6 @@ import java.util.Optional;
 
 public interface ManagerRepository extends CrudRepository<Manager, Long> {
 
-    @Query(value = "FROM manager m WHERE m.id=:id")
+    @Query(value = "SELECT m FROM manager m WHERE m.id=:id")
     Optional<Manager> findManagerById(@Param("id") Long id);
 }

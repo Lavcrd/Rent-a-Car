@@ -105,7 +105,7 @@ public class ReservationService {
                 return HttpStatus.ACCEPTED;
             } else if (status.equals(Reservation.ReservationStatus.STATUS_COMPLETED) && r.getStatus().equals(Reservation.ReservationStatus.STATUS_PROGRESS)) {
                 carService.updateCarStatus(r.getCar(), Car.CarStatus.STATUS_OPEN);
-                carService.updateCarLocation(r.getCar(), r.getDepartmentBack().getDepartmentId());
+                carService.updateCarLocation(r.getCar(), r.getDepartmentBack().getId());
                 updateReservationStatus(r, status);
                 return HttpStatus.ACCEPTED;
             }
@@ -154,7 +154,7 @@ public class ReservationService {
     public HttpStatus substituteCar(Long reservationId, Long customerId, Long carId) {
         try {
             Reservation r = getCustomerReservation(customerId, reservationId);
-            Car c = carService.findAvailableCar(r.getDateFrom(), r.getDateTo(), r.getDepartmentTake().getDepartmentId(), carId);
+            Car c = carService.findAvailableCar(r.getDateFrom(), r.getDateTo(), r.getDepartmentTake().getId(), carId);
             r.setCar(c);
             repository.save(r);
             paymentDetailsService.adjustRequiredDeposit(r, c.getDepositValue());

@@ -19,6 +19,6 @@ public class Manager extends User {
     }
 
     @ManyToOne
-    @JoinColumn(name = "department_id", referencedColumnName = "department_id")
+    @JoinColumn(name = "department_id", referencedColumnName = "id")
     private Department department;
 }

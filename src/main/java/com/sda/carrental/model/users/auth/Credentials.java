@@ -13,14 +13,14 @@ import javax.persistence.Id;
 @NoArgsConstructor
 public class Credentials {
     public Credentials(Long userId, String username, String password) { //todo encrypted
-        this.userId = userId;
+        this.id = userId;
         this.username = username;
         this.password = password;
     }
 
     @Id
-    @Column(name = "user_id", unique = true, updatable = false)
-    private Long userId;
+    @Column(name = "id", unique = true, updatable = false)
+    private Long id;
 
     @Setter
     @Column(name = "username", unique = true, nullable = false)

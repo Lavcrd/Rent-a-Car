@@ -29,7 +29,7 @@
                         <select type="text" th:field="*{departmentTake}" class="form-control">
                             <div th:each="department:${departments}">
                                 <option th:text="${department.getCity()} + ', ' + ${department.getAddress()}"
-                                        th:value="${department.getDepartmentId()}"></option>
+                                        th:value="${department.getId()}"></option>
                             </div>
                         </select>
                     </div>
@@ -40,7 +40,7 @@
                             <option th:value="null" th:text="Any"></option>
                             <div th:each="departmentBack:${departmentsCountry}">
                                 <option th:text="${departmentBack.getCity()} + ', ' + ${departmentBack.getAddress()}"
-                                        th:value="${departmentBack.getDepartmentId()}"></option>
+                                        th:value="${departmentBack.getId()}"></option>
                             </div>
                         </select>
                     </div>
@@ -110,7 +110,7 @@
                             <option th:value="null" th:text="Any"></option>
                             <div th:each="departmentTake:${departmentsCountry}">
                                 <option th:text="${departmentTake.getCity()} + ', ' + ${departmentTake.getAddress()}"
-                                        th:value="${departmentTake.getDepartmentId()}"></option>
+                                        th:value="${departmentTake.getId()}"></option>
                             </div>
                         </select>
                     </div>
@@ -119,7 +119,7 @@
                         <select type="text" th:field="*{departmentBack}" class="form-control">
                             <div th:each="departmentBack:${departments}">
                                 <option th:text="${departmentBack.getCity()} + ', ' + ${departmentBack.getAddress()}"
-                                        th:value="${departmentBack.getDepartmentId()}"></option>
+                                        th:value="${departmentBack.getId()}"></option>
                             </div>
                         </select>
                     </div>

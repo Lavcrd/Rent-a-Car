@@ -12,15 +12,15 @@ import javax.persistence.*;
 @NoArgsConstructor
 public class Returning {
     public Returning(Long reservationId, Long employeeId, LocalDate dateTo, String remarks) {
-        this.returnId = reservationId;
+        this.id = reservationId;
         this.employeeId = employeeId;
         this.dateTo = dateTo;
         this.remarks = remarks;
     }
 
     @Id
-    @Column(name = "return_id", nullable = false)
-    private Long returnId;
+    @Column(name = "id", nullable = false)
+    private Long id;
 
     @Column(name = "employee_id")
     private Long employeeId;
