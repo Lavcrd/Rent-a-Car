@@ -2,6 +2,7 @@ package com.sda.carrental.web.mvc.form;
 
 import com.sda.carrental.model.property.Car;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
@@ -11,6 +12,7 @@ import java.util.List;
 @Getter
 @Setter
 @ToString
+@NoArgsConstructor
 public class SubstituteCarFilterForm {
     private Integer priceMin;
 
@@ -27,4 +29,10 @@ public class SubstituteCarFilterForm {
     private LocalDate dateTo;
 
     private Long departmentId;
+
+    public SubstituteCarFilterForm(LocalDate dateFrom, LocalDate dateTo, Long departmentId) {
+        this.dateFrom = dateFrom;
+        this.dateTo = dateTo;
+        this.departmentId = departmentId;
+    }
 }

@@ -43,29 +43,26 @@ public class ClaimReturnController {
         try {
             CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             map.addAttribute("countries", Country.values());
+            map.addAttribute("searchCarForm", map.getOrDefault("searchCarForm", new SearchCarForm()));
 
-            if (map.containsKey("searchCarForm")) {
-                if (map.containsKey("reservation")) {
-                    if (!map.containsKey("confirm_claim_form")) {
-                        map.addAttribute("confirm_claim_form", new ConfirmClaimForm(LocalDate.now()));
-                    }
-                    map.addAttribute("departments", departmentService.getDepartmentsByRole(cud));
+            if (map.containsKey("reservation")) {
+                Reservation reservation = (Reservation) map.get("reservation");
 
-                    Reservation reservation = (Reservation) map.get("reservation");
-                    PaymentDetails receipt = paymentDetailsService.getOptionalPaymentDetails(reservation).orElseThrow(ResourceNotFoundException::new);
+                map.addAttribute("confirm_claim_form", map.getOrDefault("confirm_claim_form", new ConfirmClaimForm(reservation.getDepartmentBack().getId(), LocalDate.now())));
+                map.addAttribute("departments", departmentService.getDepartmentsByRole(cud));
 
-                    map.addAttribute("diff_return_price", receipt.getRequiredReturnValue());
-                    map.addAttribute("raw_price", receipt.getRequiredRawValue());
-                    map.addAttribute("total_price", receipt.getRequiredRawValue() + receipt.getRequiredReturnValue());
-                    map.addAttribute("deposit_value", receipt.getRequiredDeposit());
+                PaymentDetails receipt = paymentDetailsService.getOptionalPaymentDetails(reservation).orElseThrow(ResourceNotFoundException::new);
 
-                    map.addAttribute("reservation", reservation);
-                    map.addAttribute("fee_percentage", cv.getCancellationFeePercentage() * 100);
-                    map.addAttribute("refund_fee_days", cv.getRefundSubtractDaysDuration());
-                }
-            } else {
-                map.addAttribute("searchCarForm", new SearchCarForm());
+                map.addAttribute("diff_return_price", receipt.getRequiredReturnValue());
+                map.addAttribute("raw_price", receipt.getRequiredRawValue());
+                map.addAttribute("total_price", receipt.getRequiredRawValue() + receipt.getRequiredReturnValue());
+                map.addAttribute("deposit_value", receipt.getRequiredDeposit());
+
+                map.addAttribute("reservation", reservation);
+                map.addAttribute("fee_percentage", cv.getCancellationFeePercentage() * 100);
+                map.addAttribute("refund_fee_days", cv.getRefundSubtractDaysDuration());
             }
+
             return "management/claimReturn";
         } catch (ResourceNotFoundException err) {
             redAtt.addFlashAttribute("message", "Failed: Missing payment - possible server side issues");
@@ -103,13 +100,13 @@ public class ClaimReturnController {
     @RequestMapping(value = "/claim", method = RequestMethod.POST)
     public String claimReservationButton(@ModelAttribute @Valid ConfirmClaimForm form, Errors err, RedirectAttributes redAtt,
                                          @RequestParam("plate") String plate, @RequestParam("department") Long departmentId,
-                                         @RequestParam("reservation_id") Long reservationId,  @RequestParam("customer") Long customerId) {
+                                         @RequestParam("reservation_id") Long reservationId, @RequestParam("customer") Long customerId) {
         if (err.hasErrors()) {
             Reservation reservation = reservationService.findActiveReservationByPlate(plate);
             redAtt.addFlashAttribute("reservation", reservation);
             redAtt.addFlashAttribute("rent_details", rentingService.findById(reservation.getId()));
             String[] plateValues = plate.split("-", 2);
-            redAtt.addFlashAttribute("searchCarForm", new SearchCarForm(Country.valueOf("COUNTRY_"+plateValues[0]), plateValues[1]));
+            redAtt.addFlashAttribute("searchCarForm", new SearchCarForm(Country.valueOf("COUNTRY_" + plateValues[0]), plateValues[1]));
             redAtt.addFlashAttribute("message", err.getAllErrors().get(0).getDefaultMessage());
             redAtt.addFlashAttribute("confirm_claim_form", form);
             return "redirect:/c-ret";

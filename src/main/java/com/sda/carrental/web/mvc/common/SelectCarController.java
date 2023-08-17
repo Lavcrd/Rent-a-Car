@@ -37,29 +37,21 @@ public class SelectCarController {
                     indexData.getDepartmentIdFrom());
             if (carList.isEmpty()) throw new ResourceNotFoundException();
 
-            if (!map.containsKey("filteredCars")) {
-                map.addAttribute("cars", carList);
-            } else {
-                map.addAttribute("cars", map.getAttribute("filteredCars"));
-            }
-            Map<String,Object> carProperties = carService.getFilterProperties(carList);
+            map.addAttribute("cars", map.getOrDefault("filteredCars", carList));
 
-            map.addAttribute("brand", carProperties.get("brand"));
-            map.addAttribute("type", carProperties.get("type"));
+            Map<String, Object> carProperties = carService.getFilterProperties(carList);
+
+            map.addAttribute("brands", carProperties.get("brands"));
+            map.addAttribute("types", carProperties.get("types"));
             map.addAttribute("seats", carProperties.get("seats"));
 
             map.addAttribute("days", (indexData.getDateFrom().until(indexData.getDateTo(), ChronoUnit.DAYS) + 1));
 
-            SelectCarForm selectCarForm = new SelectCarForm();
-            CarFilterForm carFilterForm = new CarFilterForm();
+            map.addAttribute("selectCarForm", new SelectCarForm(indexData));
+            map.addAttribute(map.getOrDefault("carFilterForm", new CarFilterForm(indexData)));
 
-            selectCarForm.setIndexData(indexData);
-            carFilterForm.setIndexData(indexData);
-
-            map.addAttribute("selectCarForm", selectCarForm);
-            map.addAttribute("carFilterForm", carFilterForm);
             return "common/selectCar";
-        } catch (IllegalActionException err ) {
+        } catch (IllegalActionException err) {
             redAtt.addFlashAttribute("message", "An unexpected error occurred. Please try again later or contact customer service.");
             return "redirect:/";
         } catch (ResourceNotFoundException err) {
@@ -69,17 +61,18 @@ public class SelectCarController {
     }
 
     //Select car buttons
-    @RequestMapping(value="/proceed", method = RequestMethod.POST)
+    @RequestMapping(value = "/proceed", method = RequestMethod.POST)
     public String selectButton(@ModelAttribute("selectCarForm") SelectCarForm selectCarData, @RequestParam(value = "select") Long carId, RedirectAttributes redAtt) {
         selectCarData.setCarId(carId);
         redAtt.addFlashAttribute("showData", selectCarData);
         return "redirect:/reservation";
     }
 
-    @RequestMapping(value="/filter", method = RequestMethod.POST)
+    @RequestMapping(value = "/filter", method = RequestMethod.POST)
     public String filterCarsButton(@ModelAttribute("carFilterForm") CarFilterForm filterData, RedirectAttributes redirect) {
         redirect.addFlashAttribute("filteredCars", carService.filterCars(filterData));
         redirect.addFlashAttribute("indexData", filterData.getIndexData());
+        redirect.addFlashAttribute("carFilterForm", filterData);
         return "redirect:/cars";
     }
 }

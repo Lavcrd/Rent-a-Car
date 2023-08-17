@@ -27,11 +27,8 @@ public class ConfirmClaimForm {
     @CurrentPassword(message = "Provided password confirmation is not valid")
     private String currentPassword;
 
-    public ConfirmClaimForm(Long departmentId) {
+    public ConfirmClaimForm(Long departmentId, LocalDate dateTo) {
         this.departmentId = departmentId;
-    }
-
-    public ConfirmClaimForm(LocalDate dateTo) {
         this.dateTo = dateTo;
     }
 }

@@ -53,8 +53,8 @@
                             <div class="accordion-body">
                                 <div class="form-group">
                                     <div class="input-group">
-                                        <input type="text" class="form-control" name="priceMin" placeholder="Min">
-                                        <input type="text" class="form-control" name="priceMax" placeholder="Max">
+                                        <input type="text" class="form-control" name="priceMin" th:field="*{priceMin}" placeholder="Min">
+                                        <input type="text" class="form-control" name="priceMax" th:field="*{priceMax}" placeholder="Max">
                                     </div>
                                 </div>
                             </div>
@@ -72,9 +72,9 @@
                         <div id="brandAcc" class="collapse"
                              aria-labelledby="brand-heading">
                             <div class="accordion-body">
-                                <div class="form-check" th:each="brand : ${brand}">
-                                    <input class="form-check-input" type="checkbox" th:value="${brand}" id="checkBrandId" name="brands">
-                                    <label class="form-check-label" for="checkBrandId" th:text="${brand}"></label>
+                                <div class="form-check" th:each="brand : ${brands}">
+                                    <input class="form-check-input" type="checkbox" th:value="${brand}" th:field="*{brands}" th:id="'brand' + ${brand}" name="brands">
+                                    <label class="form-check-label" th:for="'brand' + ${brand}" th:text="${brand}"></label>
                                 </div>
                             </div>
                         </div>
@@ -91,9 +91,9 @@
                         <div id="typeAcc" class="accordion-collapse collapse"
                              aria-labelledby="type-heading">
                             <div class="accordion-body">
-                                <div class="form-check" th:each="type : ${type}">
-                                    <input class="form-check-input" type="checkbox" th:value="${type}" id="checkTypeId" name="types">
-                                    <label class="form-check-label" for="checkTypeId" th:text="${type.getName()}"></label>
+                                <div class="form-check" th:each="type : ${types}">
+                                    <input class="form-check-input" type="checkbox" th:value="${type}" th:field="*{types}" th:id="'type' + ${type}" name="types">
+                                    <label class="form-check-label" th:for="'type' + ${type}" th:text="${type.getName()}"></label>
                                 </div>
                             </div>
                         </div>
@@ -110,9 +110,9 @@
                         <div id="seatsAcc" class="accordion-collapse collapse"
                              aria-labelledby="seats-heading">
                             <div class="accordion-body">
-                                <div class="form-check" th:each="seats : ${seats}">
-                                    <input class="form-check-input" type="checkbox" th:value="${seats}" id="checkSeatsId" name="seats">
-                                    <label class="form-check-label" for="checkSeatsId" th:text="${seats}"></label>
+                                <div class="form-check" th:each="seat : ${seats}">
+                                    <input class="form-check-input" type="checkbox" th:value="${seat}" th:field="*{seats}" th:id="'seats' + ${seat}" name="seats">
+                                    <label class="form-check-label" th:for="'seats' + ${seat}" th:text="${seat}"></label>
                                 </div>
                             </div>
                         </div>
