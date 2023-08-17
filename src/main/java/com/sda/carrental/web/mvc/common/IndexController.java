@@ -23,11 +23,7 @@ public class IndexController {
     @RequestMapping(method = RequestMethod.GET)
     public String indexPage(final ModelMap map) {
         map.addAttribute("departments", departmentService.findAll());
-
-        IndexForm form = new IndexForm();
-        form.setDateFrom(LocalDate.now());
-        form.setDateTo(LocalDate.now().plusDays(2));
-        map.addAttribute("indexForm", form);
+        map.addAttribute("indexForm", new IndexForm(LocalDate.now(), LocalDate.now().plusDays(2)));
         return "common/index";
     }
 

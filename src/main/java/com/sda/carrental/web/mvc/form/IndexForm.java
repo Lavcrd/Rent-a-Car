@@ -2,6 +2,7 @@ package com.sda.carrental.web.mvc.form;
 
 import com.sda.carrental.web.mvc.form.validation.constraint.CorrectChronology;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -10,6 +11,7 @@ import java.time.LocalDate;
 
 @Getter
 @Setter
+@NoArgsConstructor
 @CorrectChronology(message = "Incorrect date order")
 public class IndexForm {
 
@@ -29,4 +31,8 @@ public class IndexForm {
 
     private LocalDate dateCreated;
 
+    public IndexForm(LocalDate dateFrom, LocalDate dateTo) {
+        this.dateFrom = dateFrom;
+        this.dateTo = dateTo;
+    }
 }

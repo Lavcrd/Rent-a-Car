@@ -51,15 +51,15 @@ public class CarService {
             filteredCars.removeIf(car -> car.getPriceDay() > filterForm.getPriceMax());
         }
 
-        if (filterForm.getBrands() != null) {
+        if (!filterForm.getBrands().isEmpty()) {
             filteredCars.removeIf(car -> !filterForm.getBrands().contains(car.getBrand()));
         }
 
-        if (filterForm.getSeats() != null) {
+        if (!filterForm.getSeats().isEmpty()) {
             filteredCars.removeIf(car -> !filterForm.getSeats().contains(car.getSeats()));
         }
 
-        if (filterForm.getTypes() != null) {
+        if (!filterForm.getTypes().isEmpty()) {
             filteredCars.removeIf(car -> !filterForm.getTypes().contains(car.getCarType()));
         }
 
@@ -80,15 +80,15 @@ public class CarService {
             filteredCars.removeIf(car -> car.getPriceDay() > filterForm.getPriceMax());
         }
 
-        if (filterForm.getBrands() != null) {
+        if (!filterForm.getBrands().isEmpty()) {
             filteredCars.removeIf(car -> !filterForm.getBrands().contains(car.getBrand()));
         }
 
-        if (filterForm.getSeats() != null) {
+        if (!filterForm.getSeats().isEmpty()) {
             filteredCars.removeIf(car -> !filterForm.getSeats().contains(car.getSeats()));
         }
 
-        if (filterForm.getTypes() != null) {
+        if (!filterForm.getTypes().isEmpty()) {
             filteredCars.removeIf(car -> !filterForm.getTypes().contains(car.getCarType()));
         }
 
@@ -114,8 +114,8 @@ public class CarService {
         sortedSeats.sort(null);
 
         Map<String, Object> carProperties = new HashMap<>();
-        carProperties.put("brand", sortedBrands);
-        carProperties.put("type", sortedTypes);
+        carProperties.put("brands", sortedBrands);
+        carProperties.put("types", sortedTypes);
         carProperties.put("seats", sortedSeats);
         return carProperties;
     }

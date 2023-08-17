@@ -34,12 +34,8 @@ public class ManageCustomersController {
         try {
             CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             map.addAttribute("departments", departmentService.getDepartmentsByRole(cud));
+            map.addAttribute("searchCustomerForm", map.getOrDefault("searchCustomerForm", new SearchCustomerForm()));
 
-            if (map.containsKey("searchCustomerForm")) {
-                return "management/searchCustomers";
-            } else {
-                map.addAttribute("searchCustomerForm", new SearchCustomerForm());
-            }
             return "management/searchCustomers";
         } catch (ResourceNotFoundException err) {
             redAtt.addFlashAttribute("message", "An unexpected error occurred. Please try again.");

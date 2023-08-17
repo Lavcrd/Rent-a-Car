@@ -2,6 +2,7 @@ package com.sda.carrental.web.mvc.form;
 
 import com.sda.carrental.model.operational.Reservation;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -10,6 +11,7 @@ import java.time.LocalDate;
 
 @Getter
 @Setter
+@NoArgsConstructor
 public class SearchReservationsForm {
     @NotBlank(message = "Field 'department' cannot be empty")
     private Long departmentTake;
@@ -28,4 +30,9 @@ public class SearchReservationsForm {
     private LocalDate dateTo;
 
     private Reservation.ReservationStatus status;
+
+    public SearchReservationsForm(LocalDate dateFrom, LocalDate dateTo) {
+        this.dateFrom = dateFrom;
+        this.dateTo = dateTo;
+    }
 }

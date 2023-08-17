@@ -55,10 +55,7 @@ public class ManageReservationsController {
             map.addAttribute("reservationStatuses", Reservation.ReservationStatus.values());
 
             if (!map.containsKey("searchReservationsForm")) {
-                SearchReservationsForm form = new SearchReservationsForm();
-                form.setDateFrom(LocalDate.now().minusWeeks(1));
-                form.setDateTo(LocalDate.now().plusWeeks(1));
-                map.addAttribute("searchReservationsForm", form);
+                map.addAttribute("searchReservationsForm", new SearchReservationsForm(LocalDate.now().minusWeeks(1), LocalDate.now().plusWeeks(1)));
                 map.addAttribute("isArrival", false);
             }
             return "management/searchReservations";
@@ -141,9 +138,7 @@ public class ManageReservationsController {
             } else if (reservation.getStatus().equals(Reservation.ReservationStatus.STATUS_PROGRESS)) {
                 map.addAttribute("rent_details", rentingService.findById(reservation.getId()));
                 if (departmentId.equals(reservation.getDepartmentBack().getId())) {
-                    ConfirmClaimForm form = new ConfirmClaimForm(departmentId);
-                    form.setDateTo(LocalDate.now());
-                    map.addAttribute("return_confirmation_form", form);
+                    map.addAttribute("return_confirmation_form", new ConfirmClaimForm(departmentId, LocalDate.now()));
                 }
             } else if (reservation.getStatus().equals(Reservation.ReservationStatus.STATUS_COMPLETED)) {
                 map.addAttribute("rent_details", rentingService.findById(reservation.getId()));
@@ -169,26 +164,18 @@ public class ManageReservationsController {
             List<Car> carList = carService.findAvailableCarsInDepartment(reservation);
             if (carList.isEmpty()) throw new RuntimeException();
 
-            if (!map.containsKey("filteredCars")) {
-                map.addAttribute("cars", carList);
-            } else {
-                map.addAttribute("cars", map.getAttribute("filteredCars"));
-            }
+            map.addAttribute("cars", map.getOrDefault("filteredCars", carList));
+
             Map<String, Object> carProperties = carService.getFilterProperties(carList);
 
-            map.addAttribute("brand", carProperties.get("brand"));
-            map.addAttribute("type", carProperties.get("type"));
+            map.addAttribute("brands", carProperties.get("brands"));
+            map.addAttribute("types", carProperties.get("types"));
             map.addAttribute("seats", carProperties.get("seats"));
 
             map.addAttribute("days", (reservation.getDateFrom().until(reservation.getDateTo(), ChronoUnit.DAYS) + 1));
 
-            SubstituteCarFilterForm carFilterForm = new SubstituteCarFilterForm();
-            carFilterForm.setDateFrom(reservation.getDateFrom());
-            carFilterForm.setDateTo(reservation.getDateTo());
-            carFilterForm.setDepartmentId(reservation.getDepartmentTake().getId());
-
             map.addAttribute("confirmation_form", new ConfirmationForm());
-            map.addAttribute("carFilterForm", carFilterForm);
+            map.addAttribute("carFilterForm", map.getOrDefault("carFilterForm", new SubstituteCarFilterForm(reservation.getDateFrom(), reservation.getDateTo(), reservation.getDepartmentTake().getId())));
             return "management/substituteCar";
         } catch (ResourceNotFoundException err) {
             redAtt.addFlashAttribute("message", "Error occurred. Resource not found.");
@@ -431,6 +418,7 @@ public class ManageReservationsController {
         }
 
         redAtt.addFlashAttribute("filteredCars", carService.filterCars(filterData));
+        redAtt.addFlashAttribute("carFilterForm", filterData);
         redAtt.addFlashAttribute("customer", customerId);
         redAtt.addAttribute("reservation", reservationId);
         redAtt.addAttribute("department", departmentId);
