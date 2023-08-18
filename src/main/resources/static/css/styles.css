@@ -449,10 +449,16 @@ h2.address {
     transform: translate(-50%,-50%);
 }
 
-.cb-text {
+.clb-text {
     overflow: clip;
     text-overflow: clip;
     white-space: nowrap;
     margin-left: 15%;
     margin-right: 15%;
+}
+
+.cdb-text {
+    display: grid !important;
+    grid-template-columns: auto 1fr 16px;
+    align-items: center;
 }
