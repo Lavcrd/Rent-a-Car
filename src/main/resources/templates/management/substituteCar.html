@@ -59,7 +59,7 @@
                                 Price per day
                             </button>
                         </h2>
-                        <div id="priceAcc" class="collapse"
+                        <div id="priceAcc" th:class="${carFilterForm.priceMin != null || carFilterForm.priceMax != null} ? 'collapse show' : 'collapse'"
                              aria-labelledby="price-heading">
                             <div class="accordion-body">
                                 <div class="form-group">
@@ -80,7 +80,7 @@
                                 Brand
                             </button>
                         </h2>
-                        <div id="brandAcc" class="collapse"
+                        <div id="brandAcc" th:class="${#lists.isEmpty(carFilterForm.brands)} ? 'collapse' : 'collapse show'"
                              aria-labelledby="brand-heading">
                             <div class="accordion-body">
                                 <div class="form-check" th:each="brand : ${brands}">
@@ -99,7 +99,7 @@
                                 Car type
                             </button>
                         </h2>
-                        <div id="typeAcc" class="accordion-collapse collapse"
+                        <div id="typeAcc" th:class="${#lists.isEmpty(carFilterForm.types)} ? 'accordion-collapse collapse' : 'accordion-collapse collapse show'"
                              aria-labelledby="type-heading">
                             <div class="accordion-body">
                                 <div class="form-check" th:each="type : ${types}">
@@ -118,7 +118,7 @@
                                 Seats
                             </button>
                         </h2>
-                        <div id="seatsAcc" class="accordion-collapse collapse"
+                        <div id="seatsAcc" th:class="${#lists.isEmpty(carFilterForm.seats)} ? 'accordion-collapse collapse' : 'accordion-collapse collapse show'"
                              aria-labelledby="seats-heading">
                             <div class="accordion-body">
                                 <div class="form-check" th:each="seat : ${seats}">
