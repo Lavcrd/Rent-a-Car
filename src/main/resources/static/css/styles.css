@@ -462,3 +462,11 @@ h2.address {
     grid-template-columns: auto 1fr 16px;
     align-items: center;
 }
+
+.form-check-input:checked {
+    background-color: #000 !important;
+}
+
+.accordion {
+--bs-accordion-btn-active-icon: none !important;
+}
