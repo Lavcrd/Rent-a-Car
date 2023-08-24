@@ -5,7 +5,6 @@ import com.sda.carrental.exceptions.ResourceNotFoundException;
 import com.sda.carrental.global.enums.Country;
 import com.sda.carrental.model.operational.Reservation;
 import com.sda.carrental.model.property.Car;
-import com.sda.carrental.model.property.Department;
 import com.sda.carrental.model.property.PaymentDetails;
 import com.sda.carrental.model.users.Customer;
 import com.sda.carrental.model.users.auth.Verification;
@@ -46,23 +45,9 @@ public class ManageReservationsController {
 
     //Pages
     @RequestMapping(method = RequestMethod.GET)
-    public String searchReservationsPage(ModelMap map, RedirectAttributes redAtt) {
-        try {
-            CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            List<Department> employeeDepartments = departmentService.getDepartmentsByRole(cud);
-            map.addAttribute("departments", employeeDepartments);
-            map.addAttribute("departmentsCountry", departmentService.findAllWhereCountry(employeeDepartments.get(0).getCountry()));
-            map.addAttribute("reservationStatuses", Reservation.ReservationStatus.values());
-
-            if (!map.containsKey("searchReservationsForm")) {
-                map.addAttribute("searchReservationsForm", new SearchReservationsForm(LocalDate.now().minusWeeks(1), LocalDate.now().plusWeeks(1)));
-                map.addAttribute("isArrival", false);
-            }
-            return "management/searchReservations";
-        } catch (ResourceNotFoundException | IndexOutOfBoundsException err) {
-            redAtt.addFlashAttribute("message", "An unexpected error occurred. Please try again.");
-            return "redirect:/";
-        }
+    public String redirectPage(ModelMap map, RedirectAttributes redAtt) {
+        CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return "redirect:/mg-cus";
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/{customer}")
@@ -187,63 +172,6 @@ public class ManageReservationsController {
             redAtt.addFlashAttribute("message", "No cars available for selected department and dates.");
             return "redirect:/mg-res/reservation/{reservation}";
         }
-    }
-
-    //Search reservations page buttons
-    @RequestMapping(value = "/search-departure", method = RequestMethod.POST)
-    public String reservationSearchDepartureButton(@ModelAttribute("searchReservationsForm") SearchReservationsForm reservationsData, RedirectAttributes redAtt) {
-        try {
-            CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            if (departmentService.departmentAccess(cud, reservationsData.getDepartmentTake()).equals(HttpStatus.FORBIDDEN)) {
-                redAtt.addFlashAttribute("message", "Incorrect data provided. Search rejected.");
-                return "redirect:/mg-res";
-            }
-
-            redAtt.addFlashAttribute("searchReservationsForm", reservationsData);
-            redAtt.addFlashAttribute("departments", departmentService.getDepartmentsByRole(cud));
-            redAtt.addFlashAttribute("isArrival", false);
-
-            redAtt.addFlashAttribute("reservations", reservationService.findDeparturesByDetails(reservationsData));
-            return "redirect:/mg-res";
-        } catch (ResourceNotFoundException err) {
-            redAtt.addFlashAttribute("message", "An unexpected error occurred. Please try again.");
-            return "redirect:/";
-        }
-    }
-
-    @RequestMapping(value = "/search-arrival", method = RequestMethod.POST)
-    public String reservationSearchArrivalButton(@ModelAttribute("searchReservationsForm") SearchReservationsForm reservationsData, RedirectAttributes redAtt) {
-        try {
-            CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            if (departmentService.departmentAccess(cud, reservationsData.getDepartmentBack()).equals(HttpStatus.FORBIDDEN)) {
-                redAtt.addFlashAttribute("message", "Incorrect data provided. Search rejected.");
-                return "redirect:/mg-res";
-            }
-
-            redAtt.addFlashAttribute("searchReservationsForm", reservationsData);
-            redAtt.addFlashAttribute("departments", departmentService.getDepartmentsByRole(cud));
-            redAtt.addFlashAttribute("isArrival", true);
-
-
-            redAtt.addFlashAttribute("reservations", reservationService.findArrivalsByDetails(reservationsData));
-            return "redirect:/mg-res";
-        } catch (ResourceNotFoundException err) {
-            redAtt.addFlashAttribute("message", "An unexpected error occurred. Please try again.");
-            return "redirect:/";
-        }
-    }
-
-    @RequestMapping(value = "/reservations", method = RequestMethod.POST)
-    public String customerViewButton(RedirectAttributes redAtt, @RequestParam("select_button") Long customerId, @RequestParam("department") Long departmentId) {
-        CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (userService.hasNoAccessToUserData(cud, customerId, departmentId)) {
-            redAtt.addFlashAttribute("message", "Access rejected.");
-            return "redirect:/mg-res";
-        }
-
-        redAtt.addAttribute("customer", customerId);
-        redAtt.addFlashAttribute("department", departmentId);
-        return "redirect:/mg-res/{customer}";
     }
 
     //Customer reservations page buttons

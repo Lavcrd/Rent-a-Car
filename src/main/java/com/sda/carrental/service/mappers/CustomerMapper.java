@@ -7,7 +7,7 @@ import com.sda.carrental.web.mvc.form.RegisterCustomerForm;
 
 public class CustomerMapper {
 
-    public static Customer toEntity(RegisterCustomerForm form) {
+    public static Customer toRegisteredEntity(RegisterCustomerForm form) {
         return new Customer(form.getName(), form.getSurname(), Customer.CustomerStatus.STATUS_REGISTERED, form.getContactNumber());
     }
 
