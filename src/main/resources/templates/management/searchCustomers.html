@@ -18,7 +18,7 @@
     <div th:include="fragments/top::reg-options"></div>
 
     <div class="row">
-        <form id="res" th:style="${isArrival} ? 'display: none;' : ''" th:action="@{/mg-cus/search-departure}" th:object="${searchReservationsForm}" th:method="POST"
+        <form id="res" th:style="${isArrival} ? 'display: none;' : ''" th:action="@{/mg-cus/search-departure}" th:object="${searchCustomersForm}" th:method="POST"
               class="form-inline">
 
             <div class="row mb-2" style="margin-top: 5%">
@@ -97,7 +97,7 @@
 
             <div th:insert="fragments/bottom::form-error-handler"></div>
         </form>
-        <form id="ret" th:style="${isArrival} ? '' : 'display: none;'" th:action="@{/mg-cus/search-arrival}" th:object="${searchReservationsForm}"
+        <form id="ret" th:style="${isArrival} ? '' : 'display: none;'" th:action="@{/mg-cus/search-arrival}" th:object="${searchCustomersForm}"
               th:method="POST"
               class="form-inline">
 
@@ -194,10 +194,10 @@
                 </tr>
                 </thead>
                 <form th:action="@{/mg-cus/select}" th:method="POST">
-                    <input type="hidden" th:if="${(searchReservationsForm.departmentTake != null) && (isArrival == false)}" th:name="department"
-                           th:value="${searchReservationsForm.getDepartmentTake()}">
-                    <input type="hidden" th:if="${(searchReservationsForm.departmentBack != null) && (isArrival == true)}" th:name="department"
-                           th:value="${searchReservationsForm.getDepartmentBack()}">
+                    <input type="hidden" th:if="${(searchCustomersForm.departmentTake != null) && (isArrival == false)}" th:name="department"
+                           th:value="${searchCustomersForm.getDepartmentTake()}">
+                    <input type="hidden" th:if="${(searchCustomersForm.departmentBack != null) && (isArrival == true)}" th:name="department"
+                           th:value="${searchCustomersForm.getDepartmentBack()}">
                     <tbody>
                     <th:block th:if="${#maps.isEmpty(results)}">
                         <td th:text="'—'"></td>

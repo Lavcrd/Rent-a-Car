@@ -42,8 +42,8 @@ public class ManageCustomersController {
             map.addAttribute("departmentsCountry", departmentService.findAllWhereCountry(employeeDepartments.get(0).getCountry()));
             map.addAttribute("reservationStatuses", Reservation.ReservationStatus.values());
 
-            if (!map.containsKey("searchReservationsForm")) {
-                map.addAttribute("searchReservationsForm", new SearchReservationsForm(LocalDate.now().minusWeeks(1), LocalDate.now().plusWeeks(1)));
+            if (!map.containsKey("searchCustomersForm")) {
+                map.addAttribute("searchCustomersForm", new SearchCustomersForm(LocalDate.now().minusWeeks(1), LocalDate.now().plusWeeks(1)));
                 map.addAttribute("isArrival", false);
             }
             return "management/searchCustomers";
@@ -114,7 +114,7 @@ public class ManageCustomersController {
 
     //Search page buttons
     @RequestMapping(value = "/search-departure", method = RequestMethod.POST)
-    public String reservationSearchDepartureButton(@ModelAttribute("searchReservationsForm") SearchReservationsForm reservationsData, RedirectAttributes redAtt) {
+    public String reservationSearchDepartureButton(@ModelAttribute("searchCustomersForm") SearchCustomersForm reservationsData, RedirectAttributes redAtt) {
         try {
             CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             if (departmentService.departmentAccess(cud, reservationsData.getDepartmentTake()).equals(HttpStatus.FORBIDDEN)) {
@@ -122,7 +122,7 @@ public class ManageCustomersController {
                 return "redirect:/mg-cus";
             }
 
-            redAtt.addFlashAttribute("searchReservationsForm", reservationsData);
+            redAtt.addFlashAttribute("searchCustomersForm", reservationsData);
             redAtt.addFlashAttribute("departments", departmentService.getDepartmentsByRole(cud));
             redAtt.addFlashAttribute("isArrival", false);
 
@@ -135,7 +135,7 @@ public class ManageCustomersController {
     }
 
     @RequestMapping(value = "/search-arrival", method = RequestMethod.POST)
-    public String reservationSearchArrivalButton(@ModelAttribute("searchReservationsForm") SearchReservationsForm reservationsData, RedirectAttributes redAtt) {
+    public String reservationSearchArrivalButton(@ModelAttribute("searchCustomersForm") SearchCustomersForm reservationsData, RedirectAttributes redAtt) {
         try {
             CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             if (departmentService.departmentAccess(cud, reservationsData.getDepartmentBack()).equals(HttpStatus.FORBIDDEN)) {
@@ -143,7 +143,7 @@ public class ManageCustomersController {
                 return "redirect:/mg-cus";
             }
 
-            redAtt.addFlashAttribute("searchReservationsForm", reservationsData);
+            redAtt.addFlashAttribute("searchCustomersForm", reservationsData);
             redAtt.addFlashAttribute("departments", departmentService.getDepartmentsByRole(cud));
             redAtt.addFlashAttribute("isArrival", true);
 

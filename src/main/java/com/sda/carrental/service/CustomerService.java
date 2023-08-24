@@ -16,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -100,12 +99,6 @@ public class CustomerService {
         return verificationService.deleteVerification(customerId);
     }
 
-    public List<Customer> findCustomersByDepartmentAndName(SearchCustomerForm customersData) {
-        if (customersData.getName().isEmpty()) customersData.setName(null);
-        if (customersData.getSurname().isEmpty()) customersData.setSurname(null);
-        return repository.findCustomersByDepartmentAndName(customersData.getDepartmentId(), customersData.getName(), customersData.getSurname());
-    }
-
     @Transactional
     public Customer createGuest(LocalReservationForm form) {
         Customer customer = CustomerMapper.toGuestEntity(form);
@@ -165,7 +158,7 @@ public class CustomerService {
         }
     }
 
-    public Map<Customer, Long> findCustomersWithResults(SearchReservationsForm form, boolean isArrival) {
+    public Map<Customer, Long> findCustomersWithResults(SearchCustomersForm form, boolean isArrival) {
         if (isArrival) {
             return reservationService.findArrivalsByDetails(form).stream().collect(Collectors.groupingBy(Reservation::getCustomer, Collectors.counting()));
         } else {
