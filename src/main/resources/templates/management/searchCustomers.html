@@ -18,82 +18,219 @@
     <div th:include="fragments/top::reg-options"></div>
 
     <div class="row">
-        <form th:action="@{/mg-cus/search}" th:object="${searchCustomerForm}" th:method="POST"
+        <form id="res" th:style="${isArrival} ? 'display: none;' : ''" th:action="@{/mg-cus/search-departure}" th:object="${searchCustomersForm}" th:method="POST"
               class="form-inline">
+
             <div class="row mb-2" style="margin-top: 5%">
-                <div class="col-sm-3">
-                    <select type="text" id="department" th:field="*{departmentId}" class="form-control">
-                        <div th:each="department:${departments}">
-                            <option th:text="${department.getCity()} + ', ' + ${department.getAddress()}"
-                                    th:value="${department.getId()}"></option>
-                        </div>
-                    </select>
+
+                <div class="row"
+                     style="width: 100%; flex-shrink: 1; display:inline-flex; flex-wrap: nowrap; padding-right: 0;">
+                    <div class="col-sm-3 c-input" style="width: fit-content;">
+                        <select type="text" th:field="*{departmentTake}" class="form-control">
+                            <div th:each="department:${departments}">
+                                <option th:text="${department.getCity()} + ', ' + ${department.getAddress()}"
+                                        th:value="${department.getId()}"></option>
+                            </div>
+                        </select>
+                    </div>
+                    <div class="between-fields" th:text="'⟶'" style="width: fit-content;"></div>
+
+                    <div class="col-sm-3 c-input" style="width: fit-content;">
+                        <select type="text" th:field="*{departmentBack}" class="form-control">
+                            <option th:value="null" th:text="Any"></option>
+                            <div th:each="departmentBack:${departmentsCountry}">
+                                <option th:text="${departmentBack.getCity()} + ', ' + ${departmentBack.getAddress()}"
+                                        th:value="${departmentBack.getId()}"></option>
+                            </div>
+                        </select>
+                    </div>
+
+                    <div class="between-fields" style="justify-content: flex-end;" th:text="'Departure:'"></div>
+
+                    <div class="col-sm-3 c-input" style="width: fit-content;">
+                        <input type="date" class="form-control"
+                               th:field="*{dateFrom}">
+                    </div>
+                    <div class="between-fields c-input" th:text="'↔'" style="width: fit-content;"></div>
+                    <div class="col-sm-3 c-input" style="width: fit-content; padding-right: 0;">
+                        <input type="date" class="form-control"
+                               th:field="*{dateTo}">
+                    </div>
                 </div>
+                <div class="row" style="margin-top: 1%; flex-wrap: nowrap; padding-right: 0;">
+                    <div class="col-sm-3 c-input">
+                        <input type="text" class="form-control" placeholder="Name"
+                               th:field="*{customerName}">
+                    </div>
+                    <div class="col-sm-3 c-input">
+                        <input type="text" class="form-control" placeholder="Surname"
+                               th:field="*{customerSurname}">
+                    </div>
+                    <div class="col-sm-3 c-input" style="width: fit-content;">
+                        <select th:field="*{status}" class="form-control">
+                            <option th:value="null" th:text="'Status: Any'"></option>
+                            <div th:each="status:${reservationStatuses}">
+                                <option th:text="'Status: ' + ${status.getText()}"
+                                        th:value="${status}"></option>
+                            </div>
+                        </select>
+                    </div>
+                    <div class="col-sm-3 c-input" style="width: fit-content;position: relative;">
+                        <button onclick="swapContent('res', 'ret');" type="button" class="btn btn-outline-dark">Mode:
+                            Departure
+                        </button>
+                    </div>
+                    <div class="col c-input" style="justify-content: end; padding-right: 0;">
+                        <button class="btn btn-dark bg-dark"
+                                type="submit">
 
-                <div class="col-sm-3">
-                    <input type="text" name="name" class="form-control" placeholder="Name" th:field="*{name}">
-                </div>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                 class="bi bi-search" viewBox="0 0 16 16">
+                                <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"></path>
+                            </svg>
+                            Search
+                        </button>
 
-                <div class="col-sm-3">
-                    <input type="text" name="surname" class="form-control" placeholder="Surname"
-                           th:field="*{surname}">
-                </div>
-
-                <div class="col-sm-3" style="display: flex; justify-content: end;">
-                    <button class="btn btn-dark bg-dark"
-                            type="submit">
-
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                             class="bi bi-search" viewBox="0 0 16 16">
-                            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"></path>
-                        </svg>
-                        Search
-                    </button>
+                    </div>
                 </div>
             </div>
 
             <div th:insert="fragments/bottom::form-error-handler"></div>
         </form>
+        <form id="ret" th:style="${isArrival} ? '' : 'display: none;'" th:action="@{/mg-cus/search-arrival}" th:object="${searchCustomersForm}"
+              th:method="POST"
+              class="form-inline">
+
+            <div class="row mb-2" style="margin-top: 5%">
+
+                <div class="row"
+                     style="width: 100%; flex-shrink: 1; display:inline-flex; flex-wrap: nowrap; padding-right: 0;">
+                    <div class="col-sm-3 c-input" style="width: fit-content;">
+                        <select type="text" th:field="*{departmentTake}" class="form-control">
+                            <option th:value="null" th:text="Any"></option>
+                            <div th:each="departmentTake:${departmentsCountry}">
+                                <option th:text="${departmentTake.getCity()} + ', ' + ${departmentTake.getAddress()}"
+                                        th:value="${departmentTake.getId()}"></option>
+                            </div>
+                        </select>
+                    </div>
+                    <div class="between-fields" th:text="'⟶'" style="width: fit-content;"></div>
+                    <div class="col-sm-3 c-input" style="width: fit-content;">
+                        <select type="text" th:field="*{departmentBack}" class="form-control">
+                            <div th:each="departmentBack:${departments}">
+                                <option th:text="${departmentBack.getCity()} + ', ' + ${departmentBack.getAddress()}"
+                                        th:value="${departmentBack.getId()}"></option>
+                            </div>
+                        </select>
+                    </div>
+
+                    <div class="between-fields" style="justify-content: flex-end;" th:text="'Arrival:'"></div>
+                    <div class="col-sm-3 c-input" style="width: fit-content;">
+                        <input type="date" class="form-control"
+                               th:field="*{dateFrom}">
+                    </div>
+                    <div class="between-fields" th:text="'↔'" style="width: fit-content;"></div>
+                    <div class="col-sm-3 c-input" style="width: fit-content; padding-right: 0;">
+                        <input type="date" class="form-control"
+                               th:field="*{dateTo}">
+                    </div>
+                </div>
+                <div class="row" style="margin-top: 1%; flex-wrap: nowrap; padding-right: 0;">
+                    <div class="col-sm-3 c-input">
+                        <input type="text" class="form-control" placeholder="Name"
+                               th:field="*{customerName}">
+                    </div>
+                    <div class="col-sm-3 c-input">
+                        <input type="text" class="form-control" placeholder="Surname"
+                               th:field="*{customerSurname}">
+                    </div>
+                    <div class="col-sm-3 c-input" style="width: fit-content;">
+                        <select th:field="*{status}" class="form-control">
+                            <option th:value="null" th:text="'Status: Any'"></option>
+                            <div th:each="status:${reservationStatuses}">
+                                <option th:text="'Status: ' + ${status.getText()}"
+                                        th:value="${status}"></option>
+                            </div>
+                        </select>
+                    </div>
+                    <div class="col-sm-3 c-input" style="width: fit-content;position: relative;">
+                        <button onclick="swapContent('res', 'ret');" type="button" class="btn btn-outline-dark">Mode:
+                            Arrival
+                        </button>
+                    </div>
+                    <div class="col c-input" style="display: flex; justify-content: end; padding-right: 0;">
+                        <button class="btn btn-dark bg-dark"
+                                type="submit">
+
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                 class="bi bi-search" viewBox="0 0 16 16">
+                                <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"></path>
+                            </svg>
+                            Search
+                        </button>
+
+                    </div>
+                </div>
+            </div>
+
+            <div th:insert="fragments/bottom::form-error-handler"></div>
+        </form>
+
         <br>
     </div>
 
     <div class="row">
         <div class="col-sm-12">
             <table class="table table-borderless table-hover table-fixed"
-                   style="margin-top: 1%; text-align: center; vertical-align: middle;">
+                   style="text-align: center; vertical-align: middle;">
                 <thead class="table-dark">
                 <tr>
                     <th scope="row">Name</th>
-                    <th scope="row">Number</th>
                     <th scope="row">Account type</th>
+                    <th scope="row">Created</th>
+                    <th scope="row">Contact</th>
+                    <th scope="row">Results</th>
                     <th scope="row"></th>
                 </tr>
                 </thead>
                 <form th:action="@{/mg-cus/select}" th:method="POST">
-                    <input type="hidden" th:if="${searchCustomerForm.departmentId != null}" th:name="department"
-                           th:value="${searchCustomerForm.getDepartmentId()}">
+                    <input type="hidden" th:if="${(searchCustomersForm.departmentTake != null) && (isArrival == false)}" th:name="department"
+                           th:value="${searchCustomersForm.getDepartmentTake()}">
+                    <input type="hidden" th:if="${(searchCustomersForm.departmentBack != null) && (isArrival == true)}" th:name="department"
+                           th:value="${searchCustomersForm.getDepartmentBack()}">
                     <tbody>
-                    <th:block th:if="${customers == null || #lists.isEmpty(customers)}">
+                    <th:block th:if="${#maps.isEmpty(results)}">
                         <td th:text="'—'"></td>
                         <td th:text="'—'"></td>
                         <td th:text="'—'"></td>
+                        <td th:text="'—'"></td>
+                        <td th:text="'—'"></td>
+                        <td></td>
                     </th:block>
-                    <tr th:each="customer: ${customers}">
+                    <tr th:each="result: ${results}">
                         <td>
                             <div class="overflow-cell-hs"
-                                 th:text="${customer.getName()} + ' ' + ${customer.getSurname()}"></div>
+                                 th:utext="${result.key.getName()} + '<br>' + ${result.key.getSurname()}"></div>
                         </td>
                         <td>
                             <div class="overflow-cell-hs"
-                                 th:text="${customer.getContactNumber()}"></div>
+                                 th:utext="${result.key.getStatus().name().substring(7)}"></div>
                         </td>
                         <td>
-                            <div class="overflow-cell-hs" th:text="${customer.getStatus().name().substring(7)}"></div>
+                            <div class="overflow-cell-hs"
+                                 th:utext="${result.key.getCreationDate()}"></div>
+                        </td>
+                        <td>
+                            <div class="overflow-cell-hs"
+                                 th:utext="${result.key.getContactNumber()}"></div>
+                        </td>
+                        <td>
+                            <div class="overflow-cell-hs" th:utext="${result.value}"></div>
                         </td>
                         <td style="position: relative;">
-                            <button type="submit" class="btn btn-dark list-button"
-                                    th:text="Select" th:name="select_button"
-                                    th:value="${customer.getId()}"></button>
+                            <button type="submit" class="btn btn-dark list-button" th:text="Select"
+                                    th:name="select_button"
+                                    th:value="${result.key.id}"></button>
                         </td>
                     </tr>
                     </tbody>

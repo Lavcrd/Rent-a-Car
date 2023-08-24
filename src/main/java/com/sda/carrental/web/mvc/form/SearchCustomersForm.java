@@ -12,7 +12,7 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @NoArgsConstructor
-public class SearchReservationsForm {
+public class SearchCustomersForm {
     @NotBlank(message = "Field 'department' cannot be empty")
     private Long departmentTake;
 
@@ -31,7 +31,7 @@ public class SearchReservationsForm {
 
     private Reservation.ReservationStatus status;
 
-    public SearchReservationsForm(LocalDate dateFrom, LocalDate dateTo) {
+    public SearchCustomersForm(LocalDate dateFrom, LocalDate dateTo) {
         this.dateFrom = dateFrom;
         this.dateTo = dateTo;
     }

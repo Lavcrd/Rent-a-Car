@@ -2,6 +2,8 @@ package com.sda.carrental.web.mvc.management;
 
 import com.sda.carrental.exceptions.ResourceNotFoundException;
 import com.sda.carrental.global.enums.Country;
+import com.sda.carrental.model.operational.Reservation;
+import com.sda.carrental.model.property.Department;
 import com.sda.carrental.model.users.Customer;
 import com.sda.carrental.model.users.auth.Verification;
 import com.sda.carrental.service.*;
@@ -17,6 +19,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
+import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -30,14 +34,20 @@ public class ManageCustomersController {
 
     //Pages
     @RequestMapping(method = RequestMethod.GET)
-    public String searchCustomerPage(ModelMap map, RedirectAttributes redAtt) {
+    public String searchReservationsPage(ModelMap map, RedirectAttributes redAtt) {
         try {
             CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            map.addAttribute("departments", departmentService.getDepartmentsByRole(cud));
-            map.addAttribute("searchCustomerForm", map.getOrDefault("searchCustomerForm", new SearchCustomerForm()));
+            List<Department> employeeDepartments = departmentService.getDepartmentsByRole(cud);
+            map.addAttribute("departments", employeeDepartments);
+            map.addAttribute("departmentsCountry", departmentService.findAllWhereCountry(employeeDepartments.get(0).getCountry()));
+            map.addAttribute("reservationStatuses", Reservation.ReservationStatus.values());
 
+            if (!map.containsKey("searchCustomersForm")) {
+                map.addAttribute("searchCustomersForm", new SearchCustomersForm(LocalDate.now().minusWeeks(1), LocalDate.now().plusWeeks(1)));
+                map.addAttribute("isArrival", false);
+            }
             return "management/searchCustomers";
-        } catch (ResourceNotFoundException err) {
+        } catch (ResourceNotFoundException | IndexOutOfBoundsException err) {
             redAtt.addFlashAttribute("message", "An unexpected error occurred. Please try again.");
             return "redirect:/";
         }
@@ -102,20 +112,43 @@ public class ManageCustomersController {
         }
     }
 
-    //Search customers page buttons
-    @RequestMapping(value = "/search", method = RequestMethod.POST)
-    public String customerSearchButton(@ModelAttribute("searchCustomerForm") SearchCustomerForm customersData, RedirectAttributes redAtt) {
+    //Search page buttons
+    @RequestMapping(value = "/search-departure", method = RequestMethod.POST)
+    public String reservationSearchDepartureButton(@ModelAttribute("searchCustomersForm") SearchCustomersForm reservationsData, RedirectAttributes redAtt) {
         try {
             CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            if (departmentService.departmentAccess(cud, customersData.getDepartmentId()).equals(HttpStatus.FORBIDDEN)) {
+            if (departmentService.departmentAccess(cud, reservationsData.getDepartmentTake()).equals(HttpStatus.FORBIDDEN)) {
                 redAtt.addFlashAttribute("message", "Incorrect data provided. Search rejected.");
                 return "redirect:/mg-cus";
             }
 
-            redAtt.addFlashAttribute("searchCustomerForm", customersData);
+            redAtt.addFlashAttribute("searchCustomersForm", reservationsData);
             redAtt.addFlashAttribute("departments", departmentService.getDepartmentsByRole(cud));
+            redAtt.addFlashAttribute("isArrival", false);
 
-            redAtt.addFlashAttribute("customers", customerService.findCustomersByDepartmentAndName(customersData));
+            redAtt.addFlashAttribute("results", customerService.findCustomersWithResults(reservationsData, false));
+            return "redirect:/mg-cus";
+        } catch (ResourceNotFoundException err) {
+            redAtt.addFlashAttribute("message", "An unexpected error occurred. Please try again.");
+            return "redirect:/";
+        }
+    }
+
+    @RequestMapping(value = "/search-arrival", method = RequestMethod.POST)
+    public String reservationSearchArrivalButton(@ModelAttribute("searchCustomersForm") SearchCustomersForm reservationsData, RedirectAttributes redAtt) {
+        try {
+            CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            if (departmentService.departmentAccess(cud, reservationsData.getDepartmentBack()).equals(HttpStatus.FORBIDDEN)) {
+                redAtt.addFlashAttribute("message", "Incorrect data provided. Search rejected.");
+                return "redirect:/mg-cus";
+            }
+
+            redAtt.addFlashAttribute("searchCustomersForm", reservationsData);
+            redAtt.addFlashAttribute("departments", departmentService.getDepartmentsByRole(cud));
+            redAtt.addFlashAttribute("isArrival", true);
+
+
+            redAtt.addFlashAttribute("results", customerService.findCustomersWithResults(reservationsData, true));
             return "redirect:/mg-cus";
         } catch (ResourceNotFoundException err) {
             redAtt.addFlashAttribute("message", "An unexpected error occurred. Please try again.");

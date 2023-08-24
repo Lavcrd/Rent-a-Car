@@ -9,7 +9,7 @@ import com.sda.carrental.model.property.PaymentDetails;
 import com.sda.carrental.model.users.Customer;
 import com.sda.carrental.repository.ReservationRepository;
 import com.sda.carrental.web.mvc.form.IndexForm;
-import com.sda.carrental.web.mvc.form.SearchReservationsForm;
+import com.sda.carrental.web.mvc.form.SearchCustomersForm;
 import com.sda.carrental.web.mvc.form.SelectCarForm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -134,7 +134,7 @@ public class ReservationService {
         }
     }
 
-    public List<Reservation> findDeparturesByDetails(SearchReservationsForm reservationsData) {
+    public List<Reservation> findDeparturesByDetails(SearchCustomersForm reservationsData) {
         return repository.findDeparturesByDetails(
                 reservationsData.getCustomerName(), reservationsData.getCustomerSurname(),
                 reservationsData.getDepartmentTake(), reservationsData.getDepartmentBack(),
@@ -142,7 +142,7 @@ public class ReservationService {
                 reservationsData.getStatus());
     }
 
-    public List<Reservation> findArrivalsByDetails(SearchReservationsForm reservationsData) {
+    public List<Reservation> findArrivalsByDetails(SearchCustomersForm reservationsData) {
         return repository.findArrivalsByDetails(
                 reservationsData.getCustomerName(), reservationsData.getCustomerSurname(),
                 reservationsData.getDepartmentTake(), reservationsData.getDepartmentBack(),

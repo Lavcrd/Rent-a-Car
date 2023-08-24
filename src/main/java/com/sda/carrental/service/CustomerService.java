@@ -2,15 +2,13 @@ package com.sda.carrental.service;
 
 import com.sda.carrental.exceptions.ResourceNotFoundException;
 import com.sda.carrental.global.enums.Country;
+import com.sda.carrental.model.operational.Reservation;
 import com.sda.carrental.model.users.Customer;
 import com.sda.carrental.model.users.auth.Verification;
 import com.sda.carrental.repository.CustomerRepository;
 import com.sda.carrental.service.auth.CustomUserDetails;
 import com.sda.carrental.service.mappers.CustomerMapper;
-import com.sda.carrental.web.mvc.form.LocalReservationForm;
-import com.sda.carrental.web.mvc.form.RegisterCustomerForm;
-import com.sda.carrental.web.mvc.form.SearchCustomerForm;
-import com.sda.carrental.web.mvc.form.SelectCarForm;
+import com.sda.carrental.web.mvc.form.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -18,8 +16,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import java.time.LocalDate;
-import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -37,7 +36,7 @@ public class CustomerService {
     @Transactional(rollbackFor = {Exception.class})
     public HttpStatus createCustomer(RegisterCustomerForm form) {
         try {
-            Customer customer = CustomerMapper.toEntity(form);
+            Customer customer = CustomerMapper.toRegisteredEntity(form);
             repository.save(customer);
             credentialsService.createCredentials(customer.getId(), form.getUsername(), form.getPassword());
             return HttpStatus.CREATED;
@@ -100,12 +99,6 @@ public class CustomerService {
         return verificationService.deleteVerification(customerId);
     }
 
-    public List<Customer> findCustomersByDepartmentAndName(SearchCustomerForm customersData) {
-        if (customersData.getName().isEmpty()) customersData.setName(null);
-        if (customersData.getSurname().isEmpty()) customersData.setSurname(null);
-        return repository.findCustomersByDepartmentAndName(customersData.getDepartmentId(), customersData.getName(), customersData.getSurname());
-    }
-
     @Transactional
     public Customer createGuest(LocalReservationForm form) {
         Customer customer = CustomerMapper.toGuestEntity(form);
@@ -162,6 +155,14 @@ public class CustomerService {
         } catch (RuntimeException err) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+    }
+
+    public Map<Customer, Long> findCustomersWithResults(SearchCustomersForm form, boolean isArrival) {
+        if (isArrival) {
+            return reservationService.findArrivalsByDetails(form).stream().collect(Collectors.groupingBy(Reservation::getCustomer, Collectors.counting()));
+        } else {
+            return reservationService.findDeparturesByDetails(form).stream().collect(Collectors.groupingBy(Reservation::getCustomer, Collectors.counting()));
         }
     }
 }
