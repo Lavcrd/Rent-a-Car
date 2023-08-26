@@ -66,6 +66,7 @@ public class CustomerReservationsController {
             map.addAttribute("reservation", reservation);
             map.addAttribute("fee_percentage", cv.getCancellationFeePercentage() * 100);
             map.addAttribute("refund_fee_days", cv.getRefundSubtractDaysDuration());
+            map.addAttribute("deposit_deadline", cv.getRefundDepositDeadlineDays());
             return "user/reservationDetailsCustomer";
         } catch (ResourceNotFoundException err) {
             redAtt.addFlashAttribute("message", "An unexpected error occurred. Please try again later or contact customer service.");

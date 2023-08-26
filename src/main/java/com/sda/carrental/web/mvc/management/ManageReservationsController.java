@@ -116,6 +116,7 @@ public class ManageReservationsController {
             map.addAttribute("reservation", reservation);
             map.addAttribute("fee_percentage", cv.getCancellationFeePercentage() * 100);
             map.addAttribute("refund_fee_days", cv.getRefundSubtractDaysDuration());
+            map.addAttribute("deposit_deadline", cv.getRefundDepositDeadlineDays());
 
             map.addAttribute("confirmation_form", new ConfirmationForm());
             if (reservation.getStatus().equals(Reservation.ReservationStatus.STATUS_RESERVED)) {

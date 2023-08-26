@@ -62,6 +62,7 @@ public class ReservationController {
             map.addAttribute("raw_price", days * car.getPriceDay());
             map.addAttribute("fee_percentage", cv.getCancellationFeePercentage() * 100);
             map.addAttribute("refund_fee_days", cv.getRefundSubtractDaysDuration());
+            map.addAttribute("deposit_deadline", cv.getRefundDepositDeadlineDays());
 
             return "common/reservationRecap";
         } catch (IllegalActionException | ResourceNotFoundException err) {
