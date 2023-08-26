@@ -9,6 +9,6 @@ import java.util.Optional;
 
 public interface EmployeeRepository extends CrudRepository<Employee, Long> {
 
-    @Query(value = "FROM employee e WHERE e.id=:id")
+    @Query(value = "SELECT e FROM employee e WHERE e.id=:id")
     Optional<Employee> findEmployeeById(@Param("id") Long id);
 }

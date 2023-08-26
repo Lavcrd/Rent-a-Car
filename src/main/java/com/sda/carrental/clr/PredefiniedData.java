@@ -8,6 +8,7 @@ import com.sda.carrental.model.operational.Reservation;
 import com.sda.carrental.model.operational.Returning;
 import com.sda.carrental.model.property.Car;
 import com.sda.carrental.model.property.Department;
+import com.sda.carrental.model.property.PaymentDetails;
 import com.sda.carrental.model.users.*;
 import com.sda.carrental.model.users.auth.Credentials;
 import com.sda.carrental.model.users.auth.Verification;
@@ -52,7 +53,7 @@ public class PredefiniedData implements CommandLineRunner {
         createReservation();
         createRent();
         createReturn();
-        /*        createInvoice();*/ // currently creates duplicates due to not automated reservation statuses.
+        createPayments();
 
         createVerification();
     }
@@ -64,7 +65,7 @@ public class PredefiniedData implements CommandLineRunner {
         userRepository.save(new Customer("Jan", "Orzech", Customer.CustomerStatus.STATUS_REGISTERED, "123312894"));
         userRepository.save(new Customer("Katarzyna", "Kasztan", Customer.CustomerStatus.STATUS_REGISTERED, "123312895"));
         userRepository.save(new Customer("Igor", "Kasztan", Customer.CustomerStatus.STATUS_REGISTERED, "123312896"));
-        userRepository.save(new Customer("Anna", "Kowalska", Customer.CustomerStatus.STATUS_REGISTERED, "123312897"));
+        userRepository.save(new Customer("Anna", "Kowalska", Customer.CustomerStatus.STATUS_UNREGISTERED, "123312897"));
 
 
         userRepository.save(new Manager("Maria", "Fajna", departmentRepository.findById(1L).orElse(null), LocalDate.ofYearDay(9999, 1)));
@@ -87,7 +88,6 @@ public class PredefiniedData implements CommandLineRunner {
         credentialsRepository.save(new Credentials(4L, "user4@gmail.com", encoder.encode("password1")));
         credentialsRepository.save(new Credentials(5L, "user5@gmail.com", encoder.encode("password1")));
         credentialsRepository.save(new Credentials(6L, "user6@gmail.com", encoder.encode("password1")));
-        /*credentialsRepository.save(new Credentials(7L, "user7@gmail.com", encoder.encode("password1")));*/
 
         credentialsRepository.save(new Credentials(8L, "manager1@gmail.com", encoder.encode("manager1")));
         credentialsRepository.save(new Credentials(9L, "manager2@gmail.com", encoder.encode("manager1")));
@@ -180,14 +180,14 @@ public class PredefiniedData implements CommandLineRunner {
 
     private void createReturn() {
         returningRepository.save(new Returning(1L, 13L, LocalDate.now().plusWeeks(1), "Some notes after return of the car."));
+        returningRepository.save(new Returning(2L, 14L, LocalDate.now().plusWeeks(1), "Some notes after return of the car."));
+        returningRepository.save(new Returning(3L, 15L, LocalDate.now().plusWeeks(1), "Some notes after return of the car."));
     }
 
     private void createPayments() {
-        //paymentDetailsRepository.save(new PaymentDetails( carRepository.findById(7L).get().getPriceDay() * (reservationRepository.findById(1L).get().getDateFrom().until(reservationRepository.findById(1L).get().getDateTo(), ChronoUnit.DAYS)), gv.getDeptReturnPriceDiff(), carRepository.findById(7L).get().getDepositValue(), carRepository.findById(7L).get().getPrice_day() * (reservationRepository.findById(1L).get().getDateFrom().until(reservationRepository.findById(1L).get().getDateTo(), ChronoUnit.DAYS)),  carRepository.findById(7L).get().getDepositValue(), reservationRepository.findById(1L).orElse(null)));
-        //paymentDetailsRepository.save(new PaymentDetails(carRepository.findById(10L).get().getPriceDay() * (reservationRepository.findById(2L).get().getDateFrom().until(reservationRepository.findById(2L).get().getDateTo(), ChronoUnit.DAYS)), gv.getDeptReturnPriceDiff(), carRepository.findById(10L).get().getDepositValue(), carRepository.findById(10L).get().getPrice_day() * (reservationRepository.findById(2L).get().getDateFrom().until(reservationRepository.findById(2L).get().getDateTo(), ChronoUnit.DAYS)), carRepository.findById(10L).get().getDepositValue(), reservationRepository.findById(2L).orElse(null)));
-        //paymentDetailsRepository.save(new PaymentDetails(carRepository.findById(19L).get().getPriceDay() * (reservationRepository.findById(3L).get().getDateFrom().until(reservationRepository.findById(3L).get().getDateTo(), ChronoUnit.DAYS)), gv.getDeptReturnPriceDiff(), carRepository.findById(19L).get().getDepositValue(), carRepository.findById(19L).get().getPrice_day() * (reservationRepository.findById(3L).get().getDateFrom().until(reservationRepository.findById(3L).get().getDateTo(), ChronoUnit.DAYS)), carRepository.findById(19L).get().getDepositValue(), reservationRepository.findById(3L).orElse(null)));
-        //paymentDetailsRepository.save(new PaymentDetails(carRepository.findById(23L).get().getPriceDay() * (reservationRepository.findById(4L).get().getDateFrom().until(reservationRepository.findById(4L).get().getDateTo(), ChronoUnit.DAYS)), gv.getDeptReturnPriceDiff(), carRepository.findById(23L).get().getDepositValue(), carRepository.findById(23L).get().getPrice_day() * (reservationRepository.findById(4L).get().getDateFrom().until(reservationRepository.findById(4L).get().getDateTo(), ChronoUnit.DAYS)), carRepository.findById(23L).get().getDepositValue(), reservationRepository.findById(4L).orElse(null)));
-        //paymentDetailsRepository.save(new PaymentDetails(carRepository.findById(28L).get().getPriceDay() * (reservationRepository.findById(5L).get().getDateFrom().until(reservationRepository.findById(5L).get().getDateTo(), ChronoUnit.DAYS)), gv.getDeptReturnPriceDiff(), carRepository.findById(28L).get().getDepositValue(), carRepository.findById(28L).get().getPrice_day() * (reservationRepository.findById(5L).get().getDateFrom().until(reservationRepository.findById(5L).get().getDateTo(), ChronoUnit.DAYS)), carRepository.findById(28L).get().getDepositValue(), reservationRepository.findById(5L).orElse(null)));
+        paymentDetailsRepository.save(new PaymentDetails(100D, 100D, 100D, 100D, 100D, reservationRepository.findById(1L).get()));
+        paymentDetailsRepository.save(new PaymentDetails(100D, 100D, 120D, 100D, 120D, reservationRepository.findById(1L).get()));
+        paymentDetailsRepository.save(new PaymentDetails(100D, 100D, 150D, 100D, 0D, reservationRepository.findById(1L).get()));
     }
 
     private void createVerification() {
