@@ -37,7 +37,7 @@ public class ManageCustomersController {
     public String searchReservationsPage(ModelMap map, RedirectAttributes redAtt) {
         try {
             CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            List<Department> employeeDepartments = departmentService.getDepartmentsByRole(cud);
+            List<Department> employeeDepartments = departmentService.getDepartmentsByUserContext(cud);
             map.addAttribute("departments", employeeDepartments);
             map.addAttribute("departmentsCountry", departmentService.findAllWhereCountry(employeeDepartments.get(0).getCountry()));
             map.addAttribute("reservationStatuses", Reservation.ReservationStatus.values());
@@ -123,7 +123,7 @@ public class ManageCustomersController {
             }
 
             redAtt.addFlashAttribute("searchCustomersForm", reservationsData);
-            redAtt.addFlashAttribute("departments", departmentService.getDepartmentsByRole(cud));
+            redAtt.addFlashAttribute("departments", departmentService.getDepartmentsByUserContext(cud));
             redAtt.addFlashAttribute("isArrival", false);
 
             redAtt.addFlashAttribute("results", customerService.findCustomersWithResults(reservationsData, false));
@@ -144,7 +144,7 @@ public class ManageCustomersController {
             }
 
             redAtt.addFlashAttribute("searchCustomersForm", reservationsData);
-            redAtt.addFlashAttribute("departments", departmentService.getDepartmentsByRole(cud));
+            redAtt.addFlashAttribute("departments", departmentService.getDepartmentsByUserContext(cud));
             redAtt.addFlashAttribute("isArrival", true);
 
 

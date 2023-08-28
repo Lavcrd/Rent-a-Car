@@ -23,7 +23,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
 import java.time.LocalDate;
-import java.util.ArrayList;
 
 @Controller
 @RequiredArgsConstructor
@@ -49,7 +48,7 @@ public class ClaimReturnController {
                 Reservation reservation = (Reservation) map.get("reservation");
 
                 map.addAttribute("confirm_claim_form", map.getOrDefault("confirm_claim_form", new ConfirmClaimForm(reservation.getDepartmentBack().getId(), LocalDate.now())));
-                map.addAttribute("departments", departmentService.getDepartmentsByRole(cud));
+                map.addAttribute("departments", departmentService.getDepartmentsByUserContext(cud));
 
                 PaymentDetails receipt = paymentDetailsService.getOptionalPaymentDetails(reservation).orElseThrow(ResourceNotFoundException::new);
 

@@ -179,15 +179,17 @@ public class PredefiniedData implements CommandLineRunner {
     }
 
     private void createReturn() {
-        returningRepository.save(new Returning(1L, 13L, LocalDate.now().plusWeeks(1), "Some notes after return of the car."));
-        returningRepository.save(new Returning(2L, 14L, LocalDate.now().plusWeeks(1), "Some notes after return of the car."));
-        returningRepository.save(new Returning(3L, 15L, LocalDate.now().plusWeeks(1), "Some notes after return of the car."));
+        returningRepository.save(new Returning(1L, reservationRepository.findById(1L).get(), rentingRepository.findById(1L).get(), 13L, LocalDate.now().plusDays(7), "Some notes after return of the car."));
+        returningRepository.save(new Returning(2L, reservationRepository.findById(2L).get(), rentingRepository.findById(2L).get(), 14L, LocalDate.now().plusDays(8), "Some notes after return of the car."));
+        returningRepository.save(new Returning(3L, reservationRepository.findById(3L).get(), rentingRepository.findById(3L).get(), 15L, LocalDate.now().plusDays(9), "Some notes after return of the car."));
+        returningRepository.save(new Returning(4L, reservationRepository.findById(4L).get(), rentingRepository.findById(4L).get(), 13L, LocalDate.now().plusDays(10), "Some notes after return of the car."));
     }
 
     private void createPayments() {
         paymentDetailsRepository.save(new PaymentDetails(100D, 100D, 100D, 100D, 100D, reservationRepository.findById(1L).get()));
-        paymentDetailsRepository.save(new PaymentDetails(100D, 100D, 120D, 100D, 120D, reservationRepository.findById(1L).get()));
-        paymentDetailsRepository.save(new PaymentDetails(100D, 100D, 150D, 100D, 0D, reservationRepository.findById(1L).get()));
+        paymentDetailsRepository.save(new PaymentDetails(100D, 100D, 120D, 100D, 120D, reservationRepository.findById(2L).get()));
+        paymentDetailsRepository.save(new PaymentDetails(100D, 100D, 150D, 100D, 0D, reservationRepository.findById(3L).get()));
+        paymentDetailsRepository.save(new PaymentDetails(100D, 100D, 150D, 100D, 123D, reservationRepository.findById(4L).get()));
     }
 
     private void createVerification() {

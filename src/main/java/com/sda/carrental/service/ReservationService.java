@@ -29,6 +29,10 @@ public class ReservationService {
     private final PaymentDetailsService paymentDetailsService;
     private final VerificationService verificationService;
 
+    public Reservation findById(Long id) throws ResourceNotFoundException{
+        return repository.findById(id).orElseThrow(ResourceNotFoundException::new);
+    }
+
     @Transactional
     public HttpStatus createReservation(Customer customer, SelectCarForm form) {
         try {
@@ -189,7 +193,7 @@ public class ReservationService {
 
     @Transactional
     public void changeDestination(Long reservationId, Long departmentId) throws ResourceNotFoundException {
-        Reservation r = repository.findById(reservationId).orElseThrow(ResourceNotFoundException::new);
+        Reservation r = findById(reservationId);
         Department d = departmentService.findDepartmentWhereId(departmentId);
         r.setDepartmentBack(d);
         repository.save(r);
