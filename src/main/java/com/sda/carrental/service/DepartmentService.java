@@ -44,7 +44,7 @@ public class DepartmentService {
         return departmentRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Department", "id", id));
     }
 
-    public List<Department> getDepartmentsByRole(CustomUserDetails cud) {
+    public List<Department> getDepartmentsByUserContext(CustomUserDetails cud) {
         if (cud.getAuthorities().contains(new SimpleGrantedAuthority(User.Roles.ROLE_EMPLOYEE.name()))) {
             return List.of(employeeService.findEmployeeById(cud.getId()).getDepartment());
         }
@@ -66,7 +66,7 @@ public class DepartmentService {
 
     public HttpStatus departmentAccess(CustomUserDetails cud, Long departmentId) {
         Department department = findDepartmentWhereId(departmentId);
-        if (getDepartmentsByRole(cud).contains(department)) {
+        if (getDepartmentsByUserContext(cud).contains(department)) {
             return HttpStatus.ACCEPTED;
         } else {
             return HttpStatus.FORBIDDEN;

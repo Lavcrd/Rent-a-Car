@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="Content-Type" content="text/html"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    <title>Rent-a-Car</title>
+
+    <link rel="stylesheet" type="text/css" href="/css/styles.css"/>
+    <link rel="stylesheet" href="/webjars/bootstrap/5.2.3/css/bootstrap.min.css">
+</head>
+
+<body>
+<div id="container">
+
+    <div th:include="fragments/top::top-menu"></div>
+    <div th:include="fragments/top::reg-options"></div>
+
+    <div class="row">
+        <form id="res" th:action="@{/mg-depo/search}" th:method="POST"
+              class="form-inline">
+
+            <div class="row mb-2" style="margin-top: 5%">
+                Parameters for query
+            </div>
+            <!--<div th:insert="fragments/bottom::form-error-handler"></div>-->
+        </form>
+
+        <br>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-12">
+            <table class="table table-borderless table-hover table-fixed"
+                   style="text-align: center; vertical-align: middle;">
+                <thead class="table-dark">
+                <tr>
+                    <th scope="row">Name</th>
+                    <th scope="row">Department</th>
+                    <th scope="row">Car</th>
+                    <th scope="row">Deadline</th>
+                    <th scope="row"></th>
+                </tr>
+                </thead>
+                <form th:action="@{/mg-depo/select}" th:method="POST">
+                    <tbody>
+                    <th:block th:if="${#lists.isEmpty(results)}">
+                        <td th:text="'—'"></td>
+                        <td th:text="'—'"></td>
+                        <td th:text="'—'"></td>
+                        <td th:text="'—'"></td>
+                        <td></td>
+                    </th:block>
+                    <tr th:each="result: ${results}">
+                        <td>
+                            <div class="overflow-cell-hs"
+                                 th:utext="${result.reservation.customer.getName()} + '<br>' + ${result.reservation.customer.getSurname()}"></div>
+                        </td>
+                        <td>
+                            <div class="overflow-cell-hs"
+                                 th:utext="${result.reservation.departmentBack.getCity()} + ', <br>' + ${result.reservation.departmentBack.getAddress()}"></div>
+                        </td>
+                        <td>
+                            <div class="overflow-cell-hs"
+                                 th:text="${result.reservation.car.getPlate()}"></div>
+                        </td>
+                        <td>
+                            <div class="overflow-cell-hs" th:text="${result.dateTo}"></div>
+                        </td>
+                        <td style="position: relative;">
+                            <button type="submit" class="btn btn-dark list-button" th:text="Select"
+                                    th:name="select_button"
+                                    th:value="${result.id}"></button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </form>
+            </table>
+        </div>
+    </div>
+    <div th:include="fragments/bottom::bottom-footer"></div>
+    <div th:insert="fragments/bottom::message-handler"></div>
+</div>
+<div th:include="fragments/bottom::common-scripts"></div>
+</body>
+</html>

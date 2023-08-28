@@ -2,6 +2,7 @@ package com.sda.carrental.service;
 
 import com.sda.carrental.exceptions.IllegalActionException;
 import com.sda.carrental.exceptions.ResourceNotFoundException;
+import com.sda.carrental.global.ConstantValues;
 import com.sda.carrental.model.operational.Reservation;
 import com.sda.carrental.model.operational.Returning;
 import com.sda.carrental.repository.ReturningRepository;
@@ -16,12 +17,15 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class ReturningService {
+    private final ConstantValues cv;
     private final ReturningRepository repository;
     private final ReservationService reservationService;
+    private final RentingService rentingService;
     private final DepartmentService departmentService;
 
 
@@ -35,12 +39,15 @@ public class ReturningService {
             CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             HttpStatus status = reservationService.handleReservationStatus(customerId, reservationId, Reservation.ReservationStatus.STATUS_COMPLETED);
             if (status.equals(HttpStatus.ACCEPTED)) {
-                repository.save(new Returning(reservationId, cud.getId(), dateTo, remarks));
+                repository.save(new Returning(reservationId, reservationService.findById(reservationId), rentingService.findById(reservationId), cud.getId(), dateTo, remarks));
             }
             return status;
         } catch (DataAccessException err) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return HttpStatus.INTERNAL_SERVER_ERROR;
+        } catch (ResourceNotFoundException err) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            return HttpStatus.NOT_FOUND;
         }
     }
 
@@ -61,5 +68,17 @@ public class ReturningService {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return HttpStatus.NOT_FOUND;
         }
+    }
+
+    public List<Returning> findAllUnresolvedByUserContext(CustomUserDetails cud) {
+        return repository.findAllUnresolvedByDepartments(departmentService.getDepartmentsByUserContext(cud));
+    }
+
+    public List<Returning> replaceDatesWithDeadlines(List<Returning> returns) {
+        long days = (long) (Math.floor(cv.getRefundDepositDeadlineDays() / 5D) * 7 + (cv.getRefundDepositDeadlineDays() % 5));
+        for (Returning r : returns) {
+            r.setDateTo(r.getDateTo().plusDays(days));
+        }
+        return returns;
     }
 }

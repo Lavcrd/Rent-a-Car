@@ -19,7 +19,7 @@ public class RentingService {
     private final RentingRepository repository;
     private final ReservationService reservationService;
 
-    public Object findById(Long id) throws ResourceNotFoundException {
+    public Renting findById(Long id) throws ResourceNotFoundException {
         return repository.findById(id).orElseThrow(ResourceNotFoundException::new);
     }
 
