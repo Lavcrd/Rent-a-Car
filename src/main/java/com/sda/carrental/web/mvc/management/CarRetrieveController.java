@@ -27,18 +27,18 @@ import java.time.LocalDate;
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/c-ret")
-public class ClaimReturnController {
+public class CarRetrieveController {
 
     private final ConstantValues cv;
     private final ReservationService reservationService;
-    private final RentingService rentingService;
-    private final ReturningService returningService;
+    private final RentService rentService;
+    private final RetrieveService retrieveService;
     private final PaymentDetailsService paymentDetailsService;
     private final DepartmentService departmentService;
 
     //Pages
     @RequestMapping(method = RequestMethod.GET)
-    public String showClaimReturnPage(ModelMap map, RedirectAttributes redAtt) {
+    public String showRetrievePage(ModelMap map, RedirectAttributes redAtt) {
         try {
             CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             map.addAttribute("countries", Country.values());
@@ -62,7 +62,7 @@ public class ClaimReturnController {
                 map.addAttribute("refund_fee_days", cv.getRefundSubtractDaysDuration());
             }
 
-            return "management/claimReturn";
+            return "management/carRetrieve";
         } catch (ResourceNotFoundException err) {
             redAtt.addFlashAttribute("message", "Failed: Missing payment - possible server side issues");
             return "redirect:/c-ret";
@@ -72,7 +72,7 @@ public class ClaimReturnController {
         }
     }
 
-    //Claim return buttons
+    //Retrieve page buttons
     @RequestMapping(value = "/check", method = RequestMethod.POST)
     public String checkReservationButton(final ModelMap map, @ModelAttribute @Valid SearchCarForm form, Errors errors, RedirectAttributes redAtt) {
         try {
@@ -80,12 +80,12 @@ public class ClaimReturnController {
 
             if (errors.hasErrors()) {
                 map.addAttribute("countries", Country.values());
-                return "management/claimReturn";
+                return "management/carRetrieve";
             }
 
             Reservation reservation = reservationService.findActiveReservationByPlate(form.getCountry().getCode() + "-" + form.getPlate());
             redAtt.addFlashAttribute("reservation", reservation);
-            redAtt.addFlashAttribute("rent_details", rentingService.findById(reservation.getId()));
+            redAtt.addFlashAttribute("rent_details", rentService.findById(reservation.getId()));
             return "redirect:/c-ret";
         } catch (ResourceNotFoundException err) {
             redAtt.addFlashAttribute("message", "Failed: No active rent found for: " + form.getCountry().getCode() + '-' + form.getPlate());
@@ -103,7 +103,7 @@ public class ClaimReturnController {
         if (err.hasErrors()) {
             Reservation reservation = reservationService.findActiveReservationByPlate(plate);
             redAtt.addFlashAttribute("reservation", reservation);
-            redAtt.addFlashAttribute("rent_details", rentingService.findById(reservation.getId()));
+            redAtt.addFlashAttribute("rent_details", rentService.findById(reservation.getId()));
             String[] plateValues = plate.split("-", 2);
             redAtt.addFlashAttribute("searchCarForm", new SearchCarForm(Country.valueOf("COUNTRY_" + plateValues[0]), plateValues[1]));
             redAtt.addFlashAttribute("message", err.getAllErrors().get(0).getDefaultMessage());
@@ -111,7 +111,7 @@ public class ClaimReturnController {
             return "redirect:/c-ret";
         }
 
-        HttpStatus response = returningService.handleReturn(customerId, reservationId, departmentId, form);
+        HttpStatus response = retrieveService.handleRetrieve(customerId, reservationId, departmentId, form);
 
         redAtt.addAttribute("reservation", reservationId);
         redAtt.addFlashAttribute("customer", customerId);

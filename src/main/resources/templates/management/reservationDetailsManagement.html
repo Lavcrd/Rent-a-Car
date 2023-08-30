@@ -292,12 +292,12 @@
                                                      th:utext="'<strong>Rent date:</strong><br>' + ${rent_details.getDateFrom()}"></div>
                                                 <div style="margin-top: 3%;"
                                                      th:if="${reservation.status.name() == 'STATUS_COMPLETED'}"
-                                                     th:utext="'<strong>Return date:</strong><br>' + ${return_details.getDateTo()}"></div>
+                                                     th:utext="'<strong>Retrieve date:</strong><br>' + ${retrieve_details.getDateTo()}"></div>
                                                 <div style="margin-top: 3%;"
                                                      th:utext="'<strong>Remarks:</strong><br>' + ${rent_details.getRemarks()}"></div>
                                                 <div style="margin-top: 3%;"
                                                      th:if="${reservation.status.name() == 'STATUS_COMPLETED'}"
-                                                     th:utext="'<strong>Return remarks:</strong><br>' + ${return_details.getRemarks()}"></div>
+                                                     th:utext="'<strong>Retrieve remarks:</strong><br>' + ${retrieve_details.getRemarks()}"></div>
                                             </div>
                                         </div>
                                         <div class="modal-footer">
@@ -310,30 +310,30 @@
                             </div>
                         </th:block>
                         <th:block th:if="${reservation.status.name() == 'STATUS_PROGRESS' && department == reservation.departmentBack.id}">
-                            <form th:action="@{/mg-res/reservation/return}" th:object="${return_confirmation_form}"
+                            <form th:action="@{/mg-res/reservation/retrieve}" th:object="${retrieve_confirmation_form}"
                                   th:method="POST">
                                 <input type="hidden" th:name="reservation" th:value="${reservation.getId()}">
                                 <input type="hidden" th:name="customer" th:value="${reservation.getCustomer().getId()}">
                                 <input type="hidden" th:name="department" th:value="${department}">
 
-                                <!--Trigger for return modal-->
+                                <!--Trigger for retrieve modal-->
                                 <button type="button" class="btn btn-dark bg-dark mt-2 w-100 cdb-text" data-bs-toggle="modal"
-                                        data-bs-target="#return_confirmation_modal">
+                                        data-bs-target="#retrieve_confirmation_modal">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                                          class="bi bi-check-circle" viewBox="0 0 16 16">
                                         <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
                                         <path d="M10.97 4.97a.235.235 0 0 0-.02.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05z"/>
                                     </svg>
-                                    Return
+                                    Retrieve
                                 </button>
 
                                 <!--Modal-->
-                                <div class="modal fade" id="return_confirmation_modal" tabindex="-1" role="dialog"
+                                <div class="modal fade" id="retrieve_confirmation_modal" tabindex="-1" role="dialog"
                                      aria-hidden="true">
                                     <div class="modal-dialog modal-dialog-centered" role="document">
                                         <div class="modal-content">
                                             <div class="modal-header">
-                                                <h5 class="modal-title">Return confirmation</h5>
+                                                <h5 class="modal-title">Retrieve confirmation</h5>
                                                 <button type="button" class="close" data-bs-dismiss="modal"
                                                         aria-label="Close">
                                                     <span aria-hidden="true">×</span>

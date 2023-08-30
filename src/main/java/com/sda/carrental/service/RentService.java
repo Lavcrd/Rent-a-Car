@@ -1,9 +1,9 @@
 package com.sda.carrental.service;
 
 import com.sda.carrental.exceptions.ResourceNotFoundException;
-import com.sda.carrental.model.operational.Renting;
+import com.sda.carrental.model.operational.Rent;
 import com.sda.carrental.model.operational.Reservation;
-import com.sda.carrental.repository.RentingRepository;
+import com.sda.carrental.repository.RentRepository;
 import com.sda.carrental.service.auth.CustomUserDetails;
 import com.sda.carrental.web.mvc.form.ConfirmRentalForm;
 import lombok.RequiredArgsConstructor;
@@ -15,11 +15,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class RentingService {
-    private final RentingRepository repository;
+public class RentService {
+    private final RentRepository repository;
     private final ReservationService reservationService;
 
-    public Renting findById(Long id) throws ResourceNotFoundException {
+    public Rent findById(Long id) throws ResourceNotFoundException {
         return repository.findById(id).orElseThrow(ResourceNotFoundException::new);
     }
 
@@ -29,7 +29,7 @@ public class RentingService {
             CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             HttpStatus status = reservationService.handleReservationStatus(customerId, reservationId, Reservation.ReservationStatus.STATUS_PROGRESS);
             if (status.equals(HttpStatus.ACCEPTED)) {
-                repository.save(new Renting(cud.getId(), reservationId, form.getRemarks(), form.getDateFrom()));
+                repository.save(new Rent(cud.getId(), reservationId, form.getRemarks(), form.getDateFrom()));
             }
             return status;
         } catch (DataAccessException err) {

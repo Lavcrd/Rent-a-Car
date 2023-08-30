@@ -4,8 +4,8 @@ import com.sda.carrental.exceptions.IllegalActionException;
 import com.sda.carrental.exceptions.ResourceNotFoundException;
 import com.sda.carrental.global.ConstantValues;
 import com.sda.carrental.model.operational.Reservation;
-import com.sda.carrental.model.operational.Returning;
-import com.sda.carrental.repository.ReturningRepository;
+import com.sda.carrental.model.operational.Retrieve;
+import com.sda.carrental.repository.RetrieveRepository;
 import com.sda.carrental.service.auth.CustomUserDetails;
 import com.sda.carrental.web.mvc.form.ConfirmClaimForm;
 import lombok.RequiredArgsConstructor;
@@ -21,11 +21,11 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class ReturningService {
+public class RetrieveService {
     private final ConstantValues cv;
-    private final ReturningRepository repository;
+    private final RetrieveRepository repository;
     private final ReservationService reservationService;
-    private final RentingService rentingService;
+    private final RentService rentService;
     private final DepartmentService departmentService;
 
 
@@ -34,12 +34,12 @@ public class ReturningService {
     }
 
     @Transactional
-    public HttpStatus createReturn(Long customerId, Long reservationId, LocalDate dateTo, String remarks) {
+    public HttpStatus createRetrieve(Long customerId, Long reservationId, LocalDate dateTo, String remarks) {
         try {
             CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             HttpStatus status = reservationService.handleReservationStatus(customerId, reservationId, Reservation.ReservationStatus.STATUS_COMPLETED);
             if (status.equals(HttpStatus.ACCEPTED)) {
-                repository.save(new Returning(reservationId, reservationService.findById(reservationId), rentingService.findById(reservationId), cud.getId(), dateTo, remarks));
+                repository.save(new Retrieve(reservationId, reservationService.findById(reservationId), rentService.findById(reservationId), cud.getId(), dateTo, remarks));
             }
             return status;
         } catch (DataAccessException err) {
@@ -52,7 +52,7 @@ public class ReturningService {
     }
 
     @Transactional
-    public HttpStatus handleReturn(Long customerId, Long reservationId, Long departmentId, ConfirmClaimForm form) throws IllegalActionException {
+    public HttpStatus handleRetrieve(Long customerId, Long reservationId, Long departmentId, ConfirmClaimForm form) throws IllegalActionException {
         try {
             CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             if (departmentService.departmentAccess(cud, departmentId).equals(HttpStatus.FORBIDDEN)) {
@@ -60,7 +60,7 @@ public class ReturningService {
             } else if (!departmentId.equals(form.getDepartmentId())) {
                 reservationService.changeDestination(reservationId, form.getDepartmentId());
             }
-            return createReturn(customerId, reservationId, form.getDateTo(), form.getRemarks());
+            return createRetrieve(customerId, reservationId, form.getDateTo(), form.getRemarks());
         } catch (IllegalActionException err) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return HttpStatus.BAD_REQUEST;
@@ -70,15 +70,15 @@ public class ReturningService {
         }
     }
 
-    public List<Returning> findAllUnresolvedByUserContext(CustomUserDetails cud) {
+    public List<Retrieve> findAllUnresolvedByUserContext(CustomUserDetails cud) {
         return repository.findAllUnresolvedByDepartments(departmentService.getDepartmentsByUserContext(cud));
     }
 
-    public List<Returning> replaceDatesWithDeadlines(List<Returning> returns) {
+    public List<Retrieve> replaceDatesWithDeadlines(List<Retrieve> retrieves) {
         long days = (long) (Math.floor(cv.getRefundDepositDeadlineDays() / 5D) * 7 + (cv.getRefundDepositDeadlineDays() % 5));
-        for (Returning r : returns) {
+        for (Retrieve r : retrieves) {
             r.setDateTo(r.getDateTo().plusDays(days));
         }
-        return returns;
+        return retrieves;
     }
 }

@@ -3,9 +3,9 @@ package com.sda.carrental.clr;
 import com.sda.carrental.global.ConstantValues;
 import com.sda.carrental.global.enums.Country;
 import com.sda.carrental.model.Company;
-import com.sda.carrental.model.operational.Renting;
+import com.sda.carrental.model.operational.Rent;
 import com.sda.carrental.model.operational.Reservation;
-import com.sda.carrental.model.operational.Returning;
+import com.sda.carrental.model.operational.Retrieve;
 import com.sda.carrental.model.property.Car;
 import com.sda.carrental.model.property.Department;
 import com.sda.carrental.model.property.PaymentDetails;
@@ -34,11 +34,11 @@ public class PredefiniedData implements CommandLineRunner {
     private final DepartmentRepository departmentRepository;
     private final CarRepository carRepository;
     private final ReservationRepository reservationRepository;
-    private final RentingRepository rentingRepository;
+    private final RentRepository rentRepository;
     private final PaymentDetailsRepository paymentDetailsRepository;
     private final VerificationRepository verificationRepository;
     private final CredentialsRepository credentialsRepository;
-    private final ReturningRepository returningRepository;
+    private final RetrieveRepository retrieveRepository;
     private final ConstantValues cv;
 
     @Override
@@ -52,7 +52,7 @@ public class PredefiniedData implements CommandLineRunner {
 
         createReservation();
         createRent();
-        createReturn();
+        createRetrieve();
         createPayments();
 
         createVerification();
@@ -171,18 +171,18 @@ public class PredefiniedData implements CommandLineRunner {
     }
 
     private void createRent() {
-        rentingRepository.save(new Renting(12L, 1L, "N/D", LocalDate.now()));
-        rentingRepository.save(new Renting(13L, 2L, "N/D", LocalDate.now()));
-        rentingRepository.save(new Renting(14L, 3L, "N/D", LocalDate.now()));
-        rentingRepository.save(new Renting(14L, 4L, "N/D", LocalDate.now()));
-        rentingRepository.save(new Renting(13L, 5L, "N/D", LocalDate.now()));
+        rentRepository.save(new Rent(12L, 1L, "N/D", LocalDate.now()));
+        rentRepository.save(new Rent(13L, 2L, "N/D", LocalDate.now()));
+        rentRepository.save(new Rent(14L, 3L, "N/D", LocalDate.now()));
+        rentRepository.save(new Rent(14L, 4L, "N/D", LocalDate.now()));
+        rentRepository.save(new Rent(13L, 5L, "N/D", LocalDate.now()));
     }
 
-    private void createReturn() {
-        returningRepository.save(new Returning(1L, reservationRepository.findById(1L).get(), rentingRepository.findById(1L).get(), 13L, LocalDate.now().plusDays(7), "Some notes after return of the car."));
-        returningRepository.save(new Returning(2L, reservationRepository.findById(2L).get(), rentingRepository.findById(2L).get(), 14L, LocalDate.now().plusDays(8), "Some notes after return of the car."));
-        returningRepository.save(new Returning(3L, reservationRepository.findById(3L).get(), rentingRepository.findById(3L).get(), 15L, LocalDate.now().plusDays(9), "Some notes after return of the car."));
-        returningRepository.save(new Returning(4L, reservationRepository.findById(4L).get(), rentingRepository.findById(4L).get(), 13L, LocalDate.now().plusDays(10), "Some notes after return of the car."));
+    private void createRetrieve() {
+        retrieveRepository.save(new Retrieve(1L, reservationRepository.findById(1L).get(), rentRepository.findById(1L).get(), 13L, LocalDate.now().plusDays(7), "Some notes after car retrieve."));
+        retrieveRepository.save(new Retrieve(2L, reservationRepository.findById(2L).get(), rentRepository.findById(2L).get(), 14L, LocalDate.now().plusDays(8), "Some notes after car retrieve."));
+        retrieveRepository.save(new Retrieve(3L, reservationRepository.findById(3L).get(), rentRepository.findById(3L).get(), 15L, LocalDate.now().plusDays(9), "Some notes after car retrieve."));
+        retrieveRepository.save(new Retrieve(4L, reservationRepository.findById(4L).get(), rentRepository.findById(4L).get(), 13L, LocalDate.now().plusDays(10), "Some notes after car retrieve."));
     }
 
     private void createPayments() {
