@@ -38,8 +38,8 @@ public class ManageReservationsController {
     private final PaymentDetailsService paymentDetailsService;
     private final VerificationService verificationService;
     private final CarService carService;
-    private final RentingService rentingService;
-    private final ReturningService returningService;
+    private final RentService rentService;
+    private final RetrieveService retrieveService;
     private final UserService userService;
     private final ConstantValues cv;
 
@@ -122,13 +122,13 @@ public class ManageReservationsController {
             if (reservation.getStatus().equals(Reservation.ReservationStatus.STATUS_RESERVED)) {
                 map.addAttribute("rental_confirmation_form", new ConfirmRentalForm(LocalDate.now()));
             } else if (reservation.getStatus().equals(Reservation.ReservationStatus.STATUS_PROGRESS)) {
-                map.addAttribute("rent_details", rentingService.findById(reservation.getId()));
+                map.addAttribute("rent_details", rentService.findById(reservation.getId()));
                 if (departmentId.equals(reservation.getDepartmentBack().getId())) {
-                    map.addAttribute("return_confirmation_form", new ConfirmClaimForm(departmentId, LocalDate.now()));
+                    map.addAttribute("retrieve_confirmation_form", new ConfirmClaimForm(departmentId, LocalDate.now()));
                 }
             } else if (reservation.getStatus().equals(Reservation.ReservationStatus.STATUS_COMPLETED)) {
-                map.addAttribute("rent_details", rentingService.findById(reservation.getId()));
-                map.addAttribute("return_details", returningService.findById(reservation.getId()));
+                map.addAttribute("rent_details", rentService.findById(reservation.getId()));
+                map.addAttribute("retrieve_details", retrieveService.findById(reservation.getId()));
             }
             return "management/reservationDetailsManagement";
         } catch (ResourceNotFoundException err) {
@@ -273,7 +273,7 @@ public class ManageReservationsController {
             return "redirect:/mg-res/reservation/{reservation}";
         }
 
-        HttpStatus response = rentingService.createRent(customerId, reservationId, form);
+        HttpStatus response = rentService.createRent(customerId, reservationId, form);
 
         redAtt.addAttribute("reservation", reservationId);
         redAtt.addFlashAttribute("customer", customerId);
@@ -291,8 +291,8 @@ public class ManageReservationsController {
         return "redirect:/mg-res/reservation/{reservation}";
     }
 
-    @RequestMapping(method = RequestMethod.POST, value = "/reservation/return")
-    public String reservationReturnButton(@ModelAttribute("return_confirmation_form") @Valid ConfirmClaimForm form, Errors err, RedirectAttributes redAtt, @RequestParam("reservation") Long reservationId, @RequestParam("customer") Long customerId, @RequestParam("department") Long departmentId) {
+    @RequestMapping(method = RequestMethod.POST, value = "/reservation/retrieve")
+    public String reservationRetrieveButton(@ModelAttribute("retrieve_confirmation_form") @Valid ConfirmClaimForm form, Errors err, RedirectAttributes redAtt, @RequestParam("reservation") Long reservationId, @RequestParam("customer") Long customerId, @RequestParam("department") Long departmentId) {
         CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (userService.hasNoAccessToUserReservation(cud, customerId, reservationId)) {
             redAtt.addFlashAttribute("message", "Access rejected.");
@@ -307,14 +307,14 @@ public class ManageReservationsController {
             return "redirect:/mg-res/reservation/{reservation}";
         }
 
-        HttpStatus response = returningService.handleReturn(customerId, reservationId, departmentId, form);
+        HttpStatus response = retrieveService.handleRetrieve(customerId, reservationId, departmentId, form);
 
         redAtt.addAttribute("reservation", reservationId);
         redAtt.addFlashAttribute("customer", customerId);
         redAtt.addFlashAttribute("department", departmentId);
 
         if (response.equals(HttpStatus.ACCEPTED)) {
-            redAtt.addFlashAttribute("message", "Success: Return completed");
+            redAtt.addFlashAttribute("message", "Success: Retrieve completed");
         } else {
             redAtt.addFlashAttribute("message", "An unexpected error occurred. Please try again later.");
         }

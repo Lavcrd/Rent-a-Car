@@ -10,8 +10,8 @@ import javax.persistence.*;
 @Entity(name = "rent")
 @Getter
 @NoArgsConstructor
-public class Renting {
-    public Renting(Long employeeId, Long reservationId, String remarks, LocalDate dateFrom) {
+public class Rent {
+    public Rent(Long employeeId, Long reservationId, String remarks, LocalDate dateFrom) {
         this.id = reservationId;
         this.employeeId = employeeId;
         this.dateFrom = dateFrom;

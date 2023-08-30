@@ -25,7 +25,7 @@ public class IndexForm {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate dateFrom;
 
-    @FutureOrPresent(message = "Return date is out of date!")
+    @FutureOrPresent(message = "Return date is out of date")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate dateTo;
 

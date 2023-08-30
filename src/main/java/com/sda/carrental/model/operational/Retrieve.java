@@ -7,14 +7,14 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.time.LocalDate;
 
-@Entity(name = "returning")
+@Entity(name = "retrieve")
 @Getter
 @NoArgsConstructor
-public class Returning {
-    public Returning(Long reservationId, Reservation reservation, Renting renting, Long employeeId, LocalDate dateTo, String remarks) {
+public class Retrieve {
+    public Retrieve(Long reservationId, Reservation reservation, Rent rent, Long employeeId, LocalDate dateTo, String remarks) {
         this.id = reservationId;
         this.reservation = reservation;
-        this.renting = renting;
+        this.rent = rent;
         this.employeeId = employeeId;
         this.dateTo = dateTo;
         this.remarks = remarks;
@@ -29,8 +29,8 @@ public class Returning {
     private Reservation reservation;
 
     @OneToOne
-    @JoinColumn(name = "renting", referencedColumnName = "id")
-    private Renting renting;
+    @JoinColumn(name = "rent", referencedColumnName = "id")
+    private Rent rent;
 
     @Column(name = "employee_id")
     private Long employeeId;
