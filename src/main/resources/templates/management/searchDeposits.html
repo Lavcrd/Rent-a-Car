@@ -27,36 +27,42 @@
                      style="width: 100%; flex-shrink: 1; display:inline-flex; flex-wrap: nowrap; padding-right: 0;">
                     <div class="col-sm-3 c-input">
                         <input type="text" class="form-control" placeholder="Name"
-                               th:field="*{customerName}">
+                               th:field="*{name}">
                     </div>
                     <div class="col-sm-3 c-input">
                         <input type="text" class="form-control" placeholder="Surname"
-                               th:field="*{customerSurname}">
+                               th:field="*{surname}">
                     </div>
 
-                    <div class="between-fields" style="justify-content: flex-end;" th:text="'Deadline:'"></div>
-
-                    <div class="col-sm-3 c-input" style="width: fit-content;">
-                        <input type="date" class="form-control"
-                               th:field="*{dateFrom}">
-                    </div>
-                    <div class="between-fields c-input" th:text="'↔'" style="width: fit-content;"></div>
-                    <div class="col-sm-3 c-input" style="width: fit-content; padding-right: 0;">
-                        <input type="date" class="form-control"
-                               th:field="*{dateTo}">
-                    </div>
+                    <div class="col-sm-6 c-input"></div>
                 </div>
                 <div class="row" style="margin-top: 1%; flex-wrap: nowrap; padding-right: 0;">
-                    <div class="col-sm-3 c-input" style="width: fit-content;">
-                        <select type="text" th:field="*{departmentBack}" class="form-control">
-                            <option th:value="null" th:text="Any"></option>
-                            <div th:each="departmentBack:${departmentsCountry}">
-                                <option th:text="${departmentBack.getCity()} + ', ' + ${departmentBack.getAddress()}"
-                                        th:value="${departmentBack.getId()}"></option>
+                    <div class="col-sm-3">
+                        <select type="text" id="country" th:field="*{country}" class="form-control">
+                            <div th:each="country:${countries}">
+                                <option th:text="${country.getCountryName()}"
+                                        th:value="${country}"></option>
                             </div>
                         </select>
                     </div>
-                    <div class="col c-input" style="justify-content: end; padding-right: 0;">
+
+                    <div class="col-sm-3">
+                        <input type="text" name="plate" class="form-control" placeholder="License plate"
+                               th:field="*{plate}">
+                    </div>
+
+                    <div class="between-fields" style="justify-content: flex-end;" th:text="'Department:'"></div>
+
+                    <div class="col-sm-3 c-input" style="width: fit-content;">
+                        <select type="text" th:field="*{department}" class="form-control">
+                            <option th:value="null" th:text="Any"></option>
+                            <div th:each="department:${departments}">
+                                <option th:text="${department.getCity()} + ', ' + ${department.getAddress()}"
+                                        th:value="${department.getId()}"></option>
+                            </div>
+                        </select>
+                    </div>
+                    <div class="col c-input" style="justify-content: end; padding-right: 0; white-space: nowrap;">
                         <button class="btn btn-dark bg-dark"
                                 type="submit">
 
@@ -83,8 +89,8 @@
                 <thead class="table-dark">
                 <tr>
                     <th scope="row">Name</th>
-                    <th scope="row">Department</th>
                     <th scope="row">Car</th>
+                    <th scope="row">Department</th>
                     <th scope="row">Deadline</th>
                     <th scope="row"></th>
                 </tr>
@@ -105,11 +111,11 @@
                         </td>
                         <td>
                             <div class="overflow-cell-hs"
-                                 th:utext="${result.reservation.departmentBack.getCity()} + ', <br>' + ${result.reservation.departmentBack.getAddress()}"></div>
+                                 th:text="${result.reservation.car.getPlate()}"></div>
                         </td>
                         <td>
                             <div class="overflow-cell-hs"
-                                 th:text="${result.reservation.car.getPlate()}"></div>
+                                 th:utext="${result.reservation.departmentBack.getCity()} + ', <br>' + ${result.reservation.departmentBack.getAddress()}"></div>
                         </td>
                         <td>
                             <div class="overflow-cell-hs" th:text="${result.dateTo}"></div>
