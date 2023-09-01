@@ -3,11 +3,14 @@ package com.sda.carrental.service;
 import com.sda.carrental.exceptions.IllegalActionException;
 import com.sda.carrental.exceptions.ResourceNotFoundException;
 import com.sda.carrental.global.ConstantValues;
+import com.sda.carrental.global.enums.Country;
 import com.sda.carrental.model.operational.Reservation;
 import com.sda.carrental.model.operational.Retrieve;
+import com.sda.carrental.model.property.Department;
 import com.sda.carrental.repository.RetrieveRepository;
 import com.sda.carrental.service.auth.CustomUserDetails;
 import com.sda.carrental.web.mvc.form.ConfirmClaimForm;
+import com.sda.carrental.web.mvc.form.SearchDepositsForm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
@@ -17,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -80,5 +84,28 @@ public class RetrieveService {
             r.setDateTo(r.getDateTo().plusDays(days));
         }
         return retrieves;
+    }
+
+    public List<Retrieve> findUnresolvedByUserContextAndForm(CustomUserDetails cud, SearchDepositsForm form) {
+        String country;
+        if (form.getCountry().equals(Country.COUNTRY_NONE)) {
+            country = null;
+        } else {
+            country = form.getCountry().getCode();
+        }
+
+        List<Department> departments;
+        if (form.getDepartment() == null) {
+            departments = departmentService.getDepartmentsByUserContext(cud);
+        } else {
+            if (departmentService.departmentAccess(cud, form.getDepartment()).equals(HttpStatus.FORBIDDEN)) return Collections.emptyList();
+            departments = List.of(departmentService.findDepartmentWhereId(form.getDepartment()));
+        }
+
+        return repository.findUnresolved(
+                form.getName(), form.getSurname(),
+                country, form.getPlate(),
+                departments
+        );
     }
 }
