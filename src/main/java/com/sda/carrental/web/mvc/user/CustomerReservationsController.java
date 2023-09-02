@@ -34,7 +34,7 @@ public class CustomerReservationsController {
     public String reservationsPage(ModelMap map) {
         CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        map.addAttribute("reservations", reservationService.getCustomerReservations(cud.getId()));
+        map.addAttribute("reservations", reservationService.findCustomerReservations(cud.getId()));
         return "user/reservationsCustomer";
     }
 
@@ -42,7 +42,7 @@ public class CustomerReservationsController {
     public String reservationDetailsPage(final ModelMap map, RedirectAttributes redAtt, @PathVariable(value = "details_button") Long detailsButton) {
         try {
             CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            Reservation reservation = reservationService.getCustomerReservation(cud.getId(), detailsButton);
+            Reservation reservation = reservationService.findCustomerReservation(cud.getId(), detailsButton);
             Optional<PaymentDetails> receipt = paymentDetailsService.getOptionalPaymentDetails(reservation);
 
             if (receipt.isPresent()) {

@@ -24,7 +24,7 @@ public interface CarRepository extends CrudRepository<Car, Long> {
             "       SELECT r2.car.id " +
             "       FROM reservation r2 " +
             "       WHERE r2.dateFrom <= :dateTo AND r2.dateTo >= :dateFrom " +
-            "       AND r2.status IN (1, 3) " +
+            "       AND r2.status IN (1, 2, 3) " +
             "       GROUP BY r2.car.id " +
             "       HAVING COUNT(*) >= 1)) " +
             "GROUP BY c.id)" +
@@ -43,7 +43,7 @@ public interface CarRepository extends CrudRepository<Car, Long> {
             "       SELECT r2.car.id " +
             "       FROM reservation r2 " +
             "       WHERE r2.dateFrom <= :dateTo AND r2.dateTo >= :dateFrom " +
-            "       AND r2.status IN (1, 3) " +
+            "       AND r2.status IN (1, 2, 3) " +
             "       GROUP BY r2.car.id " +
             "       HAVING COUNT(*) >= 1)) " +
             "GROUP BY c.id)")

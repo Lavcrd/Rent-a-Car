@@ -18,8 +18,8 @@ public interface RetrieveRepository extends CrudRepository<Retrieve, Long> {
     List<Retrieve> findAllUnresolvedByDepartments(@Param("departments") List<Department> departments);
 
     @Query("SELECT r FROM retrieve r " +
-            "JOIN customer u on u.id = r.reservation.customer " +
-            "JOIN car c on c.id = r.reservation.car " +
+            "JOIN customer u ON u.id = r.reservation.customer " +
+            "JOIN car c ON c.id = r.reservation.car " +
             "WHERE r.reservation.departmentBack IN (:departments) " +
             "AND (:name IS NULL OR LOWER(u.name) LIKE LOWER(CONCAT(:name, '%'))) " +
             "AND (:surname IS NULL OR LOWER(u.surname) LIKE LOWER(CONCAT(:surname, '%'))) " +
