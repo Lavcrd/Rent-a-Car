@@ -65,12 +65,12 @@ public class ReservationService {
         }
     }
 
-    public List<Reservation> getCustomerReservations(Long customerId) {
+    public List<Reservation> findCustomerReservations(Long customerId) {
         return repository
                 .findAllByCustomerId(customerId);
     }
 
-    public Reservation getCustomerReservation(Long customerId, Long reservationId) {
+    public Reservation findCustomerReservation(Long customerId, Long reservationId) throws ResourceNotFoundException {
         return repository
                 .findByCustomerIdAndId(customerId, reservationId)
                 .orElseThrow(ResourceNotFoundException::new);
@@ -85,42 +85,88 @@ public class ReservationService {
     @Transactional
     public HttpStatus handleReservationStatus(Long customerId, Long reservationId, Reservation.ReservationStatus status) {
         try {
-            Reservation r = getCustomerReservation(customerId, reservationId);
+            Reservation r = findCustomerReservation(customerId, reservationId);
+            Reservation.ReservationStatus currentStatus = r.getStatus();
 
-            if (status.equals(Reservation.ReservationStatus.STATUS_REFUNDED) && r.getStatus().equals(Reservation.ReservationStatus.STATUS_RESERVED)) {
-                paymentDetailsService.retractReservationPayment(r, status);
-                updateReservationStatus(r, status);
-                return HttpStatus.ACCEPTED;
-            } else if (status.equals(Reservation.ReservationStatus.STATUS_CANCELED) && (r.getStatus().equals(Reservation.ReservationStatus.STATUS_PENDING) || r.getStatus().equals(Reservation.ReservationStatus.STATUS_RESERVED))) {
-                paymentDetailsService.retractReservationPayment(r, status);
-                updateReservationStatus(r, status);
-                return HttpStatus.ACCEPTED;
-            } else if (status.equals(Reservation.ReservationStatus.STATUS_PROGRESS) && r.getStatus().equals(Reservation.ReservationStatus.STATUS_RESERVED)) {
-                if (verificationService.getOptionalVerificationByCustomer(r.getCustomer().getId()).isEmpty()) {
-                    return HttpStatus.PRECONDITION_REQUIRED;
-                }
-                Optional<PaymentDetails> payment = paymentDetailsService.getOptionalPaymentDetails(r);
-                if (payment.isEmpty()) {
-                    return HttpStatus.PAYMENT_REQUIRED;
-                }
-                paymentDetailsService.securePayment(payment.get());
-                carService.updateCarStatus(r.getCar(), Car.CarStatus.STATUS_RENTED);
-                updateReservationStatus(r, status);
-                return HttpStatus.ACCEPTED;
-            } else if (status.equals(Reservation.ReservationStatus.STATUS_COMPLETED) && r.getStatus().equals(Reservation.ReservationStatus.STATUS_PROGRESS)) {
-                carService.updateCarStatus(r.getCar(), Car.CarStatus.STATUS_OPEN);
-                carService.updateCarLocation(r.getCar(), r.getDepartmentBack().getId());
-                updateReservationStatus(r, status);
-                return HttpStatus.ACCEPTED;
+            switch (status) {
+                case STATUS_REFUNDED:
+                    if (currentStatus == Reservation.ReservationStatus.STATUS_RESERVED) {
+                        processRefundReservation(r, status);
+                        return HttpStatus.ACCEPTED;
+                    }
+                    break;
+
+                case STATUS_CANCELED:
+                    if (currentStatus == Reservation.ReservationStatus.STATUS_PENDING ||
+                            currentStatus == Reservation.ReservationStatus.STATUS_RESERVED) {
+                        processCancelReservation(r, status);
+                        return HttpStatus.ACCEPTED;
+                    }
+                    break;
+
+                case STATUS_PROGRESS:
+                    if (currentStatus == Reservation.ReservationStatus.STATUS_RESERVED) {
+                        if (verificationService.getOptionalVerificationByCustomer(r.getCustomer().getId()).isEmpty()) {
+                            return HttpStatus.PRECONDITION_REQUIRED;
+                        }
+                        Optional<PaymentDetails> payment = paymentDetailsService.getOptionalPaymentDetails(r);
+                        if (payment.isEmpty()) {
+                            return HttpStatus.PAYMENT_REQUIRED;
+                        }
+                        processProgressReservation(r, status, payment.get());
+                        return HttpStatus.ACCEPTED;
+                    }
+                    break;
+
+                case STATUS_COMPLETED:
+                    if (currentStatus == Reservation.ReservationStatus.STATUS_PROGRESS) {
+                        processCompleteReservation(r, status);
+                        return HttpStatus.ACCEPTED;
+                    }
+                    break;
+
+                default:
+                    break;
             }
+
             return HttpStatus.BAD_REQUEST;
         } catch (ResourceNotFoundException err) {
-            err.printStackTrace();
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return HttpStatus.NOT_FOUND;
+        } catch (RuntimeException err) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            return HttpStatus.INTERNAL_SERVER_ERROR;
         }
     }
 
-    public List<Reservation> getUserReservationsByDepartmentTake(Long customerId, Long departmentId) throws ResourceNotFoundException {
+    @Transactional
+    private void processRefundReservation(Reservation r, Reservation.ReservationStatus status) {
+        paymentDetailsService.retractReservationPayment(r, status);
+        updateReservationStatus(r, status);
+    }
+
+    @Transactional
+    private void processCancelReservation(Reservation r, Reservation.ReservationStatus status) {
+        paymentDetailsService.retractReservationPayment(r, status);
+        updateReservationStatus(r, status);
+    }
+
+    @Transactional
+    private void processProgressReservation(Reservation r, Reservation.ReservationStatus status, PaymentDetails payment) {
+        paymentDetailsService.securePayment(payment);
+        carService.updateCarStatus(r.getCar(), Car.CarStatus.STATUS_RENTED);
+        updateReservationStatus(r, status);
+    }
+
+    @Transactional
+    private void processCompleteReservation(Reservation r, Reservation.ReservationStatus status) {
+        carService.updateCarStatus(r.getCar(), Car.CarStatus.STATUS_OPEN);
+        carService.updateCarLocation(r.getCar(), r.getDepartmentBack().getId());
+        updateReservationStatus(r, status);
+    }
+
+
+    public List<Reservation> findUserReservationsByDepartmentTake(Long customerId, Long departmentId) throws ResourceNotFoundException {
         try {
             return repository
                     .findAllByCustomerIdAndDepartmentTakeId(customerId, departmentId);
@@ -129,7 +175,7 @@ public class ReservationService {
         }
     }
 
-    public List<Reservation> getUserReservationsByDepartmentBack(Long customerId, Long departmentId) throws ResourceNotFoundException {
+    public List<Reservation> findUserReservationsByDepartmentBack(Long customerId, Long departmentId) throws ResourceNotFoundException {
         try {
             return repository
                     .findAllByCustomerIdAndDepartmentBackId(customerId, departmentId);
@@ -157,7 +203,7 @@ public class ReservationService {
     @Transactional
     public HttpStatus substituteCar(Long reservationId, Long customerId, Long carId) {
         try {
-            Reservation r = getCustomerReservation(customerId, reservationId);
+            Reservation r = findCustomerReservation(customerId, reservationId);
             Car c = carService.findAvailableCar(r.getDateFrom(), r.getDateTo(), r.getDepartmentTake().getId(), carId);
             r.setCar(c);
             repository.save(r);
@@ -175,7 +221,7 @@ public class ReservationService {
     @Transactional
     public boolean transferReservations(Customer mainCustomer, Customer usedCustomer) {
         try {
-            List<Reservation> reservations = getCustomerReservations(usedCustomer.getId());
+            List<Reservation> reservations = findCustomerReservations(usedCustomer.getId());
             for (Reservation reservation : reservations) {
                 reservation.setCustomer(mainCustomer);
             }

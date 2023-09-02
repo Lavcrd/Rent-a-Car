@@ -14,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import java.time.LocalDate;
-import java.util.Optional;
 
 
 @Service
@@ -52,7 +51,7 @@ public class UserService {
                     return HttpStatus.CONFLICT;
                 }
                 credentialsService.deleteCredentials(userId);
-                return customerService.deleteCustomer(userId, reservationService.getCustomerReservations(userId).isEmpty());
+                return customerService.deleteCustomer(userId, reservationService.findCustomerReservations(userId).isEmpty());
             } else {
                 user.setTerminationDate(LocalDate.now());
                 credentialsService.scramblePassword(userId);
@@ -71,8 +70,8 @@ public class UserService {
     public boolean hasNoAccessToUserData(CustomUserDetails cud, Long customerId, Long departmentId) {
         try {
             if (departmentService.departmentAccess(cud, departmentId).equals(HttpStatus.ACCEPTED)) {
-                boolean hasReservationsDepTake = reservationService.getUserReservationsByDepartmentTake(customerId, departmentId).isEmpty();
-                boolean hasReservationsDepBack = reservationService.getUserReservationsByDepartmentBack(customerId, departmentId).isEmpty();
+                boolean hasReservationsDepTake = reservationService.findUserReservationsByDepartmentTake(customerId, departmentId).isEmpty();
+                boolean hasReservationsDepBack = reservationService.findUserReservationsByDepartmentBack(customerId, departmentId).isEmpty();
 
                 return hasReservationsDepTake && hasReservationsDepBack;
             }
@@ -84,7 +83,7 @@ public class UserService {
 
     public boolean hasNoAccessToUserReservation(CustomUserDetails cud, Long customerId, Long reservationId) {
         try {
-            Reservation r = reservationService.getCustomerReservation(customerId, reservationId);
+            Reservation r = reservationService.findCustomerReservation(customerId, reservationId);
 
             HttpStatus accessDepFrom = departmentService.departmentAccess(cud, r.getDepartmentTake().getId());
             HttpStatus accessDepTo = departmentService.departmentAccess(cud, r.getDepartmentBack().getId());

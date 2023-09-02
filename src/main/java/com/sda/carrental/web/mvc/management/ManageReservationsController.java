@@ -62,8 +62,8 @@ public class ManageReservationsController {
             Customer customer = customerService.findById(customerId);
             map.addAttribute("department", departmentService.findDepartmentWhereId(departmentId));
             map.addAttribute("customer", customer);
-            map.addAttribute("reservations", reservationService.getUserReservationsByDepartmentTake(customer.getId(), departmentId));
-            map.addAttribute("reservations_incoming", reservationService.getUserReservationsByDepartmentBack(customer.getId(), departmentId));
+            map.addAttribute("reservations", reservationService.findUserReservationsByDepartmentTake(customer.getId(), departmentId));
+            map.addAttribute("reservations_incoming", reservationService.findUserReservationsByDepartmentBack(customer.getId(), departmentId));
 
             Optional<Verification> verification = verificationService.getOptionalVerificationByCustomer(customerId);
             if (verification.isPresent()) {
@@ -87,7 +87,7 @@ public class ManageReservationsController {
                 return "redirect:/mg-res";
             }
 
-            Reservation reservation = reservationService.getCustomerReservation(customerId, reservationId);
+            Reservation reservation = reservationService.findCustomerReservation(customerId, reservationId);
 
             if (departmentService.departmentAccess(cud, reservation.getDepartmentTake().getId()).equals(HttpStatus.FORBIDDEN)) {
                 redAtt.addFlashAttribute("message", "Incorrect data. Access not allowed.");
@@ -146,7 +146,7 @@ public class ManageReservationsController {
                 return "redirect:/mg-res";
             }
 
-            Reservation reservation = reservationService.getCustomerReservation(customerId, reservationId);
+            Reservation reservation = reservationService.findCustomerReservation(customerId, reservationId);
             List<Car> carList = carService.findAvailableCarsInDepartment(reservation);
             if (carList.isEmpty()) throw new RuntimeException();
 
