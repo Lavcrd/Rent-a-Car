@@ -3,7 +3,7 @@
 <body>
 <div th:fragment="top-menu">
     <div sec:authorize="isAuthenticated()">
-        <span>Logged in as: </span> <a sec:authentication="name" href="/profile" style="--bs-link-color: black; --bs-link-hover-color: gray;"></a>
+        <span>Logged in as: </span> <a sec:authentication="name" href="/profile" class="link"></a>
     </div>
     <div id="header" class="bg-dark rounded">
         <div id="logo">
