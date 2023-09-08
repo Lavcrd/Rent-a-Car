@@ -294,10 +294,10 @@
                                                      th:if="${reservation.status.name() == 'STATUS_COMPLETED'}"
                                                      th:utext="'<strong>Retrieve date:</strong><br>' + ${retrieve_details.getDateTo()}"></div>
                                                 <div style="margin-top: 3%;"
-                                                     th:utext="'<strong>Remarks:</strong><br>' + ${rent_details.getRemarks()}"></div>
+                                                     th:utext="'<strong>Rental remarks:</strong><br>' + ${rent_details.getRemarks()}"></div>
                                                 <div style="margin-top: 3%;"
                                                      th:if="${reservation.status.name() == 'STATUS_COMPLETED'}"
-                                                     th:utext="'<strong>Retrieve remarks:</strong><br>' + ${retrieve_details.getRemarks()}"></div>
+                                                     th:utext="'<strong>Retrieval remarks:</strong><br>' + ${retrieve_details.getRemarks()}"></div>
                                             </div>
                                         </div>
                                         <div class="modal-footer">

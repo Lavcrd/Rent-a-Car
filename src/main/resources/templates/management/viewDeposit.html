@@ -19,14 +19,109 @@
     <div class="main">
         <div class="container text-center">
             <div class="row">
-                <div class="col-md-3">Content 1</div>
-                <div class="col-md-6">Content 2</div>
+                <div class="col-md-3 p-0 mt-3 mb-5">
+                    <table class="table table-borderless table-fixed" style="text-align:start;">
+                        <tbody>
+                        <tr class="table-dark">
+                            <td>Name:</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="overflow-cell-hs"
+                                     th:text="${retrieve.reservation.customer.name} + ' ' + ${retrieve.reservation.customer.surname}"></div>
+                            </td>
+                        </tr>
+
+                        <tr class="table-dark">
+                            <td>Car:</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="overflow-cell-hs"
+                                     th:text="${retrieve.reservation.car.plate}"></div>
+                            </td>
+                        </tr>
+
+                        <tr class="table-dark">
+                            <td>Departure:</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="overflow-cell-hs"
+                                     th:utext="
+                                     ${retrieve.reservation.dateFrom} + '<br>' +
+                                     ${retrieve.reservation.departmentTake.city} + ' ' + ${retrieve.reservation.departmentTake.postcode} + '<br>' +
+                                     ${retrieve.reservation.departmentTake.address}"></div>
+                            </td>
+                        </tr>
+                        <tr class="table-dark">
+                            <td>Arrival:</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="overflow-cell-hs"
+                                     th:utext="
+                                     ${retrieve.reservation.dateTo} + '<br>' +
+                                     ${retrieve.reservation.departmentBack.city} + ' ' + ${retrieve.reservation.departmentBack.postcode} + '<br>' +
+                                     ${retrieve.reservation.departmentBack.address}">
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col-md-6" style="text-align:start;">
+                    <div style="margin-top: 3%;"
+                         th:utext="'<strong>Deposit deadline:</strong><br>' + ${deadline}">
+                    </div>
+                    <div style="margin-top: 3%;"
+                         th:utext="'<strong>Rent date:</strong><br>' + ${retrieve.rent.dateFrom}">
+                    </div>
+                    <div style="margin-top: 3%;"
+                         th:utext="'<strong>Retrieve date:</strong><br>' + ${retrieve.dateTo}">
+                    </div>
+                    <div style="margin-top: 3%;"
+                         th:utext="'<strong>Renting employee:</strong><br>' + ${rent_employee.name} + ' ' + ${rent_employee.surname}">
+                    </div>
+                    <div style="margin-top: 3%;"
+                         th:utext="'<strong>Rental remarks:</strong><br>' + ${retrieve.rent.remarks}">
+                    </div>
+                    <div style="margin-top: 3%;"
+                         th:utext="'<strong>Retrieving employee:</strong><br>' + ${retrieve_employee.name} + ' ' + ${retrieve_employee.surname}">
+                    </div>
+                    <div style="margin-top: 3%;"
+                         th:utext="'<strong>Retrieval remarks:</strong><br>' + ${retrieve.remarks}"></div>
+                </div>
                 <div class="col-md-3">Content 3</div>
             </div>
             <div class="row">
-                <div class="col-md-3">Content 4</div>
+                <div class="col-md-3 p-0">
+                    <div class="d-flex flex-column">
+                        <a class="btn btn-dark bg-dark mt-2 def-button-text"
+                           type="button" href="/mg-depo">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                 class="bi bi-arrow-left-circle" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd"
+                                      d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-4.5-.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5z"/>
+                            </svg>
+                            Back
+                        </a>
+                    </div>
+                </div>
                 <div class="col-md-6">Content 5</div>
-                <div class="col-md-3">Content 6</div>
+                <div class="col-md-3 p-0">
+                    <div class="d-flex flex-column">
+                        <a class="btn btn-dark bg-dark mt-2 def-button-text" type="button" href="#">
+                            Button 1
+                        </a>
+                        <a class="btn btn-dark bg-dark mt-2 def-button-text" type="button" href="#">
+                            Button 2
+                        </a>
+                        <a class="btn btn-dark bg-dark mt-2 def-button-text" type="button" href="#">
+                            Button 3
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

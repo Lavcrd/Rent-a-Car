@@ -2,12 +2,15 @@ package com.sda.carrental.web.mvc.management;
 
 import com.sda.carrental.exceptions.ResourceNotFoundException;
 import com.sda.carrental.global.enums.Country;
+import com.sda.carrental.model.operational.Retrieve;
 import com.sda.carrental.model.property.Department;
 import com.sda.carrental.service.DepartmentService;
 import com.sda.carrental.service.RetrieveService;
+import com.sda.carrental.service.UserService;
 import com.sda.carrental.service.auth.CustomUserDetails;
 import com.sda.carrental.web.mvc.form.SearchDepositsForm;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -24,6 +27,7 @@ import java.util.List;
 public class ManageDepositController {
     private final RetrieveService retrieveService;
     private final DepartmentService departmentService;
+    private final UserService userService;
 
     //Pages
     @RequestMapping(method = RequestMethod.GET)
@@ -69,7 +73,22 @@ public class ManageDepositController {
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/{retrieve}")
-    public String viewDepositPage(@PathVariable(value = "retrieve") Long retrieveId) {
-        return "management/viewDeposit";
+    public String viewDepositPage(@PathVariable(value = "retrieve") Long retrieveId, ModelMap map, RedirectAttributes redAtt) {
+        try {
+            CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            Retrieve retrieve = retrieveService.findById(retrieveId);
+            if (departmentService.departmentAccess(cud, retrieve.getReservation().getDepartmentBack().getId()).equals(HttpStatus.FORBIDDEN)) {
+                redAtt.addFlashAttribute("message", "Inaccessible department.");
+                return "redirect:/";
+            }
+            map.addAttribute("retrieve", retrieve);
+            map.addAttribute("deadline", retrieveService.replaceDatesWithDeadlines(List.of(retrieve)).get(0).getDateTo());
+            map.addAttribute("rent_employee", userService.findById(retrieve.getRent().getEmployeeId()));
+            map.addAttribute("retrieve_employee", userService.findById(retrieve.getId()));
+            return "management/viewDeposit";
+        } catch (RuntimeException err) {
+            redAtt.addFlashAttribute("message", "An unexpected error occurred. Please try again.");
+            return "redirect:/";
+        }
     }
 }
