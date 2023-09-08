@@ -33,7 +33,7 @@ public class RetrieveService {
     private final DepartmentService departmentService;
 
 
-    public Object findById(Long id) throws ResourceNotFoundException {
+    public Retrieve findById(Long id) throws ResourceNotFoundException {
         return repository.findById(id).orElseThrow(ResourceNotFoundException::new);
     }
 
