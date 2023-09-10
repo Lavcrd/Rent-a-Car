@@ -19,7 +19,7 @@
     <div class="main">
         <div class="container text-center">
             <div class="row">
-                <div class="col-md-3 p-0 mt-3 mb-5">
+                <div class="col-md-2 p-0 mt-3 mb-5">
                     <table class="table table-borderless table-fixed" style="text-align:start;">
                         <tbody>
                         <tr class="table-dark">
@@ -70,29 +70,40 @@
                         </tbody>
                     </table>
                 </div>
-                <div class="col-md-6" style="text-align:start;">
-                    <div style="margin-top: 3%;"
+                <div class="col-md-8">
+                    <div style="margin-top: 3%;text-align:end;"
                          th:utext="'<strong>Deposit deadline:</strong><br>' + ${deadline}">
                     </div>
-                    <div style="margin-top: 3%;"
+
+                    <div class="my-3 d-flex" style="justify-content: center; align-content: center;">
+                        <span class="border w-100"></span>
+                    </div>
+
+                    <div style="margin-top: 3%;text-align:start;"
                          th:utext="'<strong>Rent date:</strong><br>' + ${retrieve.rent.dateFrom}">
-                    </div>
-                    <div style="margin-top: 3%;"
-                         th:utext="'<strong>Retrieve date:</strong><br>' + ${retrieve.dateTo}">
-                    </div>
-                    <div style="margin-top: 3%;"
-                         th:utext="'<strong>Renting employee:</strong><br>' + ${rent_employee.name} + ' ' + ${rent_employee.surname}">
                     </div>
                     <div style="margin-top: 3%;"
                          th:utext="'<strong>Rental remarks:</strong><br>' + ${retrieve.rent.remarks}">
                     </div>
-                    <div style="margin-top: 3%;"
-                         th:utext="'<strong>Retrieving employee:</strong><br>' + ${retrieve_employee.name} + ' ' + ${retrieve_employee.surname}">
+                    <div style="margin-top: 3%;text-align:end;"
+                         th:utext="'<strong>Renting employee:</strong><br>' + ${rent_employee.name} + ' ' + ${rent_employee.surname}">
+                    </div>
+
+                    <div class="my-3 d-flex" style="justify-content: center; align-content: center;">
+                        <span class="border w-100"></span>
+                    </div>
+
+                    <div style="margin-top: 3%;text-align:start;"
+                         th:utext="'<strong>Retrieve date:</strong><br>' + ${retrieve.dateTo}">
                     </div>
                     <div style="margin-top: 3%;"
-                         th:utext="'<strong>Retrieval remarks:</strong><br>' + ${retrieve.remarks}"></div>
+                         th:utext="'<strong>Retrieval remarks:</strong><br>' + ${retrieve.remarks}">
+                    </div>
+                    <div style="margin-top: 3%;text-align:end;"
+                         th:utext="'<strong>Retrieving employee:</strong><br>' + ${retrieve_employee.name} + ' ' + ${retrieve_employee.surname}">
+                    </div>
                 </div>
-                <div class="col-md-3">Content 3</div>
+                <div class="col-md-2" style="font-size:small;">Maecenas diam mauris, sagittis ut aliquet porttitor, blandit quis eros. Nullam vestibulum quis turpis eget sodales. Proin pretium eros nec urna auctor fermentum quis ut ex. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Proin mattis turpis sed ligula ullamcorper ultricies.</div>
             </div>
             <div class="row">
                 <div class="col-md-3 p-0">
@@ -108,7 +119,7 @@
                         </a>
                     </div>
                 </div>
-                <div class="col-md-6">Content 5</div>
+                <div class="col-md-6"></div>
                 <div class="col-md-3 p-0">
                     <div class="d-flex flex-column">
                         <a class="btn btn-dark bg-dark mt-2 def-button-text" type="button" href="#">
