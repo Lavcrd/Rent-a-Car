@@ -55,6 +55,14 @@ public class PaymentDetailsService {
         return repository.findByReservation(reservation);
     }
 
+    public double calculateReleasedDeposit(PaymentDetails paymentDetails) {
+        return paymentDetails.getRequiredDeposit() - paymentDetails.getDeposit() - calculateSecuredDeposit(paymentDetails);
+    }
+
+    public double calculateSecuredDeposit(PaymentDetails paymentDetails) {
+        return paymentDetails.getSecuredValue() - (paymentDetails.getRequiredRawValue() + paymentDetails.getRequiredReturnValue());
+    }
+
     @Transactional
     public void securePayment(PaymentDetails paymentDetails) {
         paymentDetails.setSecuredValue(paymentDetails.getMainValue());

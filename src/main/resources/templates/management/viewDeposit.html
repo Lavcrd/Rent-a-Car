@@ -103,7 +103,35 @@
                          th:utext="'<strong>Retrieving employee:</strong><br>' + ${retrieve_employee.name} + ' ' + ${retrieve_employee.surname}">
                     </div>
                 </div>
-                <div class="col-md-2" style="font-size:small;">Maecenas diam mauris, sagittis ut aliquet porttitor, blandit quis eros. Nullam vestibulum quis turpis eget sodales. Proin pretium eros nec urna auctor fermentum quis ut ex. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Proin mattis turpis sed ligula ullamcorper ultricies.</div>
+                <div class="col-md-2" style="font-size:small;text-align:end;">
+                    <div style="margin-top: 20%;"
+                         th:utext="'<strong>Deposit:</strong>'">
+                    </div>
+                    <div style="margin-top: 2%;"
+                         th:text="${payment_details.requiredDeposit}">
+                    </div>
+
+                    <div style="margin-top: 20%;"
+                         th:utext="'<strong>Balance:</strong>'">
+                    </div>
+                    <div style="margin-top: 2%;"
+                         th:text="${payment_details.deposit}">
+                    </div>
+
+                    <div style="margin-top: 20%;"
+                         th:utext="'<strong>Secured:</strong>'">
+                    </div>
+                    <div style="margin-top: 2%;"
+                         th:text="${secured_deposit}">
+                    </div>
+
+                    <div style="margin-top: 20%;"
+                         th:utext="'<strong>Released:</strong>'">
+                    </div>
+                    <div style="margin-top: 2%;"
+                         th:text="${released_deposit}">
+                    </div>
+                </div>
             </div>
             <div class="row">
                 <div class="col-md-3 p-0">
