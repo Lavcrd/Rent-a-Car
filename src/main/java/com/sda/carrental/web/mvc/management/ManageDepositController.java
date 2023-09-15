@@ -89,8 +89,7 @@ public class ManageDepositController {
             map.addAttribute("retrieve", retrieve);
             map.addAttribute("deadline", retrieveService.replaceDatesWithDeadlines(List.of(retrieve)).get(0).getDateTo());
             map.addAttribute("payment_details", paymentDetails);
-            map.addAttribute("secured_deposit", paymentDetailsService.calculateSecuredDeposit(paymentDetails));
-            map.addAttribute("released_deposit", paymentDetailsService.calculateReleasedDeposit(paymentDetails));
+            map.addAttribute("charged_deposit", paymentDetailsService.calculateChargedDeposit(paymentDetails));
             map.addAttribute("rent_employee", userService.findById(retrieve.getRent().getEmployeeId()));
             map.addAttribute("retrieve_employee", userService.findById(retrieve.getEmployeeId()));
             return "management/viewDeposit";

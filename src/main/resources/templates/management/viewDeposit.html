@@ -71,8 +71,9 @@
                     </table>
                 </div>
                 <div class="col-md-8">
-                    <div style="margin-top: 3%;text-align:end;"
-                         th:utext="'<strong>Deposit deadline:</strong><br>' + ${deadline}">
+                    <div class="d-flex justify-content-between" style="margin-top: 3%;">
+                        <div style="text-align:start;" th:utext="'<strong>ID: </strong>' + ${retrieve.id}"></div>
+                        <div style="text-align:end;" th:utext="'<strong>Deposit deadline:</strong><br>' + ${deadline}"></div>
                     </div>
 
                     <div class="my-3 d-flex" style="justify-content: center; align-content: center;">
@@ -108,7 +109,7 @@
                          th:utext="'<strong>Deposit:</strong>'">
                     </div>
                     <div style="margin-top: 2%;"
-                         th:text="${payment_details.requiredDeposit}">
+                         th:text="${payment_details.initialDeposit}">
                     </div>
 
                     <div style="margin-top: 20%;"
@@ -119,21 +120,21 @@
                     </div>
 
                     <div style="margin-top: 20%;"
-                         th:utext="'<strong>Secured:</strong>'">
+                         th:utext="'<strong>Charged:</strong>'">
                     </div>
                     <div style="margin-top: 2%;"
-                         th:text="${secured_deposit}">
+                         th:text="${charged_deposit}">
                     </div>
 
                     <div style="margin-top: 20%;"
                          th:utext="'<strong>Released:</strong>'">
                     </div>
                     <div style="margin-top: 2%;"
-                         th:text="${released_deposit}">
+                         th:text="${payment_details.releasedDeposit}">
                     </div>
                 </div>
             </div>
-            <div class="row">
+            <div class="row" style="margin-top:3%;">
                 <div class="col-md-3 p-0">
                     <div class="d-flex flex-column">
                         <a class="btn btn-dark bg-dark mt-2 def-button-text"
