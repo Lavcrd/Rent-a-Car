@@ -11,13 +11,14 @@ import javax.persistence.*;
 @Getter
 @NoArgsConstructor
 public class PaymentDetails {
-    public PaymentDetails(Double reqRaw, Double reqReturn, Double reqDeposit, Double mainValue, Double deposit, Reservation reservation) {
-        this.requiredRawValue = reqRaw;
-        this.requiredReturnValue = reqReturn;
-        this.requiredDeposit = reqDeposit;
-        this.mainValue = mainValue;
+    public PaymentDetails(Double carFee, Double divergenceFee, Double initialDeposit, Double payment, Double deposit, Reservation reservation) {
+        this.initialCarFee = carFee;
+        this.initialDivergenceFee = divergenceFee;
+        this.initialDeposit = initialDeposit;
+        this.payment = payment;
         this.deposit = deposit;
-        this.securedValue = 0.0;
+        this.secured = 0.0;
+        this.releasedDeposit = 0.0;
         this.reservation = reservation;
     }
 
@@ -30,25 +31,29 @@ public class PaymentDetails {
     @JoinColumn(name = "reservation", referencedColumnName = "id")
     private Reservation reservation;
 
-    @Column(name = "archival_raw_value", nullable = false)
-    private double requiredRawValue;
+    @Column(name = "initial_car_fee", nullable = false)
+    private double initialCarFee;
 
-    @Column(name = "archival_return_value", nullable = false)
-    private double requiredReturnValue;
-
-    @Setter
-    @Column(name = "archival_deposit", nullable = false)
-    private double requiredDeposit;
+    @Column(name = "initial_divergence_fee", nullable = false)
+    private double initialDivergenceFee;
 
     @Setter
-    @Column(name = "main_value", nullable = false)
-    private double mainValue;
+    @Column(name = "initial_deposit", nullable = false)
+    private double initialDeposit;
+
+    @Setter
+    @Column(name = "payment_balance", nullable = false)
+    private double payment;
 
     @Setter
     @Column(name = "deposit", nullable = false)
     private double deposit;
 
     @Setter
-    @Column(name = "secured_value", nullable = false)
-    private double securedValue;
+    @Column(name = "released_deposit", nullable = false)
+    private double releasedDeposit;
+
+    @Setter
+    @Column(name = "secured", nullable = false)
+    private double secured;
 }

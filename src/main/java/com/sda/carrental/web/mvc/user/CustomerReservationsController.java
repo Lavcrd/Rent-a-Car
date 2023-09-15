@@ -46,10 +46,10 @@ public class CustomerReservationsController {
             Optional<PaymentDetails> receipt = paymentDetailsService.getOptionalPaymentDetails(reservation);
 
             if (receipt.isPresent()) {
-                map.addAttribute("diff_return_price", receipt.get().getRequiredReturnValue());
-                map.addAttribute("raw_price", receipt.get().getRequiredRawValue());
-                map.addAttribute("total_price", receipt.get().getRequiredRawValue() + receipt.get().getRequiredReturnValue());
-                map.addAttribute("deposit_value", receipt.get().getRequiredDeposit());
+                map.addAttribute("diff_return_price", receipt.get().getInitialDivergenceFee());
+                map.addAttribute("raw_price", receipt.get().getInitialCarFee());
+                map.addAttribute("total_price", receipt.get().getInitialCarFee() + receipt.get().getInitialDivergenceFee());
+                map.addAttribute("deposit_value", receipt.get().getInitialDeposit());
             } else {
                 long days = reservation.getDateFrom().until(reservation.getDateTo(), ChronoUnit.DAYS) + 1;
                 if (!reservation.getDepartmentTake().equals(reservation.getDepartmentBack())) {

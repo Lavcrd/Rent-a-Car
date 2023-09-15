@@ -52,10 +52,10 @@ public class CarRetrieveController {
 
                 PaymentDetails receipt = paymentDetailsService.getOptionalPaymentDetails(reservation).orElseThrow(ResourceNotFoundException::new);
 
-                map.addAttribute("diff_return_price", receipt.getRequiredReturnValue());
-                map.addAttribute("raw_price", receipt.getRequiredRawValue());
-                map.addAttribute("total_price", receipt.getRequiredRawValue() + receipt.getRequiredReturnValue());
-                map.addAttribute("deposit_value", receipt.getRequiredDeposit());
+                map.addAttribute("diff_return_price", receipt.getInitialDivergenceFee());
+                map.addAttribute("raw_price", receipt.getInitialCarFee());
+                map.addAttribute("total_price", receipt.getInitialCarFee() + receipt.getInitialDivergenceFee());
+                map.addAttribute("deposit_value", receipt.getInitialDeposit());
 
                 map.addAttribute("reservation", reservation);
                 map.addAttribute("fee_percentage", cv.getCancellationFeePercentage() * 100);

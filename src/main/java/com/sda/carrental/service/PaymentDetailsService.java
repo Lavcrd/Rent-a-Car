@@ -41,12 +41,12 @@ public class PaymentDetailsService {
         }
         PaymentDetails paymentDetails = paymentDetailsOptional.get();
         if (LocalDate.now().isAfter(reservation.getDateFrom().minusDays(cv.getRefundSubtractDaysDuration())) && requestType.equals(Reservation.ReservationStatus.STATUS_REFUNDED)) {
-            paymentDetails.setSecuredValue(paymentDetails.getMainValue() * cv.getCancellationFeePercentage());
+            paymentDetails.setSecured(paymentDetails.getPayment() * cv.getCancellationFeePercentage());
         }
 
         //some method here that would return money to the customer
 
-        paymentDetails.setMainValue(0);
+        paymentDetails.setPayment(0);
         paymentDetails.setDeposit(0);
         repository.save(paymentDetails);
     }
@@ -55,18 +55,14 @@ public class PaymentDetailsService {
         return repository.findByReservation(reservation);
     }
 
-    public double calculateReleasedDeposit(PaymentDetails paymentDetails) {
-        return paymentDetails.getRequiredDeposit() - paymentDetails.getDeposit() - calculateSecuredDeposit(paymentDetails);
-    }
-
-    public double calculateSecuredDeposit(PaymentDetails paymentDetails) {
-        return paymentDetails.getSecuredValue() - (paymentDetails.getRequiredRawValue() + paymentDetails.getRequiredReturnValue());
+    public double calculateChargedDeposit(PaymentDetails paymentDetails) {
+        return paymentDetails.getInitialDeposit() - paymentDetails.getReleasedDeposit() - paymentDetails.getDeposit();
     }
 
     @Transactional
     public void securePayment(PaymentDetails paymentDetails) {
-        paymentDetails.setSecuredValue(paymentDetails.getMainValue());
-        paymentDetails.setMainValue(0);
+        paymentDetails.setSecured(paymentDetails.getPayment());
+        paymentDetails.setPayment(0);
         repository.save(paymentDetails);
     }
 
@@ -74,7 +70,7 @@ public class PaymentDetailsService {
     public void adjustRequiredDeposit(Reservation r, Double depositValue) {
         Optional<PaymentDetails> pd = repository.findByReservation(r);
         if (pd.isEmpty()) return;
-        pd.get().setRequiredDeposit(depositValue);
+        pd.get().setInitialDeposit(depositValue);
         repository.save(pd.get());
     }
 }
