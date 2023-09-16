@@ -10,6 +10,7 @@ import com.sda.carrental.service.PaymentDetailsService;
 import com.sda.carrental.service.RetrieveService;
 import com.sda.carrental.service.UserService;
 import com.sda.carrental.service.auth.CustomUserDetails;
+import com.sda.carrental.web.mvc.form.DepositForm;
 import com.sda.carrental.web.mvc.form.SearchDepositsForm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -53,28 +54,6 @@ public class ManageDepositController {
         }
     }
 
-    //Search page buttons
-    @RequestMapping(method = RequestMethod.POST, value = "/search")
-    public String searchDepositsButton(@ModelAttribute("searchCustomersForm") @Valid SearchDepositsForm form, Errors err, RedirectAttributes redAtt) {
-        CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        redAtt.addFlashAttribute("searchDepositsForm", form);
-
-        if (err.hasErrors()) {
-            redAtt.addFlashAttribute("message", err.getAllErrors().get(0).getDefaultMessage());
-            return "redirect:/mg-depo";
-        }
-
-        redAtt.addFlashAttribute("results", retrieveService.replaceDatesWithDeadlines(retrieveService.findUnresolvedByUserContextAndForm(cud, form)));
-        return "redirect:/mg-depo";
-    }
-
-    @RequestMapping(method = RequestMethod.POST, value = "/check")
-    public String checkDepositButton(RedirectAttributes redAtt, @RequestParam("check_button") Long retrieveId) {
-        redAtt.addAttribute("retrieve", retrieveId);
-        return "redirect:/mg-depo/{retrieve}";
-    }
-
     @RequestMapping(method = RequestMethod.GET, value = "/{retrieve}")
     public String viewDepositPage(@PathVariable(value = "retrieve") Long retrieveId, ModelMap map, RedirectAttributes redAtt) {
         try {
@@ -92,10 +71,77 @@ public class ManageDepositController {
             map.addAttribute("charged_deposit", paymentDetailsService.calculateChargedDeposit(paymentDetails));
             map.addAttribute("rent_employee", userService.findById(retrieve.getRent().getEmployeeId()));
             map.addAttribute("retrieve_employee", userService.findById(retrieve.getEmployeeId()));
+
+            map.addAttribute("form", new DepositForm());
             return "management/viewDeposit";
         } catch (RuntimeException err) {
             redAtt.addFlashAttribute("message", "An unexpected error occurred. Please try again.");
             return "redirect:/";
         }
+    }
+
+    //Search page buttons
+    @RequestMapping(method = RequestMethod.POST, value = "/search")
+    public String searchDepositsButton(@ModelAttribute("searchCustomersForm") @Valid SearchDepositsForm form, Errors err, RedirectAttributes redAtt) {
+        CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        redAtt.addFlashAttribute("searchDepositsForm", form);
+
+        if (err.hasErrors()) {
+            redAtt.addFlashAttribute("message", err.getAllErrors().get(0).getDefaultMessage());
+            return "redirect:/mg-depo";
+        }
+
+        redAtt.addFlashAttribute("results", retrieveService.replaceDatesWithDeadlines(retrieveService.findUnresolvedByUserContextAndForm(cud, form)));
+        return "redirect:/mg-depo";
+    }
+
+    @RequestMapping(method = RequestMethod.POST, value = "/check")
+    public String viewDepositButton(RedirectAttributes redAtt, @RequestParam("check_button") Long retrieveId) {
+        redAtt.addAttribute("retrieve", retrieveId);
+        return "redirect:/mg-depo/{retrieve}";
+    }
+
+    //Check page buttons
+    @RequestMapping(method = RequestMethod.POST, value = "/release")
+    public String checkReleaseButton(@ModelAttribute("form") @Valid DepositForm form, Errors err, RedirectAttributes redAtt, @RequestParam("retrieve") Long retrieveId, @RequestParam("customer") Long customerId) {
+        CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (userService.hasNoAccessToUserOperation(cud, customerId, retrieveId)) {
+            redAtt.addFlashAttribute("message", "Access rejected.");
+            return "redirect:/mg-depo";
+        }
+
+        redAtt.addAttribute("retrieve", retrieveId);
+
+        if (err.hasErrors()) {
+            redAtt.addFlashAttribute("message", err.getAllErrors().get(0).getDefaultMessage());
+            return "redirect:/mg-depo/{retrieve}";
+        }
+
+        //Method with HttpStatus as return
+
+        redAtt.addFlashAttribute("message", "Success: Value successfully released from deposit.");
+        return "redirect:/mg-depo/{retrieve}";
+    }
+
+    @RequestMapping(method = RequestMethod.POST, value = "/charge")
+    public String checkChargeButton(@ModelAttribute("form") @Valid DepositForm form, Errors err, RedirectAttributes redAtt, @RequestParam("retrieve") Long retrieveId, @RequestParam("customer") Long customerId) {
+        CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (userService.hasNoAccessToUserOperation(cud, customerId, retrieveId)) {
+            redAtt.addFlashAttribute("message", "Access rejected.");
+            return "redirect:/mg-depo";
+        }
+
+        redAtt.addAttribute("retrieve", retrieveId);
+
+        if (err.hasErrors()) {
+            redAtt.addFlashAttribute("message", err.getAllErrors().get(0).getDefaultMessage());
+            return "redirect:/mg-depo/{retrieve}";
+        }
+
+        //Method with HttpStatus as return
+
+        redAtt.addFlashAttribute("message", "Success: Value successfully charged from deposit.");
+        return "redirect:/mg-depo/{retrieve}";
     }
 }
