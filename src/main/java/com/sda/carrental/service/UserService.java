@@ -81,9 +81,9 @@ public class UserService {
         }
     }
 
-    public boolean hasNoAccessToUserReservation(CustomUserDetails cud, Long customerId, Long reservationId) {
+    public boolean hasNoAccessToUserOperation(CustomUserDetails cud, Long customerId, Long operationId) {
         try {
-            Reservation r = reservationService.findCustomerReservation(customerId, reservationId);
+            Reservation r = reservationService.findCustomerReservation(customerId, operationId);
 
             HttpStatus accessDepFrom = departmentService.departmentAccess(cud, r.getDepartmentTake().getId());
             HttpStatus accessDepTo = departmentService.departmentAccess(cud, r.getDepartmentBack().getId());
