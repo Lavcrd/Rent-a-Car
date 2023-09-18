@@ -93,7 +93,7 @@ public class ManageReservationsController {
                 redAtt.addFlashAttribute("message", "Incorrect data. Access not allowed.");
                 return "redirect:/mg-res";
             }
-            Optional<PaymentDetails> receipt = paymentDetailsService.getOptionalPaymentDetails(reservation);
+            Optional<PaymentDetails> receipt = paymentDetailsService.getOptionalPaymentDetails(reservation.getId());
 
             if (receipt.isPresent()) {
                 map.addAttribute("diff_return_price", receipt.get().getInitialDivergenceFee());

@@ -109,7 +109,7 @@ public class ReservationService {
                         if (verificationService.getOptionalVerificationByCustomer(r.getCustomer().getId()).isEmpty()) {
                             return HttpStatus.PRECONDITION_REQUIRED;
                         }
-                        Optional<PaymentDetails> payment = paymentDetailsService.getOptionalPaymentDetails(r);
+                        Optional<PaymentDetails> payment = paymentDetailsService.getOptionalPaymentDetails(r.getId());
                         if (payment.isEmpty()) {
                             return HttpStatus.PAYMENT_REQUIRED;
                         }

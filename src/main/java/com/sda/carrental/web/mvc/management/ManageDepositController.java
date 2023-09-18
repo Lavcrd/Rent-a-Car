@@ -1,6 +1,7 @@
 package com.sda.carrental.web.mvc.management;
 
 import com.sda.carrental.exceptions.ResourceNotFoundException;
+import com.sda.carrental.global.Utility;
 import com.sda.carrental.global.enums.Country;
 import com.sda.carrental.model.operational.Retrieve;
 import com.sda.carrental.model.property.Department;
@@ -28,6 +29,8 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/mg-depo")
 public class ManageDepositController {
+
+    private final Utility utility;
     private final RetrieveService retrieveService;
     private final DepartmentService departmentService;
     private final UserService userService;
@@ -59,7 +62,7 @@ public class ManageDepositController {
         try {
             CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             Retrieve retrieve = retrieveService.findById(retrieveId);
-            PaymentDetails paymentDetails = paymentDetailsService.getOptionalPaymentDetails(retrieve.getReservation()).orElseThrow(ResourceNotFoundException::new);
+            PaymentDetails paymentDetails = paymentDetailsService.getOptionalPaymentDetails(retrieve.getId()).orElseThrow(ResourceNotFoundException::new);
             if (departmentService.departmentAccess(cud, retrieve.getReservation().getDepartmentBack().getId()).equals(HttpStatus.FORBIDDEN)) {
                 redAtt.addFlashAttribute("message", "Inaccessible department.");
                 return "redirect:/";
@@ -118,9 +121,15 @@ public class ManageDepositController {
             return "redirect:/mg-depo/{retrieve}";
         }
 
-        //Method with HttpStatus as return
+        HttpStatus status = paymentDetailsService.releaseDeposit(retrieveId, utility.valueToDouble(form.getValue()));
 
-        redAtt.addFlashAttribute("message", "Success: Value successfully released from deposit.");
+        if (status.equals(HttpStatus.OK)) {
+            redAtt.addFlashAttribute("message", "Success: Value successfully released from deposit.");
+        } else if (status.equals(HttpStatus.NOT_ACCEPTABLE)) {
+            redAtt.addFlashAttribute("message", "Failure: Value exceeds deposit.");
+        } else {
+            redAtt.addFlashAttribute("message", "Failure: Unexpected error.");
+        }
         return "redirect:/mg-depo/{retrieve}";
     }
 

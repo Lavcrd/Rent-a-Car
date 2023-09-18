@@ -43,7 +43,7 @@ public class CustomerReservationsController {
         try {
             CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             Reservation reservation = reservationService.findCustomerReservation(cud.getId(), detailsButton);
-            Optional<PaymentDetails> receipt = paymentDetailsService.getOptionalPaymentDetails(reservation);
+            Optional<PaymentDetails> receipt = paymentDetailsService.getOptionalPaymentDetails(reservation.getId());
 
             if (receipt.isPresent()) {
                 map.addAttribute("diff_return_price", receipt.get().getInitialDivergenceFee());

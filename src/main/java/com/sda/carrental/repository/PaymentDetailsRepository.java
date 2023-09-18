@@ -1,11 +1,14 @@
 package com.sda.carrental.repository;
 
-import com.sda.carrental.model.operational.Reservation;
 import com.sda.carrental.model.property.PaymentDetails;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 
 import java.util.Optional;
 
 public interface PaymentDetailsRepository extends CrudRepository<PaymentDetails, Long> {
-    Optional<PaymentDetails> findByReservation(Reservation reservation);
+
+    @Query(value = "SELECT p FROM payment_details p WHERE p.reservation.id = :operationId")
+    Optional<PaymentDetails> findByOperationId(@Param("operationId") Long operationId);
 }
