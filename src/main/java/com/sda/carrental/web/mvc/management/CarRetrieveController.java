@@ -50,7 +50,7 @@ public class CarRetrieveController {
                 map.addAttribute("confirm_claim_form", map.getOrDefault("confirm_claim_form", new ConfirmClaimForm(reservation.getDepartmentBack().getId(), LocalDate.now())));
                 map.addAttribute("departments", departmentService.getDepartmentsByUserContext(cud));
 
-                PaymentDetails receipt = paymentDetailsService.getOptionalPaymentDetails(reservation).orElseThrow(ResourceNotFoundException::new);
+                PaymentDetails receipt = paymentDetailsService.getOptionalPaymentDetails(reservation.getId()).orElseThrow(ResourceNotFoundException::new);
 
                 map.addAttribute("diff_return_price", receipt.getInitialDivergenceFee());
                 map.addAttribute("raw_price", receipt.getInitialCarFee());

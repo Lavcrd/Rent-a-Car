@@ -1,12 +1,16 @@
 package com.sda.carrental.service;
 
+import com.sda.carrental.exceptions.IllegalActionException;
+import com.sda.carrental.exceptions.ResourceNotFoundException;
 import com.sda.carrental.global.ConstantValues;
 import com.sda.carrental.model.operational.Reservation;
 import com.sda.carrental.model.property.PaymentDetails;
 import com.sda.carrental.repository.PaymentDetailsRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
@@ -35,7 +39,7 @@ public class PaymentDetailsService {
 
     @Transactional
     public void retractReservationPayment(Reservation reservation, Reservation.ReservationStatus requestType) {
-        Optional<PaymentDetails> paymentDetailsOptional = getOptionalPaymentDetails(reservation);
+        Optional<PaymentDetails> paymentDetailsOptional = getOptionalPaymentDetails(reservation.getId());
         if (paymentDetailsOptional.isEmpty()) {
             return;
         }
@@ -51,8 +55,8 @@ public class PaymentDetailsService {
         repository.save(paymentDetails);
     }
 
-    public Optional<PaymentDetails> getOptionalPaymentDetails(Reservation reservation) {
-        return repository.findByReservation(reservation);
+    public Optional<PaymentDetails> getOptionalPaymentDetails(Long operationId) {
+        return repository.findByOperationId(operationId);
     }
 
     public double calculateChargedDeposit(PaymentDetails paymentDetails) {
@@ -68,9 +72,35 @@ public class PaymentDetailsService {
 
     @Transactional
     public void adjustRequiredDeposit(Reservation r, Double depositValue) {
-        Optional<PaymentDetails> pd = repository.findByReservation(r);
+        Optional<PaymentDetails> pd = repository.findByOperationId(r.getId());
         if (pd.isEmpty()) return;
         pd.get().setInitialDeposit(depositValue);
         repository.save(pd.get());
+    }
+
+    @Transactional
+    public HttpStatus releaseDeposit(Long operationId, Double value) {
+        try {
+            Optional<PaymentDetails> opd = repository.findByOperationId(operationId);
+            if (opd.isEmpty()) throw new ResourceNotFoundException();
+
+            PaymentDetails pd = opd.get();
+            if (pd.getDeposit() < value) throw new IllegalActionException();
+
+            pd.setDeposit(Math.round((pd.getDeposit() - value) * 100.0) / 100.0);
+            pd.setReleasedDeposit(Math.round((pd.getReleasedDeposit() + value) * 100.0) / 100.0);
+            repository.save(pd);
+
+            return HttpStatus.OK;
+        } catch (ResourceNotFoundException err) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            return HttpStatus.NOT_FOUND;
+        } catch (IllegalActionException err) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            return HttpStatus.NOT_ACCEPTABLE;
+        } catch (RuntimeException err) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            return HttpStatus.INTERNAL_SERVER_ERROR;
+        }
     }
 }

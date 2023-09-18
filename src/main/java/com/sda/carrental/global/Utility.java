@@ -2,6 +2,10 @@ package com.sda.carrental.global;
 
 import org.springframework.stereotype.Component;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.ParseException;
+import java.util.Locale;
 import java.util.Random;
 
 @Component
@@ -15,5 +19,17 @@ public class Utility {
             sb.append(CHARACTERS.charAt(randomIndex));
         }
         return sb.toString();
+    }
+
+    public double valueToDouble(String value) {
+        DecimalFormat format = (DecimalFormat) DecimalFormat.getInstance(Locale.GERMANY);
+        DecimalFormatSymbols symbols = format.getDecimalFormatSymbols();
+        format.setDecimalFormatSymbols(symbols);
+
+        try {
+            return format.parse(value).doubleValue();
+        } catch (ParseException ignored) {
+            return 0.0;
+        }
     }
 }
