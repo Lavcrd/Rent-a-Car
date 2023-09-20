@@ -121,17 +121,17 @@
                     </div>
 
                     <div style="margin-top: 20%;"
-                         th:utext="'<strong>Charged:</strong>'">
-                    </div>
-                    <div style="margin-top: 2%;"
-                         th:text="${charged_deposit}">
-                    </div>
-
-                    <div style="margin-top: 20%;"
                          th:utext="'<strong>Released:</strong>'">
                     </div>
                     <div style="margin-top: 2%;"
                          th:text="${payment_details.releasedDeposit}">
+                    </div>
+
+                    <div style="margin-top: 20%;"
+                         th:utext="'<strong>Charged:</strong>'">
+                    </div>
+                    <div style="margin-top: 2%;"
+                         th:text="${charged_deposit}">
                     </div>
                 </div>
             </div>

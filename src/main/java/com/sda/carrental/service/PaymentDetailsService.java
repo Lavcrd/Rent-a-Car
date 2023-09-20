@@ -79,16 +79,22 @@ public class PaymentDetailsService {
     }
 
     @Transactional
-    public HttpStatus releaseDeposit(Long operationId, Double value) {
+    public HttpStatus transferDeposit(Long operationId, Double value, boolean isCharge) {
         try {
             Optional<PaymentDetails> opd = repository.findByOperationId(operationId);
             if (opd.isEmpty()) throw new ResourceNotFoundException();
 
             PaymentDetails pd = opd.get();
-            if (pd.getDeposit() < value) throw new IllegalActionException();
+            if (pd.getDeposit() < value || value < 0) throw new IllegalActionException();
 
-            pd.setDeposit(Math.round((pd.getDeposit() - value) * 100.0) / 100.0);
-            pd.setReleasedDeposit(Math.round((pd.getReleasedDeposit() + value) * 100.0) / 100.0);
+            if (isCharge) {
+                pd.setDeposit(Math.round((pd.getDeposit() - value) * 100.0) / 100.0);
+                pd.setSecured(Math.round((pd.getSecured() + value) * 100.0) / 100.0);
+            } else {
+                pd.setDeposit(Math.round((pd.getDeposit() - value) * 100.0) / 100.0);
+                pd.setReleasedDeposit(Math.round((pd.getReleasedDeposit() + value) * 100.0) / 100.0);
+            }
+
             repository.save(pd);
 
             return HttpStatus.OK;

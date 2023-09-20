@@ -121,7 +121,7 @@ public class ManageDepositController {
             return "redirect:/mg-depo/{retrieve}";
         }
 
-        HttpStatus status = paymentDetailsService.releaseDeposit(retrieveId, utility.valueToDouble(form.getValue()));
+        HttpStatus status = paymentDetailsService.transferDeposit(retrieveId, utility.valueToDouble(form.getValue()), false);
 
         if (status.equals(HttpStatus.OK)) {
             redAtt.addFlashAttribute("message", "Success: Value successfully released from deposit.");
@@ -148,9 +148,15 @@ public class ManageDepositController {
             return "redirect:/mg-depo/{retrieve}";
         }
 
-        //Method with HttpStatus as return
+        HttpStatus status = paymentDetailsService.transferDeposit(retrieveId, utility.valueToDouble(form.getValue()), true);
 
-        redAtt.addFlashAttribute("message", "Success: Value successfully charged from deposit.");
+        if (status.equals(HttpStatus.OK)) {
+            redAtt.addFlashAttribute("message", "Success: Value successfully charged from deposit.");
+        } else if (status.equals(HttpStatus.NOT_ACCEPTABLE)) {
+            redAtt.addFlashAttribute("message", "Failure: Value exceeds deposit.");
+        } else {
+            redAtt.addFlashAttribute("message", "Failure: Unexpected error.");
+        }
         return "redirect:/mg-depo/{retrieve}";
     }
 }
