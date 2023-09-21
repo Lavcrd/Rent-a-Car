@@ -162,7 +162,7 @@
 
                                 <form th:action="@{/c-ret/claim}" th:object="${confirm_claim_form}"
                                       th:method="POST">
-                                    <input type="hidden" th:name="reservation_id" th:value="${reservation.id}">
+                                    <input type="hidden" th:field="*{reservationId}">
                                     <input type="hidden" th:name="department" th:value="${reservation.getDepartmentBack().id}">
                                     <input type="hidden" th:name="customer" th:value="${reservation.getCustomer().id}">
                                     <input type="hidden" th:name="plate" th:value="${reservation.getCar().plate}">
@@ -191,15 +191,19 @@
                                                     </button>
                                                 </div>
                                                 <div class="modal-body">
-                                                    <div class="form-group">
-                                                        <label for="department"
-                                                               class="col-form-label">Department:</label>
-                                                        <select id="department" type="text" th:field="*{departmentId}" class="form-control">
-                                                            <div th:each="department:${departments}">
-                                                                <option th:text="${department.getCity()} + ', ' + ${department.getAddress()}"
-                                                                        th:value="${department.getId()}"></option>
-                                                            </div>
-                                                        </select>
+                                                    <div class="form-group" style="flex-direction:row;justify-content:space-between;">
+                                                        <div class="column"><label for="department"
+                                                                                   class="col-form-label">Department:</label>
+                                                            <select id="department" type="text" th:field="*{departmentId}" class="form-control">
+                                                                <div th:each="department:${departments}">
+                                                                    <option th:text="${department.getCity()} + ', ' + ${department.getAddress()}"
+                                                                            th:value="${department.getId()}"></option>
+                                                                </div>
+                                                            </select></div>
+                                                        <div class="column">
+                                                            <label for="mileage" class="col-form-label">Mileage:</label>
+                                                            <input id="mileage" type="number" th:field="*{mileage}" class="form-control" required>
+                                                        </div>
                                                     </div>
                                                     <div class="form-group">
                                                         <label for="date_to"

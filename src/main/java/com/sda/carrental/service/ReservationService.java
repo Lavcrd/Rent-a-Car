@@ -29,7 +29,7 @@ public class ReservationService {
     private final PaymentDetailsService paymentDetailsService;
     private final VerificationService verificationService;
 
-    public Reservation findById(Long id) throws ResourceNotFoundException{
+    public Reservation findById(Long id) throws ResourceNotFoundException {
         return repository.findById(id).orElseThrow(ResourceNotFoundException::new);
     }
 
@@ -83,7 +83,7 @@ public class ReservationService {
     }
 
     @Transactional
-    public HttpStatus handleReservationStatus(Long customerId, Long reservationId, Reservation.ReservationStatus status) {
+    public HttpStatus handleReservationStatus(Long customerId, Long reservationId, Reservation.ReservationStatus status, Long optionalParam) {
         try {
             Reservation r = findCustomerReservation(customerId, reservationId);
             Reservation.ReservationStatus currentStatus = r.getStatus();
@@ -120,7 +120,7 @@ public class ReservationService {
 
                 case STATUS_COMPLETED:
                     if (currentStatus == Reservation.ReservationStatus.STATUS_PROGRESS) {
-                        processCompleteReservation(r, status);
+                        processCompleteReservation(r, optionalParam, status);
                         return HttpStatus.ACCEPTED;
                     }
                     break;
@@ -159,9 +159,10 @@ public class ReservationService {
     }
 
     @Transactional
-    private void processCompleteReservation(Reservation r, Reservation.ReservationStatus status) {
+    private void processCompleteReservation(Reservation r, Long mileage, Reservation.ReservationStatus status) {
         carService.updateCarStatus(r.getCar(), Car.CarStatus.STATUS_OPEN);
         carService.updateCarLocation(r.getCar(), r.getDepartmentBack().getId());
+        carService.updateCarMileage(r.getCar(), mileage);
         updateReservationStatus(r, status);
     }
 

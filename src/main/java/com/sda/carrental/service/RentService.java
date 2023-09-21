@@ -27,9 +27,9 @@ public class RentService {
     public HttpStatus createRent(Long customerId, Long reservationId, ConfirmRentalForm form) {
         try {
             CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            HttpStatus status = reservationService.handleReservationStatus(customerId, reservationId, Reservation.ReservationStatus.STATUS_PROGRESS);
+            HttpStatus status = reservationService.handleReservationStatus(customerId, reservationId, Reservation.ReservationStatus.STATUS_PROGRESS, null);
             if (status.equals(HttpStatus.ACCEPTED)) {
-                repository.save(new Rent(cud.getId(), reservationId, form.getRemarks(), form.getDateFrom()));
+                repository.save(new Rent(reservationId, cud.getId(), form.getRemarks(), form.getDateFrom()));
             }
             return status;
         } catch (DataAccessException err) {

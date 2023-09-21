@@ -47,7 +47,7 @@ public class CarRetrieveController {
             if (map.containsKey("reservation")) {
                 Reservation reservation = (Reservation) map.get("reservation");
 
-                map.addAttribute("confirm_claim_form", map.getOrDefault("confirm_claim_form", new ConfirmClaimForm(reservation.getDepartmentBack().getId(), LocalDate.now())));
+                map.addAttribute("confirm_claim_form", map.getOrDefault("confirm_claim_form", new ConfirmClaimForm(reservation.getId(), reservation.getDepartmentBack().getId(), LocalDate.now())));
                 map.addAttribute("departments", departmentService.getDepartmentsByUserContext(cud));
 
                 PaymentDetails receipt = paymentDetailsService.getOptionalPaymentDetails(reservation.getId()).orElseThrow(ResourceNotFoundException::new);
@@ -64,7 +64,7 @@ public class CarRetrieveController {
 
             return "management/carRetrieve";
         } catch (ResourceNotFoundException err) {
-            redAtt.addFlashAttribute("message", "Failed: Missing payment - possible server side issues");
+            redAtt.addFlashAttribute("message", "Failed: Cannot retrieve - possible server side issues");
             return "redirect:/c-ret";
         } catch (RuntimeException err) {
             redAtt.addFlashAttribute("message", "An unexpected error occurred. Please try again.");
@@ -99,7 +99,7 @@ public class CarRetrieveController {
     @RequestMapping(value = "/claim", method = RequestMethod.POST)
     public String claimReservationButton(@ModelAttribute @Valid ConfirmClaimForm form, Errors err, RedirectAttributes redAtt,
                                          @RequestParam("plate") String plate, @RequestParam("department") Long departmentId,
-                                         @RequestParam("reservation_id") Long reservationId, @RequestParam("customer") Long customerId) {
+                                         @RequestParam("customer") Long customerId) {
         if (err.hasErrors()) {
             Reservation reservation = reservationService.findActiveReservationByPlate(plate);
             redAtt.addFlashAttribute("reservation", reservation);
@@ -111,9 +111,9 @@ public class CarRetrieveController {
             return "redirect:/c-ret";
         }
 
-        HttpStatus response = retrieveService.handleRetrieve(customerId, reservationId, departmentId, form);
+        HttpStatus response = retrieveService.handleRetrieve(customerId, form.getReservationId(), departmentId, form);
 
-        redAtt.addAttribute("reservation", reservationId);
+        redAtt.addAttribute("reservation", form.getReservationId());
         redAtt.addFlashAttribute("customer", customerId);
         redAtt.addFlashAttribute("department", form.getDepartmentId());
 
