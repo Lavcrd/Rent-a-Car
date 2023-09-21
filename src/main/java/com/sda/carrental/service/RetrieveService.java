@@ -38,12 +38,12 @@ public class RetrieveService {
     }
 
     @Transactional
-    public HttpStatus createRetrieve(Long customerId, Long reservationId, LocalDate dateTo, String remarks) {
+    public HttpStatus createRetrieve(Long customerId, Long reservationId, ConfirmClaimForm form) {
         try {
             CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            HttpStatus status = reservationService.handleReservationStatus(customerId, reservationId, Reservation.ReservationStatus.STATUS_COMPLETED);
+            HttpStatus status = reservationService.handleReservationStatus(customerId, reservationId, Reservation.ReservationStatus.STATUS_COMPLETED, form.getMileage());
             if (status.equals(HttpStatus.ACCEPTED)) {
-                repository.save(new Retrieve(reservationId, reservationService.findById(reservationId), rentService.findById(reservationId), cud.getId(), dateTo, remarks));
+                repository.save(new Retrieve(reservationId, reservationService.findById(reservationId), rentService.findById(reservationId), cud.getId(), form.getDateTo(), form.getRemarks()));
             }
             return status;
         } catch (DataAccessException err) {
@@ -64,7 +64,7 @@ public class RetrieveService {
             } else if (!departmentId.equals(form.getDepartmentId())) {
                 reservationService.changeDestination(reservationId, form.getDepartmentId());
             }
-            return createRetrieve(customerId, reservationId, form.getDateTo(), form.getRemarks());
+            return createRetrieve(customerId, reservationId, form);
         } catch (IllegalActionException err) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return HttpStatus.BAD_REQUEST;

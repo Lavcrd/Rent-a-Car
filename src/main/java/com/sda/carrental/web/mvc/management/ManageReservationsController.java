@@ -124,7 +124,7 @@ public class ManageReservationsController {
             } else if (reservation.getStatus().equals(Reservation.ReservationStatus.STATUS_PROGRESS)) {
                 map.addAttribute("rent_details", rentService.findById(reservation.getId()));
                 if (departmentId.equals(reservation.getDepartmentBack().getId())) {
-                    map.addAttribute("retrieve_confirmation_form", new ConfirmClaimForm(departmentId, LocalDate.now()));
+                    map.addAttribute("retrieve_confirmation_form", new ConfirmClaimForm(reservationId, departmentId, LocalDate.now()));
                 }
             } else if (reservation.getStatus().equals(Reservation.ReservationStatus.STATUS_COMPLETED)) {
                 map.addAttribute("rent_details", rentService.findById(reservation.getId()));
@@ -215,7 +215,7 @@ public class ManageReservationsController {
             return "redirect:/mg-res/reservation/{reservation}";
         }
 
-        HttpStatus response = reservationService.handleReservationStatus(customerId, reservationId, Reservation.ReservationStatus.STATUS_REFUNDED);
+        HttpStatus response = reservationService.handleReservationStatus(customerId, reservationId, Reservation.ReservationStatus.STATUS_REFUNDED, null);
 
         if (response.equals(HttpStatus.ACCEPTED)) {
             redAtt.addAttribute("reservation", reservationId);
@@ -244,7 +244,7 @@ public class ManageReservationsController {
             return "redirect:/mg-res/reservation/{reservation}";
         }
 
-        HttpStatus response = reservationService.handleReservationStatus(customerId, reservationId, Reservation.ReservationStatus.STATUS_CANCELED);
+        HttpStatus response = reservationService.handleReservationStatus(customerId, reservationId, Reservation.ReservationStatus.STATUS_CANCELED, null);
 
         if (response.equals(HttpStatus.ACCEPTED)) {
             redAtt.addAttribute("reservation", reservationId);
@@ -292,24 +292,24 @@ public class ManageReservationsController {
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/reservation/retrieve")
-    public String reservationRetrieveButton(@ModelAttribute("retrieve_confirmation_form") @Valid ConfirmClaimForm form, Errors err, RedirectAttributes redAtt, @RequestParam("reservation") Long reservationId, @RequestParam("customer") Long customerId, @RequestParam("department") Long departmentId) {
+    public String reservationRetrieveButton(@ModelAttribute("retrieve_confirmation_form") @Valid ConfirmClaimForm form, Errors err, RedirectAttributes redAtt, @RequestParam("customer") Long customerId, @RequestParam("department") Long departmentId) {
         CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (userService.hasNoAccessToUserOperation(cud, customerId, reservationId)) {
+        if (userService.hasNoAccessToUserOperation(cud, customerId, form.getReservationId())) {
             redAtt.addFlashAttribute("message", "Access rejected.");
             return "redirect:/mg-res";
         }
 
         if (err.hasErrors()) {
-            redAtt.addAttribute("reservation", reservationId);
+            redAtt.addAttribute("reservation", form.getReservationId());
             redAtt.addFlashAttribute("customer", customerId);
             redAtt.addFlashAttribute("department", departmentId);
             redAtt.addFlashAttribute("message", err.getAllErrors().get(0).getDefaultMessage());
             return "redirect:/mg-res/reservation/{reservation}";
         }
 
-        HttpStatus response = retrieveService.handleRetrieve(customerId, reservationId, departmentId, form);
+        HttpStatus response = retrieveService.handleRetrieve(customerId, form.getReservationId(), departmentId, form);
 
-        redAtt.addAttribute("reservation", reservationId);
+        redAtt.addAttribute("reservation", form.getReservationId());
         redAtt.addFlashAttribute("customer", customerId);
         redAtt.addFlashAttribute("department", departmentId);
 

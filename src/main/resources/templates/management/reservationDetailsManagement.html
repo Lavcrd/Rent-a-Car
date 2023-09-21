@@ -312,7 +312,7 @@
                         <th:block th:if="${reservation.status.name() == 'STATUS_PROGRESS' && department == reservation.departmentBack.id}">
                             <form th:action="@{/mg-res/reservation/retrieve}" th:object="${retrieve_confirmation_form}"
                                   th:method="POST">
-                                <input type="hidden" th:name="reservation" th:value="${reservation.getId()}">
+                                <input type="hidden" th:field="*{reservationId}">
                                 <input type="hidden" th:name="customer" th:value="${reservation.getCustomer().getId()}">
                                 <input type="hidden" th:name="department" th:value="${department}">
 
@@ -341,10 +341,16 @@
                                             </div>
                                             <div class="modal-body">
                                                 <input type="hidden" th:field="*{departmentId}">
-                                                <div class="form-group">
-                                                    <label for="date_to"
-                                                           class="col-form-label">Date:</label>
-                                                    <input id="date_to" class="text-black bg-white" type="date" name="date_to" th:field="*{dateTo}" required/>
+                                                <div class="form-group" style="flex-direction:row;justify-content:space-between;">
+                                                    <div class="column">
+                                                        <label for="date_to"
+                                                               class="col-form-label">Date:</label>
+                                                        <input id="date_to" class="form-control text-black bg-white" type="date" name="date_to" th:field="*{dateTo}" required/>
+                                                    </div>
+                                                    <div class="column">
+                                                        <label for="mileage" class="col-form-label">Mileage:</label>
+                                                        <input id="mileage" type="number" th:field="*{mileage}" class="form-control" required>
+                                                    </div>
                                                 </div>
                                                 <div class="form-group">
                                                     <label for="message-text-ret"
