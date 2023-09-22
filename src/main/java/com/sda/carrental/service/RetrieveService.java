@@ -19,7 +19,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
-import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 
@@ -38,12 +37,12 @@ public class RetrieveService {
     }
 
     @Transactional
-    public HttpStatus createRetrieve(Long customerId, Long reservationId, ConfirmClaimForm form) {
+    public HttpStatus createRetrieve(Long customerId, ConfirmClaimForm form) {
         try {
             CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            HttpStatus status = reservationService.handleReservationStatus(customerId, reservationId, Reservation.ReservationStatus.STATUS_COMPLETED, form.getMileage());
+            HttpStatus status = reservationService.handleReservationStatus(customerId, form.getReservationId(), Reservation.ReservationStatus.STATUS_COMPLETED, form.getMileage());
             if (status.equals(HttpStatus.ACCEPTED)) {
-                repository.save(new Retrieve(reservationId, reservationService.findById(reservationId), rentService.findById(reservationId), cud.getId(), form.getDateTo(), form.getRemarks()));
+                repository.save(new Retrieve(form.getReservationId(), reservationService.findById(form.getReservationId()), rentService.findById(form.getReservationId()), cud.getId(), form.getDateTo(), form.getRemarks(), form.getMileage()));
             }
             return status;
         } catch (DataAccessException err) {
@@ -56,15 +55,15 @@ public class RetrieveService {
     }
 
     @Transactional
-    public HttpStatus handleRetrieve(Long customerId, Long reservationId, Long departmentId, ConfirmClaimForm form) throws IllegalActionException {
+    public HttpStatus handleRetrieve(Long customerId, Long departmentId, ConfirmClaimForm form) throws IllegalActionException {
         try {
             CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             if (departmentService.departmentAccess(cud, departmentId).equals(HttpStatus.FORBIDDEN)) {
                 throw new IllegalActionException();
             } else if (!departmentId.equals(form.getDepartmentId())) {
-                reservationService.changeDestination(reservationId, form.getDepartmentId());
+                reservationService.changeDestination(form.getReservationId(), form.getDepartmentId());
             }
-            return createRetrieve(customerId, reservationId, form);
+            return createRetrieve(customerId, form);
         } catch (IllegalActionException err) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return HttpStatus.BAD_REQUEST;

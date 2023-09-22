@@ -11,11 +11,12 @@ import javax.persistence.*;
 @Getter
 @NoArgsConstructor
 public class Rent {
-    public Rent(Long reservationId, Long employeeId, String remarks, LocalDate dateFrom) {
+    public Rent(Long reservationId, Long employeeId, String remarks, LocalDate dateFrom, Long mileage) {
         this.id = reservationId;
         this.employeeId = employeeId;
         this.dateFrom = dateFrom;
         this.remarks = remarks;
+        this.mileage = mileage;
     }
 
     @Id
@@ -30,4 +31,7 @@ public class Rent {
 
     @Column(name = "remarks")
     private String remarks;
+
+    @Column(name = "mileage")
+    private Long mileage;
 }

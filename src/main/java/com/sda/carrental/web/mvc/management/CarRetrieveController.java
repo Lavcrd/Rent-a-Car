@@ -111,7 +111,7 @@ public class CarRetrieveController {
             return "redirect:/c-ret";
         }
 
-        HttpStatus response = retrieveService.handleRetrieve(customerId, form.getReservationId(), departmentId, form);
+        HttpStatus response = retrieveService.handleRetrieve(customerId, departmentId, form);
 
         redAtt.addAttribute("reservation", form.getReservationId());
         redAtt.addFlashAttribute("customer", customerId);

@@ -24,12 +24,12 @@ public class RentService {
     }
 
     @Transactional
-    public HttpStatus createRent(Long customerId, Long reservationId, ConfirmRentalForm form) {
+    public HttpStatus createRent(Long customerId, ConfirmRentalForm form) {
         try {
             CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            HttpStatus status = reservationService.handleReservationStatus(customerId, reservationId, Reservation.ReservationStatus.STATUS_PROGRESS, null);
+            HttpStatus status = reservationService.handleReservationStatus(customerId, form.getReservationId(), Reservation.ReservationStatus.STATUS_PROGRESS, null);
             if (status.equals(HttpStatus.ACCEPTED)) {
-                repository.save(new Rent(reservationId, cud.getId(), form.getRemarks(), form.getDateFrom()));
+                repository.save(new Rent(form.getReservationId(), cud.getId(), form.getRemarks(), form.getDateFrom(), form.getMileage()));
             }
             return status;
         } catch (DataAccessException err) {

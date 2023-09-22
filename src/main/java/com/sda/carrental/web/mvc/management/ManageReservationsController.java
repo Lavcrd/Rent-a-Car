@@ -120,7 +120,7 @@ public class ManageReservationsController {
 
             map.addAttribute("confirmation_form", new ConfirmationForm());
             if (reservation.getStatus().equals(Reservation.ReservationStatus.STATUS_RESERVED)) {
-                map.addAttribute("rental_confirmation_form", new ConfirmRentalForm(LocalDate.now()));
+                map.addAttribute("rental_confirmation_form", new ConfirmRentalForm(reservationId, LocalDate.now()));
             } else if (reservation.getStatus().equals(Reservation.ReservationStatus.STATUS_PROGRESS)) {
                 map.addAttribute("rent_details", rentService.findById(reservation.getId()));
                 if (departmentId.equals(reservation.getDepartmentBack().getId())) {
@@ -258,24 +258,24 @@ public class ManageReservationsController {
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/reservation/rent")
-    public String reservationRentButton(@ModelAttribute("rental_confirmation_form") @Valid ConfirmRentalForm form, Errors err, RedirectAttributes redAtt, @RequestParam("reservation") Long reservationId, @RequestParam("customer") Long customerId, @RequestParam("department") Long departmentId) {
+    public String reservationRentButton(@ModelAttribute("rental_confirmation_form") @Valid ConfirmRentalForm form, Errors err, RedirectAttributes redAtt, @RequestParam("customer") Long customerId, @RequestParam("department") Long departmentId) {
         CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (userService.hasNoAccessToUserOperation(cud, customerId, reservationId)) {
+        if (userService.hasNoAccessToUserOperation(cud, customerId, form.getReservationId())) {
             redAtt.addFlashAttribute("message", "Access rejected.");
             return "redirect:/mg-res";
         }
 
         if (err.hasErrors()) {
-            redAtt.addAttribute("reservation", reservationId);
+            redAtt.addAttribute("reservation", form.getReservationId());
             redAtt.addFlashAttribute("customer", customerId);
             redAtt.addFlashAttribute("department", departmentId);
             redAtt.addFlashAttribute("message", err.getAllErrors().get(0).getDefaultMessage());
             return "redirect:/mg-res/reservation/{reservation}";
         }
 
-        HttpStatus response = rentService.createRent(customerId, reservationId, form);
+        HttpStatus response = rentService.createRent(customerId, form);
 
-        redAtt.addAttribute("reservation", reservationId);
+        redAtt.addAttribute("reservation", form.getReservationId());
         redAtt.addFlashAttribute("customer", customerId);
         redAtt.addFlashAttribute("department", departmentId);
 
@@ -307,7 +307,7 @@ public class ManageReservationsController {
             return "redirect:/mg-res/reservation/{reservation}";
         }
 
-        HttpStatus response = retrieveService.handleRetrieve(customerId, form.getReservationId(), departmentId, form);
+        HttpStatus response = retrieveService.handleRetrieve(customerId, departmentId, form);
 
         redAtt.addAttribute("reservation", form.getReservationId());
         redAtt.addFlashAttribute("customer", customerId);
