@@ -171,18 +171,18 @@ public class PredefiniedData implements CommandLineRunner {
     }
 
     private void createRent() {
-        rentRepository.save(new Rent(1L, 12L, "N/D", LocalDate.now()));
-        rentRepository.save(new Rent(2L, 13L, "N/D", LocalDate.now()));
-        rentRepository.save(new Rent(3L, 14L, "N/D", LocalDate.now()));
-        rentRepository.save(new Rent(4L, 14L, "N/D", LocalDate.now()));
-        rentRepository.save(new Rent(5L, 13L, "N/D", LocalDate.now()));
+        rentRepository.save(new Rent(1L, 12L, "N/D", LocalDate.now(), 100000L));
+        rentRepository.save(new Rent(2L, 13L, "N/D", LocalDate.now(), 100000L));
+        rentRepository.save(new Rent(3L, 14L, "N/D", LocalDate.now(), 100000L));
+        rentRepository.save(new Rent(4L, 14L, "N/D", LocalDate.now(), 100000L));
+        rentRepository.save(new Rent(5L, 13L, "N/D", LocalDate.now(), 100000L));
     }
 
     private void createRetrieve() {
-        retrieveRepository.save(new Retrieve(1L, reservationRepository.findById(1L).get(), rentRepository.findById(1L).get(), 13L, LocalDate.now().plusDays(7), "Some notes after car retrieve."));
-        retrieveRepository.save(new Retrieve(2L, reservationRepository.findById(2L).get(), rentRepository.findById(2L).get(), 14L, LocalDate.now().plusDays(8), "Some notes after car retrieve."));
-        retrieveRepository.save(new Retrieve(3L, reservationRepository.findById(3L).get(), rentRepository.findById(3L).get(), 15L, LocalDate.now().plusDays(9), "Some notes after car retrieve."));
-        retrieveRepository.save(new Retrieve(4L, reservationRepository.findById(4L).get(), rentRepository.findById(4L).get(), 13L, LocalDate.now().plusDays(10), "Some notes after car retrieve."));
+        retrieveRepository.save(new Retrieve(1L, reservationRepository.findById(1L).get(), rentRepository.findById(1L).get(), 13L, LocalDate.now().plusDays(7), "Some notes after car retrieve.", 120000L));
+        retrieveRepository.save(new Retrieve(2L, reservationRepository.findById(2L).get(), rentRepository.findById(2L).get(), 14L, LocalDate.now().plusDays(8), "Some notes after car retrieve.", 120000L));
+        retrieveRepository.save(new Retrieve(3L, reservationRepository.findById(3L).get(), rentRepository.findById(3L).get(), 15L, LocalDate.now().plusDays(9), "Some notes after car retrieve.", 120000L));
+        retrieveRepository.save(new Retrieve(4L, reservationRepository.findById(4L).get(), rentRepository.findById(4L).get(), 13L, LocalDate.now().plusDays(10), "Some notes after car retrieve.", 120000L));
     }
 
     private void createPayments() {

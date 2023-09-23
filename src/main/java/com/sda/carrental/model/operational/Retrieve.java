@@ -11,13 +11,14 @@ import java.time.LocalDate;
 @Getter
 @NoArgsConstructor
 public class Retrieve {
-    public Retrieve(Long reservationId, Reservation reservation, Rent rent, Long employeeId, LocalDate dateTo, String remarks) {
+    public Retrieve(Long reservationId, Reservation reservation, Rent rent, Long employeeId, LocalDate dateTo, String remarks, Long mileage) {
         this.id = reservationId;
         this.reservation = reservation;
         this.rent = rent;
         this.employeeId = employeeId;
         this.dateTo = dateTo;
         this.remarks = remarks;
+        this.mileage = mileage;
     }
 
     @Id
@@ -41,4 +42,7 @@ public class Retrieve {
 
     @Column(name = "remarks")
     private String remarks;
+
+    @Column(name = "mileage")
+    private Long mileage;
 }
