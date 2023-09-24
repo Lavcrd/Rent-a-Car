@@ -130,7 +130,7 @@ public class ManageReservationsController {
                 map.addAttribute("rent_details", rentService.findById(reservation.getId()));
                 map.addAttribute("retrieve_details", retrieveService.findById(reservation.getId()));
             }
-            return "management/reservationDetailsManagement";
+            return "management/viewReservation";
         } catch (ResourceNotFoundException err) {
             redAtt.addFlashAttribute("message", "An unexpected error occurred. Please try again.");
             return "redirect:/mg-res";
@@ -280,13 +280,15 @@ public class ManageReservationsController {
         redAtt.addFlashAttribute("department", departmentId);
 
         if (response.equals(HttpStatus.ACCEPTED)) {
-            redAtt.addFlashAttribute("message", "Rent completed successfully!");
+            redAtt.addFlashAttribute("message", "Success: Rent completed successfully!");
         } else if (response.equals(HttpStatus.PAYMENT_REQUIRED)) {
-            redAtt.addFlashAttribute("message", "Payment not registered. Please try again later.");
+            redAtt.addFlashAttribute("message", "Failure: Payment not registered.");
         } else if (response.equals(HttpStatus.PRECONDITION_REQUIRED)) {
-            redAtt.addFlashAttribute("message", "Verification not registered. Please try again later.");
+            redAtt.addFlashAttribute("message", "Failure: Verification not registered.");
+        } else if (response.equals(HttpStatus.CONFLICT)) {
+            redAtt.addFlashAttribute("message", "Failure: Status unavailable.");
         } else {
-            redAtt.addFlashAttribute("message", "An unexpected error occurred. Please try again later.");
+            redAtt.addFlashAttribute("message", "Failure: An unexpected error occurred.");
         }
         return "redirect:/mg-res/reservation/{reservation}";
     }

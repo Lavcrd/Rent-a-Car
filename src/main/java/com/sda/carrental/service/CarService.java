@@ -120,6 +120,10 @@ public class CarService {
         return carProperties;
     }
 
+    public boolean isCarUnavailable(Reservation r) {
+        return r.getCar().getCarStatus().equals(Car.CarStatus.STATUS_UNAVAILABLE);
+    }
+
     @Transactional
     public void updateCarStatus(Car car, Car.CarStatus status) {
         car.setCarStatus(status);
