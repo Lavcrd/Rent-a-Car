@@ -30,6 +30,7 @@ public class RetrieveService {
     private final ReservationService reservationService;
     private final RentService rentService;
     private final DepartmentService departmentService;
+    private final CarService carService;
 
 
     public Retrieve findById(Long id) throws ResourceNotFoundException {
@@ -40,9 +41,12 @@ public class RetrieveService {
     public HttpStatus createRetrieve(Long customerId, ConfirmClaimForm form) {
         try {
             CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            HttpStatus status = reservationService.handleReservationStatus(customerId, form.getReservationId(), Reservation.ReservationStatus.STATUS_COMPLETED, form.getMileage());
+            HttpStatus status = reservationService.handleReservationStatus(customerId, form.getReservationId(), Reservation.ReservationStatus.STATUS_COMPLETED);
             if (status.equals(HttpStatus.ACCEPTED)) {
-                repository.save(new Retrieve(form.getReservationId(), reservationService.findById(form.getReservationId()), rentService.findById(form.getReservationId()), cud.getId(), form.getDateTo(), form.getRemarks(), form.getMileage()));
+                repository.save(new Retrieve(
+                        form.getReservationId(), reservationService.findById(form.getReservationId()), rentService.findById(form.getReservationId()),
+                        cud.getId(), form.getDateTo(), form.getRemarks(),
+                        departmentService.findDepartmentWhereId(form.getDepartmentId()), form.getMileage()));
             }
             return status;
         } catch (DataAccessException err) {
@@ -60,9 +64,8 @@ public class RetrieveService {
             CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             if (departmentService.departmentAccess(cud, departmentId).equals(HttpStatus.FORBIDDEN)) {
                 throw new IllegalActionException();
-            } else if (!departmentId.equals(form.getDepartmentId())) {
-                reservationService.changeDestination(form.getReservationId(), form.getDepartmentId());
             }
+            carService.retrieveCar(reservationService.findById(form.getReservationId()).getCar(), form.getDepartmentId(), form.getMileage());
             return createRetrieve(customerId, form);
         } catch (IllegalActionException err) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
@@ -97,7 +100,8 @@ public class RetrieveService {
         if (form.getDepartment() == null) {
             departments = departmentService.getDepartmentsByUserContext(cud);
         } else {
-            if (departmentService.departmentAccess(cud, form.getDepartment()).equals(HttpStatus.FORBIDDEN)) return Collections.emptyList();
+            if (departmentService.departmentAccess(cud, form.getDepartment()).equals(HttpStatus.FORBIDDEN))
+                return Collections.emptyList();
             departments = List.of(departmentService.findDepartmentWhereId(form.getDepartment()));
         }
 

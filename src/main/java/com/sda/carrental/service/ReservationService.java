@@ -83,7 +83,7 @@ public class ReservationService {
     }
 
     @Transactional
-    public HttpStatus handleReservationStatus(Long customerId, Long reservationId, Reservation.ReservationStatus status, Long optionalParam) {
+    public HttpStatus handleReservationStatus(Long customerId, Long reservationId, Reservation.ReservationStatus status) {
         try {
             Reservation r = findCustomerReservation(customerId, reservationId);
             Reservation.ReservationStatus currentStatus = r.getStatus();
@@ -126,7 +126,7 @@ public class ReservationService {
 
                 case STATUS_COMPLETED:
                     if (currentStatus == Reservation.ReservationStatus.STATUS_PROGRESS) {
-                        processCompleteReservation(r, optionalParam, status);
+                        processCompleteReservation(r, status);
                         return HttpStatus.ACCEPTED;
                     }
                     break;
@@ -165,10 +165,7 @@ public class ReservationService {
     }
 
     @Transactional
-    private void processCompleteReservation(Reservation r, Long mileage, Reservation.ReservationStatus status) {
-        carService.updateCarStatus(r.getCar(), Car.CarStatus.STATUS_OPEN);
-        carService.updateCarLocation(r.getCar(), r.getDepartmentBack().getId());
-        carService.updateCarMileage(r.getCar(), mileage);
+    private void processCompleteReservation(Reservation r, Reservation.ReservationStatus status) {
         updateReservationStatus(r, status);
     }
 
@@ -242,13 +239,5 @@ public class ReservationService {
 
     public Reservation findActiveReservationByPlate(String plate) throws ResourceNotFoundException {
         return repository.findActiveReservationByPlate(plate).orElseThrow(ResourceNotFoundException::new);
-    }
-
-    @Transactional
-    public void changeDestination(Long reservationId, Long departmentId) throws ResourceNotFoundException {
-        Reservation r = findById(reservationId);
-        Department d = departmentService.findDepartmentWhereId(departmentId);
-        r.setDepartmentBack(d);
-        repository.save(r);
     }
 }

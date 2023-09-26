@@ -85,7 +85,7 @@ public class CustomerReservationsController {
     @RequestMapping(method = RequestMethod.POST, value = "/refund")
     public String reservationRefundButton(RedirectAttributes redAtt, @RequestParam(value = "id") Long reservationId) {
         CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        HttpStatus response = reservationService.handleReservationStatus(cud.getId(), reservationId, Reservation.ReservationStatus.STATUS_REFUNDED, null);
+        HttpStatus response = reservationService.handleReservationStatus(cud.getId(), reservationId, Reservation.ReservationStatus.STATUS_REFUNDED);
 
         if (response.equals(HttpStatus.ACCEPTED)) {
             redAtt.addFlashAttribute("message", "Refund completed successfully!");

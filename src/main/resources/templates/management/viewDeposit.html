@@ -81,8 +81,9 @@
                         <span class="border w-100"></span>
                     </div>
 
-                    <div style="margin-top: 3%;text-align:start;"
-                         th:utext="'<strong>Rent date:</strong><br>' + ${retrieve.rent.dateFrom}">
+                    <div class="d-flex" style="margin-top: 3%;justify-content:space-between;">
+                        <div style="text-align:start;" th:utext="'<strong>Rent date:</strong><br>' + ${retrieve.rent.dateFrom}"></div>
+                        <div style="text-align:end;" th:utext="'<strong>Mileage:</strong><br>' + ${retrieve.rent.mileage}"></div>
                     </div>
                     <div style="margin-top: 3%;"
                          th:utext="'<strong>Rental remarks:</strong><br>' + ${retrieve.rent.remarks}">
@@ -95,14 +96,16 @@
                         <span class="border w-100"></span>
                     </div>
 
-                    <div style="margin-top: 3%;text-align:start;"
-                         th:utext="'<strong>Retrieve date:</strong><br>' + ${retrieve.dateTo}">
+                    <div class="d-flex" style="margin-top: 3%;justify-content:space-between;">
+                        <div style="text-align:start;" th:utext="'<strong>Retrieve date:</strong><br>' + ${retrieve.dateTo}"></div>
+                        <div style="text-align:end;" th:utext="'<strong>Mileage:</strong><br>' + ${retrieve.mileage}"></div>
                     </div>
                     <div style="margin-top: 3%;"
                          th:utext="'<strong>Retrieval remarks:</strong><br>' + ${retrieve.remarks}">
                     </div>
-                    <div style="margin-top: 3%;text-align:end;"
-                         th:utext="'<strong>Retrieving employee:</strong><br>' + ${retrieve_employee.name} + ' ' + ${retrieve_employee.surname}">
+                    <div class="d-flex" style="margin-top: 3%;justify-content:space-between;">
+                        <div style="text-align:start;" th:utext="'<strong>Location:</strong><br>' + ${retrieve.department.city} + ' ' + ${retrieve.department.postcode} + '<br>' + ${retrieve.department.address}"></div>
+                        <div style="text-align:end;" th:utext="'<strong>Retrieving employee:</strong><br>' + ${retrieve_employee.name} + ' ' + ${retrieve_employee.surname}"></div>
                     </div>
                 </div>
                 <div class="col-md-2" style="font-size:small;text-align:end;">
