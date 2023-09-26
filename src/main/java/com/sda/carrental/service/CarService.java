@@ -141,4 +141,11 @@ public class CarService {
         car.setMileage(mileage);
         repository.save(car);
     }
+
+    @Transactional
+    public void retrieveCar(Car car, Long departmentId, Long mileage) {
+        updateCarStatus(car, Car.CarStatus.STATUS_OPEN);
+        updateCarLocation(car, departmentId);
+        updateCarMileage(car, mileage);
+    }
 }

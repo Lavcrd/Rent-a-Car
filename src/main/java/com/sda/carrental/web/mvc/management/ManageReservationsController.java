@@ -215,7 +215,7 @@ public class ManageReservationsController {
             return "redirect:/mg-res/reservation/{reservation}";
         }
 
-        HttpStatus response = reservationService.handleReservationStatus(customerId, reservationId, Reservation.ReservationStatus.STATUS_REFUNDED, null);
+        HttpStatus response = reservationService.handleReservationStatus(customerId, reservationId, Reservation.ReservationStatus.STATUS_REFUNDED);
 
         if (response.equals(HttpStatus.ACCEPTED)) {
             redAtt.addAttribute("reservation", reservationId);
@@ -244,7 +244,7 @@ public class ManageReservationsController {
             return "redirect:/mg-res/reservation/{reservation}";
         }
 
-        HttpStatus response = reservationService.handleReservationStatus(customerId, reservationId, Reservation.ReservationStatus.STATUS_CANCELED, null);
+        HttpStatus response = reservationService.handleReservationStatus(customerId, reservationId, Reservation.ReservationStatus.STATUS_CANCELED);
 
         if (response.equals(HttpStatus.ACCEPTED)) {
             redAtt.addAttribute("reservation", reservationId);
