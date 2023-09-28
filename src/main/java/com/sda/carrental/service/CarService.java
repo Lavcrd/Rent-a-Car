@@ -4,6 +4,7 @@ import com.sda.carrental.exceptions.ResourceNotFoundException;
 import com.sda.carrental.global.ConstantValues;
 import com.sda.carrental.model.operational.Reservation;
 import com.sda.carrental.model.property.Car;
+import com.sda.carrental.model.property.Department;
 import com.sda.carrental.repository.CarRepository;
 import com.sda.carrental.web.mvc.form.CarFilterForm;
 import com.sda.carrental.web.mvc.form.SubstituteCarFilterForm;
@@ -147,5 +148,9 @@ public class CarService {
         updateCarStatus(car, Car.CarStatus.STATUS_OPEN);
         updateCarLocation(car, departmentId);
         updateCarMileage(car, mileage);
+    }
+
+    public List<Car> findByDepartments(List<Department> departments) {
+        return repository.findAllByDepartments(departments);
     }
 }
