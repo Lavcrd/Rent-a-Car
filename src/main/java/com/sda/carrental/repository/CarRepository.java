@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import com.sda.carrental.model.property.Car;
+import com.sda.carrental.model.property.Department;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
@@ -67,4 +68,8 @@ public interface CarRepository extends CrudRepository<Car, Long> {
             "       HAVING COUNT(*) >= 1)) " +
             "GROUP BY c.id)")
     Optional<Car> findCarByCarIdAndAvailability(@Param("dateFrom") LocalDate dateFrom, @Param("dateTo") LocalDate dateTo, @Param("department") Long department, @Param("carId") long carId);
+
+    @Query(value = "SELECT c FROM car c WHERE c.departmentId IN (" +
+            "SELECT d.id FROM department d WHERE d in (:departments))")
+    List<Car> findAllByDepartments(@Param("departments") List<Department> departments);
 }
