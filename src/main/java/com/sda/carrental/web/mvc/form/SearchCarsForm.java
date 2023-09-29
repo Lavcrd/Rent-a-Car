@@ -1,21 +1,19 @@
 package com.sda.carrental.web.mvc.form;
 
 import com.sda.carrental.global.enums.Country;
-import com.sda.carrental.model.operational.Reservation;
 import com.sda.carrental.model.property.Car;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.validation.constraints.NotNull;
-import java.util.List;
 
 @Getter
 @Setter
 @NoArgsConstructor
-public class SearchCarsForm {
+public class SearchCarsForm extends GenericCarForm {
 
-    private Reservation.ReservationStatus status;
+    private Car.CarStatus status;
 
     private Long department;
 
@@ -24,15 +22,7 @@ public class SearchCarsForm {
 
     private String plate;
 
-    private Long mileage;
+    private Long mileageMin;
 
-    private Integer priceMin;
-
-    private Integer priceMax;
-
-    private List<String> brands;
-
-    private List<Car.CarType> types;
-
-    private List<Integer> seats;
+    private Long mileageMax;
 }
