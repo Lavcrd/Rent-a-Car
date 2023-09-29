@@ -70,7 +70,7 @@ public class SelectCarController {
 
     @RequestMapping(value = "/filter", method = RequestMethod.POST)
     public String filterCarsButton(@ModelAttribute("carFilterForm") CarFilterForm filterData, RedirectAttributes redirect) {
-        redirect.addFlashAttribute("filteredCars", carService.filterCars(filterData));
+        redirect.addFlashAttribute("filteredCars", carService.findCarsByForm(filterData));
         redirect.addFlashAttribute("indexData", filterData.getIndexData());
         redirect.addFlashAttribute("carFilterForm", filterData);
         return "redirect:/cars";

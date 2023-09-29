@@ -72,4 +72,17 @@ public interface CarRepository extends CrudRepository<Car, Long> {
     @Query(value = "SELECT c FROM car c WHERE c.departmentId IN (" +
             "SELECT d.id FROM department d WHERE d in (:departments))")
     List<Car> findAllByDepartments(@Param("departments") List<Department> departments);
+
+    @Query(value = "SELECT c FROM car c " +
+            "WHERE c.departmentId in (" +
+            "   SELECT d.id FROM department d WHERE d in (:departments)) " +
+            "AND (:status IS NULL OR c.carStatus = :status) " +
+            "AND (:mileageMin IS NULL OR c.mileage >= :mileageMin) " +
+            "AND (:mileageMax IS NULL OR c.mileage <= :mileageMax) " +
+            "AND (:country IS NULL OR LOWER(c.plate) LIKE LOWER(CONCAT(:country, '-%'))) " +
+            "AND (:plate IS NULL OR LOWER(c.plate) LIKE LOWER(CONCAT('%-%', :plate, '%'))) " +
+            "ORDER BY c.id ASC")
+    List<Car> findByCriteria(@Param("mileageMin") Long mileageMin, @Param("mileageMax") Long mileageMax,
+                             @Param("country") String country, @Param("plate") String plate,
+                             @Param("departments") List<Department> departments, @Param("status") Car.CarStatus status);
 }

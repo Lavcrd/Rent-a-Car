@@ -2,13 +2,19 @@ package com.sda.carrental.service;
 
 import com.sda.carrental.exceptions.ResourceNotFoundException;
 import com.sda.carrental.global.ConstantValues;
+import com.sda.carrental.global.enums.Country;
 import com.sda.carrental.model.operational.Reservation;
 import com.sda.carrental.model.property.Car;
 import com.sda.carrental.model.property.Department;
 import com.sda.carrental.repository.CarRepository;
+import com.sda.carrental.service.auth.CustomUserDetails;
 import com.sda.carrental.web.mvc.form.CarFilterForm;
+import com.sda.carrental.web.mvc.form.GenericCarForm;
+import com.sda.carrental.web.mvc.form.SearchCarsForm;
 import com.sda.carrental.web.mvc.form.SubstituteCarFilterForm;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +26,7 @@ import java.util.*;
 public class CarService {
 
     private final CarRepository repository;
+    private final DepartmentService departmentService;
     private final ConstantValues cv;
 
     public Car findCarById(long id) {
@@ -34,66 +41,74 @@ public class CarService {
         return repository.findAvailableCarsInDepartment(r.getDateFrom().minusDays(cv.getReservationGap()), r.getDateTo().plusDays(cv.getReservationGap()), r.getDepartmentTake().getId());
     }
 
-    public Car findAvailableCar(LocalDate dateFrom, LocalDate dateTo, Long department, long carId) {
+    public Car findAvailableCar(LocalDate dateFrom, LocalDate dateTo, Long department, long carId) throws IllegalArgumentException {
         return repository.findCarByCarIdAndAvailability(dateFrom.minusDays(cv.getReservationGap()), dateTo.plusDays(cv.getReservationGap()), department, carId).orElseThrow(ResourceNotFoundException::new);
     }
 
-    public List<Car> filterCars(CarFilterForm filterForm) {
-        ArrayList<Car> filteredCars = (ArrayList<Car>) repository.findAvailableDistinctCarsInDepartment(
-                filterForm.getIndexData().getDateFrom().minusDays(cv.getReservationGap()),
-                filterForm.getIndexData().getDateTo().plusDays(cv.getReservationGap()),
-                filterForm.getIndexData().getDepartmentIdFrom());
+    public List<Car> findCarsByForm(GenericCarForm form) {
+        ArrayList<Car> cars;
+        if (form instanceof CarFilterForm f) {
+            cars = (ArrayList<Car>) repository.findAvailableDistinctCarsInDepartment(
+                    f.getIndexData().getDateFrom().minusDays(cv.getReservationGap()),
+                    f.getIndexData().getDateTo().plusDays(cv.getReservationGap()),
+                    f.getIndexData().getDepartmentIdFrom());
+        } else if (form instanceof SubstituteCarFilterForm f) {
+            cars = (ArrayList<Car>) repository.findAvailableCarsInDepartment(
+                    f.getDateFrom(),
+                    f.getDateTo().plusDays(cv.getReservationGap()),
+                    f.getDepartmentId());
+        } else if (form instanceof SearchCarsForm f) {
+            CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            String country;
+            if (f.getCountry().equals(Country.COUNTRY_NONE)) {
+                country = null;
+            } else {
+                country = f.getCountry().getCode();
+            }
 
-        if (filterForm.getPriceMin() != null) {
-            filteredCars.removeIf(car -> car.getPriceDay() < filterForm.getPriceMin());
+            List<Department> departments;
+            if (f.getDepartment() == null) {
+                departments = departmentService.getDepartmentsByUserContext(cud);
+            } else {
+                if (departmentService.departmentAccess(cud, f.getDepartment()).equals(HttpStatus.FORBIDDEN))
+                    return Collections.emptyList();
+                departments = List.of(departmentService.findDepartmentWhereId(f.getDepartment()));
+            }
+
+            cars = (ArrayList<Car>) repository.findByCriteria(
+                    f.getMileageMin(), f.getMileageMax(),
+                    country, f.getPlate(),
+                    departments, f.getStatus()
+            );
+        } else {
+            return Collections.emptyList();
         }
 
-        if (filterForm.getPriceMax() != null) {
-            filteredCars.removeIf(car -> car.getPriceDay() > filterForm.getPriceMax());
-        }
-
-        if (!filterForm.getBrands().isEmpty()) {
-            filteredCars.removeIf(car -> !filterForm.getBrands().contains(car.getBrand()));
-        }
-
-        if (!filterForm.getSeats().isEmpty()) {
-            filteredCars.removeIf(car -> !filterForm.getSeats().contains(car.getSeats()));
-        }
-
-        if (!filterForm.getTypes().isEmpty()) {
-            filteredCars.removeIf(car -> !filterForm.getTypes().contains(car.getCarType()));
-        }
-
-        return filteredCars;
+        return applyFilters(cars, form);
     }
 
-    public List<Car> filterCars(SubstituteCarFilterForm filterForm) {
-        ArrayList<Car> filteredCars = (ArrayList<Car>) repository.findAvailableCarsInDepartment(
-                filterForm.getDateFrom(),
-                filterForm.getDateTo().plusDays(cv.getReservationGap()),
-                filterForm.getDepartmentId());
-
-        if (filterForm.getPriceMin() != null) {
-            filteredCars.removeIf(car -> car.getPriceDay() < filterForm.getPriceMin());
+    private List<Car> applyFilters(List<Car> cl, GenericCarForm form) {
+        if (form.getPriceMin() != null) {
+            cl.removeIf(car -> car.getPriceDay() < form.getPriceMin());
         }
 
-        if (filterForm.getPriceMax() != null) {
-            filteredCars.removeIf(car -> car.getPriceDay() > filterForm.getPriceMax());
+        if (form.getPriceMax() != null) {
+            cl.removeIf(car -> car.getPriceDay() > form.getPriceMax());
         }
 
-        if (!filterForm.getBrands().isEmpty()) {
-            filteredCars.removeIf(car -> !filterForm.getBrands().contains(car.getBrand()));
+        if (!form.getBrands().isEmpty()) {
+            cl.removeIf(car -> !form.getBrands().contains(car.getBrand()));
         }
 
-        if (!filterForm.getSeats().isEmpty()) {
-            filteredCars.removeIf(car -> !filterForm.getSeats().contains(car.getSeats()));
+        if (!form.getSeats().isEmpty()) {
+            cl.removeIf(car -> !form.getSeats().contains(car.getSeats()));
         }
 
-        if (!filterForm.getTypes().isEmpty()) {
-            filteredCars.removeIf(car -> !filterForm.getTypes().contains(car.getCarType()));
+        if (!form.getTypes().isEmpty()) {
+            cl.removeIf(car -> !form.getTypes().contains(car.getCarType()));
         }
 
-        return filteredCars;
+        return cl;
     }
 
     public Map<String, Object> getFilterProperties(List<Car> carList) {

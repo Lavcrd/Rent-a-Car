@@ -348,7 +348,7 @@ public class ManageReservationsController {
             return "redirect:/mg-res";
         }
 
-        redAtt.addFlashAttribute("filteredCars", carService.filterCars(filterData));
+        redAtt.addFlashAttribute("filteredCars", carService.findCarsByForm(filterData));
         redAtt.addFlashAttribute("carFilterForm", filterData);
         redAtt.addFlashAttribute("customer", customerId);
         redAtt.addAttribute("reservation", reservationId);
