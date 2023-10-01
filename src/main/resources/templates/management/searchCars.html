@@ -217,7 +217,7 @@
                 <div th:each="result : ${results}" id="car-list">
                     <div class="row">
                         <div class="col-md-12">
-                            <h4 th:text="${result.brand}"></h4>
+                            <h4 th:text="${result.plate}"></h4>
                         </div>
                     </div>
 
@@ -228,11 +228,12 @@
                         </div>
                         <div class="col-md-6">
                             <ul class="list-group list-group-flush">
-                                <li class="list-group-item" th:text="'Plate: ' + ${result.plate}"></li>
-                                <li class="list-group-item" th:text="'Model: ' + ${result.model}"></li>
-                                <li class="list-group-item" th:text="'Type: ' + ${result.carType.getName()}"></li>
+                                <li class="list-group-item"
+                                    th:text="'Unit: ' + ${result.brand} + ' ' + ${result.model} + ' – ' + ${result.carType.getName()} + ' (' + ${result.seats} + ' seats)'"></li>
+                                <li class="list-group-item" th:text="'Mileage: ' + ${result.mileage} + ' [km]'"></li>
                                 <li class="list-group-item" th:text="'Production date: ' + ${result.year}"></li>
-                                <li class="list-group-item" th:text="'Seats: ' + ${result.seats}"></li>
+                                <li class="list-group-item" style="white-space: nowrap;"
+                                    th:text="'Status: ' + ${result.carStatus.name().substring(7)} + ' – ' + ${result.department.getCity()} + ', ' + ${result.department.getAddress()}"></li>
                                 <li class="list-group-item"
                                     th:text="'Price per day: ' + ${#numbers.formatDecimal((result.priceDay), 1, 2, 'POINT')} + ' PLN'"></li>
                             </ul>

@@ -17,7 +17,7 @@ public interface CarRepository extends CrudRepository<Car, Long> {
             "SELECT c.id " +
             "FROM car c " +
             "LEFT JOIN reservation r ON c.id = r.car.id " +
-            "WHERE c.departmentId = :department " +
+            "WHERE c.department.id = :department " +
             "   AND c.carStatus <> 3 " +
             "   AND (" +
             "       r.id IS NULL " +
@@ -36,7 +36,7 @@ public interface CarRepository extends CrudRepository<Car, Long> {
             "SELECT c.id " +
             "FROM car c " +
             "LEFT JOIN reservation r ON c.id = r.car.id " +
-            "WHERE c.departmentId = :department " +
+            "WHERE c.department.id = :department " +
             "   AND c.carStatus <> 3 " +
             "   AND (" +
             "       r.id IS NULL " +
@@ -55,7 +55,7 @@ public interface CarRepository extends CrudRepository<Car, Long> {
             "SELECT c.id " +
             "FROM car c " +
             "LEFT JOIN reservation r ON c.id = r.car.id " +
-            "WHERE c.departmentId = :department " +
+            "WHERE c.department.id = :department " +
             "   AND c.carStatus <> 3 " +
             "   AND (" +
             "       r.id IS NULL " +
@@ -69,13 +69,11 @@ public interface CarRepository extends CrudRepository<Car, Long> {
             "GROUP BY c.id)")
     Optional<Car> findCarByCarIdAndAvailability(@Param("dateFrom") LocalDate dateFrom, @Param("dateTo") LocalDate dateTo, @Param("department") Long department, @Param("carId") long carId);
 
-    @Query(value = "SELECT c FROM car c WHERE c.departmentId IN (" +
-            "SELECT d.id FROM department d WHERE d in (:departments))")
+    @Query(value = "SELECT c FROM car c WHERE c.department IN (:departments)")
     List<Car> findAllByDepartments(@Param("departments") List<Department> departments);
 
     @Query(value = "SELECT c FROM car c " +
-            "WHERE c.departmentId in (" +
-            "   SELECT d.id FROM department d WHERE d in (:departments)) " +
+            "WHERE c.department in (:departments) " +
             "AND (:status IS NULL OR c.carStatus = :status) " +
             "AND (:mileageMin IS NULL OR c.mileage >= :mileageMin) " +
             "AND (:mileageMax IS NULL OR c.mileage <= :mileageMax) " +

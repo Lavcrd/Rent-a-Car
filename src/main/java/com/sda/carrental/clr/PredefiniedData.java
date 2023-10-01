@@ -24,6 +24,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @Service
+@SuppressWarnings(value = "all")
 public class PredefiniedData implements CommandLineRunner {
 
     //The purpose of this class is to generate artificial data for visualizing the app's user interface.
@@ -117,40 +118,40 @@ public class PredefiniedData implements CommandLineRunner {
     }
 
     private void createCars() {
-        carRepository.save(new Car(1L, "https://cdn2.rcstatic.com/images/car_images/web/fiat/500_lrg.jpg", "Fiat", "Fiat 500", 2007, Country.COUNTRY_NL.getCode() + "-ABC1234", 150000L, 2, 85.0, Car.CarType.TYPE_HATCHBACK, Car.CarStatus.STATUS_OPEN, 750.0));
-        carRepository.save(new Car(1L, "/cars/bmw3.jpg", "BMW", "F34", 2013, Country.COUNTRY_PL.getCode() + "-ABC4321", 140000L, 5, 95.0, Car.CarType.TYPE_HATCHBACK, Car.CarStatus.STATUS_OPEN, 1500.0));
-        carRepository.save(new Car(1L, "/cars/yaris.png", "Toyota", "Yaris", 1999, Country.COUNTRY_PL.getCode() + "-ABC2314", 130000L, 4, 102.0, Car.CarType.TYPE_HATCHBACK, Car.CarStatus.STATUS_OPEN, 1500.0));
-        carRepository.save(new Car(1L, "/cars/hyundai-elantra.jpg", "Hyundai", "Lantra", 1990, Country.COUNTRY_PL.getCode() + "-ABC3214", 120000L, 5, 81.0, Car.CarType.TYPE_COMPACT, Car.CarStatus.STATUS_UNAVAILABLE, 500.0));
+        carRepository.save(new Car(departmentRepository.findById(1L).get(), "https://cdn2.rcstatic.com/images/car_images/web/fiat/500_lrg.jpg", "Fiat", "Fiat 500", 2007, Country.COUNTRY_NL.getCode() + "-ABC1234", 150000L, 2, 85.0, Car.CarType.TYPE_HATCHBACK, Car.CarStatus.STATUS_OPEN, 750.0));
+        carRepository.save(new Car(departmentRepository.findById(1L).get(), "/cars/bmw3.jpg", "BMW", "F34", 2013, Country.COUNTRY_PL.getCode() + "-ABC4321", 140000L, 5, 95.0, Car.CarType.TYPE_HATCHBACK, Car.CarStatus.STATUS_OPEN, 1500.0));
+        carRepository.save(new Car(departmentRepository.findById(1L).get(), "/cars/yaris.png", "Toyota", "Yaris", 1999, Country.COUNTRY_PL.getCode() + "-ABC2314", 130000L, 4, 102.0, Car.CarType.TYPE_HATCHBACK, Car.CarStatus.STATUS_OPEN, 1500.0));
+        carRepository.save(new Car(departmentRepository.findById(1L).get(), "/cars/hyundai-elantra.jpg", "Hyundai", "Lantra", 1990, Country.COUNTRY_PL.getCode() + "-ABC3214", 120000L, 5, 81.0, Car.CarType.TYPE_COMPACT, Car.CarStatus.STATUS_UNAVAILABLE, 500.0));
 
-        carRepository.save(new Car(2L, "https://cdn2.rcstatic.com/images/car_images/web/fiat/500_lrg.jpg", "Fiat", "Fiat 500", 2007, Country.COUNTRY_GB.getCode() + "-XBC1234", 150000L, 2, 86.0, Car.CarType.TYPE_HATCHBACK, Car.CarStatus.STATUS_UNAVAILABLE, 750.0));
-        carRepository.save(new Car(2L, "/cars/bmw3.jpg", "BMW", "F34", 2013, Country.COUNTRY_GB.getCode() + "-AXX1234", 140000L, 5, 90.0, Car.CarType.TYPE_HATCHBACK, Car.CarStatus.STATUS_OPEN, 1500.0));
-        carRepository.save(new Car(2L, "/cars/yaris.png", "Toyota", "Yaris", 1999, Country.COUNTRY_GB.getCode() + "-ABX1234", 130000L, 4, 90.0, Car.CarType.TYPE_HATCHBACK, Car.CarStatus.STATUS_RENTED, 1500.0));
-        carRepository.save(new Car(2L, "/cars/hyundai-elantra.jpg", "Hyundai", "Lantra", 1990, Country.COUNTRY_GB.getCode() + "-AXC1234", 120000L, 5, 82.0, Car.CarType.TYPE_COMPACT, Car.CarStatus.STATUS_OPEN, 500.0));
+        carRepository.save(new Car(departmentRepository.findById(2L).get(), "https://cdn2.rcstatic.com/images/car_images/web/fiat/500_lrg.jpg", "Fiat", "Fiat 500", 2007, Country.COUNTRY_GB.getCode() + "-XBC1234", 150000L, 2, 86.0, Car.CarType.TYPE_HATCHBACK, Car.CarStatus.STATUS_UNAVAILABLE, 750.0));
+        carRepository.save(new Car(departmentRepository.findById(2L).get(), "/cars/bmw3.jpg", "BMW", "F34", 2013, Country.COUNTRY_GB.getCode() + "-AXX1234", 140000L, 5, 90.0, Car.CarType.TYPE_HATCHBACK, Car.CarStatus.STATUS_OPEN, 1500.0));
+        carRepository.save(new Car(departmentRepository.findById(2L).get(), "/cars/yaris.png", "Toyota", "Yaris", 1999, Country.COUNTRY_GB.getCode() + "-ABX1234", 130000L, 4, 90.0, Car.CarType.TYPE_HATCHBACK, Car.CarStatus.STATUS_RENTED, 1500.0));
+        carRepository.save(new Car(departmentRepository.findById(2L).get(), "/cars/hyundai-elantra.jpg", "Hyundai", "Lantra", 1990, Country.COUNTRY_GB.getCode() + "-AXC1234", 120000L, 5, 82.0, Car.CarType.TYPE_COMPACT, Car.CarStatus.STATUS_OPEN, 500.0));
 
-        carRepository.save(new Car(3L, "https://cdn2.rcstatic.com/images/car_images/web/fiat/500_lrg.jpg", "Fiat", "Fiat 500", 2007, Country.COUNTRY_PL.getCode() + "-AAC1234", 150000L, 2, 88.0, Car.CarType.TYPE_HATCHBACK, Car.CarStatus.STATUS_OPEN, 750.0));
-        carRepository.save(new Car(3L, "/cars/bmw3.jpg", "BMW", "F34", 2013, Country.COUNTRY_PL.getCode() + "-AVC1234", 140000L, 5, 100.0, Car.CarType.TYPE_HATCHBACK, Car.CarStatus.STATUS_RENTED, 1500.0));
-        carRepository.save(new Car(3L, "/cars/yaris.png", "Toyota", "Yaris", 1999, Country.COUNTRY_PL.getCode() + "-AVV1234", 130000L, 4, 100.0, Car.CarType.TYPE_HATCHBACK, Car.CarStatus.STATUS_OPEN, 1500.0));
-        carRepository.save(new Car(3L, "/cars/hyundai-elantra.jpg", "Hyundai", "Lantra", 1990, Country.COUNTRY_PL.getCode() + "-ACC1234", 120000L, 5, 84.0, Car.CarType.TYPE_COMPACT, Car.CarStatus.STATUS_UNAVAILABLE, 1000.0));
+        carRepository.save(new Car(departmentRepository.findById(3L).get(), "https://cdn2.rcstatic.com/images/car_images/web/fiat/500_lrg.jpg", "Fiat", "Fiat 500", 2007, Country.COUNTRY_PL.getCode() + "-AAC1234", 150000L, 2, 88.0, Car.CarType.TYPE_HATCHBACK, Car.CarStatus.STATUS_OPEN, 750.0));
+        carRepository.save(new Car(departmentRepository.findById(3L).get(), "/cars/bmw3.jpg", "BMW", "F34", 2013, Country.COUNTRY_PL.getCode() + "-AVC1234", 140000L, 5, 100.0, Car.CarType.TYPE_HATCHBACK, Car.CarStatus.STATUS_RENTED, 1500.0));
+        carRepository.save(new Car(departmentRepository.findById(3L).get(), "/cars/yaris.png", "Toyota", "Yaris", 1999, Country.COUNTRY_PL.getCode() + "-AVV1234", 130000L, 4, 100.0, Car.CarType.TYPE_HATCHBACK, Car.CarStatus.STATUS_OPEN, 1500.0));
+        carRepository.save(new Car(departmentRepository.findById(3L).get(), "/cars/hyundai-elantra.jpg", "Hyundai", "Lantra", 1990, Country.COUNTRY_PL.getCode() + "-ACC1234", 120000L, 5, 84.0, Car.CarType.TYPE_COMPACT, Car.CarStatus.STATUS_UNAVAILABLE, 1000.0));
 
-        carRepository.save(new Car(4L, "https://cdn2.rcstatic.com/images/car_images/web/fiat/500_lrg.jpg", "Fiat", "Fiat 500", 2007, Country.COUNTRY_PL.getCode() + "-BBC1234", 150000L, 2, 89.0, Car.CarType.TYPE_HATCHBACK, Car.CarStatus.STATUS_OPEN, 750.0));
-        carRepository.save(new Car(4L, "/cars/bmw3.jpg", "BMW", "F34", 2013, Country.COUNTRY_PL.getCode() + "-CCC1234", 140000L, 5, 98.0, Car.CarType.TYPE_HATCHBACK, Car.CarStatus.STATUS_OPEN, 1500.0));
-        carRepository.save(new Car(4L, "/cars/yaris.png", "Toyota", "Yaris", 1999, Country.COUNTRY_PL.getCode() + "-XXX1234", 130000L, 4, 99.0, Car.CarType.TYPE_HATCHBACK, Car.CarStatus.STATUS_OPEN, 1500.0));
-        carRepository.save(new Car(4L, "/cars/hyundai-elantra.jpg", "Hyundai", "Lantra", 1990, Country.COUNTRY_PL.getCode() + "-ZZZ1234", 120000L, 5, 84.0, Car.CarType.TYPE_COMPACT, Car.CarStatus.STATUS_UNAVAILABLE, 500.0));
+        carRepository.save(new Car(departmentRepository.findById(4L).get(), "https://cdn2.rcstatic.com/images/car_images/web/fiat/500_lrg.jpg", "Fiat", "Fiat 500", 2007, Country.COUNTRY_PL.getCode() + "-BBC1234", 150000L, 2, 89.0, Car.CarType.TYPE_HATCHBACK, Car.CarStatus.STATUS_OPEN, 750.0));
+        carRepository.save(new Car(departmentRepository.findById(4L).get(), "/cars/bmw3.jpg", "BMW", "F34", 2013, Country.COUNTRY_PL.getCode() + "-CCC1234", 140000L, 5, 98.0, Car.CarType.TYPE_HATCHBACK, Car.CarStatus.STATUS_OPEN, 1500.0));
+        carRepository.save(new Car(departmentRepository.findById(4L).get(), "/cars/yaris.png", "Toyota", "Yaris", 1999, Country.COUNTRY_PL.getCode() + "-XXX1234", 130000L, 4, 99.0, Car.CarType.TYPE_HATCHBACK, Car.CarStatus.STATUS_OPEN, 1500.0));
+        carRepository.save(new Car(departmentRepository.findById(4L).get(), "/cars/hyundai-elantra.jpg", "Hyundai", "Lantra", 1990, Country.COUNTRY_PL.getCode() + "-ZZZ1234", 120000L, 5, 84.0, Car.CarType.TYPE_COMPACT, Car.CarStatus.STATUS_UNAVAILABLE, 500.0));
 
-        carRepository.save(new Car(5L, "https://cdn2.rcstatic.com/images/car_images/web/fiat/500_lrg.jpg", "Fiat", "Fiat 500", 2007, Country.COUNTRY_PL.getCode() + "-BBB1234", 150000L, 2, 82.0, Car.CarType.TYPE_HATCHBACK, Car.CarStatus.STATUS_OPEN, 750.0));
-        carRepository.save(new Car(5L, "/cars/bmw3.jpg", "BMW", "F34", 2013, Country.COUNTRY_PL.getCode() + "-MMM1234", 140000L, 5, 90.0, Car.CarType.TYPE_HATCHBACK, Car.CarStatus.STATUS_OPEN, 2000.0));
-        carRepository.save(new Car(5L, "/cars/yaris.png", "Toyota", "Yaris", 1999, Country.COUNTRY_PL.getCode() + "-NNN1234", 130000L, 4, 90.0, Car.CarType.TYPE_HATCHBACK, Car.CarStatus.STATUS_RENTED, 2000.0));
-        carRepository.save(new Car(5L, "/cars/hyundai-elantra.jpg", "Hyundai", "Lantra", 1990, Country.COUNTRY_PL.getCode() + "-VVV1234", 120000L, 5, 82.0, Car.CarType.TYPE_COMPACT, Car.CarStatus.STATUS_UNAVAILABLE, 1000.0));
+        carRepository.save(new Car(departmentRepository.findById(5L).get(), "https://cdn2.rcstatic.com/images/car_images/web/fiat/500_lrg.jpg", "Fiat", "Fiat 500", 2007, Country.COUNTRY_PL.getCode() + "-BBB1234", 150000L, 2, 82.0, Car.CarType.TYPE_HATCHBACK, Car.CarStatus.STATUS_OPEN, 750.0));
+        carRepository.save(new Car(departmentRepository.findById(5L).get(), "/cars/bmw3.jpg", "BMW", "F34", 2013, Country.COUNTRY_PL.getCode() + "-MMM1234", 140000L, 5, 90.0, Car.CarType.TYPE_HATCHBACK, Car.CarStatus.STATUS_OPEN, 2000.0));
+        carRepository.save(new Car(departmentRepository.findById(5L).get(), "/cars/yaris.png", "Toyota", "Yaris", 1999, Country.COUNTRY_PL.getCode() + "-NNN1234", 130000L, 4, 90.0, Car.CarType.TYPE_HATCHBACK, Car.CarStatus.STATUS_RENTED, 2000.0));
+        carRepository.save(new Car(departmentRepository.findById(5L).get(), "/cars/hyundai-elantra.jpg", "Hyundai", "Lantra", 1990, Country.COUNTRY_PL.getCode() + "-VVV1234", 120000L, 5, 82.0, Car.CarType.TYPE_COMPACT, Car.CarStatus.STATUS_UNAVAILABLE, 1000.0));
 
-        carRepository.save(new Car(6L, "https://cdn2.rcstatic.com/images/car_images/web/fiat/500_lrg.jpg", "Fiat", "Fiat 500", 2007, Country.COUNTRY_PL.getCode() + "-ABC123X", 150000L, 2, 81.0, Car.CarType.TYPE_HATCHBACK, Car.CarStatus.STATUS_OPEN, 750.0));
-        carRepository.save(new Car(6L, "/cars/hyundai-elantra.jpg", "Hyundai", "Lantra", 1990, Country.COUNTRY_PL.getCode() + "-ABC12X4", 120000L, 5, 95.0, Car.CarType.TYPE_COMPACT, Car.CarStatus.STATUS_UNAVAILABLE, 2000.0));
-        carRepository.save(new Car(6L, "/cars/bmw3.jpg", "BMW", "F34", 2013, Country.COUNTRY_PL.getCode() + "-ABC1Z34", 140000L, 5, 100.0, Car.CarType.TYPE_HATCHBACK, Car.CarStatus.STATUS_RENTED, 2000.0));
-        carRepository.save(new Car(6L, "/cars/yaris.png", "Toyota", "Yaris", 1999, Country.COUNTRY_PL.getCode() + "-ABC1X34", 130000L, 4, 81.0, Car.CarType.TYPE_HATCHBACK, Car.CarStatus.STATUS_OPEN, 500.0));
+        carRepository.save(new Car(departmentRepository.findById(6L).get(), "https://cdn2.rcstatic.com/images/car_images/web/fiat/500_lrg.jpg", "Fiat", "Fiat 500", 2007, Country.COUNTRY_PL.getCode() + "-ABC123X", 150000L, 2, 81.0, Car.CarType.TYPE_HATCHBACK, Car.CarStatus.STATUS_OPEN, 750.0));
+        carRepository.save(new Car(departmentRepository.findById(6L).get(), "/cars/hyundai-elantra.jpg", "Hyundai", "Lantra", 1990, Country.COUNTRY_PL.getCode() + "-ABC12X4", 120000L, 5, 95.0, Car.CarType.TYPE_COMPACT, Car.CarStatus.STATUS_UNAVAILABLE, 2000.0));
+        carRepository.save(new Car(departmentRepository.findById(6L).get(), "/cars/bmw3.jpg", "BMW", "F34", 2013, Country.COUNTRY_PL.getCode() + "-ABC1Z34", 140000L, 5, 100.0, Car.CarType.TYPE_HATCHBACK, Car.CarStatus.STATUS_RENTED, 2000.0));
+        carRepository.save(new Car(departmentRepository.findById(6L).get(), "/cars/yaris.png", "Toyota", "Yaris", 1999, Country.COUNTRY_PL.getCode() + "-ABC1X34", 130000L, 4, 81.0, Car.CarType.TYPE_HATCHBACK, Car.CarStatus.STATUS_OPEN, 500.0));
 
-        carRepository.save(new Car(7L, "https://cdn2.rcstatic.com/images/car_images/web/fiat/500_lrg.jpg", "Fiat", "Fiat 500", 2007, Country.COUNTRY_PL.getCode() + "-ABC1A34", 150000L, 2, 88.0, Car.CarType.TYPE_HATCHBACK, Car.CarStatus.STATUS_OPEN, 750.0));
-        carRepository.save(new Car(7L, "/cars/hyundai-elantra.jpg", "Hyundai", "Lantra", 1990, Country.COUNTRY_PL.getCode() + "-ABC1D34", 120000L, 5, 100.0, Car.CarType.TYPE_COMPACT, Car.CarStatus.STATUS_UNAVAILABLE, 2000.0));
-        carRepository.save(new Car(7L, "/cars/bmw3.jpg", "BMW", "F34", 2013, Country.COUNTRY_PL.getCode() + "-ABC1DD4", 140000L, 5, 95.0, Car.CarType.TYPE_HATCHBACK, Car.CarStatus.STATUS_OPEN, 2000.0));
-        carRepository.save(new Car(7L, "/cars/yaris.png", "Toyota", "Yaris", 1999, Country.COUNTRY_PL.getCode() + "-ABC12S4", 130000L, 4, 82.0, Car.CarType.TYPE_HATCHBACK, Car.CarStatus.STATUS_RENTED, 500.0));
+        carRepository.save(new Car(departmentRepository.findById(7L).get(), "https://cdn2.rcstatic.com/images/car_images/web/fiat/500_lrg.jpg", "Fiat", "Fiat 500", 2007, Country.COUNTRY_PL.getCode() + "-ABC1A34", 150000L, 2, 88.0, Car.CarType.TYPE_HATCHBACK, Car.CarStatus.STATUS_OPEN, 750.0));
+        carRepository.save(new Car(departmentRepository.findById(7L).get(), "/cars/hyundai-elantra.jpg", "Hyundai", "Lantra", 1990, Country.COUNTRY_PL.getCode() + "-ABC1D34", 120000L, 5, 100.0, Car.CarType.TYPE_COMPACT, Car.CarStatus.STATUS_UNAVAILABLE, 2000.0));
+        carRepository.save(new Car(departmentRepository.findById(7L).get(), "/cars/bmw3.jpg", "BMW", "F34", 2013, Country.COUNTRY_PL.getCode() + "-ABC1DD4", 140000L, 5, 95.0, Car.CarType.TYPE_HATCHBACK, Car.CarStatus.STATUS_OPEN, 2000.0));
+        carRepository.save(new Car(departmentRepository.findById(7L).get(), "/cars/yaris.png", "Toyota", "Yaris", 1999, Country.COUNTRY_PL.getCode() + "-ABC12S4", 130000L, 4, 82.0, Car.CarType.TYPE_HATCHBACK, Car.CarStatus.STATUS_RENTED, 500.0));
     }
 
     private void createReservation() {
