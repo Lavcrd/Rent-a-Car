@@ -147,8 +147,8 @@ public class CarService {
     }
 
     @Transactional
-    public void updateCarLocation(Car car, Long departmentBack) {
-        car.setDepartmentId(departmentBack);
+    public void updateCarLocation(Car car, Department department) {
+        car.setDepartment(department);
         repository.save(car);
     }
 
@@ -159,9 +159,9 @@ public class CarService {
     }
 
     @Transactional
-    public void retrieveCar(Car car, Long departmentId, Long mileage) {
+    public void retrieveCar(Car car, Department department, Long mileage) {
         updateCarStatus(car, Car.CarStatus.STATUS_OPEN);
-        updateCarLocation(car, departmentId);
+        updateCarLocation(car, department);
         updateCarMileage(car, mileage);
     }
 
