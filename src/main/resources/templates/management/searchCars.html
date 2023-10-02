@@ -213,6 +213,7 @@
         </div>
 
         <div class="col-sm-9">
+            <div class="row" style="text-align:end;"><h6><i th:text="'Results: ' + ${results.size()}"></i></h6></div>
             <form th:action="@{/mg-res/reservation/{reservation}/select}" th:method="POST">
                 <div th:each="result : ${results}" id="car-list">
                     <div class="row">

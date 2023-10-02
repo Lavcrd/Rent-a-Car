@@ -86,6 +86,6 @@ public class Car {
     }
 
     public enum CarStatus {
-        STATUS_OPEN, STATUS_RENTED, STATUS_UNAVAILABLE
+        STATUS_OPEN, STATUS_RENTED, STATUS_UNAVAILABLE, STATUS_REMOVED
     }
 }

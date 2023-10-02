@@ -18,7 +18,7 @@ public interface CarRepository extends CrudRepository<Car, Long> {
             "FROM car c " +
             "LEFT JOIN reservation r ON c.id = r.car.id " +
             "WHERE c.department.id = :department " +
-            "   AND c.carStatus <> 3 " +
+            "   AND c.carStatus <> 2 " +
             "   AND (" +
             "       r.id IS NULL " +
             "       OR r.car.id NOT IN (" +
@@ -37,7 +37,7 @@ public interface CarRepository extends CrudRepository<Car, Long> {
             "FROM car c " +
             "LEFT JOIN reservation r ON c.id = r.car.id " +
             "WHERE c.department.id = :department " +
-            "   AND c.carStatus <> 3 " +
+            "   AND c.carStatus <> 2 " +
             "   AND (" +
             "       r.id IS NULL " +
             "       OR r.car.id NOT IN (" +
@@ -56,7 +56,7 @@ public interface CarRepository extends CrudRepository<Car, Long> {
             "FROM car c " +
             "LEFT JOIN reservation r ON c.id = r.car.id " +
             "WHERE c.department.id = :department " +
-            "   AND c.carStatus <> 3 " +
+            "   AND c.carStatus <> 2 " +
             "   AND (" +
             "       r.id IS NULL " +
             "       OR r.car.id NOT IN (" +
@@ -74,7 +74,7 @@ public interface CarRepository extends CrudRepository<Car, Long> {
 
     @Query(value = "SELECT c FROM car c " +
             "WHERE c.department in (:departments) " +
-            "AND (:status IS NULL OR c.carStatus = :status) " +
+            "AND ((:status IS NULL AND c.carStatus <= 2) OR c.carStatus = :status) " +
             "AND (:mileageMin IS NULL OR c.mileage >= :mileageMin) " +
             "AND (:mileageMax IS NULL OR c.mileage <= :mileageMax) " +
             "AND (:country IS NULL OR LOWER(c.plate) LIKE LOWER(CONCAT(:country, '-%'))) " +
