@@ -214,7 +214,7 @@
 
         <div class="col-sm-9">
             <div class="row" style="text-align:end;"><h6><i th:text="'Results: ' + ${results.size()}"></i></h6></div>
-            <form th:action="@{/mg-res/reservation/{reservation}/select}" th:method="POST">
+            <form th:action="@{/mg-car/select}" th:method="POST">
                 <div th:each="result : ${results}" id="car-list">
                     <div class="row">
                         <div class="col-md-12">
@@ -250,7 +250,7 @@
                                        th:text="${#numbers.formatDecimal((result.depositValue), 1, 2, 'POINT')} + ' PLN'"></p>
                                 </div>
                                 <button type="submit" class="btn btn-dark" th:text="Inspect"
-                                        th:value="${result.getId()}"></button>
+                                        name="select_button" th:value="${result.getId()}"></button>
                             </div>
                         </div>
                     </div>

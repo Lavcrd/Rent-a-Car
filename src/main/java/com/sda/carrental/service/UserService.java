@@ -2,6 +2,8 @@ package com.sda.carrental.service;
 
 import com.sda.carrental.exceptions.ResourceNotFoundException;
 import com.sda.carrental.model.operational.Reservation;
+import com.sda.carrental.model.property.Car;
+import com.sda.carrental.model.property.Department;
 import com.sda.carrental.service.auth.CustomUserDetails;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -93,4 +95,21 @@ public class UserService {
             return true;
         }
     }
+
+    public boolean hasNoAccessToProperty(CustomUserDetails cud, Object object) {
+        try {
+            if (object instanceof Department d) {
+                HttpStatus accessDep = departmentService.departmentAccess(cud, d.getId());
+                return accessDep == HttpStatus.FORBIDDEN;
+            } else if (object instanceof Car c) {
+                HttpStatus accessDep = departmentService.departmentAccess(cud, c.getDepartment().getId());
+                return accessDep == HttpStatus.FORBIDDEN;
+            } else {
+                return true;
+            }
+        } catch (ResourceNotFoundException err) {
+            return true;
+        }
+    }
+
 }
