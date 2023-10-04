@@ -83,7 +83,7 @@
 
                     <div class="d-flex" style="margin-top: 3%;justify-content:space-between;">
                         <div style="text-align:start;" th:utext="'<strong>Rent date:</strong><br>' + ${retrieve.rent.dateFrom}"></div>
-                        <div style="text-align:end;" th:utext="'<strong>Mileage:</strong><br>' + ${retrieve.rent.mileage}"></div>
+                        <div style="text-align:end;" th:utext="'<strong>Mileage:</strong><br>' + ${retrieve.rent.mileage} + ' [km]'"></div>
                     </div>
                     <div style="margin-top: 3%;"
                          th:utext="'<strong>Rental remarks:</strong><br>' + ${retrieve.rent.remarks}">
@@ -98,7 +98,7 @@
 
                     <div class="d-flex" style="margin-top: 3%;justify-content:space-between;">
                         <div style="text-align:start;" th:utext="'<strong>Retrieve date:</strong><br>' + ${retrieve.dateTo}"></div>
-                        <div style="text-align:end;" th:utext="'<strong>Mileage:</strong><br>' + ${retrieve.mileage}"></div>
+                        <div style="text-align:end;" th:utext="'<strong>Mileage:</strong><br>' + ${retrieve.mileage} + ' [km]'"></div>
                     </div>
                     <div style="margin-top: 3%;"
                          th:utext="'<strong>Retrieval remarks:</strong><br>' + ${retrieve.remarks}">
