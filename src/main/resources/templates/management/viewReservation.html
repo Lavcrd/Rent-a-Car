@@ -21,7 +21,7 @@
         <br>
         <div class="container text-center">
             <div class="row">
-                <div class="col">
+                <div class="col mb-5">
                     <dl style="text-align: left">
                         <dt style="font-weight: bold">Vehicle pick-up:</dt>
                         <dt style="font-weight: normal"
@@ -45,7 +45,7 @@
                     </ul>
                     <br>
                 </div>
-                <div class="col-5">
+                <div class="col-5 mb-5">
                     <h5><strong>Vehicle</strong></h5>
                     <ul class="list-group list-group-flush">
                         <li class="list-group-item" th:text="'Plate: ' + ${reservation.getCar().plate}"></li>
@@ -57,7 +57,7 @@
                     </ul>
                     <br>
                 </div>
-                <div class="col">
+                <div class="col mb-5">
                     <img th:src="${reservation.getCar().jpgLink}" alt="Picture" width="255" height="150"/>
                 </div>
             </div>
@@ -276,54 +276,6 @@
                                 </div>
                             </form>
                         </th:block>
-                        <th:block
-                                th:if="${reservation.status.name() == 'STATUS_PROGRESS' || reservation.status.name() == 'STATUS_COMPLETED'}">
-                            <button type="button" class="btn btn-dark mt-2 w-100 def-button-text" data-bs-toggle="modal"
-                                    data-bs-target="#rent_details">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                     class="bi bi-file-text" viewBox="0 0 16 16">
-                                    <path d="M5 4a.5.5 0 0 0 0 1h6a.5.5 0 0 0 0-1H5zm-.5 2.5A.5.5 0 0 1 5 6h6a.5.5 0 0 1 0 1H5a.5.5 0 0 1-.5-.5zM5 8a.5.5 0 0 0 0 1h6a.5.5 0 0 0 0-1H5zm0 2a.5.5 0 0 0 0 1h3a.5.5 0 0 0 0-1H5z"/>
-                                    <path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2zm10-1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1z"/>
-                                </svg>
-                                Status
-                            </button>
-
-                            <!--Modal-->
-                            <div class="modal fade" id="rent_details" tabindex="-1" role="dialog"
-                                 aria-hidden="true">
-                                <div class="modal-dialog modal-dialog-centered" role="document">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title">Status</h5>
-                                            <button type="button" class="close" data-bs-dismiss="modal"
-                                                    aria-label="Close">
-                                                <span aria-hidden="true">×</span>
-                                            </button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <div class="d-flex flex-column" style="text-align: left;">
-                                                <div th:utext="'<strong>Status:</strong><br>' + ${reservation.getStatus().getText()}"></div>
-                                                <div style="margin-top: 3%;"
-                                                     th:utext="'<strong>Rent date:</strong><br>' + ${rent_details.getDateFrom()}"></div>
-                                                <div style="margin-top: 3%;"
-                                                     th:if="${reservation.status.name() == 'STATUS_COMPLETED'}"
-                                                     th:utext="'<strong>Retrieve date:</strong><br>' + ${retrieve_details.getDateTo()}"></div>
-                                                <div style="margin-top: 3%;"
-                                                     th:utext="'<strong>Rental remarks:</strong><br>' + ${rent_details.getRemarks()}"></div>
-                                                <div style="margin-top: 3%;"
-                                                     th:if="${reservation.status.name() == 'STATUS_COMPLETED'}"
-                                                     th:utext="'<strong>Retrieval remarks:</strong><br>' + ${retrieve_details.getRemarks()}"></div>
-                                            </div>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-dark" data-bs-dismiss="modal">
-                                                Close
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </th:block>
                         <th:block th:if="${reservation.status.name() == 'STATUS_PROGRESS' && department == reservation.departmentBack.id}">
                             <form th:action="@{/mg-res/reservation/retrieve}" th:object="${retrieve_confirmation_form}"
                                   th:method="POST">
@@ -393,6 +345,54 @@
                                     </div>
                                 </div>
                             </form>
+                        </th:block>
+                        <th:block
+                                th:if="${reservation.status.name() == 'STATUS_PROGRESS' || reservation.status.name() == 'STATUS_COMPLETED'}">
+                            <button type="button" class="btn btn-dark mt-2 w-100 def-button-text" data-bs-toggle="modal"
+                                    data-bs-target="#rent_details">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                     class="bi bi-file-text" viewBox="0 0 16 16">
+                                    <path d="M5 4a.5.5 0 0 0 0 1h6a.5.5 0 0 0 0-1H5zm-.5 2.5A.5.5 0 0 1 5 6h6a.5.5 0 0 1 0 1H5a.5.5 0 0 1-.5-.5zM5 8a.5.5 0 0 0 0 1h6a.5.5 0 0 0 0-1H5zm0 2a.5.5 0 0 0 0 1h3a.5.5 0 0 0 0-1H5z"/>
+                                    <path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2zm10-1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1z"/>
+                                </svg>
+                                Status
+                            </button>
+
+                            <!--Modal-->
+                            <div class="modal fade" id="rent_details" tabindex="-1" role="dialog"
+                                 aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">Status</h5>
+                                            <button type="button" class="close" data-bs-dismiss="modal"
+                                                    aria-label="Close">
+                                                <span aria-hidden="true">×</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="d-flex flex-column" style="text-align: left;">
+                                                <div th:utext="'<strong>Status:</strong><br>' + ${reservation.getStatus().getText()}"></div>
+                                                <div style="margin-top: 3%;"
+                                                     th:utext="'<strong>Rent date:</strong><br>' + ${rent_details.getDateFrom()}"></div>
+                                                <div style="margin-top: 3%;"
+                                                     th:if="${reservation.status.name() == 'STATUS_COMPLETED'}"
+                                                     th:utext="'<strong>Retrieve date:</strong><br>' + ${retrieve_details.getDateTo()}"></div>
+                                                <div style="margin-top: 3%;"
+                                                     th:utext="'<strong>Rental remarks:</strong><br>' + ${rent_details.getRemarks()}"></div>
+                                                <div style="margin-top: 3%;"
+                                                     th:if="${reservation.status.name() == 'STATUS_COMPLETED'}"
+                                                     th:utext="'<strong>Retrieval remarks:</strong><br>' + ${retrieve_details.getRemarks()}"></div>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-dark" data-bs-dismiss="modal">
+                                                Close
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </th:block>
                     </div>
                 </div>
