@@ -60,7 +60,7 @@
             <br>
             <div class="container text-center">
                 <div class="row">
-                    <div class="col">
+                    <div class="col mb-5">
                         <dl style="text-align: left">
                             <dt style="font-weight: bold">Vehicle pick-up:</dt>
                             <dt style="font-weight: normal"
@@ -84,7 +84,7 @@
                         </ul>
                         <br>
                     </div>
-                    <div class="col-5">
+                    <div class="col-5 mb-5">
                         <h5><strong>Vehicle</strong></h5>
                         <ul class="list-group list-group-flush">
                             <li class="list-group-item" th:text="'Plate: ' + ${reservation.getCar().plate}"></li>
@@ -96,7 +96,7 @@
                         </ul>
                         <br>
                     </div>
-                    <div class="col">
+                    <div class="col mb-5">
                         <img th:src="${reservation.getCar().jpgLink}" alt="Picture" width="255" height="150"/>
                     </div>
                 </div>

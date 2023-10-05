@@ -66,6 +66,11 @@ public class ManageCarsController {
                 redAtt.addFlashAttribute("message", "Access rejected.");
                 return "redirect:/mg-car";
             }
+
+            //Hardcoded map coordinates due to lack of real data
+            map.addAttribute("latitude", "50.556140369367725");
+            map.addAttribute("longitude", "18.888311942515067");
+
             map.addAttribute("car", car);
             return "management/viewCar";
         } catch (ResourceNotFoundException err) {

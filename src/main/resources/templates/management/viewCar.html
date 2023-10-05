@@ -7,6 +7,10 @@
 
     <title>Rent-a-Car</title>
 
+    <link rel="stylesheet" href="/css/leaflet.css"/>
+    <script src="/js/leaflet.js"></script>
+    <script src="/js/leaflet-map.js"></script>
+
     <link rel="stylesheet" type="text/css" href="/css/styles.css"/>
     <link rel="stylesheet" href="/webjars/bootstrap/5.2.3/css/bootstrap.min.css">
 </head>
@@ -65,8 +69,10 @@
                         </tbody>
                     </table>
                 </div>
-                <div class="col-md-6 p-0 mt-3 mb-5"></div>
-                <div class="col-md-3 p-0 mt-3 mb-5">
+                <div class="col-md-7 p-0 mt-3 mb-5">
+                    <div id="map" style="height: 90%; width:90%; margin:auto;"></div>
+                </div>
+                <div class="col-md-2 p-0 mt-3 mb-5">
                     <table class="table table-borderless table-fixed" style="text-align:start;">
                         <tbody>
                         <tr class="table-dark">
@@ -80,7 +86,7 @@
                             </td>
                         </tr>
                         <tr class="table-dark">
-                            <td>Location:</td>
+                            <td>Department:</td>
                         </tr>
                         <tr>
                             <td>
@@ -140,7 +146,7 @@
                 </div>
             </div>
             <div class="row" style="margin-top:3%;">
-                <div class="col-md-3 p-0">
+                <div class="col-md-3 px-1">
                     <div class="d-flex flex-column">
                         <a class="btn btn-dark bg-dark mt-2 def-button-text"
                            type="button" href="/mg-car">
@@ -153,8 +159,35 @@
                         </a>
                     </div>
                 </div>
-                <div class="col-md-6"></div>
-                <div class="col-md-3 p-0"></div>
+                <div class="col-md-3 px-1"></div>
+                <div class="col-md-3 px-1">
+                    <button class="btn btn-dark bg-dark mt-2 def-button-text w-100" type="button">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-circle" viewBox="0 0 16 16">
+                            <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                        </svg>
+                        Set Status
+                    </button>
+                    <button class="btn btn-dark bg-dark mt-2 def-button-text w-100" type="button">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-circle" viewBox="0 0 16 16">
+                            <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                        </svg>
+                        Remove
+                    </button>
+                </div>
+                <div class="col-md-3 px-1">
+                    <button class="btn btn-dark bg-dark mt-2 def-button-text w-100" type="button">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-circle" viewBox="0 0 16 16">
+                            <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                        </svg>
+                        Update Details
+                    </button>
+                    <button class="btn btn-dark bg-dark mt-2 def-button-text w-100" type="button">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-circle" viewBox="0 0 16 16">
+                            <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                        </svg>
+                        Edit Model
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -163,5 +196,11 @@
     <div th:insert="fragments/bottom::message-handler"></div>
 </div>
 <div th:include="fragments/bottom::common-scripts"></div>
+<script th:inline="javascript">
+        var latitude = [[${latitude}]];
+        var longitude = [[${longitude}]];
+
+        initializeMap([latitude, longitude], 13);
+</script>
 </body>
 </html>
