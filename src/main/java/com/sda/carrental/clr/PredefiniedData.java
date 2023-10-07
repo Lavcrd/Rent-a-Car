@@ -152,6 +152,9 @@ public class PredefiniedData implements CommandLineRunner {
         carRepository.save(new Car(departmentRepository.findById(7L).get(), "/cars/hyundai-elantra.jpg", "Hyundai", "Lantra", 1990, Country.COUNTRY_PL.getCode() + "-ABC1D34", 120000L, 5, 100.0, Car.CarType.TYPE_COMPACT, Car.CarStatus.STATUS_UNAVAILABLE, 2000.0));
         carRepository.save(new Car(departmentRepository.findById(7L).get(), "/cars/bmw3.jpg", "BMW", "F34", 2013, Country.COUNTRY_PL.getCode() + "-ABC1DD4", 140000L, 5, 95.0, Car.CarType.TYPE_HATCHBACK, Car.CarStatus.STATUS_OPEN, 2000.0));
         carRepository.save(new Car(departmentRepository.findById(7L).get(), "/cars/yaris.png", "Toyota", "Yaris", 1999, Country.COUNTRY_PL.getCode() + "-ABC12S4", 130000L, 4, 82.0, Car.CarType.TYPE_HATCHBACK, Car.CarStatus.STATUS_RENTED, 500.0));
+
+        carRepository.save(new Car(departmentRepository.findById(1L).get(), "/cars/bmw3.jpg", "BMW", "F34", 2013, Country.COUNTRY_PL.getCode() + "-AFC4322", 130000L, 5, 95.0, Car.CarType.TYPE_HATCHBACK, Car.CarStatus.STATUS_OPEN, 1500.0));
+        carRepository.save(new Car(departmentRepository.findById(1L).get(), "/cars/bmw3.jpg", "BMW", "F34", 2013, Country.COUNTRY_PL.getCode() + "-ABF4323", 120000L, 5, 95.0, Car.CarType.TYPE_HATCHBACK, Car.CarStatus.STATUS_OPEN, 1500.0));
     }
 
     private void createReservation() {
