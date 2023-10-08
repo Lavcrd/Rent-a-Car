@@ -8,8 +8,10 @@ import com.sda.carrental.service.CarService;
 import com.sda.carrental.service.DepartmentService;
 import com.sda.carrental.service.UserService;
 import com.sda.carrental.service.auth.CustomUserDetails;
+import com.sda.carrental.web.mvc.form.ChangeCarStatus;
 import com.sda.carrental.web.mvc.form.SearchCarsForm;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -67,6 +69,9 @@ public class ManageCarsController {
                 return "redirect:/mg-car";
             }
 
+            map.addAttribute("status_form", map.getOrDefault("status_form", new ChangeCarStatus()));
+            map.addAttribute("statuses", Car.CarStatus.values());
+
             //Hardcoded map coordinates due to lack of real data
             map.addAttribute("latitude", "50.556140369367725");
             map.addAttribute("longitude", "18.888311942515067");
@@ -97,6 +102,39 @@ public class ManageCarsController {
     @RequestMapping(method = RequestMethod.POST, value = "/select")
     public String carViewButton(RedirectAttributes redAtt, @RequestParam("select_button") Long carId) {
         redAtt.addAttribute("carId", carId);
+        return "redirect:/mg-car/{carId}";
+    }
+
+    //View car page buttons
+    @RequestMapping(method = RequestMethod.POST, value = "/{id}/status")
+    public String statusChangeButton(@ModelAttribute("searchCarsForm") @Valid ChangeCarStatus form, Errors errors, RedirectAttributes redAtt, @PathVariable("id") Long carId) {
+        redAtt.addAttribute("carId", carId);
+
+        try {
+            CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+            Car car = carService.findCarById(carId);
+            if (userService.hasNoAccessToProperty(cud, car)) {
+                redAtt.addFlashAttribute("message", "Access rejected.");
+                return "redirect:/mg-car";
+            }
+
+            if (errors.hasErrors()) {
+                redAtt.addFlashAttribute("message", errors.getAllErrors().get(0).getDefaultMessage());
+                redAtt.addFlashAttribute("status_form", form);
+                return "redirect:/mg-car/{carId}";
+            }
+
+            Car.CarStatus carStatus = Car.CarStatus.valueOf((String) form.getStatus());
+            HttpStatus status = carService.updateCarStatus(car, carStatus);
+            if (status.equals(HttpStatus.OK)) {
+                redAtt.addFlashAttribute("message", "Success: Car status successfully changed to - " + carStatus.name().substring(7));
+            }
+        } catch (ResourceNotFoundException err) {
+            redAtt.addFlashAttribute("message", "Failure: Not found");
+        } catch (RuntimeException err) {
+            redAtt.addFlashAttribute("message", "Failure: Unexpected value");
+        }
         return "redirect:/mg-car/{carId}";
     }
 }

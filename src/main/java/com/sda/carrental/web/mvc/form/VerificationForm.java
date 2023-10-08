@@ -19,7 +19,7 @@ public class VerificationForm {
     @NotNull
     private Long customerId;
 
-    @ValidCountry(message = "Provided country is not valid")
+    @ValidCountry
     private Country country;
 
     @Pattern(regexp = "\\S{8,16}", message = "Personal IDN must contain minimum 8 characters.")

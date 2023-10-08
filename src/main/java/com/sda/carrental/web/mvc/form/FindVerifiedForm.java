@@ -10,7 +10,7 @@ import javax.validation.constraints.Pattern;
 @Getter
 @Setter
 public class FindVerifiedForm {
-    @ValidCountry(message = "Provided country is not valid")
+    @ValidCountry
     private Country country;
 
     @Pattern(regexp = "\\S{8,16}", message = "Personal IDN must be in range of 8 to 16 characters")

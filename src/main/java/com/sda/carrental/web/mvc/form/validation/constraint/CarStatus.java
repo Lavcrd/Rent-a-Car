@@ -1,6 +1,6 @@
 package com.sda.carrental.web.mvc.form.validation.constraint;
 
-import com.sda.carrental.web.mvc.form.validation.validator.ValidCountryValidator;
+import com.sda.carrental.web.mvc.form.validation.validator.CarStatusValidator;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
@@ -11,9 +11,9 @@ import java.lang.annotation.Target;
 
 @Target({ElementType.FIELD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
-@Constraint(validatedBy = {ValidCountryValidator.class})
-public @interface ValidCountry {
-    String message() default "Failure: Provided country is not valid";
+@Constraint(validatedBy = {CarStatusValidator.class})
+public @interface CarStatus {
+    String message() default "Failure: Provided value is not valid";
 
     Class<?>[] groups() default {};
 
