@@ -14,7 +14,7 @@ import javax.validation.constraints.Pattern;
 @RequiredArgsConstructor
 @AllArgsConstructor
 public class SearchCarForm {
-    @ValidCountry(message = "Provided country is not valid")
+    @ValidCountry
     private Country country;
 
     @Pattern(regexp = "\\S{1,10}", message = "Invalid length of license plate.")

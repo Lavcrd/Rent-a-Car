@@ -23,7 +23,7 @@ public class LocalReservationForm {
     @Pattern(regexp = "^\\+{0,1}[\\s\\d]{6,30}+$", message="Incorrect contact number format and/or length")
     private String contactNumber;
 
-    @ValidCountry(message = "Provided country is not valid")
+    @ValidCountry
     private Country country;
 
     @Pattern(regexp = "\\S{8,16}", message = "Personal IDN must be in range of 8 to 16 characters")

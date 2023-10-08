@@ -393,6 +393,11 @@ input {
     color: #CCC;
 }
 
+.modal-input {
+    width: 15em !important;
+    justify-self: end;
+}
+
 .form-group {
     display: flex;
     flex-direction: column;

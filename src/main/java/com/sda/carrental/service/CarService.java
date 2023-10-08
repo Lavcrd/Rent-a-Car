@@ -141,9 +141,10 @@ public class CarService {
     }
 
     @Transactional
-    public void updateCarStatus(Car car, Car.CarStatus status) {
+    public HttpStatus updateCarStatus(Car car, Car.CarStatus status) {
         car.setCarStatus(status);
         repository.save(car);
+        return HttpStatus.OK;
     }
 
     @Transactional
