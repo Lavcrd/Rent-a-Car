@@ -43,9 +43,10 @@ public class VerificationService {
     public HttpStatus createVerification(VerificationForm form) {
         try {
             if (getOptionalVerificationByCustomer(form.getCustomerId()).isEmpty()) {
-                if (getOptionalVerification(form.getCountry(), form.getPersonalId()).isPresent())
+                Country country = Country.valueOf(Country.class, form.getCountry());
+                if (getOptionalVerification(country, form.getPersonalId()).isPresent())
                     return HttpStatus.CONFLICT;
-                repository.save(new Verification(form.getCustomerId(), form.getCountry(), form.getPersonalId(), form.getDriverId()));
+                repository.save(new Verification(form.getCustomerId(), country, form.getPersonalId(), form.getDriverId()));
                 return HttpStatus.CREATED;
             }
             return HttpStatus.EXPECTATION_FAILED;

@@ -1,13 +1,9 @@
 package com.sda.carrental.web.mvc.form;
 
-import com.sda.carrental.global.enums.Country;
-
+import com.sda.carrental.web.mvc.form.validation.constraint.ValidCountry;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import javax.validation.constraints.NotNull;
-
 
 @Getter
 @Setter
@@ -19,8 +15,8 @@ public class SearchDepositsForm {
 
     private Long department;
 
-    @NotNull(message = "Field 'country' cannot be empty")
-    private Country country;
+    @ValidCountry
+    private String country;
 
     private String plate;
 }

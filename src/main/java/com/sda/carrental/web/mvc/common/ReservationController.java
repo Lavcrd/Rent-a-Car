@@ -9,7 +9,9 @@ import com.sda.carrental.model.users.User;
 import com.sda.carrental.service.CarService;
 import com.sda.carrental.service.CustomerService;
 import com.sda.carrental.service.DepartmentService;
+import com.sda.carrental.service.ReservationService;
 import com.sda.carrental.service.auth.CustomUserDetails;
+import com.sda.carrental.web.mvc.form.IndexForm;
 import com.sda.carrental.web.mvc.form.SelectCarForm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -32,6 +34,7 @@ public class ReservationController {
     private final CarService carService;
     private final DepartmentService depService;
     private final CustomerService customerService;
+    private final ReservationService reservationService;
     private final ConstantValues cv;
 
     //Pages
@@ -40,6 +43,8 @@ public class ReservationController {
         try {
             if (reservationData == null) throw new IllegalActionException();
             if (reservationData.getIndexData() == null) throw new IllegalActionException();
+            IndexForm index = reservationData.getIndexData();
+            if (!reservationService.isChronologyValid(index.getDateFrom(), index.getDateTo(), index.getDateCreated())) throw new ResourceNotFoundException();
 
             Car car = carService.findCarById(reservationData.getCarId());
             Department depFrom = depService.findDepartmentWhereId(reservationData.getIndexData().getDepartmentIdFrom());

@@ -41,7 +41,7 @@ public class CarService {
         return repository.findAvailableCarsInDepartment(r.getDateFrom().minusDays(cv.getReservationGap()), r.getDateTo().plusDays(cv.getReservationGap()), r.getDepartmentTake().getId());
     }
 
-    public Car findAvailableCar(LocalDate dateFrom, LocalDate dateTo, Long department, long carId) throws IllegalArgumentException {
+    public Car findAvailableCar(LocalDate dateFrom, LocalDate dateTo, Long department, long carId) throws ResourceNotFoundException {
         return repository.findCarByCarIdAndAvailability(dateFrom.minusDays(cv.getReservationGap()), dateTo.plusDays(cv.getReservationGap()), department, carId).orElseThrow(ResourceNotFoundException::new);
     }
 
@@ -59,11 +59,12 @@ public class CarService {
                     f.getDepartmentId());
         } else if (form instanceof SearchCarsForm f) {
             CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            Country formCountry = Country.valueOf(f.getCountry());
             String country;
-            if (f.getCountry().equals(Country.COUNTRY_NONE)) {
+            if (formCountry.equals(Country.COUNTRY_NONE)) {
                 country = null;
             } else {
-                country = f.getCountry().getCode();
+                country = formCountry.getCode();
             }
 
             List<Department> departments;
@@ -78,8 +79,7 @@ public class CarService {
             cars = (ArrayList<Car>) repository.findByCriteria(
                     f.getMileageMin(), f.getMileageMax(),
                     country, f.getPlate(),
-                    departments, f.getStatus()
-            );
+                    departments, Car.CarStatus.valueOf(f.getStatus()));
         } else {
             return Collections.emptyList();
         }

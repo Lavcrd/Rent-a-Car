@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,11 +34,16 @@ public class ReservationService {
         return repository.findById(id).orElseThrow(ResourceNotFoundException::new);
     }
 
+    public boolean isChronologyValid(LocalDate dateFrom, LocalDate dateTo, LocalDate dateCreated) {
+        return !dateFrom.isAfter(dateTo) && dateCreated.isEqual(LocalDate.now());
+    }
+
     @Transactional
     public HttpStatus createReservation(Customer customer, SelectCarForm form) {
         try {
             IndexForm index = form.getIndexData();
 
+            if (!isChronologyValid(index.getDateFrom(), index.getDateTo(), index.getDateCreated())) throw new ResourceNotFoundException();
             Car car = carService.findAvailableCar(index.getDateFrom(), index.getDateTo(), index.getDepartmentIdFrom(), form.getCarId());
             Department depRepFrom = departmentService.findDepartmentWhereId(index.getDepartmentIdFrom());
             Department depRepTo = departmentService.findDepartmentWhereId(index.getDepartmentIdTo());
@@ -57,10 +63,8 @@ public class ReservationService {
 
             return HttpStatus.CREATED;
         } catch (ResourceNotFoundException err) {
-            err.printStackTrace();
             return HttpStatus.NOT_FOUND;
         } catch (Exception err) {
-            err.printStackTrace();
             return HttpStatus.INTERNAL_SERVER_ERROR;
         }
     }

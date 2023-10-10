@@ -83,12 +83,12 @@ public class CarRetrieveController {
                 return "management/carRetrieve";
             }
 
-            Reservation reservation = reservationService.findActiveReservationByPlate(form.getCountry().getCode() + "-" + form.getPlate());
+            Reservation reservation = reservationService.findActiveReservationByPlate(Country.valueOf(form.getCountry()).getCode() + "-" + form.getPlate());
             redAtt.addFlashAttribute("reservation", reservation);
             redAtt.addFlashAttribute("rent_details", rentService.findById(reservation.getId()));
             return "redirect:/c-ret";
         } catch (ResourceNotFoundException err) {
-            redAtt.addFlashAttribute("message", "Failed: No active rent found for: " + form.getCountry().getCode() + '-' + form.getPlate());
+            redAtt.addFlashAttribute("message", "Failed: No active rent found for: " + Country.valueOf(form.getCountry()).getCode() + '-' + form.getPlate());
             return "redirect:/c-ret";
         } catch (RuntimeException err) {
             redAtt.addFlashAttribute("message", "An unexpected error occurred. Please try again.");
@@ -105,7 +105,7 @@ public class CarRetrieveController {
             redAtt.addFlashAttribute("reservation", reservation);
             redAtt.addFlashAttribute("rent_details", rentService.findById(reservation.getId()));
             String[] plateValues = plate.split("-", 2);
-            redAtt.addFlashAttribute("searchCarForm", new SearchCarForm(Country.valueOf("COUNTRY_" + plateValues[0]), plateValues[1]));
+            redAtt.addFlashAttribute("searchCarForm", new SearchCarForm("COUNTRY_" + plateValues[0], plateValues[1]));
             redAtt.addFlashAttribute("message", err.getAllErrors().get(0).getDefaultMessage());
             redAtt.addFlashAttribute("confirm_claim_form", form);
             return "redirect:/c-ret";

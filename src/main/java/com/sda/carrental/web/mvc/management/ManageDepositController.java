@@ -91,7 +91,6 @@ public class ManageDepositController {
         redAtt.addFlashAttribute("searchDepositsForm", form);
 
         if (err.hasErrors()) {
-            redAtt.addFlashAttribute("message", err.getAllErrors().get(0).getDefaultMessage());
             return "redirect:/mg-depo";
         }
 

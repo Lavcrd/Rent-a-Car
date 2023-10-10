@@ -89,11 +89,12 @@ public class RetrieveService {
     }
 
     public List<Retrieve> findUnresolvedByUserContextAndForm(CustomUserDetails cud, SearchDepositsForm form) {
+        Country formCountry = Country.valueOf(form.getCountry());
         String country;
-        if (form.getCountry().equals(Country.COUNTRY_NONE)) {
+        if (formCountry.equals(Country.COUNTRY_NONE)) {
             country = null;
         } else {
-            country = form.getCountry().getCode();
+            country = formCountry.getCode();
         }
 
         List<Department> departments;

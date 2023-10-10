@@ -8,5 +8,5 @@ import lombok.Setter;
 @Setter
 public class ChangeCarStatus extends ConfirmationForm {
     @CarStatus
-    private Object status;
+    private String status;
 }

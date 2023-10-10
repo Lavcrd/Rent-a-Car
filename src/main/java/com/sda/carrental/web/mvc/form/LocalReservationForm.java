@@ -1,7 +1,6 @@
 package com.sda.carrental.web.mvc.form;
 
-import com.sda.carrental.global.enums.Country;
-import com.sda.carrental.web.mvc.form.validation.constraint.ValidCountry;
+import com.sda.carrental.web.mvc.form.validation.constraint.SelectedCountry;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.validator.constraints.Length;
@@ -23,8 +22,8 @@ public class LocalReservationForm {
     @Pattern(regexp = "^\\+{0,1}[\\s\\d]{6,30}+$", message="Incorrect contact number format and/or length")
     private String contactNumber;
 
-    @ValidCountry
-    private Country country;
+    @SelectedCountry
+    private String country;
 
     @Pattern(regexp = "\\S{8,16}", message = "Personal IDN must be in range of 8 to 16 characters")
     private String personalId;

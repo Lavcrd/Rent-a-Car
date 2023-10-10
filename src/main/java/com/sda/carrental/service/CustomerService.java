@@ -126,16 +126,17 @@ public class CustomerService {
             HttpStatus hasAccess = departmentService.departmentAccess(cud, form.getReservationForm().getIndexData().getDepartmentIdFrom());
             if (hasAccess.equals(HttpStatus.FORBIDDEN)) return HttpStatus.FORBIDDEN;
 
-            Optional<Verification> verification = verificationService.getOptionalVerification(form.getCountry(), form.getPersonalId());
+            Country country = Country.valueOf(form.getCountry());
+            Optional<Verification> verification = verificationService.getOptionalVerification(country, form.getPersonalId());
             if (verification.isEmpty()) {
                 Customer customer = createGuest(form);
-                verificationService.createVerification(customer.getId(), form.getCountry(), form.getPersonalId(), form.getDriverId());
-                reservationService.createReservation(customer, form.getReservationForm());
-                return HttpStatus.CREATED;
+                verificationService.createVerification(customer.getId(), country, form.getPersonalId(), form.getDriverId());
+                return reservationService.createReservation(customer, form.getReservationForm());
             } else {
                 Customer customer = findById(verification.get().getId());
-                reservationService.createReservation(customer, form.getReservationForm());
-                return HttpStatus.OK;
+                HttpStatus status = reservationService.createReservation(customer, form.getReservationForm());
+                if (status.equals(HttpStatus.CREATED)) return HttpStatus.OK;
+                return status;
             }
 
         } catch (RuntimeException err) {

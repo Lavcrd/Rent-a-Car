@@ -101,7 +101,7 @@ public class ManageCustomersController {
             }
 
             map.addAttribute("unverified_customer", customerService.findById(customerId));
-            map.addAttribute("verified_customer", customerService.findCustomerByVerification(verificationData.getCountry(), verificationData.getPersonalId()));
+            map.addAttribute("verified_customer", customerService.findCustomerByVerification(Country.valueOf(verificationData.getCountry()), verificationData.getPersonalId()));
             map.addAttribute("confirmation_form", new ConfirmationForm());
             return "management/mergeCustomer";
         } catch (ResourceNotFoundException err) {
