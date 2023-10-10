@@ -91,7 +91,6 @@ public class ManageCarsController {
 
         redAtt.addFlashAttribute("searchCarsForm", form);
         if (err.hasErrors()) {
-            redAtt.addFlashAttribute("message", err.getAllErrors().get(0).getDefaultMessage());
             return "redirect:/mg-car";
         }
 
@@ -125,7 +124,7 @@ public class ManageCarsController {
                 return "redirect:/mg-car/{carId}";
             }
 
-            Car.CarStatus carStatus = Car.CarStatus.valueOf((String) form.getStatus());
+            Car.CarStatus carStatus = Car.CarStatus.valueOf(form.getStatus());
             HttpStatus status = carService.updateCarStatus(car, carStatus);
             if (status.equals(HttpStatus.OK)) {
                 redAtt.addFlashAttribute("message", "Success: Car status successfully changed to - " + carStatus.name().substring(7));
