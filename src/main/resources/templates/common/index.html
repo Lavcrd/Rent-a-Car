@@ -17,7 +17,7 @@
     <div th:include="fragments/top::reg-options"></div>
 
     <div id="main">
-        <img src="../images/img1.jpg"/>
+        <img style="width: inherit;" src="../images/img1.jpg"/>
 
         <form th:object="${indexForm}" th:action="@{/}" th:method="POST">
             <div id="box_car" class="border border-dark">
@@ -36,7 +36,7 @@
                 </select><br>
 
                 <div class="form-check form-switch">
-                    <input class="form-check-input bg-dark" type="checkbox" role="switch" name="firstBranchChecked"
+                    <input class="form-check-input btn btn-dark bg-white index-switch" type="checkbox" role="switch" name="firstBranchChecked"
                            data-bs-toggle="collapse"
                            data-bs-target="#checkReturn"
                            id="checkSwitch"
@@ -64,14 +64,16 @@
 
                 <div>
                     <label for="dateFrom">from</label>
-                    <input id="dateFrom" class="text-white bg-dark" th:type="date" th:field="*{dateFrom}" required/>
+                    <input id="dateFrom" class="form-control text-white bg-dark mx-1" style="width:revert;display:revert;"
+                           th:type="date" th:field="*{dateFrom}" required/>
                     <label for="dateTo">to</label>
-                    <input id="dateTo" class="text-white bg-dark" th:type="date" th:field="*{dateTo}" required/>
+                    <input id="dateTo" class="form-control text-white bg-dark mx-1" style="width:revert;display:revert;"
+                           th:type="date" th:field="*{dateTo}" required/>
                 </div>
 
                 <div class="position-relative">
 
-                    <button class="btn btn-dark bg-dark position-absolute bottom-0 end-0"
+                    <button class="btn btn-dark position-absolute bottom-0 end-0"
                             type="submit">
 
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
