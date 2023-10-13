@@ -13,6 +13,8 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = {CarStatusValidator.class})
 public @interface CarStatus {
+    boolean canBeEmpty() default false;
+
     String message() default "Failure: Provided value is not valid";
 
     Class<?>[] groups() default {};

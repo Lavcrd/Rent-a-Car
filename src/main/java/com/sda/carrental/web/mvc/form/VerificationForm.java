@@ -1,6 +1,6 @@
 package com.sda.carrental.web.mvc.form;
 
-import com.sda.carrental.web.mvc.form.validation.constraint.SelectedCountry;
+import com.sda.carrental.web.mvc.form.validation.constraint.ValidCountry;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +18,7 @@ public class VerificationForm {
     @NotNull
     private Long customerId;
 
-    @SelectedCountry
+    @ValidCountry(canBeUnselected = false)
     private String country;
 
     @Pattern(regexp = "\\S{8,16}", message = "Personal IDN must contain minimum 8 characters.")

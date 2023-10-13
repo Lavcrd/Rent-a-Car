@@ -69,7 +69,7 @@ public class ManageCarsController {
                 return "redirect:/mg-car";
             }
 
-            map.addAttribute("status_form", map.getOrDefault("status_form", new ChangeCarStatus()));
+            map.addAttribute("status_form", map.getOrDefault("status_form", new ChangeCarStatus(car.getCarStatus().name())));
             map.addAttribute("statuses", Car.CarStatus.values());
 
             //Hardcoded map coordinates due to lack of real data
