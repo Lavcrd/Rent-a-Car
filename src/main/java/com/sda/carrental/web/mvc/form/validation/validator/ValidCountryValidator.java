@@ -7,15 +7,18 @@ import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
 public class ValidCountryValidator implements ConstraintValidator<ValidCountry, String> {
+    private boolean canBeUnselected;
+
     @Override
     public void initialize(ValidCountry constraint) {
+        this.canBeUnselected = constraint.canBeUnselected();
     }
 
     @Override
     public boolean isValid(String input, ConstraintValidatorContext cvc) {
         try {
             if (input == null) return false;
-            Country.valueOf(Country.class, input);
+            if (Country.valueOf(Country.class, input).equals(Country.COUNTRY_NONE) && canBeUnselected) return true;
             return true;
         } catch (RuntimeException err) {
             return false;

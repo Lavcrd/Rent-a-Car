@@ -11,7 +11,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class SearchCarsForm extends GenericCarForm {
 
-    @CarStatus
+    @CarStatus(canBeEmpty = true)
     private String status;
 
     private Long department;

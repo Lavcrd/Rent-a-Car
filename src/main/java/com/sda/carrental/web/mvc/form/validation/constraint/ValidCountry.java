@@ -13,6 +13,8 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = {ValidCountryValidator.class})
 public @interface ValidCountry {
+    boolean canBeUnselected() default true;
+
     String message() default "Failure: Provided country is not valid";
 
     Class<?>[] groups() default {};

@@ -58,33 +58,45 @@ public class CarService {
                     f.getDateTo().plusDays(cv.getReservationGap()),
                     f.getDepartmentId());
         } else if (form instanceof SearchCarsForm f) {
-            CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            Country formCountry = Country.valueOf(f.getCountry());
-            String country;
-            if (formCountry.equals(Country.COUNTRY_NONE)) {
-                country = null;
-            } else {
-                country = formCountry.getCode();
-            }
-
-            List<Department> departments;
-            if (f.getDepartment() == null) {
-                departments = departmentService.getDepartmentsByUserContext(cud);
-            } else {
-                if (departmentService.departmentAccess(cud, f.getDepartment()).equals(HttpStatus.FORBIDDEN))
-                    return Collections.emptyList();
-                departments = List.of(departmentService.findDepartmentWhereId(f.getDepartment()));
-            }
-
-            cars = (ArrayList<Car>) repository.findByCriteria(
-                    f.getMileageMin(), f.getMileageMax(),
-                    country, f.getPlate(),
-                    departments, Car.CarStatus.valueOf(f.getStatus()));
+            cars = (ArrayList<Car>) findByCriteria(f);
         } else {
             return Collections.emptyList();
         }
 
         return applyFilters(cars, form);
+    }
+
+    private List<Car> findByCriteria(SearchCarsForm f) {
+        CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        Country formCountry = Country.valueOf(f.getCountry());
+        String country;
+        if (formCountry.equals(Country.COUNTRY_NONE)) {
+            country = null;
+        } else {
+            country = formCountry.getCode();
+        }
+
+        List<Department> departments;
+        if (f.getDepartment() == null) {
+            departments = departmentService.getDepartmentsByUserContext(cud);
+        } else {
+            if (departmentService.departmentAccess(cud, f.getDepartment()).equals(HttpStatus.FORBIDDEN))
+                return Collections.emptyList();
+            departments = List.of(departmentService.findDepartmentWhereId(f.getDepartment()));
+        }
+
+        Car.CarStatus carStatus;
+        if (f.getStatus().isEmpty()) {
+            carStatus = null;
+        } else {
+            carStatus = Car.CarStatus.valueOf(f.getStatus());
+        }
+
+        return repository.findByCriteria(
+                f.getMileageMin(), f.getMileageMax(),
+                country, f.getPlate(),
+                departments, carStatus);
     }
 
     private List<Car> applyFilters(List<Car> cl, GenericCarForm form) {
