@@ -166,9 +166,10 @@ public class CarService {
     }
 
     @Transactional
-    public void updateCarMileage(Car car, Long mileage) {
+    public HttpStatus updateCarMileage(Car car, Long mileage) {
         car.setMileage(mileage);
         repository.save(car);
+        return HttpStatus.OK;
     }
 
     @Transactional
