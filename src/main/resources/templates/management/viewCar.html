@@ -235,7 +235,9 @@
                         </svg>
                         Set Mileage
                     </button>
-                    <button class="btn btn-dark bg-dark mt-2 def-button-text w-100" type="button">
+                    <button class="btn btn-dark bg-dark mt-2 def-button-text w-100" type="button"
+                            data-bs-toggle="modal"
+                            data-bs-target="#departmentModal">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                              class="bi bi-circle" viewBox="0 0 16 16">
                             <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
@@ -243,8 +245,9 @@
                         Set Department
                     </button>
 
-                    <!--Modal status-->
-                    <form th:method="POST" th:object="${mileage_form}" th:action="@{'/mg-car/' + ${carId} + '/mileage'}">
+                    <!--Modal mileage-->
+                    <form th:method="POST" th:object="${mileage_form}"
+                          th:action="@{'/mg-car/' + ${carId} + '/mileage'}">
                         <div class="modal fade" id="mileageModal" tabindex="-1" role="dialog"
                              aria-hidden="true">
                             <div class="modal-dialog modal-dialog-centered" role="document">
@@ -286,6 +289,56 @@
                             </div>
                         </div>
                     </form>
+
+                    <!--Modal department-->
+                    <form th:method="POST" th:object="${department_form}"
+                          th:action="@{'/mg-car/' + ${carId} + '/department'}">
+                        <div class="modal fade" id="departmentModal" tabindex="-1" role="dialog"
+                             aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">Department</h5>
+                                        <button type="button" class="close" data-bs-dismiss="modal"
+                                                aria-label="Close">
+                                            <span aria-hidden="true">×</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <p>Please confirm <u>department update</u> with password.</p>
+                                        <div style="grid-template-columns: auto auto; display: grid;">
+                                            <label style="justify-self: start;" for="s_department"
+                                                   class="form-label">Department: </label>
+                                            <select id="s_department" class="form-select modal-input"
+                                                    th:field="*{departmentId}" required>
+                                                <div th:each="department:${departments}">
+                                                    <option th:text="${department.country.code} + '-' + ${department.city} + ', ' + ${department.address}"
+                                                            th:value="${department.id}"
+                                                            th:field="*{departmentId}"></option>
+                                                </div>
+                                            </select>
+                                        </div>
+                                        <div style="grid-template-columns: auto auto; display: grid; margin-top: 2%;">
+                                            <label style="justify-self: start;" for="s_department_confirmation"
+                                                   class="text-md">Password: </label>
+                                            <input id="s_department_confirmation"
+                                                   class="text-black bg-white modal-input"
+                                                   th:placeholder="'Confirm with password'"
+                                                   th:type="password" th:field="*{currentPassword}"
+                                                   autocomplete="new-password"
+                                                   required/>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-dark" data-bs-dismiss="modal">
+                                            Close
+                                        </button>
+                                        <button type="submit" class="btn btn-dark">Confirm</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -300,7 +353,6 @@
         var longitude = [[${longitude}]];
 
         initializeMap([latitude, longitude], 13);
-
 </script>
 </body>
 </html>
