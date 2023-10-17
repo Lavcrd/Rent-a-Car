@@ -160,9 +160,10 @@ public class CarService {
     }
 
     @Transactional
-    public void updateCarLocation(Car car, Department department) {
+    public HttpStatus updateCarLocation(Car car, Department department) {
         car.setDepartment(department);
         repository.save(car);
+        return HttpStatus.OK;
     }
 
     @Transactional

@@ -8,6 +8,7 @@ import com.sda.carrental.service.CarService;
 import com.sda.carrental.service.DepartmentService;
 import com.sda.carrental.service.UserService;
 import com.sda.carrental.service.auth.CustomUserDetails;
+import com.sda.carrental.web.mvc.form.ChangeCarDepartment;
 import com.sda.carrental.web.mvc.form.ChangeCarMileage;
 import com.sda.carrental.web.mvc.form.ChangeCarStatus;
 import com.sda.carrental.web.mvc.form.SearchCarsForm;
@@ -71,6 +72,9 @@ public class ManageCarsController {
             }
 
             map.addAttribute("mileage_form", map.getOrDefault("mileage_form", new ChangeCarMileage(car.getMileage())));
+
+            map.addAttribute("department_form", map.getOrDefault("department_form", new ChangeCarDepartment(car.getDepartment().getId())));
+            map.addAttribute("departments", departmentService.findAll());
 
             map.addAttribute("status_form", map.getOrDefault("status_form", new ChangeCarStatus(car.getCarStatus().name())));
             map.addAttribute("statuses", Car.CarStatus.values());
@@ -141,7 +145,7 @@ public class ManageCarsController {
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/{id}/mileage")
-    public String detailsChangeButton(@ModelAttribute("mileage_form") @Valid ChangeCarMileage form, Errors errors, RedirectAttributes redAtt, @PathVariable("id") Long carId) {
+    public String mileageChangeButton(@ModelAttribute("mileage_form") @Valid ChangeCarMileage form, Errors errors, RedirectAttributes redAtt, @PathVariable("id") Long carId) {
         redAtt.addAttribute("carId", carId);
 
         try {
@@ -162,6 +166,38 @@ public class ManageCarsController {
             HttpStatus status = carService.updateCarMileage(car, form.getMileage());
             if (status.equals(HttpStatus.OK)) {
                 redAtt.addFlashAttribute("message", "Success: Car mileage successfully changed to - " + form.getMileage());
+            }
+        } catch (ResourceNotFoundException err) {
+            redAtt.addFlashAttribute("message", "Failure: Not found");
+        } catch (RuntimeException err) {
+            redAtt.addFlashAttribute("message", "Failure: Unexpected value");
+        }
+        return "redirect:/mg-car/{carId}";
+    }
+
+    @RequestMapping(method = RequestMethod.POST, value = "/{id}/department")
+    public String departmentChangeButton(@ModelAttribute("department_form") @Valid ChangeCarDepartment form, Errors errors, RedirectAttributes redAtt, @PathVariable("id") Long carId) {
+        redAtt.addAttribute("carId", carId);
+
+        try {
+            CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+            Car car = carService.findCarById(carId);
+            if (userService.hasNoAccessToProperty(cud, car)) {
+                redAtt.addFlashAttribute("message", "Access rejected.");
+                return "redirect:/mg-car";
+            }
+
+            if (errors.hasErrors()) {
+                redAtt.addFlashAttribute("message", errors.getAllErrors().get(0).getDefaultMessage());
+                redAtt.addFlashAttribute("department_form", form);
+                return "redirect:/mg-car/{carId}";
+            }
+
+            Department department = departmentService.findDepartmentWhereId(form.getDepartmentId());
+            HttpStatus status = carService.updateCarLocation(car, department);
+            if (status.equals(HttpStatus.OK)) {
+                redAtt.addFlashAttribute("message", "Success: Car location successfully changed to - " + department.getCity() + ", " + department.getAddress());
             }
         } catch (ResourceNotFoundException err) {
             redAtt.addFlashAttribute("message", "Failure: Not found");
