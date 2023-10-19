@@ -107,15 +107,15 @@
                     <tr th:each="result: ${results}">
                         <td>
                             <div class="overflow-cell-hs"
-                                 th:utext="${result.reservation.customer.getName()} + '<br>' + ${result.reservation.customer.getSurname()}"></div>
+                                 th:utext="${result.rent.reservation.customer.getName()} + '<br>' + ${result.rent.reservation.customer.getSurname()}"></div>
                         </td>
                         <td>
                             <div class="overflow-cell-hs"
-                                 th:text="${result.reservation.car.getPlate()}"></div>
+                                 th:text="${result.rent.reservation.car.getPlate()}"></div>
                         </td>
                         <td>
                             <div class="overflow-cell-hs"
-                                 th:utext="${result.reservation.departmentBack.getCity()} + ', <br>' + ${result.reservation.departmentBack.getAddress()}"></div>
+                                 th:utext="${result.rent.reservation.departmentBack.getCity()} + ', <br>' + ${result.rent.reservation.departmentBack.getAddress()}"></div>
                         </td>
                         <td>
                             <div class="overflow-cell-hs" th:text="${result.dateTo}"></div>
