@@ -170,7 +170,9 @@
                         </svg>
                         Set Status
                     </button>
-                    <button class="btn btn-dark bg-dark mt-2 def-button-text w-100" type="button">
+                    <button class="btn btn-dark bg-dark mt-2 def-button-text w-100" type="button"
+                            data-bs-toggle="modal"
+                            data-bs-target="#scheduleModal">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                              class="bi bi-circle" viewBox="0 0 16 16">
                             <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
@@ -224,6 +226,51 @@
                             </div>
                         </div>
                     </form>
+
+                    <!--Modal mileage-->
+                    <div class="modal fade" id="scheduleModal" tabindex="-1" role="dialog"
+                         aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Schedule</h5>
+                                    <button type="button" class="close" data-bs-dismiss="modal"
+                                            aria-label="Close">
+                                        <span aria-hidden="true">×</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+
+                                    <div style="grid-template-rows: auto auto; display: grid;">
+                                        <div th:text="'Current rental'" style="text-align:center;"></div>
+
+                                        <div th:if="${currentRental == null}">current not present</div>
+                                        <div th:if="${currentRental != null}">current present</div>
+
+                                    </div>
+
+                                    <div style="grid-template-rows: auto auto; display: grid; margin-top: 2%;">
+                                        <div th:text="'Previous rentals'" style="text-align:center;"></div>
+
+                                        <div th:if="${#lists.isEmpty(previousRentals)}">
+                                            previous empty
+                                        </div>
+
+                                        <div th:if="${!#lists.isEmpty(previousRentals)}">
+                                            previous present
+                                        </div>
+
+                                    </div>
+
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-dark" data-bs-dismiss="modal">
+                                        Close
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div class="col-md-3 px-1">
                     <button class="btn btn-dark bg-dark mt-2 def-button-text w-100" type="button"
@@ -312,7 +359,7 @@
                                             <select id="s_department" class="form-select modal-input"
                                                     th:field="*{departmentId}" required>
                                                 <div th:each="department:${departments}">
-                                                    <option th:text="${department.country.code} + '-' + ${department.city} + ', ' + ${department.address}"
+                                                    <option th:text="${department.country.code} + ' - ' + ${department.city} + ', ' + ${department.address}"
                                                             th:value="${department.id}"
                                                             th:field="*{departmentId}"></option>
                                                 </div>

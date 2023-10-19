@@ -6,6 +6,7 @@ import com.sda.carrental.global.ConstantValues;
 import com.sda.carrental.global.enums.Country;
 import com.sda.carrental.model.operational.Reservation;
 import com.sda.carrental.model.operational.Retrieve;
+import com.sda.carrental.model.property.Car;
 import com.sda.carrental.model.property.Department;
 import com.sda.carrental.repository.RetrieveRepository;
 import com.sda.carrental.service.auth.CustomUserDetails;
@@ -44,7 +45,7 @@ public class RetrieveService {
             HttpStatus status = reservationService.handleReservationStatus(customerId, form.getReservationId(), Reservation.ReservationStatus.STATUS_COMPLETED);
             if (status.equals(HttpStatus.ACCEPTED)) {
                 repository.save(new Retrieve(
-                        form.getReservationId(), reservationService.findById(form.getReservationId()), rentService.findById(form.getReservationId()),
+                        form.getReservationId(), rentService.findById(form.getReservationId()),
                         cud.getId(), form.getDateTo(), form.getRemarks(),
                         departmentService.findDepartmentWhereId(form.getDepartmentId()), form.getMileage()));
             }
@@ -111,5 +112,9 @@ public class RetrieveService {
                 country, form.getPlate(),
                 departments
         );
+    }
+
+    public List<Retrieve> findAllByCar(Car car) {
+        return repository.findAllByCar(car);
     }
 }

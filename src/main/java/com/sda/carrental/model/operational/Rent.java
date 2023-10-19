@@ -11,8 +11,9 @@ import javax.persistence.*;
 @Getter
 @NoArgsConstructor
 public class Rent {
-    public Rent(Long reservationId, Long employeeId, String remarks, LocalDate dateFrom, Long mileage) {
+    public Rent(Long reservationId, Reservation reservation, Long employeeId, String remarks, LocalDate dateFrom, Long mileage) {
         this.id = reservationId;
+        this.reservation = reservation;
         this.employeeId = employeeId;
         this.dateFrom = dateFrom;
         this.remarks = remarks;
@@ -25,6 +26,10 @@ public class Rent {
 
     @Column(name = "employee_id")
     private Long employeeId;
+
+    @OneToOne
+    @JoinColumn(name = "reservation", referencedColumnName = "id")
+    private Reservation reservation;
 
     @Column(name = "actual_date_from")
     private LocalDate dateFrom;

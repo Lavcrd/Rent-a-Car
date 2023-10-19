@@ -63,7 +63,7 @@ public class ManageDepositController {
             CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             Retrieve retrieve = retrieveService.findById(retrieveId);
             PaymentDetails paymentDetails = paymentDetailsService.getOptionalPaymentDetails(retrieve.getId()).orElseThrow(ResourceNotFoundException::new);
-            if (departmentService.departmentAccess(cud, retrieve.getReservation().getDepartmentBack().getId()).equals(HttpStatus.FORBIDDEN)) {
+            if (departmentService.departmentAccess(cud, retrieve.getRent().getReservation().getDepartmentBack().getId()).equals(HttpStatus.FORBIDDEN)) {
                 redAtt.addFlashAttribute("message", "Inaccessible department.");
                 return "redirect:/";
             }

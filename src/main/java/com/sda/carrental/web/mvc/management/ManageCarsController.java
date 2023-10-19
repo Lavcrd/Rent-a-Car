@@ -4,9 +4,7 @@ import com.sda.carrental.exceptions.ResourceNotFoundException;
 import com.sda.carrental.global.enums.Country;
 import com.sda.carrental.model.property.Car;
 import com.sda.carrental.model.property.Department;
-import com.sda.carrental.service.CarService;
-import com.sda.carrental.service.DepartmentService;
-import com.sda.carrental.service.UserService;
+import com.sda.carrental.service.*;
 import com.sda.carrental.service.auth.CustomUserDetails;
 import com.sda.carrental.web.mvc.form.ChangeCarDepartment;
 import com.sda.carrental.web.mvc.form.ChangeCarMileage;
@@ -32,6 +30,8 @@ public class ManageCarsController {
     private final CarService carService;
     private final DepartmentService departmentService;
     private final UserService userService;
+    private final RentService rentService;
+    private final RetrieveService retrieveService;
 
     //Pages
     @RequestMapping(method = RequestMethod.GET)
@@ -78,6 +78,9 @@ public class ManageCarsController {
 
             map.addAttribute("status_form", map.getOrDefault("status_form", new ChangeCarStatus(car.getCarStatus().name())));
             map.addAttribute("statuses", Car.CarStatus.values());
+
+            map.addAttribute("currentRental", rentService.findActiveByCar(car).orElse(null));
+            map.addAttribute("previousRentals", retrieveService.findAllByCar(car));
 
             //Hardcoded map coordinates due to lack of real data
             map.addAttribute("latitude", "50.556140369367725");

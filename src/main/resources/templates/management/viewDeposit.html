@@ -28,7 +28,7 @@
                         <tr>
                             <td>
                                 <div class="overflow-cell-hs"
-                                     th:text="${retrieve.reservation.customer.name} + ' ' + ${retrieve.reservation.customer.surname}"></div>
+                                     th:text="${retrieve.rent.reservation.customer.name} + ' ' + ${retrieve.rent.reservation.customer.surname}"></div>
                             </td>
                         </tr>
 
@@ -38,7 +38,7 @@
                         <tr>
                             <td>
                                 <div class="overflow-cell-hs"
-                                     th:text="${retrieve.reservation.car.plate}"></div>
+                                     th:text="${retrieve.rent.reservation.car.plate}"></div>
                             </td>
                         </tr>
 
@@ -49,9 +49,9 @@
                             <td>
                                 <div class="overflow-cell-hs"
                                      th:utext="
-                                     ${retrieve.reservation.dateFrom} + '<br>' +
-                                     ${retrieve.reservation.departmentTake.city} + ' ' + ${retrieve.reservation.departmentTake.postcode} + '<br>' +
-                                     ${retrieve.reservation.departmentTake.address}"></div>
+                                     ${retrieve.rent.reservation.dateFrom} + '<br>' +
+                                     ${retrieve.rent.reservation.departmentTake.city} + ' ' + ${retrieve.rent.reservation.departmentTake.postcode} + '<br>' +
+                                     ${retrieve.rent.reservation.departmentTake.address}"></div>
                             </td>
                         </tr>
                         <tr class="table-dark">
@@ -61,9 +61,9 @@
                             <td>
                                 <div class="overflow-cell-hs"
                                      th:utext="
-                                     ${retrieve.reservation.dateTo} + '<br>' +
-                                     ${retrieve.reservation.departmentBack.city} + ' ' + ${retrieve.reservation.departmentBack.postcode} + '<br>' +
-                                     ${retrieve.reservation.departmentBack.address}">
+                                     ${retrieve.rent.reservation.dateTo} + '<br>' +
+                                     ${retrieve.rent.reservation.departmentBack.city} + ' ' + ${retrieve.rent.reservation.departmentBack.postcode} + '<br>' +
+                                     ${retrieve.rent.reservation.departmentBack.address}">
                                 </div>
                             </td>
                         </tr>
@@ -157,7 +157,7 @@
                     <div class="d-flex flex-column">
                         <form th:action="@{/mg-depo/release}" th:object="${form}" th:method="POST">
                             <input type="hidden" th:name="retrieve" th:value="${retrieve.id}">
-                            <input type="hidden" th:name="customer" th:value="${retrieve.reservation.customer.id}">
+                            <input type="hidden" th:name="customer" th:value="${retrieve.rent.reservation.customer.id}">
 
                             <button class="btn btn-dark bg-dark mt-2 w-100 def-button-text" type="button"
                                     data-bs-toggle="modal"
@@ -212,7 +212,7 @@
 
                         <form th:action="@{/mg-depo/charge}" th:object="${form}" th:method="POST">
                             <input type="hidden" th:name="retrieve" th:value="${retrieve.id}">
-                            <input type="hidden" th:name="customer" th:value="${retrieve.reservation.customer.id}">
+                            <input type="hidden" th:name="customer" th:value="${retrieve.rent.reservation.customer.id}">
 
                             <button class="btn btn-dark bg-dark mt-2 w-100 def-button-text" type="button"
                                     data-bs-toggle="modal"
