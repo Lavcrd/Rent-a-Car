@@ -3,6 +3,7 @@ package com.sda.carrental.repository;
 import com.sda.carrental.model.operational.Retrieve;
 import com.sda.carrental.model.property.Car;
 import com.sda.carrental.model.property.Department;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
@@ -37,5 +38,5 @@ public interface RetrieveRepository extends CrudRepository<Retrieve, Long> {
     @Query("SELECT r FROM retrieve r " +
             "WHERE r.rent.reservation.car = :car " +
             "ORDER BY r.rent.dateFrom DESC")
-    List<Retrieve> findAllByCar(@Param("car") Car car);
+    List<Retrieve> findRetrievalsByCar(@Param("car") Car car, Pageable pageable);
 }

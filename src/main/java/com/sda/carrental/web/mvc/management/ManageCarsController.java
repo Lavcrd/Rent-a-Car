@@ -80,7 +80,7 @@ public class ManageCarsController {
             map.addAttribute("statuses", Car.CarStatus.values());
 
             map.addAttribute("currentRental", rentService.findActiveByCar(car).orElse(null));
-            map.addAttribute("previousRentals", retrieveService.findAllByCar(car));
+            map.addAttribute("previousRentals", retrieveService.findRetrievalsByCar(car, 3));
 
             //Hardcoded map coordinates due to lack of real data
             map.addAttribute("latitude", "50.556140369367725");
