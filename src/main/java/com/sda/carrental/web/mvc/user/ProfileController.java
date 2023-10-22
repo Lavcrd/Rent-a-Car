@@ -37,55 +37,32 @@ public class ProfileController {
 
         try {
             map.addAttribute("user", userService.findById(cud.getId()));
-            map.addAttribute("username", credentialsService.findById(cud.getId()).getUsername());
-        } catch (ResourceNotFoundException err) {
+        } catch (RuntimeException err) {
             SecurityContextHolder.getContext().setAuthentication(null);
-            redAtt.addFlashAttribute("message", "User not recognized. Please login again.");
+            redAtt.addFlashAttribute("message", "Something went wrong. Please login again.");
             return "redirect:/";
         }
 
-        if(cud.getAuthorities().contains(new SimpleGrantedAuthority(User.Roles.ROLE_CUSTOMER.name()))) {
+        map.addAttribute("username", cud.getUsername());
+        map.addAttribute("password_form", map.getOrDefault("password_form", new ChangePasswordForm()));
+
+        if (cud.getAuthorities().contains(new SimpleGrantedAuthority(User.Roles.ROLE_CUSTOMER.name()))) {
+            map.addAttribute("contact_form", map.getOrDefault("contact_form", new ChangeContactForm()));
+            map.addAttribute("email_form", map.getOrDefault("email_form", new ChangeEmailForm()));
+            map.addAttribute("delete_form", map.getOrDefault("delete_form", new ConfirmationForm()));
+
             return "user/profileCustomer";
         }
         return "user/profileEmployee";
-    }
-
-    //Pages from profile buttons
-    @RequestMapping(method = RequestMethod.GET, value = "/password")
-    public String changePasswordPage(final ModelMap map) {
-        map.addAttribute("password_form", new ChangePasswordForm());
-        return "user/passwordUser";
-    }
-
-    @RequestMapping(method = RequestMethod.GET, value = "/email")
-    public String changeEmailPage(final ModelMap map) {
-        map.addAttribute("email_form", new ChangeEmailForm());
-        return "user/emailCustomer";
-    }
-
-    @RequestMapping(method = RequestMethod.GET, value = "/contact")
-    public String changeContactPage(final ModelMap map) {
-        CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        map.addAttribute("customer", customerService.findById(cud.getId()));
-        map.addAttribute("contact_form", new ChangeContactForm());
-        return "user/contactCustomer";
-    }
-
-    @RequestMapping(method = RequestMethod.GET, value = "/delete")
-    public String deleteAccountPage(final ModelMap map) {
-        CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        map.addAttribute("user", cud.getUsername());
-        map.addAttribute("delete_form", new ConfirmationForm());
-        return "user/deleteCustomer";
     }
 
     //Confirmation buttons
     @RequestMapping(method = RequestMethod.POST, value = "/contact")
     public String changeContactConfirmButton(RedirectAttributes redAtt, @ModelAttribute("contact_form") @Valid ChangeContactForm form, Errors errors) {
         if (errors.hasErrors()) {
-            return "user/contactCustomer";
+            redAtt.addFlashAttribute("message", errors.getAllErrors().get(0).getDefaultMessage());
+            redAtt.addFlashAttribute("contact_form", form);
+            return "redirect:/profile";
         }
 
         CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -105,7 +82,9 @@ public class ProfileController {
     @RequestMapping(method = RequestMethod.POST, value = "/email")
     public String changeEmailConfirmButton(RedirectAttributes redAtt, @ModelAttribute("email_form") @Valid ChangeEmailForm form, Errors errors) {
         if (errors.hasErrors()) {
-            return "user/emailCustomer";
+            redAtt.addFlashAttribute("message", errors.getAllErrors().get(0).getDefaultMessage());
+            redAtt.addFlashAttribute("email_form", form);
+            return "redirect:/profile";
         }
 
         HttpStatus response = credentialsService.changeUsername(form.getNewEmail());
@@ -123,7 +102,9 @@ public class ProfileController {
     @RequestMapping(method = RequestMethod.POST, value = "/password")
     public String changePasswordConfirmButton(RedirectAttributes redAtt, @ModelAttribute("password_form") @Valid ChangePasswordForm form, Errors errors) {
         if (errors.hasErrors()) {
-            return "user/passwordUser";
+            redAtt.addFlashAttribute("message", errors.getAllErrors().get(0).getDefaultMessage());
+            redAtt.addFlashAttribute("password_form", form);
+            return "redirect:/profile";
         }
 
         HttpStatus response = credentialsService.changePassword(form.getNewPassword());
@@ -142,7 +123,9 @@ public class ProfileController {
     @RequestMapping(method = RequestMethod.POST, value = "/delete")
     public String deleteAccountConfirmButton(RedirectAttributes redAtt, @ModelAttribute("delete_form") @Valid ConfirmationForm form, Errors errors) {
         if (errors.hasErrors()) {
-            return "user/deleteCustomer";
+            redAtt.addFlashAttribute("message", errors.getAllErrors().get(0).getDefaultMessage());
+            redAtt.addFlashAttribute("delete_form", form);
+            return "redirect:/profile";
         }
 
         CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();

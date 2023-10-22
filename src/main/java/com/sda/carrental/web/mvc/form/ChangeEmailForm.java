@@ -1,6 +1,5 @@
 package com.sda.carrental.web.mvc.form;
 
-import com.sda.carrental.web.mvc.form.validation.constraint.CurrentEmail;
 import com.sda.carrental.web.mvc.form.validation.constraint.MatchingEmail;
 import com.sda.carrental.web.mvc.form.validation.constraint.UniqueUsername;
 import lombok.Getter;
@@ -12,11 +11,7 @@ import javax.validation.constraints.NotEmpty;
 @Getter
 @Setter
 @MatchingEmail(message = "E-mail confirmation does not match.")
-public class ChangeEmailForm {
-
-    @NotEmpty(message = "Field cannot be empty")
-    @CurrentEmail
-    private String currentEmail;
+public class ChangeEmailForm extends ConfirmationForm {
 
     @NotEmpty(message = "Field cannot be empty")
     @Email(message = "Login should be a valid email address format")
