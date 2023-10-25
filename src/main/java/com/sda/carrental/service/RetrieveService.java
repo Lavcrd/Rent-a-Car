@@ -6,7 +6,7 @@ import com.sda.carrental.global.ConstantValues;
 import com.sda.carrental.global.enums.Country;
 import com.sda.carrental.model.operational.Reservation;
 import com.sda.carrental.model.operational.Retrieve;
-import com.sda.carrental.model.property.Car;
+import com.sda.carrental.model.property.car.Car;
 import com.sda.carrental.model.property.Department;
 import com.sda.carrental.repository.RetrieveRepository;
 import com.sda.carrental.service.auth.CustomUserDetails;

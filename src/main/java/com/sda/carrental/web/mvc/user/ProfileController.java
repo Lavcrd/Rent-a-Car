@@ -1,7 +1,5 @@
 package com.sda.carrental.web.mvc.user;
 
-import com.sda.carrental.exceptions.ResourceNotFoundException;
-import com.sda.carrental.global.enums.Country;
 import com.sda.carrental.model.users.User;
 import com.sda.carrental.service.CredentialsService;
 import com.sda.carrental.service.CustomerService;

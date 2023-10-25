@@ -32,7 +32,7 @@
                         <tr>
                             <td class="p-0">
                                 <div class="overflow-cell-hs">
-                                    <img th:src="${car.jpgLink}" alt="Picture"
+                                    <img th:src="${car.carBase.image}" alt="Picture"
                                          style="object-fit: contain; max-width:100%; height:auto;"/>
                                 </div>
                             </td>
@@ -43,7 +43,7 @@
                         <tr>
                             <td>
                                 <div class="overflow-cell-hs"
-                                     th:utext="${car.brand} + ' ' + ${car.model}">
+                                     th:utext="${car.carBase.brand} + ' ' + ${car.carBase.model}">
                                 </div>
                             </td>
                         </tr>
@@ -53,7 +53,7 @@
                         <tr>
                             <td>
                                 <div class="overflow-cell-hs"
-                                     th:utext="${car.carType.name} + ' – ' + ${car.seats} + ' seats'">
+                                     th:utext="${car.carBase.carType.name} + ' – ' + ${car.carBase.seats} + ' seats'">
                                 </div>
                             </td>
                         </tr>
@@ -120,7 +120,7 @@
                                         </td>
                                         <td>
                                             <div class="overflow-cell-hs" style="text-align:end;"
-                                                 th:text="${car.priceDay}">
+                                                 th:text="${car.carBase.priceDay}">
                                             </div>
                                         </td>
 
@@ -133,7 +133,7 @@
                                         </td>
                                         <td>
                                             <div class="overflow-cell-hs" style="text-align:end;"
-                                                 th:text="${car.depositValue}">
+                                                 th:text="${car.carBase.depositValue}">
                                             </div>
                                         </td>
                                     </tr>

@@ -1,7 +1,7 @@
 package com.sda.carrental.repository;
 
 import com.sda.carrental.model.operational.Retrieve;
-import com.sda.carrental.model.property.Car;
+import com.sda.carrental.model.property.car.Car;
 import com.sda.carrental.model.property.Department;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
