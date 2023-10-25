@@ -4,7 +4,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-import com.sda.carrental.model.property.Car;
+import com.sda.carrental.model.property.car.Car;
 import com.sda.carrental.model.property.Department;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -29,7 +29,7 @@ public interface CarRepository extends CrudRepository<Car, Long> {
             "       GROUP BY r2.car.id " +
             "       HAVING COUNT(*) >= 1)) " +
             "GROUP BY c.id)" +
-            "GROUP BY c2.model, c2.brand")
+            "GROUP BY c2.carBase.model, c2.carBase.brand")
     List<Car> findAvailableDistinctCarsInDepartment(@Param("dateFrom") LocalDate dateFrom, @Param("dateTo") LocalDate dateTo, @Param("department") Long department);
 
     @Query(value = "SELECT c1 FROM car c1 WHERE id IN (" +

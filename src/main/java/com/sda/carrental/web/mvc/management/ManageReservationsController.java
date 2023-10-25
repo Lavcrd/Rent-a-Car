@@ -4,7 +4,7 @@ import com.sda.carrental.global.ConstantValues;
 import com.sda.carrental.exceptions.ResourceNotFoundException;
 import com.sda.carrental.global.enums.Country;
 import com.sda.carrental.model.operational.Reservation;
-import com.sda.carrental.model.property.Car;
+import com.sda.carrental.model.property.car.Car;
 import com.sda.carrental.model.property.PaymentDetails;
 import com.sda.carrental.model.users.Customer;
 import com.sda.carrental.model.users.auth.Verification;
@@ -104,13 +104,13 @@ public class ManageReservationsController {
                 long days = reservation.getDateFrom().until(reservation.getDateTo(), ChronoUnit.DAYS) + 1;
                 if (!reservation.getDepartmentTake().equals(reservation.getDepartmentBack())) {
                     map.addAttribute("diff_return_price", cv.getDeptReturnPriceDiff());
-                    map.addAttribute("total_price", cv.getDeptReturnPriceDiff() + (days * reservation.getCar().getPriceDay()));
+                    map.addAttribute("total_price", cv.getDeptReturnPriceDiff() + (days * reservation.getCar().getCarBase().getPriceDay()));
                 } else {
                     map.addAttribute("diff_return_price", 0.0);
-                    map.addAttribute("total_price", days * reservation.getCar().getPriceDay());
+                    map.addAttribute("total_price", days * reservation.getCar().getCarBase().getPriceDay());
                 }
-                map.addAttribute("raw_price", days * reservation.getCar().getPriceDay());
-                map.addAttribute("deposit_value", reservation.getCar().getDepositValue());
+                map.addAttribute("raw_price", days * reservation.getCar().getCarBase().getPriceDay());
+                map.addAttribute("deposit_value", reservation.getCar().getCarBase().getDepositValue());
             }
 
             map.addAttribute("reservation", reservation);

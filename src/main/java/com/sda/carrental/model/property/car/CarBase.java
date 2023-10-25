@@ -1,4 +1,4 @@
-package com.sda.carrental.model.property;
+package com.sda.carrental.model.property.car;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -6,22 +6,18 @@ import lombok.Setter;
 
 import javax.persistence.*;
 
-@Entity(name = "car")
+@Entity(name = "car_base")
 @Getter
 @NoArgsConstructor
-public class Car {
-    public Car(Department department, String jpgLink, String brand, String model, Integer year, String plate, Long mileage, Integer seats, Double priceDay, CarType carType, CarStatus carStatus, Double depositValue) {
-        this.plate = plate;
-        this.department = department;
-        this.jpgLink = jpgLink;
+public class CarBase {
+    public CarBase(String image, String brand, String model, Integer year, CarType carType, Integer seats, Double priceDay, Double depositValue) {
+        this.image = image;
         this.brand = brand;
         this.model = model;
         this.year = year;
-        this.mileage = mileage;
+        this.carType = carType;
         this.seats = seats;
         this.priceDay = priceDay;
-        this.carType = carType;
-        this.carStatus = carStatus;
         this.depositValue = depositValue;
     }
 
@@ -31,13 +27,8 @@ public class Car {
     private Long id;
 
     @Setter
-    @ManyToOne
-    @JoinColumn(name = "department", referencedColumnName = "id")
-    Department department;
-
-    @Setter
-    @Column(name = "jpg_link")
-    String jpgLink;
+    @Column(name = "image")
+    String image;
 
     @Column(name = "brand")
     String brand;
@@ -48,31 +39,19 @@ public class Car {
     @Column(name = "year")
     Integer year;
 
-    @Setter
-    @Column(name = "plate", unique = true)
-    String plate;
-
-    @Setter
-    @Column(name = "mileage")
-    Long mileage;
+    @Column(name = "type")
+    CarType carType;
 
     @Column(name = "seats")
     Integer seats;
 
+    @Setter
     @Column(name = "price_day")
     Double priceDay;
-
-    @Column(name = "type")
-    CarType carType;
-
-    @Setter
-    @Column(name = "status")
-    CarStatus carStatus;
 
     @Setter
     @Column(name = "deposit")
     Double depositValue;
-
 
     @Getter
     public enum CarType {
@@ -83,9 +62,5 @@ public class Car {
         CarType(String name) {
             this.name = name;
         }
-    }
-
-    public enum CarStatus {
-        STATUS_OPEN, STATUS_RENTED, STATUS_UNAVAILABLE, STATUS_REMOVED
     }
 }

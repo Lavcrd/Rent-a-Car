@@ -4,8 +4,9 @@ import com.sda.carrental.exceptions.ResourceNotFoundException;
 import com.sda.carrental.global.ConstantValues;
 import com.sda.carrental.global.enums.Country;
 import com.sda.carrental.model.operational.Reservation;
-import com.sda.carrental.model.property.Car;
+import com.sda.carrental.model.property.car.Car;
 import com.sda.carrental.model.property.Department;
+import com.sda.carrental.model.property.car.CarBase;
 import com.sda.carrental.repository.CarRepository;
 import com.sda.carrental.service.auth.CustomUserDetails;
 import com.sda.carrental.web.mvc.form.CarFilterForm;
@@ -101,23 +102,23 @@ public class CarService {
 
     private List<Car> applyFilters(List<Car> cl, GenericCarForm form) {
         if (form.getPriceMin() != null) {
-            cl.removeIf(car -> car.getPriceDay() < form.getPriceMin());
+            cl.removeIf(car -> car.getCarBase().getPriceDay() < form.getPriceMin());
         }
 
         if (form.getPriceMax() != null) {
-            cl.removeIf(car -> car.getPriceDay() > form.getPriceMax());
+            cl.removeIf(car -> car.getCarBase().getPriceDay() > form.getPriceMax());
         }
 
         if (!form.getBrands().isEmpty()) {
-            cl.removeIf(car -> !form.getBrands().contains(car.getBrand()));
+            cl.removeIf(car -> !form.getBrands().contains(car.getCarBase().getBrand()));
         }
 
         if (!form.getSeats().isEmpty()) {
-            cl.removeIf(car -> !form.getSeats().contains(car.getSeats()));
+            cl.removeIf(car -> !form.getSeats().contains(car.getCarBase().getSeats()));
         }
 
         if (!form.getTypes().isEmpty()) {
-            cl.removeIf(car -> !form.getTypes().contains(car.getCarType()));
+            cl.removeIf(car -> !form.getTypes().contains(car.getCarBase().getCarType()));
         }
 
         return cl;
@@ -125,18 +126,18 @@ public class CarService {
 
     public Map<String, Object> getFilterProperties(List<Car> carList) {
         Set<String> brands = new HashSet<>();
-        Set<Car.CarType> types = new HashSet<>();
+        Set<CarBase.CarType> types = new HashSet<>();
         Set<Integer> seats = new HashSet<>();
 
         for (Car car : carList) {
-            brands.add(car.getBrand());
-            types.add(car.getCarType());
-            seats.add(car.getSeats());
+            brands.add(car.getCarBase().getBrand());
+            types.add(car.getCarBase().getCarType());
+            seats.add(car.getCarBase().getSeats());
         }
 
         List<String> sortedBrands = new ArrayList<>(brands);
         sortedBrands.sort(null);
-        List<Car.CarType> sortedTypes = new ArrayList<>(types);
+        List<CarBase.CarType> sortedTypes = new ArrayList<>(types);
         sortedTypes.sort(null);
         List<Integer> sortedSeats = new ArrayList<>(seats);
         sortedSeats.sort(null);

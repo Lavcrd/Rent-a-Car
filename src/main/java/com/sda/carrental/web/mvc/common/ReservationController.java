@@ -3,7 +3,7 @@ package com.sda.carrental.web.mvc.common;
 import com.sda.carrental.exceptions.IllegalActionException;
 import com.sda.carrental.global.ConstantValues;
 import com.sda.carrental.exceptions.ResourceNotFoundException;
-import com.sda.carrental.model.property.Car;
+import com.sda.carrental.model.property.car.Car;
 import com.sda.carrental.model.property.Department;
 import com.sda.carrental.model.users.User;
 import com.sda.carrental.service.CarService;
@@ -53,10 +53,10 @@ public class ReservationController {
 
             if (reservationData.getIndexData().isFirstBranchChecked()) {
                 map.addAttribute("diff_return_price", cv.getDeptReturnPriceDiff());
-                map.addAttribute("total_price", cv.getDeptReturnPriceDiff() + (days * car.getPriceDay()));
+                map.addAttribute("total_price", cv.getDeptReturnPriceDiff() + (days * car.getCarBase().getPriceDay()));
             } else {
                 map.addAttribute("diff_return_price", 0.0);
-                map.addAttribute("total_price", days * car.getPriceDay());
+                map.addAttribute("total_price", days * car.getCarBase().getPriceDay());
             }
 
             map.addAttribute("days", (reservationData.getIndexData().getDateFrom().until(reservationData.getIndexData().getDateTo(), ChronoUnit.DAYS) + 1));
@@ -64,7 +64,7 @@ public class ReservationController {
             map.addAttribute("branchTo", depTo);
             map.addAttribute("reservationData", reservationData);
             map.addAttribute("car", car);
-            map.addAttribute("raw_price", days * car.getPriceDay());
+            map.addAttribute("raw_price", days * car.getCarBase().getPriceDay());
             map.addAttribute("fee_percentage", cv.getCancellationFeePercentage() * 100);
             map.addAttribute("refund_fee_days", cv.getRefundSubtractDaysDuration());
             map.addAttribute("deposit_deadline", cv.getRefundDepositDeadlineDays());

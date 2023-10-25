@@ -1,7 +1,7 @@
 package com.sda.carrental.repository;
 
 import com.sda.carrental.model.operational.Rent;
-import com.sda.carrental.model.property.Car;
+import com.sda.carrental.model.property.car.Car;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;

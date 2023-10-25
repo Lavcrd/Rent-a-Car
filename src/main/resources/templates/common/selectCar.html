@@ -134,23 +134,23 @@
                 <div th:each="car : ${cars}" id="car-list">
                     <div class="row">
                         <div class="col-md-12">
-                            <h4 th:text="${car.brand}"></h4>
+                            <h4 th:text="${car.carBase.brand}"></h4>
                         </div>
                     </div>
 
                     <div class="row">
                         <div class="col-md-4">
-                            <img th:src="${car.jpgLink}" alt="Picture" width="255" height="150"/>
+                            <img th:src="${car.carBase.image}" alt="Picture" width="255" height="150"/>
 
                         </div>
                         <div class="col-md-6">
                             <ul class="list-group list-group-flush">
-                                <li class="list-group-item" th:text="'Model: ' + ${car.model}"></li>
-                                <li class="list-group-item" th:text="'Type: ' + ${car.carType.getName()}"></li>
-                                <li class="list-group-item" th:text="'Production date: ' + ${car.year}"></li>
-                                <li class="list-group-item" th:text="'Seats: ' + ${car.seats}"></li>
+                                <li class="list-group-item" th:text="'Model: ' + ${car.carBase.model}"></li>
+                                <li class="list-group-item" th:text="'Type: ' + ${car.carBase.carType.getName()}"></li>
+                                <li class="list-group-item" th:text="'Production date: ' + ${car.carBase.year}"></li>
+                                <li class="list-group-item" th:text="'Seats: ' + ${car.carBase.seats}"></li>
                                 <li class="list-group-item"
-                                    th:text="'Price per day: ' + ${#numbers.formatDecimal((car.priceDay), 1, 2, 'POINT')} + ' PLN'"></li>
+                                    th:text="'Price per day: ' + ${#numbers.formatDecimal((car.carBase.priceDay), 1, 2, 'POINT')} + ' PLN'"></li>
                             </ul>
                             <br>
                         </div>
@@ -159,11 +159,11 @@
                             <div style="display: grid;grid-template-rows: repeat(2, 1fr);">
                                 <div class="border border-dark rounded" style="text-align: center; margin-bottom: 10px;">
                                     <p style="margin-bottom: 0;" th:text="'Rental:'"></p>
-                                    <p style="margin-bottom: 0;" th:text="${#numbers.formatDecimal((days*car.priceDay), 1, 2, 'POINT')} + ' PLN'"></p>
+                                    <p style="margin-bottom: 0;" th:text="${#numbers.formatDecimal((days*car.carBase.priceDay), 1, 2, 'POINT')} + ' PLN'"></p>
                                 </div>
                                 <div class="border border-dark rounded" style="text-align: center; margin-bottom: 10px;">
                                     <p style="margin-bottom: 0;" th:text="'Deposit:'"></p>
-                                    <p style="margin-bottom: 0;" th:text="${#numbers.formatDecimal((car.depositValue), 1, 2, 'POINT')} + ' PLN'"></p>
+                                    <p style="margin-bottom: 0;" th:text="${#numbers.formatDecimal((car.carBase.depositValue), 1, 2, 'POINT')} + ' PLN'"></p>
                                 </div>
                                 <button type="submit" class="btn btn-dark" th:text="Select" name="select"
                                         th:value="${car.getId()}"></button>

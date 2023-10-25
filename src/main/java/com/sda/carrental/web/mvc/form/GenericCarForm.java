@@ -1,6 +1,6 @@
 package com.sda.carrental.web.mvc.form;
 
-import com.sda.carrental.model.property.Car;
+import com.sda.carrental.model.property.car.CarBase;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -19,7 +19,7 @@ public class GenericCarForm {
 
     private List<String> brands;
 
-    private List<Car.CarType> types;
+    private List<CarBase.CarType> types;
 
     private List<Integer> seats;
 }

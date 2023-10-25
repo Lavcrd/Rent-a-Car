@@ -3,7 +3,7 @@ package com.sda.carrental.service;
 
 import com.sda.carrental.exceptions.ResourceNotFoundException;
 import com.sda.carrental.model.operational.Reservation;
-import com.sda.carrental.model.property.Car;
+import com.sda.carrental.model.property.car.Car;
 import com.sda.carrental.model.property.Department;
 import com.sda.carrental.model.property.PaymentDetails;
 import com.sda.carrental.model.users.Customer;
@@ -215,7 +215,7 @@ public class ReservationService {
             Car c = carService.findAvailableCar(r.getDateFrom(), r.getDateTo(), r.getDepartmentTake().getId(), carId);
             r.setCar(c);
             repository.save(r);
-            paymentDetailsService.adjustRequiredDeposit(r, c.getDepositValue());
+            paymentDetailsService.adjustRequiredDeposit(r, c.getCarBase().getDepositValue());
             return HttpStatus.ACCEPTED;
         } catch (RuntimeException err) {
             return HttpStatus.NOT_FOUND;
