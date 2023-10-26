@@ -27,8 +27,8 @@ public class PaymentDetailsService {
     public void createReservationPayment(Reservation reservation) {
         long days = reservation.getDateFrom().until(reservation.getDateTo(), ChronoUnit.DAYS) + 1;
 
-        double rawValue = days * reservation.getCar().getCarBase().getPriceDay();
-        double depositValue = reservation.getCar().getCarBase().getDepositValue();
+        double rawValue = days * reservation.getCarBase().getPriceDay();
+        double depositValue = reservation.getCarBase().getDepositValue();
         if (!reservation.getDepartmentBack().equals(reservation.getDepartmentTake())) {
             double payment = rawValue + cv.getDeptReturnPriceDiff();
             repository.save(new PaymentDetails(rawValue, cv.getDeptReturnPriceDiff(), depositValue, payment, depositValue, reservation));

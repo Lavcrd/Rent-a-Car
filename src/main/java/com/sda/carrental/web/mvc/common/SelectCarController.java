@@ -62,8 +62,8 @@ public class SelectCarController {
 
     //Select car buttons
     @RequestMapping(value = "/proceed", method = RequestMethod.POST)
-    public String selectButton(@ModelAttribute("selectCarForm") SelectCarForm selectCarData, @RequestParam(value = "select") Long carId, RedirectAttributes redAtt) {
-        selectCarData.setCarId(carId);
+    public String selectButton(@ModelAttribute("selectCarForm") SelectCarForm selectCarData, @RequestParam(value = "select") Long carBaseId, RedirectAttributes redAtt) {
+        selectCarData.setCarBaseId(carBaseId);
         redAtt.addFlashAttribute("showData", selectCarData);
         return "redirect:/reservation";
     }

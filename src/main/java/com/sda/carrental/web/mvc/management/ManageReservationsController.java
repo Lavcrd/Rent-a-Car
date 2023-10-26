@@ -104,13 +104,13 @@ public class ManageReservationsController {
                 long days = reservation.getDateFrom().until(reservation.getDateTo(), ChronoUnit.DAYS) + 1;
                 if (!reservation.getDepartmentTake().equals(reservation.getDepartmentBack())) {
                     map.addAttribute("diff_return_price", cv.getDeptReturnPriceDiff());
-                    map.addAttribute("total_price", cv.getDeptReturnPriceDiff() + (days * reservation.getCar().getCarBase().getPriceDay()));
+                    map.addAttribute("total_price", cv.getDeptReturnPriceDiff() + (days * reservation.getCarBase().getPriceDay()));
                 } else {
                     map.addAttribute("diff_return_price", 0.0);
-                    map.addAttribute("total_price", days * reservation.getCar().getCarBase().getPriceDay());
+                    map.addAttribute("total_price", days * reservation.getCarBase().getPriceDay());
                 }
-                map.addAttribute("raw_price", days * reservation.getCar().getCarBase().getPriceDay());
-                map.addAttribute("deposit_value", reservation.getCar().getCarBase().getDepositValue());
+                map.addAttribute("raw_price", days * reservation.getCarBase().getPriceDay());
+                map.addAttribute("deposit_value", reservation.getCarBase().getDepositValue());
             }
 
             map.addAttribute("reservation", reservation);
@@ -120,7 +120,7 @@ public class ManageReservationsController {
 
             map.addAttribute("confirmation_form", new ConfirmationForm());
             if (reservation.getStatus().equals(Reservation.ReservationStatus.STATUS_RESERVED)) {
-                map.addAttribute("rental_confirmation_form", new ConfirmRentalForm(reservationId, LocalDate.now()));
+                map.addAttribute("rental_confirmation_form", new ConfirmRentalForm(reservationId, LocalDate.now())); //TODO add available car list attribute and html form field for new carId field + check if subsequent methods require change
             } else if (reservation.getStatus().equals(Reservation.ReservationStatus.STATUS_PROGRESS)) {
                 map.addAttribute("rent_details", rentService.findById(reservation.getId()));
                 if (departmentId.equals(reservation.getDepartmentBack().getId())) {
@@ -365,7 +365,7 @@ public class ManageReservationsController {
             return "redirect:/mg-res";
         }
 
-        HttpStatus status = reservationService.substituteCar(reservationId, customerId, carId);
+        HttpStatus status = reservationService.substituteCarBase(reservationId, customerId, carId);
 
         redAtt.addFlashAttribute("customer", customerId);
         redAtt.addAttribute("reservation", reservationId);

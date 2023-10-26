@@ -19,13 +19,16 @@ public class ConfirmRentalForm {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate dateFrom;
 
-    @NotNull
+    @NotNull(message = "Failure: Missing operation value")
     private Long reservationId;
 
-    @NotNull(message = "Failure: Field must contain value")
+    @NotNull(message = "Failure: Car field must contain value")
+    private Long carId;
+
+    @NotNull(message = "Failure: Mileage field must contain value")
     private Long mileage;
 
-    @NotEmpty(message = "Field must contain a statement or description")
+    @NotEmpty(message = "Failure: Remarks field must contain a statement or description")
     private String remarks;
 
     @NotEmpty(message = "Field cannot be empty")

@@ -56,9 +56,4 @@ public interface ReservationRepository extends CrudRepository<Reservation, Long>
             @Param("departmentTake") Long departmentTake, @Param("departmentBack") Long departmentBack,
             @Param("dateFrom") LocalDate dateFrom, @Param("dateTo") LocalDate dateTo,
             @Param("status") Reservation.ReservationStatus status);
-
-    @Query(value = "SELECT r FROM reservation r " +
-            "WHERE r.car.plate = :plate " +
-            "AND r.status = 1")
-    Optional<Reservation> findActiveReservationByPlate(@Param("plate") String plate);
 }

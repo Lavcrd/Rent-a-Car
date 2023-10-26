@@ -2,6 +2,7 @@ package com.sda.carrental.model.operational;
 
 import java.time.LocalDate;
 
+import com.sda.carrental.model.property.car.Car;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -11,9 +12,10 @@ import javax.persistence.*;
 @Getter
 @NoArgsConstructor
 public class Rent {
-    public Rent(Long reservationId, Reservation reservation, Long employeeId, String remarks, LocalDate dateFrom, Long mileage) {
+    public Rent(Long reservationId, Reservation reservation, Car car, Long employeeId, String remarks, LocalDate dateFrom, Long mileage) {
         this.id = reservationId;
         this.reservation = reservation;
+        this.car = car;
         this.employeeId = employeeId;
         this.dateFrom = dateFrom;
         this.remarks = remarks;
@@ -30,6 +32,10 @@ public class Rent {
     @OneToOne
     @JoinColumn(name = "reservation", referencedColumnName = "id")
     private Reservation reservation;
+
+    @ManyToOne
+    @JoinColumn(name = "car", referencedColumnName = "id")
+    private Car car;
 
     @Column(name = "actual_date_from")
     private LocalDate dateFrom;

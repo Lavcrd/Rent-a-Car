@@ -150,7 +150,7 @@ public class CarService {
     }
 
     public boolean isCarUnavailable(Reservation r) {
-        return r.getCar().getCarStatus().equals(Car.CarStatus.STATUS_UNAVAILABLE);
+        return repository.findAvailableCarsInDepartment(r.getDateFrom(), r.getDateTo(), r.getDepartmentTake().getId()).isEmpty();
     }
 
     @Transactional
@@ -183,5 +183,9 @@ public class CarService {
 
     public List<Car> findByDepartments(List<Department> departments) {
         return repository.findAllByDepartments(departments);
+    }
+
+    public Car findByOperationId(Long operationId) throws ResourceNotFoundException {
+        return repository.findByOperationId(operationId).orElseThrow(ResourceNotFoundException::new);
     }
 }

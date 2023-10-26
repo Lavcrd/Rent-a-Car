@@ -3,6 +3,7 @@ package com.sda.carrental.web.mvc.management;
 import com.sda.carrental.exceptions.ResourceNotFoundException;
 import com.sda.carrental.global.ConstantValues;
 import com.sda.carrental.global.enums.Country;
+import com.sda.carrental.model.operational.Rent;
 import com.sda.carrental.model.operational.Reservation;
 import com.sda.carrental.model.property.PaymentDetails;
 import com.sda.carrental.service.*;
@@ -83,9 +84,9 @@ public class CarRetrieveController {
                 return "management/carRetrieve";
             }
 
-            Reservation reservation = reservationService.findActiveReservationByPlate(Country.valueOf(form.getCountry()).getCode() + "-" + form.getPlate());
-            redAtt.addFlashAttribute("reservation", reservation);
-            redAtt.addFlashAttribute("rent_details", rentService.findById(reservation.getId()));
+            Rent rent = rentService.findActiveOperationByCarPlate(Country.valueOf(form.getCountry()).getCode() + "-" + form.getPlate());
+            redAtt.addFlashAttribute("rent_details", rent);
+            redAtt.addFlashAttribute("reservation", rent.getReservation());
             return "redirect:/c-ret";
         } catch (ResourceNotFoundException err) {
             redAtt.addFlashAttribute("message", "Failed: No active rent found for: " + Country.valueOf(form.getCountry()).getCode() + '-' + form.getPlate());
@@ -101,9 +102,9 @@ public class CarRetrieveController {
                                          @RequestParam("plate") String plate, @RequestParam("department") Long departmentId,
                                          @RequestParam("customer") Long customerId) {
         if (err.hasErrors()) {
-            Reservation reservation = reservationService.findActiveReservationByPlate(plate);
-            redAtt.addFlashAttribute("reservation", reservation);
-            redAtt.addFlashAttribute("rent_details", rentService.findById(reservation.getId()));
+            Rent rent = rentService.findActiveOperationByCarPlate(plate);
+            redAtt.addFlashAttribute("rent_details", rent);
+            redAtt.addFlashAttribute("reservation", rent.getReservation());
             String[] plateValues = plate.split("-", 2);
             redAtt.addFlashAttribute("searchCarForm", new SearchCarForm("COUNTRY_" + plateValues[0], plateValues[1]));
             redAtt.addFlashAttribute("message", err.getAllErrors().get(0).getDefaultMessage());

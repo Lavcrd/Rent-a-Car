@@ -3,9 +3,9 @@ package com.sda.carrental.service;
 
 import com.sda.carrental.exceptions.ResourceNotFoundException;
 import com.sda.carrental.model.operational.Reservation;
-import com.sda.carrental.model.property.car.Car;
 import com.sda.carrental.model.property.Department;
 import com.sda.carrental.model.property.PaymentDetails;
+import com.sda.carrental.model.property.car.CarBase;
 import com.sda.carrental.model.users.Customer;
 import com.sda.carrental.repository.ReservationRepository;
 import com.sda.carrental.web.mvc.form.IndexForm;
@@ -26,6 +26,7 @@ import java.util.Optional;
 public class ReservationService {
     private final ReservationRepository repository;
     private final CarService carService;
+    private final CarBaseService carBaseService;
     private final DepartmentService departmentService;
     private final PaymentDetailsService paymentDetailsService;
     private final VerificationService verificationService;
@@ -44,12 +45,12 @@ public class ReservationService {
             IndexForm index = form.getIndexData();
 
             if (!isChronologyValid(index.getDateFrom(), index.getDateTo(), index.getDateCreated())) throw new ResourceNotFoundException();
-            Car car = carService.findAvailableCar(index.getDateFrom(), index.getDateTo(), index.getDepartmentIdFrom(), form.getCarId());
+            CarBase carBase = carBaseService.findById(form.getCarBaseId());
             Department depRepFrom = departmentService.findDepartmentWhereId(index.getDepartmentIdFrom());
             Department depRepTo = departmentService.findDepartmentWhereId(index.getDepartmentIdTo());
 
             Reservation reservation = new Reservation(
-                    customer, car,
+                    customer, carBase,
                     depRepFrom, depRepTo,
                     index.getDateFrom(), index.getDateTo(),
                     index.getDateCreated());
@@ -164,7 +165,6 @@ public class ReservationService {
     @Transactional
     private void processProgressReservation(Reservation r, Reservation.ReservationStatus status, PaymentDetails payment) {
         paymentDetailsService.securePayment(payment);
-        carService.updateCarStatus(r.getCar(), Car.CarStatus.STATUS_RENTED);
         updateReservationStatus(r, status);
     }
 
@@ -209,13 +209,13 @@ public class ReservationService {
     }
 
     @Transactional
-    public HttpStatus substituteCar(Long reservationId, Long customerId, Long carId) {
+    public HttpStatus substituteCarBase(Long reservationId, Long customerId, Long carBaseId) {
         try {
             Reservation r = findCustomerReservation(customerId, reservationId);
-            Car c = carService.findAvailableCar(r.getDateFrom(), r.getDateTo(), r.getDepartmentTake().getId(), carId);
-            r.setCar(c);
+            CarBase cb = carBaseService.findById(carBaseId); //TODO might require swap to more precise query
+            r.setCarBase(cb);
             repository.save(r);
-            paymentDetailsService.adjustRequiredDeposit(r, c.getCarBase().getDepositValue());
+            paymentDetailsService.adjustRequiredDeposit(r, cb.getDepositValue());
             return HttpStatus.ACCEPTED;
         } catch (RuntimeException err) {
             return HttpStatus.NOT_FOUND;
@@ -239,9 +239,5 @@ public class ReservationService {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return false;
         }
-    }
-
-    public Reservation findActiveReservationByPlate(String plate) throws ResourceNotFoundException {
-        return repository.findActiveReservationByPlate(plate).orElseThrow(ResourceNotFoundException::new);
     }
 }

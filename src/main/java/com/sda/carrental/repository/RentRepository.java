@@ -16,4 +16,9 @@ public interface RentRepository extends CrudRepository<Rent, Long> {
             "   SELECT r1 FROM retrieve r1 " +
             "   WHERE r1.id = r.id)")
     Optional<Rent> findActiveByCar(@Param("car") Car car);
+
+    @Query(value = "SELECT r FROM rent r " +
+            "WHERE r.car.plate = :plate " +
+            "AND r.reservation.status = 1")
+    Optional<Rent> findActiveOperationByCarPlate(@Param("plate") String plate);
 }

@@ -83,4 +83,9 @@ public interface CarRepository extends CrudRepository<Car, Long> {
     List<Car> findByCriteria(@Param("mileageMin") Long mileageMin, @Param("mileageMax") Long mileageMax,
                              @Param("country") String country, @Param("plate") String plate,
                              @Param("departments") List<Department> departments, @Param("status") Car.CarStatus status);
+
+    @Query(value = "SELECT r.car FROM rent r " +
+            "WHERE r.id = :operationId")
+    Optional<Car> findByOperationId(@Param("operationId") Long operationId);
+
 }

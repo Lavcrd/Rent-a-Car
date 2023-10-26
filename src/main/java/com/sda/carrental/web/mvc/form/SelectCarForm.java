@@ -10,7 +10,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class SelectCarForm {
 
-    private Long carId;
+    private Long carBaseId;
 
     private IndexForm indexData;
 
