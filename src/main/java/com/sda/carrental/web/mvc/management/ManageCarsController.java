@@ -104,7 +104,7 @@ public class ManageCarsController {
             return "redirect:/mg-car";
         }
 
-        redAtt.addFlashAttribute("results", carService.findCarsByForm(form));
+        redAtt.addFlashAttribute("results", carService.findByCriteria(form));
         return "redirect:/mg-car";
     }
 

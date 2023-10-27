@@ -48,16 +48,16 @@
                 <div class="col-5">
                     <h5><strong>Vehicle</strong></h5>
                     <ul class="list-group list-group-flush">
-                        <li class="list-group-item" th:text="'Model: ' + ${reservation.car.carBase.model}"></li>
+                        <li class="list-group-item" th:text="'Model: ' + ${reservation.carBase.model}"></li>
                         <li class="list-group-item"
-                            th:text="'Car type: ' + ${reservation.car.carBase.carType.getName()}"></li>
-                        <li class="list-group-item" th:text="'Production date: ' + ${reservation.car.carBase.year}"></li>
-                        <li class="list-group-item" th:text="'Seats: ' + ${reservation.car.carBase.seats}"></li>
+                            th:text="'Car type: ' + ${reservation.carBase.carType.getName()}"></li>
+                        <li class="list-group-item" th:text="'Production date: ' + ${reservation.carBase.year}"></li>
+                        <li class="list-group-item" th:text="'Seats: ' + ${reservation.carBase.seats}"></li>
                     </ul>
                     <br>
                 </div>
                 <div class="col">
-                    <img th:src="${reservation.car.carBase.image}" alt="Picture" width="255" height="150"/>
+                    <img th:src="${reservation.carBase.image}" alt="Picture" width="255" height="150"/>
                 </div>
             </div>
             <div class="row">

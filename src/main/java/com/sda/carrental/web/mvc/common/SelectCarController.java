@@ -2,8 +2,9 @@ package com.sda.carrental.web.mvc.common;
 
 import com.sda.carrental.exceptions.IllegalActionException;
 import com.sda.carrental.exceptions.ResourceNotFoundException;
-import com.sda.carrental.model.property.car.Car;
-import com.sda.carrental.service.CarService;
+import com.sda.carrental.model.property.car.CarBase;
+import com.sda.carrental.service.CarBaseService;
+import com.sda.carrental.service.DepartmentService;
 import com.sda.carrental.web.mvc.form.CarFilterForm;
 import com.sda.carrental.web.mvc.form.IndexForm;
 import com.sda.carrental.web.mvc.form.SelectCarForm;
@@ -24,22 +25,23 @@ import java.util.Map;
 @RequestMapping("/cars")
 public class SelectCarController {
 
-    private final CarService carService;
+    private final CarBaseService carBaseService;
+    private final DepartmentService departmentService;
 
     //Pages
     @RequestMapping(method = RequestMethod.GET)
     public String selectCarPage(final ModelMap map, RedirectAttributes redAtt, @ModelAttribute("indexData") IndexForm indexData) {
         try {
             if (indexData.getDateCreated() == null) throw new IllegalActionException();
-            List<Car> carList = carService.findAvailableDistinctCarsInDepartment(
+            List<CarBase> carBaseList = carBaseService.getAvailableCarBasesInCountry(
                     indexData.getDateFrom(),
                     indexData.getDateTo(),
-                    indexData.getDepartmentIdFrom());
-            if (carList.isEmpty()) throw new ResourceNotFoundException();
+                    departmentService.findDepartmentWhereId(indexData.getDepartmentIdFrom()).getCountry());
+            if (carBaseList.isEmpty()) throw new ResourceNotFoundException();
 
-            map.addAttribute("cars", map.getOrDefault("filteredCars", carList));
+            map.addAttribute("carBases", map.getOrDefault("filteredCarBases", carBaseList));
 
-            Map<String, Object> carProperties = carService.getFilterProperties(carList);
+            Map<String, Object> carProperties = carBaseService.getFilterProperties(carBaseList);
 
             map.addAttribute("brands", carProperties.get("brands"));
             map.addAttribute("types", carProperties.get("types"));
@@ -70,7 +72,7 @@ public class SelectCarController {
 
     @RequestMapping(value = "/filter", method = RequestMethod.POST)
     public String filterCarsButton(@ModelAttribute("carFilterForm") CarFilterForm filterData, RedirectAttributes redirect) {
-        redirect.addFlashAttribute("filteredCars", carService.findCarsByForm(filterData));
+        redirect.addFlashAttribute("filteredCarBases", carBaseService.findAvailableCarBasesByForm(filterData));
         redirect.addFlashAttribute("indexData", filterData.getIndexData());
         redirect.addFlashAttribute("carFilterForm", filterData);
         return "redirect:/cars";

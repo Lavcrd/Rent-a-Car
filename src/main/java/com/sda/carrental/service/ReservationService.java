@@ -1,6 +1,7 @@
 package com.sda.carrental.service;
 
 
+import com.sda.carrental.exceptions.IllegalActionException;
 import com.sda.carrental.exceptions.ResourceNotFoundException;
 import com.sda.carrental.model.operational.Reservation;
 import com.sda.carrental.model.property.Department;
@@ -120,10 +121,6 @@ public class ReservationService {
                             return HttpStatus.PAYMENT_REQUIRED;
                         }
 
-                        if (carService.isCarUnavailable(r)) {
-                            return HttpStatus.CONFLICT;
-                        }
-
                         processProgressReservation(r, status, payment.get());
                         return HttpStatus.ACCEPTED;
                     }
@@ -212,11 +209,14 @@ public class ReservationService {
     public HttpStatus substituteCarBase(Long reservationId, Long customerId, Long carBaseId) {
         try {
             Reservation r = findCustomerReservation(customerId, reservationId);
-            CarBase cb = carBaseService.findById(carBaseId); //TODO might require swap to more precise query
+            if (!r.getStatus().equals(Reservation.ReservationStatus.STATUS_RESERVED)) throw new IllegalArgumentException();
+            CarBase cb = carBaseService.findById(carBaseId); //TODO might require more precise query that checks availability for reservation time on carBases
             r.setCarBase(cb);
             repository.save(r);
             paymentDetailsService.adjustRequiredDeposit(r, cb.getDepositValue());
             return HttpStatus.ACCEPTED;
+        } catch (IllegalActionException err) {
+            return HttpStatus.CONFLICT;
         } catch (RuntimeException err) {
             return HttpStatus.NOT_FOUND;
         }

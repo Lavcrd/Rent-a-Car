@@ -60,7 +60,7 @@ public class ReservationController {
             map.addAttribute("branchFrom", depFrom);
             map.addAttribute("branchTo", depTo);
             map.addAttribute("reservationData", reservationData);
-            map.addAttribute("car", carBase);
+            map.addAttribute("carBase", carBase);
             map.addAttribute("raw_price", days * carBase.getPriceDay());
             map.addAttribute("fee_percentage", cv.getCancellationFeePercentage() * 100);
             map.addAttribute("refund_fee_days", cv.getRefundSubtractDaysDuration());

@@ -1,5 +1,6 @@
 package com.sda.carrental.service;
 
+import com.sda.carrental.exceptions.IllegalActionException;
 import com.sda.carrental.exceptions.ResourceNotFoundException;
 import com.sda.carrental.model.operational.Rent;
 import com.sda.carrental.model.operational.Reservation;
@@ -35,15 +36,20 @@ public class RentService {
             HttpStatus status = reservationService.handleReservationStatus(customerId, form.getReservationId(), Reservation.ReservationStatus.STATUS_PROGRESS);
             if (status.equals(HttpStatus.ACCEPTED)) {
                 Reservation r = reservationService.findById(form.getReservationId());
-                Car c = carService.findAvailableCar(form.getDateFrom(), r.getDateTo(), r.getDepartmentTake().getId(), form.getCarId());
+                Car c = carService.findAvailableCar(form.getCarId(), r.getDepartmentTake().getId());
 
+                if (carService.isCarUnavailable(c)) throw new IllegalActionException();
                 carService.updateCarStatus(c, Car.CarStatus.STATUS_RENTED);
+
                 repository.save(new Rent(form.getReservationId(), r, c, cud.getId(), form.getRemarks(), form.getDateFrom(), form.getMileage()));
             }
             return status;
         } catch (DataAccessException err) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return HttpStatus.INTERNAL_SERVER_ERROR;
+        } catch (IllegalActionException err) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            return HttpStatus.CONFLICT;
         } catch (ResourceNotFoundException err) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return HttpStatus.NOT_FOUND;
