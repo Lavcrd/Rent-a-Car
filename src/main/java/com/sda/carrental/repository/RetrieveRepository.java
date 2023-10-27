@@ -21,7 +21,7 @@ public interface RetrieveRepository extends CrudRepository<Retrieve, Long> {
 
     @Query("SELECT r FROM retrieve r " +
             "JOIN customer u ON u.id = r.rent.reservation.customer " +
-            "JOIN car c ON c.id = r.rent.reservation.car " +
+            "JOIN car c ON c.id = r.rent.car " +
             "WHERE r.rent.reservation.departmentBack IN (:departments) " +
             "AND (:name IS NULL OR LOWER(u.name) LIKE LOWER(CONCAT(:name, '%'))) " +
             "AND (:surname IS NULL OR LOWER(u.surname) LIKE LOWER(CONCAT(:surname, '%'))) " +
@@ -36,7 +36,7 @@ public interface RetrieveRepository extends CrudRepository<Retrieve, Long> {
                                   @Param("departments") List<Department> departments);
 
     @Query("SELECT r FROM retrieve r " +
-            "WHERE r.rent.reservation.car = :car " +
+            "WHERE r.rent.car = :car " +
             "ORDER BY r.rent.dateFrom DESC")
     List<Retrieve> findRetrievalsByCar(@Param("car") Car car, Pageable pageable);
 }

@@ -4,8 +4,8 @@ import com.sda.carrental.global.ConstantValues;
 import com.sda.carrental.exceptions.ResourceNotFoundException;
 import com.sda.carrental.global.enums.Country;
 import com.sda.carrental.model.operational.Reservation;
-import com.sda.carrental.model.property.car.Car;
 import com.sda.carrental.model.property.PaymentDetails;
+import com.sda.carrental.model.property.car.CarBase;
 import com.sda.carrental.model.users.Customer;
 import com.sda.carrental.model.users.auth.Verification;
 import com.sda.carrental.service.*;
@@ -38,6 +38,7 @@ public class ManageReservationsController {
     private final PaymentDetailsService paymentDetailsService;
     private final VerificationService verificationService;
     private final CarService carService;
+    private final CarBaseService carBaseService;
     private final RentService rentService;
     private final RetrieveService retrieveService;
     private final UserService userService;
@@ -120,7 +121,8 @@ public class ManageReservationsController {
 
             map.addAttribute("confirmation_form", new ConfirmationForm());
             if (reservation.getStatus().equals(Reservation.ReservationStatus.STATUS_RESERVED)) {
-                map.addAttribute("rental_confirmation_form", new ConfirmRentalForm(reservationId, LocalDate.now())); //TODO add available car list attribute and html form field for new carId field + check if subsequent methods require change
+                map.addAttribute("carOptions", carService.findAvailableCarsInDepartment(reservation));
+                map.addAttribute("rental_confirmation_form", new ConfirmRentalForm(reservationId, LocalDate.now()));
             } else if (reservation.getStatus().equals(Reservation.ReservationStatus.STATUS_PROGRESS)) {
                 map.addAttribute("rent_details", rentService.findById(reservation.getId()));
                 if (departmentId.equals(reservation.getDepartmentBack().getId())) {
@@ -147,12 +149,12 @@ public class ManageReservationsController {
             }
 
             Reservation reservation = reservationService.findCustomerReservation(customerId, reservationId);
-            List<Car> carList = carService.findAvailableCarsInDepartment(reservation);
+            List<CarBase> carList = carBaseService.getAvailableCarBasesInDepartment(reservation.getDepartmentTake().getId());
             if (carList.isEmpty()) throw new RuntimeException();
 
-            map.addAttribute("cars", map.getOrDefault("filteredCars", carList));
+            map.addAttribute("carBases", map.getOrDefault("filteredCarBases", carList));
 
-            Map<String, Object> carProperties = carService.getFilterProperties(carList);
+            Map<String, Object> carProperties = carBaseService.getFilterProperties(carList);
 
             map.addAttribute("brands", carProperties.get("brands"));
             map.addAttribute("types", carProperties.get("types"));
@@ -161,7 +163,7 @@ public class ManageReservationsController {
             map.addAttribute("days", (reservation.getDateFrom().until(reservation.getDateTo(), ChronoUnit.DAYS) + 1));
 
             map.addAttribute("confirmation_form", new ConfirmationForm());
-            map.addAttribute("carFilterForm", map.getOrDefault("carFilterForm", new SubstituteCarFilterForm(reservation.getDateFrom(), reservation.getDateTo(), reservation.getDepartmentTake().getId())));
+            map.addAttribute("carFilterForm", map.getOrDefault("carFilterForm", new SubstituteCarFilterForm(reservation.getDepartmentTake().getId())));
             return "management/substituteCar";
         } catch (ResourceNotFoundException err) {
             redAtt.addFlashAttribute("message", "Error occurred. Resource not found.");
@@ -348,7 +350,7 @@ public class ManageReservationsController {
             return "redirect:/mg-res";
         }
 
-        redAtt.addFlashAttribute("filteredCars", carService.findCarsByForm(filterData));
+        redAtt.addFlashAttribute("filteredCarBases", carBaseService.findAvailableCarBasesByForm(filterData));
         redAtt.addFlashAttribute("carFilterForm", filterData);
         redAtt.addFlashAttribute("customer", customerId);
         redAtt.addAttribute("reservation", reservationId);

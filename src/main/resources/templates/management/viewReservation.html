@@ -25,19 +25,19 @@
                     <dl style="text-align: left">
                         <dt style="font-weight: bold">Vehicle pick-up:</dt>
                         <dt style="font-weight: normal"
-                            th:text="${reservation.getDepartmentTake().getCity()} + ' ' + ${reservation.getDepartmentTake().getPostcode()} + ', '"></dt>
-                        <dt style="font-weight: normal" th:text="${reservation.getDepartmentTake().getAddress()}"></dt>
+                            th:text="${reservation.departmentTake.city} + ' ' + ${reservation.departmentTake.postcode} + ', '"></dt>
+                        <dt style="font-weight: normal" th:text="${reservation.departmentTake.address}"></dt>
                     </dl>
                     <ul style="text-align: left; list-style-type:none">
                         <li><strong>Date:</strong></li>
-                        <li th:text="${reservation.getDateFrom()}"></li>
+                        <li th:text="${reservation.dateFrom}"></li>
                     </ul>
                     <br>
                     <dl style="text-align: left">
                         <dt style="font-weight: bold">Vehicle return:</dt>
                         <dt style="font-weight: normal"
-                            th:text="${reservation.getDepartmentBack().getCity()} + ' ' + ${reservation.getDepartmentBack().getPostcode()} + ', '"></dt>
-                        <dt style="font-weight: normal" th:text="${reservation.getDepartmentBack().getAddress()}"></dt>
+                            th:text="${reservation.departmentBack.city} + ' ' + ${reservation.departmentBack.postcode} + ', '"></dt>
+                        <dt style="font-weight: normal" th:text="${reservation.departmentBack.address}"></dt>
                     </dl>
                     <ul style="text-align: left; list-style-type:none">
                         <li><strong>Date:</strong></li>
@@ -48,25 +48,25 @@
                 <div class="col-5 mb-5">
                     <h5><strong>Vehicle</strong></h5>
                     <ul class="list-group list-group-flush">
-                        <li class="list-group-item" th:text="'Plate: ' + ${reservation.getCar().plate}"></li>
-                        <li class="list-group-item" th:text="'Model: ' + ${reservation.getCar().model}"></li>
+                        <li class="list-group-item" th:if="${rent_details != null}" th:text="'Plate: ' + ${rent_details.car.plate}"></li>
+                        <li class="list-group-item" th:text="'Model: ' + ${reservation.carBase.model}"></li>
                         <li class="list-group-item"
-                            th:text="'Car type: ' + ${reservation.car.carBase.carType.getName()}"></li>
-                        <li class="list-group-item" th:text="'Production date: ' + ${reservation.car.carBase.year}"></li>
-                        <li class="list-group-item" th:text="'Seats: ' + ${reservation.car.carBase.seats}"></li>
+                            th:text="'Car type: ' + ${reservation.carBase.carType.getName()}"></li>
+                        <li class="list-group-item" th:text="'Production date: ' + ${reservation.carBase.year}"></li>
+                        <li class="list-group-item" th:text="'Seats: ' + ${reservation.carBase.seats}"></li>
                     </ul>
                     <br>
                 </div>
                 <div class="col mb-5">
-                    <img th:src="${reservation.getCar().carBase.image}" alt="Picture" width="255" height="150"/>
+                    <img th:src="${reservation.carBase.image}" alt="Picture" width="255" height="150"/>
                 </div>
             </div>
             <div class="row">
                 <div class="col">
                     <form class="change_action_form" th:action="@{submit}" th:object="${confirmation_form}"
                           th:method="POST">
-                        <input type="hidden" th:name="reservation" th:value="${reservation.getId()}">
-                        <input type="hidden" th:name="customer" th:value="${reservation.getCustomer().getId()}">
+                        <input type="hidden" th:name="reservation" th:value="${reservation.id}">
+                        <input type="hidden" th:name="customer" th:value="${reservation.customer.id}">
                         <input type="hidden" th:name="department" th:value="${department}">
 
                         <div class="d-flex flex-column">
@@ -153,14 +153,16 @@
                 </div>
                 <div class="col">
                     <div class="d-flex flex-column">
-                        <th:block th:if="${reservation.status.name() == 'STATUS_RESERVED' && department == reservation.departmentTake.id}">
+                        <th:block
+                                th:if="${reservation.status.name() == 'STATUS_RESERVED' && department == reservation.departmentTake.id}">
                             <form th:action="@{/mg-res/reservation/rent}" th:object="${rental_confirmation_form}"
                                   th:method="POST">
-                                <input type="hidden" th:name="customer" th:value="${reservation.getCustomer().getId()}">
+                                <input type="hidden" th:name="customer" th:value="${reservation.customer.id}">
                                 <input type="hidden" th:name="department" th:value="${department}">
 
                                 <!--Trigger for rent modal-->
-                                <button type="button" class="btn btn-dark mt-2 w-100 def-button-text" data-bs-toggle="modal"
+                                <button type="button" class="btn btn-dark mt-2 w-100 def-button-text"
+                                        data-bs-toggle="modal"
                                         data-bs-target="#rent_confirmation_modal">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                                          class="bi bi-check-circle" viewBox="0 0 16 16">
@@ -185,16 +187,29 @@
                                             <div class="modal-body">
                                                 <input type="hidden" th:field="*{reservationId}">
                                                 <div class="form-group">
-                                                    <div class="form-group" style="flex-direction:row;justify-content:space-between;">
-                                                        <div class="column">
-                                                            <label for="date_from"
-                                                                   class="col-form-label">Date:</label>
-                                                            <input id="date_from" class="form-control text-black bg-white" type="date" name="date_from" th:field="*{dateFrom}" required/>
+                                                    <label for="car_select"></label>
+                                                    <select type="text" id="car_select" th:field="*{carId}" class="form-control">
+                                                        <option th:if="${#lists.isEmpty(carOptions)}" disabled><i style="color:red;">No required car available</i></option>
+                                                        <div th:each="car:${carOptions}">
+                                                            <option th:text="${car.plate}"
+                                                                    th:value="${car.id}"></option>
                                                         </div>
-                                                        <div class="column">
-                                                            <label for="mileage_rent" class="col-form-label">Mileage:</label>
-                                                            <input id="mileage_rent" type="number" th:field="*{mileage}" class="form-control" required>
-                                                        </div>
+                                                    </select>
+                                                </div>
+                                                <div class="form-group"
+                                                     style="flex-direction:row;justify-content:space-between;">
+                                                    <div class="column">
+                                                        <label for="date_from"
+                                                               class="col-form-label">Date:</label>
+                                                        <input id="date_from" class="form-control text-black bg-white"
+                                                               type="date" name="date_from" th:field="*{dateFrom}"
+                                                               required/>
+                                                    </div>
+                                                    <div class="column">
+                                                        <label for="mileage_rent"
+                                                               class="col-form-label">Mileage:</label>
+                                                        <input id="mileage_rent" type="number" th:field="*{mileage}"
+                                                               class="form-control" required>
                                                     </div>
                                                 </div>
                                                 <div class="form-group">
@@ -214,15 +229,12 @@
                                                 </div>
                                             </div>
                                             <div class="modal-footer">
-                                                <svg th:if="${reservation.car.carStatus.name() == 'STATUS_UNAVAILABLE'}"  xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="red" class="bi bi-exclamation-circle" data-toggle="tooltip" data-placement="top" title="Car unavailable" viewBox="0 0 16 16">
-                                                    <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
-                                                    <path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995z"/>
-                                                </svg>
                                                 <button type="button" class="btn btn-dark" data-bs-dismiss="modal">
                                                     Close
                                                 </button>
                                                 <button type="submit"
-                                                        th:class="${reservation.car.carStatus.name() == 'STATUS_UNAVAILABLE'} ? 'btn btn-dark disabled' : 'btn btn-dark'">Confirm</button>
+                                                        class="btn btn-dark">Confirm
+                                                </button>
                                             </div>
                                         </div>
                                     </div>
@@ -232,12 +244,13 @@
                             <form class="change_action_form" th:action="@{/mg-res/reservation/refund}"
                                   th:object="${confirmation_form}"
                                   th:method="POST">
-                                <input type="hidden" th:name="reservation" th:value="${reservation.getId()}">
-                                <input type="hidden" th:name="customer" th:value="${reservation.getCustomer().getId()}">
+                                <input type="hidden" th:name="reservation" th:value="${reservation.id}">
+                                <input type="hidden" th:name="customer" th:value="${reservation.customer.id}">
                                 <input type="hidden" th:name="department" th:value="${department}">
 
                                 <!--Trigger for refund modal-->
-                                <button type="button" class="btn btn-dark mt-2 w-100 def-button-text" data-bs-toggle="modal"
+                                <button type="button" class="btn btn-dark mt-2 w-100 def-button-text"
+                                        data-bs-toggle="modal"
                                         data-bs-target="#e1_confirmation_modal">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                                          class="bi bi-x-circle-fill" viewBox="0 0 16 16">
@@ -276,14 +289,16 @@
                                 </div>
                             </form>
                         </th:block>
-                        <th:block th:if="${reservation.status.name() == 'STATUS_PROGRESS' && department == reservation.departmentBack.id}">
+                        <th:block
+                                th:if="${reservation.status.name() == 'STATUS_PROGRESS' && department == reservation.departmentBack.id}">
                             <form th:action="@{/mg-res/reservation/retrieve}" th:object="${retrieve_confirmation_form}"
                                   th:method="POST">
-                                <input type="hidden" th:name="customer" th:value="${reservation.getCustomer().getId()}">
+                                <input type="hidden" th:name="customer" th:value="${reservation.customer.id}">
                                 <input type="hidden" th:name="department" th:value="${department}">
 
                                 <!--Trigger for retrieve modal-->
-                                <button type="button" class="btn btn-dark mt-2 w-100 def-button-text" data-bs-toggle="modal"
+                                <button type="button" class="btn btn-dark mt-2 w-100 def-button-text"
+                                        data-bs-toggle="modal"
                                         data-bs-target="#retrieve_confirmation_modal">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                                          class="bi bi-check-circle" viewBox="0 0 16 16">
@@ -308,15 +323,20 @@
                                             <div class="modal-body">
                                                 <input type="hidden" th:field="*{departmentId}">
                                                 <input type="hidden" th:field="*{reservationId}">
-                                                <div class="form-group" style="flex-direction:row;justify-content:space-between;">
+                                                <div class="form-group"
+                                                     style="flex-direction:row;justify-content:space-between;">
                                                     <div class="column">
                                                         <label for="date_to"
                                                                class="col-form-label">Date:</label>
-                                                        <input id="date_to" class="form-control text-black bg-white" type="date" name="date_to" th:field="*{dateTo}" required/>
+                                                        <input id="date_to" class="form-control text-black bg-white"
+                                                               type="date" name="date_to" th:field="*{dateTo}"
+                                                               required/>
                                                     </div>
                                                     <div class="column">
-                                                        <label for="mileage_retrieve" class="col-form-label">Mileage:</label>
-                                                        <input id="mileage_retrieve" type="number" th:field="*{mileage}" class="form-control" required>
+                                                        <label for="mileage_retrieve"
+                                                               class="col-form-label">Mileage:</label>
+                                                        <input id="mileage_retrieve" type="number" th:field="*{mileage}"
+                                                               class="form-control" required>
                                                     </div>
                                                 </div>
                                                 <div class="form-group">
@@ -372,17 +392,17 @@
                                         </div>
                                         <div class="modal-body">
                                             <div class="d-flex flex-column" style="text-align: left;">
-                                                <div th:utext="'<strong>Status:</strong><br>' + ${reservation.getStatus().getText()}"></div>
+                                                <div th:utext="'<strong>Status:</strong><br>' + ${reservation.status.getText()}"></div>
                                                 <div style="margin-top: 3%;"
-                                                     th:utext="'<strong>Rent date:</strong><br>' + ${rent_details.getDateFrom()}"></div>
-                                                <div style="margin-top: 3%;"
-                                                     th:if="${reservation.status.name() == 'STATUS_COMPLETED'}"
-                                                     th:utext="'<strong>Retrieve date:</strong><br>' + ${retrieve_details.getDateTo()}"></div>
-                                                <div style="margin-top: 3%;"
-                                                     th:utext="'<strong>Rental remarks:</strong><br>' + ${rent_details.getRemarks()}"></div>
+                                                     th:utext="'<strong>Rent date:</strong><br>' + ${rent_details.dateFrom}"></div>
                                                 <div style="margin-top: 3%;"
                                                      th:if="${reservation.status.name() == 'STATUS_COMPLETED'}"
-                                                     th:utext="'<strong>Retrieval remarks:</strong><br>' + ${retrieve_details.getRemarks()}"></div>
+                                                     th:utext="'<strong>Retrieve date:</strong><br>' + ${retrieve_details.dateTo}"></div>
+                                                <div style="margin-top: 3%;"
+                                                     th:utext="'<strong>Rental remarks:</strong><br>' + ${rent_details.remarks}"></div>
+                                                <div style="margin-top: 3%;"
+                                                     th:if="${reservation.status.name() == 'STATUS_COMPLETED'}"
+                                                     th:utext="'<strong>Retrieval remarks:</strong><br>' + ${retrieve_details.remarks}"></div>
                                             </div>
                                         </div>
                                         <div class="modal-footer">

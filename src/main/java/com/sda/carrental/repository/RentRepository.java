@@ -10,7 +10,7 @@ import java.util.Optional;
 
 public interface RentRepository extends CrudRepository<Rent, Long> {
     @Query("SELECT r FROM rent r " +
-            "WHERE (r.reservation.car = :car) " +
+            "WHERE (r.car = :car) " +
             "AND (CURRENT_DATE BETWEEN r.dateFrom AND r.reservation.dateTo) " +
             "AND r.id NOT IN (" +
             "   SELECT r1 FROM retrieve r1 " +
