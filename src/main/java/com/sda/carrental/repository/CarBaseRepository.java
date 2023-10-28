@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 public interface CarBaseRepository extends CrudRepository<CarBase, Long> {
     @Query("SELECT cb " +
@@ -33,5 +34,14 @@ public interface CarBaseRepository extends CrudRepository<CarBase, Long> {
             "WHERE c.department.id = :department " +
             "AND c.carStatus NOT IN (1, 2, 3) " +
             "GROUP BY cb.id")
-    List<CarBase> getAvailableCarBasesInDepartment(@Param("department") Long department); //TODO might require to check if carBases will be available for the next time gap
+    List<CarBase> getAvailableCarBasesInDepartment(@Param("department") Long department);
+
+    @Query("SELECT cb " +
+            "FROM car_base cb " +
+            "WHERE cb.id = :id " +
+            "AND EXISTS (" +
+            "   SELECT c.carBase FROM car c " +
+            "   WHERE c.department.id = :department " +
+            "   AND c.carStatus NOT IN (1, 2, 3))")
+    Optional<CarBase> getAvailableCarBaseInDepartment(@Param("id") Long id,@Param("department") Long department);
 }

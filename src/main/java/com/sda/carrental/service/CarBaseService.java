@@ -97,4 +97,8 @@ public class CarBaseService {
     public List<CarBase> getAvailableCarBasesInDepartment(Long department) {
         return repository.getAvailableCarBasesInDepartment(department);
     }
+
+    public CarBase getAvailableCarBaseInDepartment(Long carBaseId, Long department) throws ResourceNotFoundException {
+        return repository.getAvailableCarBaseInDepartment(carBaseId, department).orElseThrow(ResourceNotFoundException::new);
+    }
 }
