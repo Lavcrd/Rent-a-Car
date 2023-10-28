@@ -67,7 +67,7 @@ public class RetrieveService {
             if (departmentService.departmentAccess(cud, departmentId).equals(HttpStatus.FORBIDDEN)) {
                 throw new IllegalActionException();
             }
-            carService.retrieveCar(reservationService.findById(form.getReservationId()).getCar(), departmentService.findDepartmentWhereId(form.getDepartmentId()), form.getMileage());
+            carService.retrieveCar(rentService.findById(form.getReservationId()).getCar(), departmentService.findDepartmentWhereId(form.getDepartmentId()), form.getMileage());
             return createRetrieve(customerId, form);
         } catch (IllegalActionException err) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();

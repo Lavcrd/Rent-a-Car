@@ -23,5 +23,5 @@ public class ConstantValues {
     private double cancellationFeePercentage = 0.2;
 
     // Duration of the gap in days required between the return of a reserved car and making another reservation
-    private int reservationGap = 3;
+    private int reservationGap = 4;
 }

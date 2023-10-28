@@ -9,17 +9,14 @@ import com.sda.carrental.model.property.Department;
 import com.sda.carrental.model.property.car.CarBase;
 import com.sda.carrental.repository.CarRepository;
 import com.sda.carrental.service.auth.CustomUserDetails;
-import com.sda.carrental.web.mvc.form.CarFilterForm;
 import com.sda.carrental.web.mvc.form.GenericCarForm;
 import com.sda.carrental.web.mvc.form.SearchCarsForm;
-import com.sda.carrental.web.mvc.form.SubstituteCarFilterForm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.util.*;
 
 @Service
@@ -34,40 +31,15 @@ public class CarService {
         return repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Car", "id", id));
     }
 
-    public List<Car> findAvailableDistinctCarsInDepartment(LocalDate dateFrom, LocalDate dateTo, Long department) {
-        return repository.findAvailableDistinctCarsInDepartment(dateFrom.minusDays(cv.getReservationGap()), dateTo.plusDays(cv.getReservationGap()), department);
-    }
-
     public List<Car> findAvailableCarsInDepartment(Reservation r) {
-        return repository.findAvailableCarsInDepartment(r.getDateFrom().minusDays(cv.getReservationGap()), r.getDateTo().plusDays(cv.getReservationGap()), r.getDepartmentTake().getId());
+        return repository.findAvailableCarsInDepartment(r.getCarBase(), r.getDepartmentTake().getId());
     }
 
-    public Car findAvailableCar(LocalDate dateFrom, LocalDate dateTo, Long department, long carId) throws ResourceNotFoundException {
-        return repository.findCarByCarIdAndAvailability(dateFrom.minusDays(cv.getReservationGap()), dateTo.plusDays(cv.getReservationGap()), department, carId).orElseThrow(ResourceNotFoundException::new);
+    public Car findAvailableCar(long carId, long departmentId) throws ResourceNotFoundException {
+        return repository.findCarByIdAndAvailability(carId, departmentId).orElseThrow(ResourceNotFoundException::new);
     }
 
-    public List<Car> findCarsByForm(GenericCarForm form) {
-        ArrayList<Car> cars;
-        if (form instanceof CarFilterForm f) {
-            cars = (ArrayList<Car>) repository.findAvailableDistinctCarsInDepartment(
-                    f.getIndexData().getDateFrom().minusDays(cv.getReservationGap()),
-                    f.getIndexData().getDateTo().plusDays(cv.getReservationGap()),
-                    f.getIndexData().getDepartmentIdFrom());
-        } else if (form instanceof SubstituteCarFilterForm f) {
-            cars = (ArrayList<Car>) repository.findAvailableCarsInDepartment(
-                    f.getDateFrom(),
-                    f.getDateTo().plusDays(cv.getReservationGap()),
-                    f.getDepartmentId());
-        } else if (form instanceof SearchCarsForm f) {
-            cars = (ArrayList<Car>) findByCriteria(f);
-        } else {
-            return Collections.emptyList();
-        }
-
-        return applyFilters(cars, form);
-    }
-
-    private List<Car> findByCriteria(SearchCarsForm f) {
+    public List<Car> findByCriteria(SearchCarsForm f) {
         CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         Country formCountry = Country.valueOf(f.getCountry());
@@ -94,10 +66,12 @@ public class CarService {
             carStatus = Car.CarStatus.valueOf(f.getStatus());
         }
 
-        return repository.findByCriteria(
+        List<Car> cars = repository.findByCriteria(
                 f.getMileageMin(), f.getMileageMax(),
                 country, f.getPlate(),
                 departments, carStatus);
+
+        return applyFilters(cars, f);
     }
 
     private List<Car> applyFilters(List<Car> cl, GenericCarForm form) {
@@ -149,8 +123,8 @@ public class CarService {
         return carProperties;
     }
 
-    public boolean isCarUnavailable(Reservation r) {
-        return r.getCar().getCarStatus().equals(Car.CarStatus.STATUS_UNAVAILABLE);
+    public boolean isCarUnavailable(Car c) {
+        return !c.getCarStatus().equals(Car.CarStatus.STATUS_OPEN);
     }
 
     @Transactional
@@ -183,5 +157,9 @@ public class CarService {
 
     public List<Car> findByDepartments(List<Department> departments) {
         return repository.findAllByDepartments(departments);
+    }
+
+    public Car findByOperationId(Long operationId) throws ResourceNotFoundException {
+        return repository.findByOperationId(operationId).orElseThrow(ResourceNotFoundException::new);
     }
 }

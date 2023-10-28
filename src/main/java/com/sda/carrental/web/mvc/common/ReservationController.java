@@ -3,13 +3,10 @@ package com.sda.carrental.web.mvc.common;
 import com.sda.carrental.exceptions.IllegalActionException;
 import com.sda.carrental.global.ConstantValues;
 import com.sda.carrental.exceptions.ResourceNotFoundException;
-import com.sda.carrental.model.property.car.Car;
 import com.sda.carrental.model.property.Department;
+import com.sda.carrental.model.property.car.CarBase;
 import com.sda.carrental.model.users.User;
-import com.sda.carrental.service.CarService;
-import com.sda.carrental.service.CustomerService;
-import com.sda.carrental.service.DepartmentService;
-import com.sda.carrental.service.ReservationService;
+import com.sda.carrental.service.*;
 import com.sda.carrental.service.auth.CustomUserDetails;
 import com.sda.carrental.web.mvc.form.IndexForm;
 import com.sda.carrental.web.mvc.form.SelectCarForm;
@@ -31,7 +28,7 @@ import java.time.temporal.ChronoUnit;
 @RequestMapping("/reservation")
 public class ReservationController {
 
-    private final CarService carService;
+    private final CarBaseService carBaseService;
     private final DepartmentService depService;
     private final CustomerService customerService;
     private final ReservationService reservationService;
@@ -46,25 +43,25 @@ public class ReservationController {
             IndexForm index = reservationData.getIndexData();
             if (!reservationService.isChronologyValid(index.getDateFrom(), index.getDateTo(), index.getDateCreated())) throw new ResourceNotFoundException();
 
-            Car car = carService.findCarById(reservationData.getCarId());
+            CarBase carBase = carBaseService.findById(reservationData.getCarBaseId());
             Department depFrom = depService.findDepartmentWhereId(reservationData.getIndexData().getDepartmentIdFrom());
             Department depTo = depService.findDepartmentWhereId(reservationData.getIndexData().getDepartmentIdTo());
             long days = reservationData.getIndexData().getDateFrom().until(reservationData.getIndexData().getDateTo(), ChronoUnit.DAYS) + 1;
 
             if (reservationData.getIndexData().isFirstBranchChecked()) {
                 map.addAttribute("diff_return_price", cv.getDeptReturnPriceDiff());
-                map.addAttribute("total_price", cv.getDeptReturnPriceDiff() + (days * car.getCarBase().getPriceDay()));
+                map.addAttribute("total_price", cv.getDeptReturnPriceDiff() + (days * carBase.getPriceDay()));
             } else {
                 map.addAttribute("diff_return_price", 0.0);
-                map.addAttribute("total_price", days * car.getCarBase().getPriceDay());
+                map.addAttribute("total_price", days * carBase.getPriceDay());
             }
 
             map.addAttribute("days", (reservationData.getIndexData().getDateFrom().until(reservationData.getIndexData().getDateTo(), ChronoUnit.DAYS) + 1));
             map.addAttribute("branchFrom", depFrom);
             map.addAttribute("branchTo", depTo);
             map.addAttribute("reservationData", reservationData);
-            map.addAttribute("car", car);
-            map.addAttribute("raw_price", days * car.getCarBase().getPriceDay());
+            map.addAttribute("carBase", carBase);
+            map.addAttribute("raw_price", days * carBase.getPriceDay());
             map.addAttribute("fee_percentage", cv.getCancellationFeePercentage() * 100);
             map.addAttribute("refund_fee_days", cv.getRefundSubtractDaysDuration());
             map.addAttribute("deposit_deadline", cv.getRefundDepositDeadlineDays());

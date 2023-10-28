@@ -4,8 +4,8 @@ import com.sda.carrental.global.ConstantValues;
 import com.sda.carrental.exceptions.ResourceNotFoundException;
 import com.sda.carrental.global.enums.Country;
 import com.sda.carrental.model.operational.Reservation;
-import com.sda.carrental.model.property.car.Car;
 import com.sda.carrental.model.property.PaymentDetails;
+import com.sda.carrental.model.property.car.CarBase;
 import com.sda.carrental.model.users.Customer;
 import com.sda.carrental.model.users.auth.Verification;
 import com.sda.carrental.service.*;
@@ -38,6 +38,7 @@ public class ManageReservationsController {
     private final PaymentDetailsService paymentDetailsService;
     private final VerificationService verificationService;
     private final CarService carService;
+    private final CarBaseService carBaseService;
     private final RentService rentService;
     private final RetrieveService retrieveService;
     private final UserService userService;
@@ -104,13 +105,13 @@ public class ManageReservationsController {
                 long days = reservation.getDateFrom().until(reservation.getDateTo(), ChronoUnit.DAYS) + 1;
                 if (!reservation.getDepartmentTake().equals(reservation.getDepartmentBack())) {
                     map.addAttribute("diff_return_price", cv.getDeptReturnPriceDiff());
-                    map.addAttribute("total_price", cv.getDeptReturnPriceDiff() + (days * reservation.getCar().getCarBase().getPriceDay()));
+                    map.addAttribute("total_price", cv.getDeptReturnPriceDiff() + (days * reservation.getCarBase().getPriceDay()));
                 } else {
                     map.addAttribute("diff_return_price", 0.0);
-                    map.addAttribute("total_price", days * reservation.getCar().getCarBase().getPriceDay());
+                    map.addAttribute("total_price", days * reservation.getCarBase().getPriceDay());
                 }
-                map.addAttribute("raw_price", days * reservation.getCar().getCarBase().getPriceDay());
-                map.addAttribute("deposit_value", reservation.getCar().getCarBase().getDepositValue());
+                map.addAttribute("raw_price", days * reservation.getCarBase().getPriceDay());
+                map.addAttribute("deposit_value", reservation.getCarBase().getDepositValue());
             }
 
             map.addAttribute("reservation", reservation);
@@ -120,6 +121,7 @@ public class ManageReservationsController {
 
             map.addAttribute("confirmation_form", new ConfirmationForm());
             if (reservation.getStatus().equals(Reservation.ReservationStatus.STATUS_RESERVED)) {
+                map.addAttribute("carOptions", carService.findAvailableCarsInDepartment(reservation));
                 map.addAttribute("rental_confirmation_form", new ConfirmRentalForm(reservationId, LocalDate.now()));
             } else if (reservation.getStatus().equals(Reservation.ReservationStatus.STATUS_PROGRESS)) {
                 map.addAttribute("rent_details", rentService.findById(reservation.getId()));
@@ -147,12 +149,12 @@ public class ManageReservationsController {
             }
 
             Reservation reservation = reservationService.findCustomerReservation(customerId, reservationId);
-            List<Car> carList = carService.findAvailableCarsInDepartment(reservation);
+            List<CarBase> carList = carBaseService.getAvailableCarBasesInDepartment(reservation.getDepartmentTake().getId());
             if (carList.isEmpty()) throw new RuntimeException();
 
-            map.addAttribute("cars", map.getOrDefault("filteredCars", carList));
+            map.addAttribute("carBases", map.getOrDefault("filteredCarBases", carList));
 
-            Map<String, Object> carProperties = carService.getFilterProperties(carList);
+            Map<String, Object> carProperties = carBaseService.getFilterProperties(carList);
 
             map.addAttribute("brands", carProperties.get("brands"));
             map.addAttribute("types", carProperties.get("types"));
@@ -161,7 +163,7 @@ public class ManageReservationsController {
             map.addAttribute("days", (reservation.getDateFrom().until(reservation.getDateTo(), ChronoUnit.DAYS) + 1));
 
             map.addAttribute("confirmation_form", new ConfirmationForm());
-            map.addAttribute("carFilterForm", map.getOrDefault("carFilterForm", new SubstituteCarFilterForm(reservation.getDateFrom(), reservation.getDateTo(), reservation.getDepartmentTake().getId())));
+            map.addAttribute("carFilterForm", map.getOrDefault("carFilterForm", new SubstituteCarFilterForm(reservation.getDepartmentTake().getId())));
             return "management/substituteCar";
         } catch (ResourceNotFoundException err) {
             redAtt.addFlashAttribute("message", "Error occurred. Resource not found.");
@@ -348,7 +350,7 @@ public class ManageReservationsController {
             return "redirect:/mg-res";
         }
 
-        redAtt.addFlashAttribute("filteredCars", carService.findCarsByForm(filterData));
+        redAtt.addFlashAttribute("filteredCarBases", carBaseService.findAvailableCarBasesByForm(filterData));
         redAtt.addFlashAttribute("carFilterForm", filterData);
         redAtt.addFlashAttribute("customer", customerId);
         redAtt.addAttribute("reservation", reservationId);
@@ -365,17 +367,17 @@ public class ManageReservationsController {
             return "redirect:/mg-res";
         }
 
-        HttpStatus status = reservationService.substituteCar(reservationId, customerId, carId);
+        HttpStatus status = reservationService.substituteCarBase(reservationId, customerId, carId);
 
         redAtt.addFlashAttribute("customer", customerId);
         redAtt.addAttribute("reservation", reservationId);
         redAtt.addAttribute("department", departmentId);
 
         if (status.equals(HttpStatus.ACCEPTED)) {
-            redAtt.addFlashAttribute("message", "Car successfully substituted.");
+            redAtt.addFlashAttribute("message", "Success: Car successfully substituted.");
             return "redirect:/mg-res/reservation/{reservation}";
         }
-        redAtt.addFlashAttribute("message", "An unexpected error occurred. Please try again later.");
-        return "redirect:/mg-res";
+        redAtt.addFlashAttribute("message", "Failure: An unexpected error occurred. Please try again later.");
+        return "redirect:/mg-cus";
     }
 }

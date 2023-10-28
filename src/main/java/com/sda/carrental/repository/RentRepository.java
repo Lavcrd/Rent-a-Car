@@ -10,10 +10,15 @@ import java.util.Optional;
 
 public interface RentRepository extends CrudRepository<Rent, Long> {
     @Query("SELECT r FROM rent r " +
-            "WHERE (r.reservation.car = :car) " +
+            "WHERE (r.car = :car) " +
             "AND (CURRENT_DATE BETWEEN r.dateFrom AND r.reservation.dateTo) " +
             "AND r.id NOT IN (" +
             "   SELECT r1 FROM retrieve r1 " +
             "   WHERE r1.id = r.id)")
     Optional<Rent> findActiveByCar(@Param("car") Car car);
+
+    @Query(value = "SELECT r FROM rent r " +
+            "WHERE r.car.plate = :plate " +
+            "AND r.reservation.status = 1")
+    Optional<Rent> findActiveOperationByCarPlate(@Param("plate") String plate);
 }
