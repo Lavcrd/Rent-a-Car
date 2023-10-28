@@ -35,7 +35,7 @@ public class CarService {
         return repository.findAvailableCarsInDepartment(r.getCarBase(), r.getDepartmentTake().getId());
     }
 
-    public Car findAvailableCar(long carId, long departmentId) throws ResourceNotFoundException { //TODO might require more precise query that checks availability for reservation time on carBases
+    public Car findAvailableCar(long carId, long departmentId) throws ResourceNotFoundException {
         return repository.findCarByIdAndAvailability(carId, departmentId).orElseThrow(ResourceNotFoundException::new);
     }
 

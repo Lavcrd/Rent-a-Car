@@ -65,7 +65,7 @@ public class CarRetrieveController {
 
             return "management/carRetrieve";
         } catch (ResourceNotFoundException err) {
-            redAtt.addFlashAttribute("message", "Failed: Cannot retrieve - possible server side issues");
+            redAtt.addFlashAttribute("message", "Failure: Cannot retrieve - possible server side issues");
             return "redirect:/c-ret";
         } catch (RuntimeException err) {
             redAtt.addFlashAttribute("message", "An unexpected error occurred. Please try again.");

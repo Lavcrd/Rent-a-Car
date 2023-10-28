@@ -374,10 +374,10 @@ public class ManageReservationsController {
         redAtt.addAttribute("department", departmentId);
 
         if (status.equals(HttpStatus.ACCEPTED)) {
-            redAtt.addFlashAttribute("message", "Car successfully substituted.");
+            redAtt.addFlashAttribute("message", "Success: Car successfully substituted.");
             return "redirect:/mg-res/reservation/{reservation}";
         }
-        redAtt.addFlashAttribute("message", "An unexpected error occurred. Please try again later.");
-        return "redirect:/mg-res";
+        redAtt.addFlashAttribute("message", "Failure: An unexpected error occurred. Please try again later.");
+        return "redirect:/mg-cus";
     }
 }

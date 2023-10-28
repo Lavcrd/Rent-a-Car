@@ -17,7 +17,7 @@ public interface CarRepository extends CrudRepository<Car, Long> {
             "WHERE c.carBase = :carBase " +
             "AND c.department.id = :department " +
             "AND c.carStatus NOT IN (1, 2, 3)")
-    List<Car> findAvailableCarsInDepartment(@Param("carBase") CarBase carBase, @Param("department") Long department); //TODO might require improvement to check incoming reservations on carBase
+    List<Car> findAvailableCarsInDepartment(@Param("carBase") CarBase carBase, @Param("department") Long department);
 
     @Query(value = "SELECT c FROM car c " +
             "WHERE c.id = :carId " +
