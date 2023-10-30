@@ -122,7 +122,7 @@
             </form>
         </div>
 
-        <div class="col-sm-9">
+        <div class="col-sm-9 scroll-list">
             <form th:action="@{/cars/proceed}" th:object="${selectCarForm}" th:method="POST">
                 <input type="hidden" th:field="*{indexData.departmentIdFrom}">
                 <input type="hidden" th:field="*{indexData.departmentIdTo}">

@@ -437,3 +437,10 @@ input {
 .accordion {
 --bs-accordion-btn-active-icon: none !important;
 }
+
+/* Unassigned helpers */
+
+.scroll-list {
+    max-height: 70vh;
+    overflow-y: auto;
+}
