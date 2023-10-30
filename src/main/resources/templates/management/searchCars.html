@@ -18,6 +18,10 @@
     <div th:include="fragments/top::reg-options"></div>
 
     <div class="row">
+        <div class="row" style="text-align:end;"><h6><i th:text="'Results: ' + ${results.size()}"></i></h6></div>
+    </div>
+
+    <div class="row">
         <div class="col-sm-3">
             <form th:object="${searchCarsForm}" th:action="@{/mg-car/search}" th:method="POST">
                 <div style="display: grid; grid-template-columns: repeat(2, 1fr);">
@@ -212,8 +216,7 @@
             </form>
         </div>
 
-        <div class="col-sm-9">
-            <div class="row" style="text-align:end;"><h6><i th:text="'Results: ' + ${results.size()}"></i></h6></div>
+        <div class="col-sm-9 scroll-list">
             <form th:action="@{/mg-car/select}" th:method="POST">
                 <div th:each="result : ${results}" id="car-list">
                     <div class="row">
