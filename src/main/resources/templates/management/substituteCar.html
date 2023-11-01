@@ -130,7 +130,7 @@
             </form>
         </div>
 
-        <div class="col-sm-9 scroll-list">
+        <div class="col-sm-9 scroll-70">
             <form th:action="@{/mg-res/reservation/{reservation}/select}" th:method="POST">
                 <input type="hidden" name="customer" th:value="${customer}">
                 <input type="hidden" name="reservation" th:value="${reservation}">
@@ -144,8 +144,8 @@
                     </div>
 
                     <div class="row">
-                        <div class="col-md-4">
-                            <img th:src="${carBase.image}" alt="Picture" width="255" height="150"/>
+                        <div class="col-md-4 d-flex">
+                            <img th:src="${carBase.image}" alt="Picture" class="car-img"/>
 
                         </div>
                         <div class="col-md-6">
