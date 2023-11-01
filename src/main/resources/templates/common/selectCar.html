@@ -122,7 +122,7 @@
             </form>
         </div>
 
-        <div class="col-sm-9 scroll-list">
+        <div class="col-sm-9 scroll-70">
             <form th:action="@{/cars/proceed}" th:object="${selectCarForm}" th:method="POST">
                 <input type="hidden" th:field="*{indexData.departmentIdFrom}">
                 <input type="hidden" th:field="*{indexData.departmentIdTo}">
@@ -139,9 +139,8 @@
                     </div>
 
                     <div class="row">
-                        <div class="col-md-4">
-                            <img th:src="${carBase.image}" alt="Picture" width="255" height="150"/>
-
+                        <div class="col-md-4 d-flex">
+                            <img th:src="${carBase.image}" alt="Picture" class="car-img"/>
                         </div>
                         <div class="col-md-6">
                             <ul class="list-group list-group-flush">

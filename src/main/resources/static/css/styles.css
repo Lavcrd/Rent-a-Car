@@ -438,9 +438,16 @@ input {
 --bs-accordion-btn-active-icon: none !important;
 }
 
-/* Unassigned helpers */
+/* Global helpers */
 
-.scroll-list {
+.scroll-70 {
     max-height: 70vh;
     overflow-y: auto;
+}
+
+.car-img {
+    object-fit: contain;
+    max-width: 100%;
+    height: auto;
+    align-self: center;
 }

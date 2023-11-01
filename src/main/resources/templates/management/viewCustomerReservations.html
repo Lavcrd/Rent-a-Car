@@ -83,7 +83,7 @@
             </table>
         </div>
 
-        <div class="col-sm-9 scroll-list">
+        <div class="col-sm-9 scroll-70">
             <form th:action="@{/mg-res/reservation}" th:method="POST">
                 <input type="hidden" th:if="${customer != null}" th:name="customer"
                        th:value="${customer.getId()}">
