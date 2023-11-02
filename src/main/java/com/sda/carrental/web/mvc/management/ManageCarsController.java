@@ -4,12 +4,10 @@ import com.sda.carrental.exceptions.ResourceNotFoundException;
 import com.sda.carrental.global.enums.Country;
 import com.sda.carrental.model.property.car.Car;
 import com.sda.carrental.model.property.Department;
+import com.sda.carrental.model.property.car.CarBase;
 import com.sda.carrental.service.*;
 import com.sda.carrental.service.auth.CustomUserDetails;
-import com.sda.carrental.web.mvc.form.ChangeCarDepartment;
-import com.sda.carrental.web.mvc.form.ChangeCarMileage;
-import com.sda.carrental.web.mvc.form.ChangeCarStatus;
-import com.sda.carrental.web.mvc.form.SearchCarsForm;
+import com.sda.carrental.web.mvc.form.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -28,6 +26,7 @@ import java.util.Map;
 @RequestMapping("/mg-car")
 public class ManageCarsController {
     private final CarService carService;
+    private final CarBaseService carBaseService;
     private final DepartmentService departmentService;
     private final UserService userService;
     private final RentService rentService;
@@ -55,6 +54,28 @@ public class ManageCarsController {
             map.addAttribute("searchCarsForm", map.getOrDefault("searchCarsForm", new SearchCarsForm()));
 
             return "management/searchCars";
+        } catch (RuntimeException err) {
+            redAtt.addFlashAttribute("message", "Failure: Unexpected exception");
+            return "redirect:/";
+        }
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value="/car-bases")
+    public String searchCarBasesPage(ModelMap map, RedirectAttributes redAtt) {
+        try {
+            List<CarBase> carBases = carBaseService.findAll();
+
+            map.addAttribute("results", map.getOrDefault("results", carBases));
+
+            Map<String, Object> carProperties = carBaseService.getFilterProperties(carBases, true);
+            map.addAttribute("brands", carProperties.get("brands"));
+            map.addAttribute("types", carProperties.get("types"));
+            map.addAttribute("seats", carProperties.get("seats"));
+            map.addAttribute("years", carProperties.get("years"));
+
+            map.addAttribute("searchCarBasesForm", map.getOrDefault("searchCarBasesForm", new SearchCarBasesForm()));
+
+            return "management/searchCarBases";
         } catch (RuntimeException err) {
             redAtt.addFlashAttribute("message", "Failure: Unexpected exception");
             return "redirect:/";
