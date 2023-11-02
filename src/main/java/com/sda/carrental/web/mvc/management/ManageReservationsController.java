@@ -154,7 +154,7 @@ public class ManageReservationsController {
 
             map.addAttribute("carBases", map.getOrDefault("filteredCarBases", carList));
 
-            Map<String, Object> carProperties = carBaseService.getFilterProperties(carList);
+            Map<String, Object> carProperties = carBaseService.getFilterProperties(carList, false);
 
             map.addAttribute("brands", carProperties.get("brands"));
             map.addAttribute("types", carProperties.get("types"));

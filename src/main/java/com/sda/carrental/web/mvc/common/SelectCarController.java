@@ -41,7 +41,7 @@ public class SelectCarController {
 
             map.addAttribute("carBases", map.getOrDefault("filteredCarBases", carBaseList));
 
-            Map<String, Object> carProperties = carBaseService.getFilterProperties(carBaseList);
+            Map<String, Object> carProperties = carBaseService.getFilterProperties(carBaseList, false);
 
             map.addAttribute("brands", carProperties.get("brands"));
             map.addAttribute("types", carProperties.get("types"));

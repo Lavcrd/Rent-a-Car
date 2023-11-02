@@ -445,6 +445,11 @@ input {
     overflow-y: auto;
 }
 
+.scroll-140 {
+    max-height: 140vh;
+    overflow-y: auto;
+}
+
 .car-img {
     object-fit: contain;
     max-width: 100%;

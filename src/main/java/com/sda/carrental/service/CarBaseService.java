@@ -13,6 +13,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Service
 @RequiredArgsConstructor
@@ -20,6 +22,10 @@ public class CarBaseService {
     private final ConstantValues cv;
     private final CarBaseRepository repository;
     private final DepartmentService departmentService;
+
+    public List<CarBase> findAll() {
+        return StreamSupport.stream(repository.findAll().spliterator(), false).collect(Collectors.toList());
+    }
 
     public CarBase findById(Long id) throws ResourceNotFoundException {
         return repository.findById(id).orElseThrow(ResourceNotFoundException::new);
@@ -29,7 +35,7 @@ public class CarBaseService {
         return repository.getAvailableCarBasesInCountry(dateFrom.minusDays(cv.getReservationGap()), dateTo.plusDays(cv.getReservationGap()), country);
     }
 
-    public Map<String, Object> getFilterProperties(List<CarBase> carBaseList) {
+    public Map<String, Object> getFilterProperties(List<CarBase> carBaseList, boolean isExpanded) {
         Set<String> brands = new HashSet<>();
         Set<CarBase.CarType> types = new HashSet<>();
         Set<Integer> seats = new HashSet<>();
@@ -51,6 +57,17 @@ public class CarBaseService {
         carProperties.put("brands", sortedBrands);
         carProperties.put("types", sortedTypes);
         carProperties.put("seats", sortedSeats);
+
+        if (isExpanded) {
+            Set<Integer> years = new HashSet<>();
+            for (CarBase carBase : carBaseList) {
+                years.add(carBase.getYear());
+            }
+            List<Integer> sortedYears = new ArrayList<>(years);
+            sortedYears.sort(null);
+            carProperties.put("years", sortedYears);
+        }
+
         return carProperties;
     }
 

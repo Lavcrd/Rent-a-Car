@@ -188,8 +188,8 @@
                                                 <input type="hidden" th:field="*{reservationId}">
                                                 <div class="form-group">
                                                     <label for="car_select"></label>
-                                                    <select type="text" id="car_select" th:field="*{carId}" class="form-control">
-                                                        <option th:if="${#lists.isEmpty(carOptions)}" disabled><i style="color:red;">No required car available</i></option>
+                                                    <select type="text" id="car_select" th:field="*{carId}" class="form-control" th:disabled="${#lists.isEmpty(carOptions)}">
+                                                        <option selected th:if="${#lists.isEmpty(carOptions)}" value="">No required car available</option>
                                                         <div th:each="car:${carOptions}">
                                                             <option th:text="${car.plate}"
                                                                     th:value="${car.id}"></option>
