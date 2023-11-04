@@ -210,7 +210,7 @@ public class ReservationService {
         try {
             Reservation r = findCustomerReservation(customerId, reservationId);
             if (!r.getStatus().equals(Reservation.ReservationStatus.STATUS_RESERVED)) throw new IllegalArgumentException();
-            CarBase cb = carBaseService.getAvailableCarBaseInDepartment(carBaseId, r.getDepartmentTake().getId());
+            CarBase cb = carBaseService.findAvailableCarBaseInDepartment(carBaseId, r.getDepartmentTake().getId());
             r.setCarBase(cb);
             repository.save(r);
             paymentDetailsService.adjustRequiredDeposit(r, cb.getDepositValue());

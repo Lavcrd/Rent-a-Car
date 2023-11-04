@@ -9,11 +9,11 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-public class SearchCarBasesForm extends GenericCarForm {
+public class SearchCarBasesFilterForm extends GenericCarForm {
 
-    private Integer depositMin;
+    private Double depositMin;
 
-    private Integer depositMax;
+    private Double depositMax;
 
     private List<Integer> years;
 }

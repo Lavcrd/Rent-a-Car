@@ -149,7 +149,7 @@ public class ManageReservationsController {
             }
 
             Reservation reservation = reservationService.findCustomerReservation(customerId, reservationId);
-            List<CarBase> carList = carBaseService.getAvailableCarBasesInDepartment(reservation.getDepartmentTake().getId());
+            List<CarBase> carList = carBaseService.findAvailableCarBasesInDepartment(reservation.getDepartmentTake().getId());
             if (carList.isEmpty()) throw new RuntimeException();
 
             map.addAttribute("carBases", map.getOrDefault("filteredCarBases", carList));
@@ -163,7 +163,7 @@ public class ManageReservationsController {
             map.addAttribute("days", (reservation.getDateFrom().until(reservation.getDateTo(), ChronoUnit.DAYS) + 1));
 
             map.addAttribute("confirmation_form", new ConfirmationForm());
-            map.addAttribute("carFilterForm", map.getOrDefault("carFilterForm", new SubstituteCarFilterForm(reservation.getDepartmentTake().getId())));
+            map.addAttribute("carFilterForm", map.getOrDefault("carFilterForm", new SubstituteCarBaseFilterForm(reservation.getDepartmentTake().getId())));
             return "management/substituteCar";
         } catch (ResourceNotFoundException err) {
             redAtt.addFlashAttribute("message", "Error occurred. Resource not found.");
@@ -343,14 +343,14 @@ public class ManageReservationsController {
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/reservation/{reservation}/filter")
-    public String substituteCarFilterButton(@ModelAttribute("carFilterForm") SubstituteCarFilterForm filterData, RedirectAttributes redAtt, @RequestParam("reservation") Long reservationId, @RequestParam("customer") Long customerId, @RequestParam("department") Long departmentId) {
+    public String substituteCarFilterButton(@ModelAttribute("carFilterForm") SubstituteCarBaseFilterForm filterData, RedirectAttributes redAtt, @RequestParam("reservation") Long reservationId, @RequestParam("customer") Long customerId, @RequestParam("department") Long departmentId) {
         CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (userService.hasNoAccessToUserOperation(cud, customerId, reservationId)) {
             redAtt.addFlashAttribute("message", "Access rejected.");
             return "redirect:/mg-res";
         }
 
-        redAtt.addFlashAttribute("filteredCarBases", carBaseService.findAvailableCarBasesByForm(filterData));
+        redAtt.addFlashAttribute("filteredCarBases", carBaseService.findCarBasesByForm(filterData));
         redAtt.addFlashAttribute("carFilterForm", filterData);
         redAtt.addFlashAttribute("customer", customerId);
         redAtt.addAttribute("reservation", reservationId);

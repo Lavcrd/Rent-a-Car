@@ -5,14 +5,15 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+
 @Getter
 @Setter
 @ToString
 @NoArgsConstructor
-public class SubstituteCarFilterForm extends GenericCarForm {
-    private Long departmentId;
+public class SelectCarBaseFilterForm extends GenericCarForm {
+    private IndexForm indexData;
 
-    public SubstituteCarFilterForm(Long departmentId) {
-        this.departmentId = departmentId;
+    public SelectCarBaseFilterForm(IndexForm indexData) {
+        this.indexData = indexData;
     }
 }

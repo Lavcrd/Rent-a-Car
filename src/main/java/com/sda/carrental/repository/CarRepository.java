@@ -29,7 +29,7 @@ public interface CarRepository extends CrudRepository<Car, Long> {
     List<Car> findAllByDepartments(@Param("departments") List<Department> departments);
 
     @Query(value = "SELECT c FROM car c " +
-            "WHERE c.department in (:departments) " +
+            "WHERE c.department IN (:departments) " +
             "AND ((:status IS NULL AND c.carStatus <= 2) OR c.carStatus = :status) " +
             "AND (:mileageMin IS NULL OR c.mileage >= :mileageMin) " +
             "AND (:mileageMax IS NULL OR c.mileage <= :mileageMax) " +
