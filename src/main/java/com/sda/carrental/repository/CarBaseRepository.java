@@ -26,7 +26,7 @@ public interface CarBaseRepository extends CrudRepository<CarBase, Long> {
             "    AND r.dateTo BETWEEN :dateFrom AND :dateTo" +
             "  )" +
             ")")
-    List<CarBase> getAvailableCarBasesInCountry(@Param("dateFrom") LocalDate dateFrom, @Param("dateTo") LocalDate dateTo, @Param("country") Country country);
+    List<CarBase> findAvailableCarBasesInCountry(@Param("dateFrom") LocalDate dateFrom, @Param("dateTo") LocalDate dateTo, @Param("country") Country country);
 
     @Query("SELECT cb " +
             "FROM car_base cb " +
@@ -34,7 +34,7 @@ public interface CarBaseRepository extends CrudRepository<CarBase, Long> {
             "WHERE c.department.id = :department " +
             "AND c.carStatus NOT IN (1, 2, 3) " +
             "GROUP BY cb.id")
-    List<CarBase> getAvailableCarBasesInDepartment(@Param("department") Long department);
+    List<CarBase> findAvailableCarBasesInDepartment(@Param("department") Long department);
 
     @Query("SELECT cb " +
             "FROM car_base cb " +
@@ -43,5 +43,12 @@ public interface CarBaseRepository extends CrudRepository<CarBase, Long> {
             "   SELECT c.carBase FROM car c " +
             "   WHERE c.department.id = :department " +
             "   AND c.carStatus NOT IN (1, 2, 3))")
-    Optional<CarBase> getAvailableCarBaseInDepartment(@Param("id") Long id,@Param("department") Long department);
+    Optional<CarBase> findAvailableCarBaseInDepartment(@Param("id") Long id, @Param("department") Long department);
+
+    @Query("SELECT cb " +
+            "FROM car_base cb " +
+            "WHERE (:depositMin IS NULL OR cb.depositValue >= :depositMin) " +
+            "AND (:depositMax IS NULL OR cb.depositValue <= :depositMax) " +
+            "AND (COALESCE(:years, 0) = 0 OR cb.year IN (:years))")
+    List<CarBase> findByDepositAndModelYear(@Param("depositMin") Double depositMin, @Param("depositMax") Double depositMax, @Param("years") List<Integer> years);
 }

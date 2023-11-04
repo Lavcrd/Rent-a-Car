@@ -5,7 +5,7 @@ import com.sda.carrental.exceptions.ResourceNotFoundException;
 import com.sda.carrental.model.property.car.CarBase;
 import com.sda.carrental.service.CarBaseService;
 import com.sda.carrental.service.DepartmentService;
-import com.sda.carrental.web.mvc.form.CarFilterForm;
+import com.sda.carrental.web.mvc.form.SelectCarBaseFilterForm;
 import com.sda.carrental.web.mvc.form.IndexForm;
 import com.sda.carrental.web.mvc.form.SelectCarForm;
 import lombok.RequiredArgsConstructor;
@@ -33,7 +33,7 @@ public class SelectCarController {
     public String selectCarPage(final ModelMap map, RedirectAttributes redAtt, @ModelAttribute("indexData") IndexForm indexData) {
         try {
             if (indexData.getDateCreated() == null) throw new IllegalActionException();
-            List<CarBase> carBaseList = carBaseService.getAvailableCarBasesInCountry(
+            List<CarBase> carBaseList = carBaseService.findAvailableCarBasesInCountry(
                     indexData.getDateFrom(),
                     indexData.getDateTo(),
                     departmentService.findDepartmentWhereId(indexData.getDepartmentIdFrom()).getCountry());
@@ -50,7 +50,7 @@ public class SelectCarController {
             map.addAttribute("days", (indexData.getDateFrom().until(indexData.getDateTo(), ChronoUnit.DAYS) + 1));
 
             map.addAttribute("selectCarForm", new SelectCarForm(indexData));
-            map.addAttribute(map.getOrDefault("carFilterForm", new CarFilterForm(indexData)));
+            map.addAttribute(map.getOrDefault("carFilterForm", new SelectCarBaseFilterForm(indexData)));
 
             return "common/selectCar";
         } catch (IllegalActionException err) {
@@ -71,8 +71,8 @@ public class SelectCarController {
     }
 
     @RequestMapping(value = "/filter", method = RequestMethod.POST)
-    public String filterCarsButton(@ModelAttribute("carFilterForm") CarFilterForm filterData, RedirectAttributes redirect) {
-        redirect.addFlashAttribute("filteredCarBases", carBaseService.findAvailableCarBasesByForm(filterData));
+    public String filterCarsButton(@ModelAttribute("carFilterForm") SelectCarBaseFilterForm filterData, RedirectAttributes redirect) {
+        redirect.addFlashAttribute("filteredCarBases", carBaseService.findCarBasesByForm(filterData));
         redirect.addFlashAttribute("indexData", filterData.getIndexData());
         redirect.addFlashAttribute("carFilterForm", filterData);
         return "redirect:/cars";

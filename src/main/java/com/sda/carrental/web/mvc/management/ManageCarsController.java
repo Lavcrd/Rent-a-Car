@@ -73,7 +73,7 @@ public class ManageCarsController {
             map.addAttribute("seats", carProperties.get("seats"));
             map.addAttribute("years", carProperties.get("years"));
 
-            map.addAttribute("searchCarBasesForm", map.getOrDefault("searchCarBasesForm", new SearchCarBasesForm()));
+            map.addAttribute("searchCarBasesForm", map.getOrDefault("searchCarBasesForm", new SearchCarBasesFilterForm()));
 
             return "management/searchCarBases";
         } catch (RuntimeException err) {
@@ -115,11 +115,9 @@ public class ManageCarsController {
         }
     }
 
-    //Search page buttons
+    //Search cars page buttons
     @RequestMapping(method = RequestMethod.POST, value = "/search")
     public String filterCarsButton(@ModelAttribute("searchCarsForm") @Valid SearchCarsForm form, Errors err, RedirectAttributes redAtt) {
-        CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
         redAtt.addFlashAttribute("searchCarsForm", form);
         if (err.hasErrors()) {
             return "redirect:/mg-car";
@@ -133,6 +131,18 @@ public class ManageCarsController {
     public String carViewButton(RedirectAttributes redAtt, @RequestParam("select_button") Long carId) {
         redAtt.addAttribute("carId", carId);
         return "redirect:/mg-car/{carId}";
+    }
+
+    //Search car bases page buttons
+    @RequestMapping(method = RequestMethod.POST, value = "/car-bases/search")
+    public String filterCarsButton(@ModelAttribute("searchCarBasesForm") @Valid SearchCarBasesFilterForm form, Errors err, RedirectAttributes redAtt) {
+        redAtt.addFlashAttribute("searchCarBasesForm", form);
+        if (err.hasErrors()) {
+            return "redirect:/mg-car";
+        }
+
+        redAtt.addFlashAttribute("results", carBaseService.findCarBasesByForm(form));
+        return "redirect:/mg-car/car-bases";
     }
 
     //View car page buttons

@@ -5,9 +5,10 @@ import com.sda.carrental.global.ConstantValues;
 import com.sda.carrental.global.enums.Country;
 import com.sda.carrental.model.property.car.CarBase;
 import com.sda.carrental.repository.CarBaseRepository;
-import com.sda.carrental.web.mvc.form.CarFilterForm;
+import com.sda.carrental.web.mvc.form.SelectCarBaseFilterForm;
 import com.sda.carrental.web.mvc.form.GenericCarForm;
-import com.sda.carrental.web.mvc.form.SubstituteCarFilterForm;
+import com.sda.carrental.web.mvc.form.SearchCarBasesFilterForm;
+import com.sda.carrental.web.mvc.form.SubstituteCarBaseFilterForm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -31,8 +32,8 @@ public class CarBaseService {
         return repository.findById(id).orElseThrow(ResourceNotFoundException::new);
     }
 
-    public List<CarBase> getAvailableCarBasesInCountry(LocalDate dateFrom, LocalDate dateTo, Country country) {
-        return repository.getAvailableCarBasesInCountry(dateFrom.minusDays(cv.getReservationGap()), dateTo.plusDays(cv.getReservationGap()), country);
+    public List<CarBase> findAvailableCarBasesInCountry(LocalDate dateFrom, LocalDate dateTo, Country country) {
+        return repository.findAvailableCarBasesInCountry(dateFrom.minusDays(cv.getReservationGap()), dateTo.plusDays(cv.getReservationGap()), country);
     }
 
     public Map<String, Object> getFilterProperties(List<CarBase> carBaseList, boolean isExpanded) {
@@ -71,15 +72,17 @@ public class CarBaseService {
         return carProperties;
     }
 
-    public List<CarBase> findAvailableCarBasesByForm(GenericCarForm form) {
+    public List<CarBase> findCarBasesByForm(GenericCarForm form) {
         List<CarBase> carBases;
-        if (form instanceof CarFilterForm f) {
-            carBases = repository.getAvailableCarBasesInCountry(
+        if (form instanceof SelectCarBaseFilterForm f) {
+            carBases = findAvailableCarBasesInCountry(
                     f.getIndexData().getDateFrom(),
                     f.getIndexData().getDateTo(),
                     departmentService.findDepartmentWhereId(f.getIndexData().getDepartmentIdFrom()).getCountry());
-        } else if (form instanceof SubstituteCarFilterForm f) {
-            carBases = repository.getAvailableCarBasesInDepartment(f.getDepartmentId());
+        } else if (form instanceof SubstituteCarBaseFilterForm f) {
+            carBases = findAvailableCarBasesInDepartment(f.getDepartmentId());
+        } else if (form instanceof SearchCarBasesFilterForm f) {
+            carBases = findCarBasesByExpandedCriteria(f.getDepositMin(), f.getDepositMax(), f.getYears());
         } else {
             return Collections.emptyList();
         }
@@ -111,11 +114,15 @@ public class CarBaseService {
         return cbl;
     }
 
-    public List<CarBase> getAvailableCarBasesInDepartment(Long department) {
-        return repository.getAvailableCarBasesInDepartment(department);
+    public List<CarBase> findAvailableCarBasesInDepartment(Long department) {
+        return repository.findAvailableCarBasesInDepartment(department);
     }
 
-    public CarBase getAvailableCarBaseInDepartment(Long carBaseId, Long department) throws ResourceNotFoundException {
-        return repository.getAvailableCarBaseInDepartment(carBaseId, department).orElseThrow(ResourceNotFoundException::new);
+    public CarBase findAvailableCarBaseInDepartment(Long carBaseId, Long department) throws ResourceNotFoundException {
+        return repository.findAvailableCarBaseInDepartment(carBaseId, department).orElseThrow(ResourceNotFoundException::new);
+    }
+
+    public List<CarBase> findCarBasesByExpandedCriteria(Double depositMin, Double depositMax, List<Integer> years) {
+        return repository.findByDepositAndModelYear(depositMin, depositMax, years);
     }
 }
