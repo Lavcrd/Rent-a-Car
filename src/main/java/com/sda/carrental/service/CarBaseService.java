@@ -5,12 +5,11 @@ import com.sda.carrental.global.ConstantValues;
 import com.sda.carrental.global.enums.Country;
 import com.sda.carrental.model.property.car.CarBase;
 import com.sda.carrental.repository.CarBaseRepository;
-import com.sda.carrental.web.mvc.form.SelectCarBaseFilterForm;
-import com.sda.carrental.web.mvc.form.GenericCarForm;
-import com.sda.carrental.web.mvc.form.SearchCarBasesFilterForm;
-import com.sda.carrental.web.mvc.form.SubstituteCarBaseFilterForm;
+import com.sda.carrental.web.mvc.form.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -124,5 +123,16 @@ public class CarBaseService {
 
     public List<CarBase> findCarBasesByExpandedCriteria(Double depositMin, Double depositMax, List<Integer> years) {
         return repository.findByDepositAndModelYear(depositMin, depositMax, years);
+    }
+
+    @Transactional
+    public HttpStatus register(RegisterCarBaseForm form) {
+        try {
+            String image = "/cars/i30.png"; //car base image hardcoded due to absence of external storage system and need of demo
+            repository.save(new CarBase(image, form.getBrand(), form.getModel(), form.getYear(), CarBase.CarType.valueOf(form.getType()), form.getSeats(), form.getPrice(), form.getDeposit()));
+            return HttpStatus.CREATED;
+        } catch (RuntimeException err) {
+            return HttpStatus.BAD_REQUEST;
+        }
     }
 }

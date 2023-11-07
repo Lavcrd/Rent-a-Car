@@ -51,7 +51,10 @@ public class ManageCarsController {
             map.addAttribute("departments", departments);
             map.addAttribute("statuses", Car.CarStatus.values());
 
+            map.addAttribute("patterns", carBaseService.findAll());
+
             map.addAttribute("searchCarsForm", map.getOrDefault("searchCarsForm", new SearchCarsForm()));
+            map.addAttribute("register_form", map.getOrDefault("register_form", new RegisterCarForm()));
 
             return "management/searchCars";
         } catch (RuntimeException err) {
@@ -73,7 +76,10 @@ public class ManageCarsController {
             map.addAttribute("seats", carProperties.get("seats"));
             map.addAttribute("years", carProperties.get("years"));
 
+            map.addAttribute("all_car_types", CarBase.CarType.values());
+
             map.addAttribute("searchCarBasesForm", map.getOrDefault("searchCarBasesForm", new SearchCarBasesFilterForm()));
+            map.addAttribute("register_form", map.getOrDefault("register_form", new RegisterCarBaseForm()));
 
             return "management/searchCarBases";
         } catch (RuntimeException err) {
@@ -127,6 +133,25 @@ public class ManageCarsController {
         return "redirect:/mg-car";
     }
 
+    @RequestMapping(method = RequestMethod.POST, value = "/register")
+    public String registerCarButton(@ModelAttribute("register_form") @Valid RegisterCarForm form, Errors err, RedirectAttributes redAtt) {
+        if (err.hasErrors()) {
+            redAtt.addFlashAttribute("message", err.getAllErrors().get(0).getDefaultMessage());
+            redAtt.addFlashAttribute("register_form", form);
+            return "redirect:/mg-car";
+        }
+
+        HttpStatus status = carService.register(form);
+        if (status.equals(HttpStatus.CREATED)) {
+            redAtt.addFlashAttribute("message", "Success: Car successfully registered.");
+        } else if (status.equals(HttpStatus.NOT_FOUND)) {
+            redAtt.addFlashAttribute("message", "Failure: Provided car information might not be valid.");
+        } else {
+            redAtt.addFlashAttribute("message", "Failure: Unexpected database error.");
+        }
+        return "redirect:/mg-car";
+    }
+
     @RequestMapping(method = RequestMethod.POST, value = "/select")
     public String carViewButton(RedirectAttributes redAtt, @RequestParam("select_button") Long carId) {
         redAtt.addAttribute("carId", carId);
@@ -135,13 +160,30 @@ public class ManageCarsController {
 
     //Search car bases page buttons
     @RequestMapping(method = RequestMethod.POST, value = "/car-bases/search")
-    public String filterCarsButton(@ModelAttribute("searchCarBasesForm") @Valid SearchCarBasesFilterForm form, Errors err, RedirectAttributes redAtt) {
+    public String filterCarBasesButton(@ModelAttribute("searchCarBasesForm") @Valid SearchCarBasesFilterForm form, Errors err, RedirectAttributes redAtt) {
         redAtt.addFlashAttribute("searchCarBasesForm", form);
         if (err.hasErrors()) {
-            return "redirect:/mg-car";
+            return "redirect:/mg-car/car-bases";
         }
 
         redAtt.addFlashAttribute("results", carBaseService.findCarBasesByForm(form));
+        return "redirect:/mg-car/car-bases";
+    }
+
+    @RequestMapping(method = RequestMethod.POST, value = "/car-bases/register")
+    public String registerCarBaseButton(@ModelAttribute("register_form") @Valid RegisterCarBaseForm form, Errors err, RedirectAttributes redAtt) {
+        if (err.hasErrors()) {
+            redAtt.addFlashAttribute("message", err.getAllErrors().get(0).getDefaultMessage());
+            redAtt.addFlashAttribute("register_form", form);
+            return "redirect:/mg-car/car-bases";
+        }
+
+        HttpStatus status = carBaseService.register(form);
+        if (status.equals(HttpStatus.CREATED)) {
+            redAtt.addFlashAttribute("message", "Success: Pattern successfully registered.");
+        } else {
+            redAtt.addFlashAttribute("message", "Failure: Unexpected database error.");
+        }
         return "redirect:/mg-car/car-bases";
     }
 
