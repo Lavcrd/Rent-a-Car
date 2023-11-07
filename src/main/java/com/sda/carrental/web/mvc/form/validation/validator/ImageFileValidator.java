@@ -1,0 +1,24 @@
+package com.sda.carrental.web.mvc.form.validation.validator;
+
+import com.sda.carrental.web.mvc.form.validation.constraint.ImageFile;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.validation.ConstraintValidator;
+import javax.validation.ConstraintValidatorContext;
+
+public class ImageFileValidator implements ConstraintValidator<ImageFile, MultipartFile> {
+
+    @Override
+    public void initialize(ImageFile constraint) {
+    }
+
+    @Override
+    public boolean isValid(MultipartFile input, ConstraintValidatorContext cvc) {
+        try {
+            String filename = input.getOriginalFilename();
+            return filename.endsWith(".jpg") || filename.endsWith(".png");
+        } catch (RuntimeException err) {
+            return false;
+        }
+    }
+}

@@ -34,7 +34,9 @@
                 <div style="display: grid; grid-template-columns: repeat(2, 1fr);">
                     <button class="btn btn-dark bg-dark"
                             style="margin: 1%"
-                            type="button">
+                            type="button"
+                            data-bs-toggle="modal"
+                            data-bs-target="#registerModal">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                              class="bi bi-plus-square" viewBox="0 0 16 16">
                             <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"/>
@@ -236,6 +238,102 @@
                                 </div>
                                 <button type="submit" class="btn btn-dark" th:text="Inspect"
                                         name="select_button" th:value="${result.getId()}"></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+            <!--Modal add car base-->
+            <form th:method="POST" th:object="${register_form}" th:action="@{'/mg-car/car-bases/register'}" enctype="multipart/form-data">
+                <div class="modal fade" id="registerModal" tabindex="-1" role="dialog"
+                     aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Register new car base</h5>
+                                <button type="button" class="close" data-bs-dismiss="modal"
+                                        aria-label="Close">
+                                    <span aria-hidden="true">×</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <p>Please fill all car base fields.</p>
+                                <div class="input-group my-3">
+                                    <input id="r_image" class="text-black bg-white form-control"
+                                           th:type="file" th:field="*{image}" required/>
+                                </div>
+                                <div class="modal-row mt-2">
+                                    <label style="justify-self: start;" for="r_pattern" class="form-label">Type: </label>
+                                    <select id="r_pattern" class="form-select modal-input"
+                                            th:field="*{type}" required>
+                                        <div th:each="type:${all_car_types}">
+                                            <option th:text="${type.name}"
+                                                    th:value="${type}"
+                                                    th:field="*{type}"></option>
+                                        </div>
+                                    </select>
+                                </div>
+                                <div class="modal-row mt-2">
+                                    <label style="justify-self: start;" for="r_brand" class="form-label">Brand: </label>
+                                    <input id="r_brand" class="text-black bg-white modal-input"
+                                           th:placeholder="'Brand shortcut'"
+                                           th:type="text" th:field="*{brand}"
+                                           required/>
+                                </div>
+                                <div class="modal-row mt-2">
+                                    <label style="justify-self: start;" for="r_model" class="form-label">Model: </label>
+                                    <input id="r_model" class="text-black bg-white modal-input"
+                                           th:placeholder="'Full model name'"
+                                           th:type="text" th:field="*{model}"
+                                           required/>
+                                </div>
+                                <div class="modal-row mt-2">
+                                    <label style="justify-self: start;" for="r_year" class="form-label">Production date: </label>
+                                    <input id="r_year" class="text-black bg-white modal-input"
+                                           th:placeholder="'Provide year of production'"
+                                           th:type="number" th:field="*{year}"
+                                           required/>
+                                </div>
+                                <div class="modal-row mt-2">
+                                    <label style="justify-self: start;" for="r_seats" class="form-label">Seats: </label>
+                                    <input id="r_seats" class="text-black bg-white modal-input"
+                                           th:placeholder="'Provide amount of seats'"
+                                           th:type="number" th:field="*{seats}"
+                                           required/>
+                                </div>
+                                <div class="modal-row mt-2">
+                                    <label style="justify-self: start;" for="r_price" class="form-label">Initial price: </label>
+                                    <input id="r_price" class="text-black bg-white modal-input"
+                                           th:placeholder="'Provide initial price per day'"
+                                           th:type="number" th:field="*{price}"
+                                           required/>
+                                </div>
+                                <div class="modal-row mt-2">
+                                    <label style="justify-self: start;" for="r_deposit" class="form-label">Initial deposit: </label>
+                                    <input id="r_deposit" class="text-black bg-white modal-input"
+                                           th:placeholder="'Provide initial deposit value'"
+                                           th:type="number" th:field="*{deposit}"
+                                           required/>
+                                </div>
+                                <div class="my-3 d-flex" style="justify-content: center; align-content: center;">
+                                    <span class="border w-100"></span>
+                                </div>
+                                <div class="modal-row mt-2">
+                                    <label style="justify-self: start;" for="r_car_confirmation"
+                                           class="text-md">Password: </label>
+                                    <input id="r_car_confirmation" class="text-black bg-white modal-input"
+                                           th:placeholder="'Confirm car registration with password'"
+                                           th:type="password" th:field="*{currentPassword}"
+                                           autocomplete="new-password"
+                                           required/>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-dark" data-bs-dismiss="modal">
+                                    Close
+                                </button>
+                                <button type="submit" class="btn btn-dark">Confirm</button>
                             </div>
                         </div>
                     </div>

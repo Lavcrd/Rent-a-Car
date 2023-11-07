@@ -411,6 +411,11 @@ input {
     justify-self: end;
 }
 
+.modal-row {
+    grid-template-columns: auto auto;
+    display: grid;
+}
+
 .form-group {
     display: flex;
     flex-direction: column;

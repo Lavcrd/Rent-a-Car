@@ -1,7 +1,6 @@
 package com.sda.carrental.service;
 
 import com.sda.carrental.exceptions.ResourceNotFoundException;
-import com.sda.carrental.global.ConstantValues;
 import com.sda.carrental.global.enums.Country;
 import com.sda.carrental.model.operational.Reservation;
 import com.sda.carrental.model.property.car.Car;
@@ -10,6 +9,7 @@ import com.sda.carrental.model.property.car.CarBase;
 import com.sda.carrental.repository.CarRepository;
 import com.sda.carrental.service.auth.CustomUserDetails;
 import com.sda.carrental.web.mvc.form.GenericCarForm;
+import com.sda.carrental.web.mvc.form.RegisterCarForm;
 import com.sda.carrental.web.mvc.form.SearchCarsForm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -24,8 +24,8 @@ import java.util.*;
 public class CarService {
 
     private final CarRepository repository;
+    private final CarBaseService carBaseService;
     private final DepartmentService departmentService;
-    private final ConstantValues cv;
 
     public Car findCarById(long id) {
         return repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Car", "id", id));
@@ -161,5 +161,23 @@ public class CarService {
 
     public Car findByOperationId(Long operationId) throws ResourceNotFoundException {
         return repository.findByOperationId(operationId).orElseThrow(ResourceNotFoundException::new);
+    }
+
+    @Transactional
+    public HttpStatus register(RegisterCarForm form) {
+        try {
+            CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            if (departmentService.departmentAccess(cud, form.getDepartment()).equals(HttpStatus.FORBIDDEN)) throw new RuntimeException();
+
+            CarBase carBase = carBaseService.findById(form.getPattern());
+            Department department = departmentService.findDepartmentWhereId(form.getDepartment());
+
+            repository.save(new Car(carBase, department, department.getCountry().getCode() + "-" + form.getPlate().toUpperCase(), form.getMileage(), Car.CarStatus.STATUS_UNAVAILABLE));
+            return HttpStatus.CREATED;
+        } catch (ResourceNotFoundException err) {
+            return HttpStatus.NOT_FOUND;
+        } catch (RuntimeException err) {
+            return HttpStatus.BAD_REQUEST;
+        }
     }
 }
