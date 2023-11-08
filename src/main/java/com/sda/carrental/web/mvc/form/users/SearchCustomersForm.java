@@ -1,4 +1,4 @@
-package com.sda.carrental.web.mvc.form;
+package com.sda.carrental.web.mvc.form.users;
 
 import com.sda.carrental.model.operational.Reservation;
 import lombok.Getter;

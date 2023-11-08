@@ -1,4 +1,4 @@
-package com.sda.carrental.web.mvc.form;
+package com.sda.carrental.web.mvc.form.property.cars;
 
 import com.sda.carrental.web.mvc.form.validation.constraint.CarType;
 import com.sda.carrental.web.mvc.form.validation.constraint.CurrentPassword;

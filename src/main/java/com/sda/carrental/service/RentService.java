@@ -7,7 +7,7 @@ import com.sda.carrental.model.operational.Reservation;
 import com.sda.carrental.model.property.car.Car;
 import com.sda.carrental.repository.RentRepository;
 import com.sda.carrental.service.auth.CustomUserDetails;
-import com.sda.carrental.web.mvc.form.ConfirmRentalForm;
+import com.sda.carrental.web.mvc.form.operational.ConfirmRentalForm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;

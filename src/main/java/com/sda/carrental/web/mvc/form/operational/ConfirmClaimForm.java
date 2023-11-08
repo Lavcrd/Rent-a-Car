@@ -1,4 +1,4 @@
-package com.sda.carrental.web.mvc.form;
+package com.sda.carrental.web.mvc.form.operational;
 
 import com.sda.carrental.web.mvc.form.validation.constraint.ConsistentMileage;
 import com.sda.carrental.web.mvc.form.validation.constraint.CurrentPassword;

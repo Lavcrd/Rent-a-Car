@@ -71,7 +71,7 @@
                         <div class="modal-body">
                             <p>Please confirm your <u>password change</u>.</p>
 
-                            <div style="grid-template-columns: auto auto; display: grid; margin-top: 2%;">
+                            <div class="modal-row mt-2">
                                 <label style="justify-self: start;" for="old_password"
                                        class="text-md">Old password: </label>
                                 <input id="old_password" class="text-black bg-white modal-input" th:placeholder="'Current password'"
@@ -79,7 +79,7 @@
                                        required/>
                             </div>
 
-                            <div style="grid-template-columns: auto auto; display: grid; margin-top: 2%;">
+                            <div class="modal-row mt-2">
                                 <label style="justify-self: start;" for="new_password"
                                        class="text-md">New password: </label>
                                 <input id="new_password" class="text-black bg-white modal-input" th:placeholder="'New password'"
@@ -87,7 +87,7 @@
                                        required/>
                             </div>
 
-                            <div style="grid-template-columns: auto auto; display: grid; margin-top: 2%;">
+                            <div class="modal-row mt-2">
                                 <label style="justify-self: start;" for="repeat_new_password"
                                        class="text-md">Repeat new password: </label>
                                 <input id="repeat_new_password" class="text-black bg-white modal-input" th:placeholder="'Repeat new password'"
@@ -112,7 +112,7 @@
         </form>
 
         <div th:include="fragments/bottom::bottom-footer"></div>
-        <div th:insert="fragments/bottom::message-handler" style="width: inherit;"></div>
+        <div th:insert="fragments/bottom::message-handler"></div>
     </div>
 </div>
 <div th:include="fragments/bottom::common-scripts"></div>

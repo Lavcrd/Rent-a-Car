@@ -5,9 +5,9 @@ import com.sda.carrental.exceptions.ResourceNotFoundException;
 import com.sda.carrental.model.property.car.CarBase;
 import com.sda.carrental.service.CarBaseService;
 import com.sda.carrental.service.DepartmentService;
-import com.sda.carrental.web.mvc.form.SelectCarBaseFilterForm;
-import com.sda.carrental.web.mvc.form.IndexForm;
-import com.sda.carrental.web.mvc.form.SelectCarForm;
+import com.sda.carrental.web.mvc.form.property.cars.SelectCarBaseFilterForm;
+import com.sda.carrental.web.mvc.form.operational.IndexForm;
+import com.sda.carrental.web.mvc.form.operational.SelectCarForm;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Controller;
@@ -50,7 +50,7 @@ public class SelectCarController {
             map.addAttribute("days", (indexData.getDateFrom().until(indexData.getDateTo(), ChronoUnit.DAYS) + 1));
 
             map.addAttribute("selectCarForm", new SelectCarForm(indexData));
-            map.addAttribute(map.getOrDefault("carFilterForm", new SelectCarBaseFilterForm(indexData)));
+            map.addAttribute("carFilterForm", map.getOrDefault("carFilterForm", new SelectCarBaseFilterForm(indexData)));
 
             return "common/selectCar";
         } catch (IllegalActionException err) {

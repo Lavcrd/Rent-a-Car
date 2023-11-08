@@ -133,7 +133,7 @@
                                                     </div>
                                                     <div class="modal-body">
                                                         <p>Please provide nationality, personal ID and driver ID.</p>
-                                                        <div style="grid-template-columns: auto auto; display: grid;">
+                                                        <div class="modal-row">
                                                             <label style="justify-self: start;" for="v_country" class="form-label">Country: </label>
                                                             <select id="v_country" class="form-select" style="justify-self: end; width: 15em;"
                                                                     th:field="*{country}" required>
@@ -144,13 +144,13 @@
                                                                 </div>
                                                             </select>
                                                         </div>
-                                                        <div style="grid-template-columns: auto auto; display: grid; margin-top: 2%;">
+                                                        <div class="modal-row mt-2">
                                                             <label style="justify-self: start;" for="v_personal_id" class="text-md">Personal ID: </label>
                                                             <input style="justify-self: end; width: 15em;" id="v_personal_id" class="text-black bg-white"
                                                                    th:placeholder="'Personal ID'"
                                                                    th:type="text" th:field="*{personalId}" required/>
                                                         </div>
-                                                        <div style="grid-template-columns: auto auto; display: grid; margin-top: 2%;">
+                                                        <div class="modal-row mt-2">
                                                             <label style="justify-self: start;" for="v_driver_id" class="text-md">Driver License ID: </label>
                                                             <input style="justify-self: end; width: 15em;" id="v_driver_id" class="text-black bg-white"
                                                                    th:placeholder="'Driver ID'"
@@ -255,7 +255,7 @@
                                                 </div>
                                                 <div class="modal-body">
                                                     <p>Please provide new contact number.</p>
-                                                    <div style="grid-template-columns: auto auto; display: grid; margin-top: 2%;">
+                                                    <div class="modal-row mt-2">
                                                         <label style="justify-self: start;" for="c_contact_n" class="text-md">Contact number: </label>
                                                         <input style="justify-self: end; width: 15em;" id="c_contact_n" class="text-black bg-white"
                                                                th:placeholder="'Enter contact number'"
@@ -306,7 +306,7 @@
                                                 </div>
                                                 <div class="modal-body">
                                                     <p>Please provide nationality and P-ID of verified account.</p>
-                                                    <div style="grid-template-columns: auto auto; display: grid;">
+                                                    <div class="modal-row">
                                                         <label style="justify-self: start;" for="m_country" class="form-label">Country: </label>
                                                         <select id="m_country"
                                                                 class="form-select" style="justify-self: end; width: 15em;"
@@ -318,7 +318,7 @@
                                                             </div>
                                                         </select>
                                                     </div>
-                                                    <div style="grid-template-columns: auto auto; display: grid; margin-top: 2%;">
+                                                    <div class="modal-row mt-2">
                                                         <label style="justify-self: start;" for="m_personal_id" class="text-md">P-ID: </label>
                                                         <input style="justify-self: end; width: 15em;" id="m_personal_id" class="text-black bg-white"
                                                                th:placeholder="'Personal ID'"

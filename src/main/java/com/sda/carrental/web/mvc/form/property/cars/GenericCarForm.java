@@ -1,4 +1,4 @@
-package com.sda.carrental.web.mvc.form;
+package com.sda.carrental.web.mvc.form.property.cars;
 
 import com.sda.carrental.model.property.car.CarBase;
 import lombok.Getter;

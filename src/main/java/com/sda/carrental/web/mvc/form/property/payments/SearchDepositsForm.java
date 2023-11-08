@@ -1,4 +1,4 @@
-package com.sda.carrental.web.mvc.form;
+package com.sda.carrental.web.mvc.form.property.payments;
 
 import com.sda.carrental.web.mvc.form.validation.constraint.ValidCountry;
 import lombok.Getter;
