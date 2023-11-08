@@ -195,7 +195,7 @@
                                     </div>
                                     <div class="modal-body">
                                         <p>Please confirm <u>status change</u> with password.</p>
-                                        <div style="grid-template-columns: auto auto; display: grid;">
+                                        <div class="modal-row">
                                             <label style="justify-self: start;" for="s_status" class="form-label">Status: </label>
                                             <select id="s_status" class="form-select modal-input"
                                                     th:field="*{status}" required>
@@ -206,7 +206,7 @@
                                                 </div>
                                             </select>
                                         </div>
-                                        <div style="grid-template-columns: auto auto; display: grid; margin-top: 2%;">
+                                        <div class="modal-row mt-2">
                                             <label style="justify-self: start;" for="s_status_confirmation"
                                                    class="text-md">Password: </label>
                                             <input id="s_status_confirmation" class="text-black bg-white modal-input"
@@ -362,7 +362,7 @@
                                     </div>
                                     <div class="modal-body">
                                         <p>Please confirm <u>mileage update</u> with password.</p>
-                                        <div style="grid-template-columns: auto auto; display: grid; margin-top: 2%;">
+                                        <div class="modal-row mt-2">
                                             <label style="justify-self: start;" for="s_mileage"
                                                    class="text-md">Mileage: </label>
                                             <input id="s_mileage" class="text-black bg-white modal-input"
@@ -370,7 +370,7 @@
                                                    th:type="number" th:field="*{mileage}"
                                                    required/>
                                         </div>
-                                        <div style="grid-template-columns: auto auto; display: grid; margin-top: 2%;">
+                                        <div class="modal-row mt-2">
                                             <label style="justify-self: start;" for="s_mileage_confirmation"
                                                    class="text-md">Password: </label>
                                             <input id="s_mileage_confirmation" class="text-black bg-white modal-input"
@@ -407,7 +407,7 @@
                                     </div>
                                     <div class="modal-body">
                                         <p>Please confirm <u>department update</u> with password.</p>
-                                        <div style="grid-template-columns: auto auto; display: grid;">
+                                        <div class="modal-row">
                                             <label style="justify-self: start;" for="s_department"
                                                    class="form-label">Department: </label>
                                             <select id="s_department" class="form-select modal-input"
@@ -419,7 +419,7 @@
                                                 </div>
                                             </select>
                                         </div>
-                                        <div style="grid-template-columns: auto auto; display: grid; margin-top: 2%;">
+                                        <div class="modal-row mt-2">
                                             <label style="justify-self: start;" for="s_department_confirmation"
                                                    class="text-md">Password: </label>
                                             <input id="s_department_confirmation"

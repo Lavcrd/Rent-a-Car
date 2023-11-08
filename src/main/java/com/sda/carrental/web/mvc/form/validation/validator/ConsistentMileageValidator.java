@@ -1,8 +1,8 @@
 package com.sda.carrental.web.mvc.form.validation.validator;
 
 import com.sda.carrental.service.CarService;
-import com.sda.carrental.web.mvc.form.ConfirmClaimForm;
-import com.sda.carrental.web.mvc.form.ConfirmRentalForm;
+import com.sda.carrental.web.mvc.form.operational.ConfirmClaimForm;
+import com.sda.carrental.web.mvc.form.operational.ConfirmRentalForm;
 import com.sda.carrental.web.mvc.form.validation.constraint.ConsistentMileage;
 import org.springframework.beans.factory.annotation.Autowired;
 

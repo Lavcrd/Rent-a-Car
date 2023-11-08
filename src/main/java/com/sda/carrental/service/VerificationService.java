@@ -5,7 +5,7 @@ import com.sda.carrental.exceptions.ResourceNotFoundException;
 import com.sda.carrental.global.enums.Country;
 import com.sda.carrental.model.users.auth.Verification;
 import com.sda.carrental.repository.VerificationRepository;
-import com.sda.carrental.web.mvc.form.VerificationForm;
+import com.sda.carrental.web.mvc.form.users.VerificationForm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;

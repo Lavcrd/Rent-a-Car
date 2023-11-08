@@ -2,7 +2,7 @@ package com.sda.carrental.web.mvc.common;
 
 
 import com.sda.carrental.service.DepartmentService;
-import com.sda.carrental.web.mvc.form.IndexForm;
+import com.sda.carrental.web.mvc.form.operational.IndexForm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;

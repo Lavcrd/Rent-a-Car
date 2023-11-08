@@ -1,5 +1,6 @@
-package com.sda.carrental.web.mvc.form;
+package com.sda.carrental.web.mvc.form.users;
 
+import com.sda.carrental.web.mvc.form.common.ConfirmationForm;
 import com.sda.carrental.web.mvc.form.validation.constraint.MatchingPassword;
 import lombok.Getter;
 import lombok.Setter;

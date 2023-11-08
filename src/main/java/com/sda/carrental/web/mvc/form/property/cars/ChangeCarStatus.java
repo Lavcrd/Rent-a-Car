@@ -1,5 +1,6 @@
-package com.sda.carrental.web.mvc.form;
+package com.sda.carrental.web.mvc.form.property.cars;
 
+import com.sda.carrental.web.mvc.form.common.ConfirmationForm;
 import com.sda.carrental.web.mvc.form.validation.constraint.CarStatus;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

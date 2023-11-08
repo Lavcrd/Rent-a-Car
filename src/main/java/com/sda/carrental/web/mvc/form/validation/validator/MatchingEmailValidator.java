@@ -1,6 +1,6 @@
 package com.sda.carrental.web.mvc.form.validation.validator;
 
-import com.sda.carrental.web.mvc.form.ChangeEmailForm;
+import com.sda.carrental.web.mvc.form.users.ChangeEmailForm;
 import com.sda.carrental.web.mvc.form.validation.constraint.MatchingEmail;
 
 import javax.validation.ConstraintValidator;

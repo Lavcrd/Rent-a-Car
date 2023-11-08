@@ -1,5 +1,6 @@
-package com.sda.carrental.web.mvc.form;
+package com.sda.carrental.web.mvc.form.property.cars;
 
+import com.sda.carrental.web.mvc.form.operational.IndexForm;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
