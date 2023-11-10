@@ -208,9 +208,11 @@ public class ManageCarsController {
             }
 
             Car.CarStatus carStatus = Car.CarStatus.valueOf(form.getStatus());
-            HttpStatus status = carService.updateCarStatus(car, carStatus);
+            HttpStatus status = carService.handleStatus(car, carStatus);
             if (status.equals(HttpStatus.OK)) {
                 redAtt.addFlashAttribute("message", "Success: Car status successfully changed to - " + carStatus.name().substring(7));
+            } else if (status.equals(HttpStatus.PRECONDITION_FAILED)){
+                redAtt.addFlashAttribute("message", "Failure: Rejected due to active reservation.");
             }
         } catch (ResourceNotFoundException err) {
             redAtt.addFlashAttribute("message", "Failure: Not found");

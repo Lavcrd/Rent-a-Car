@@ -43,4 +43,12 @@ public interface CarRepository extends CrudRepository<Car, Long> {
     @Query(value = "SELECT r.car FROM rent r " +
             "WHERE r.id = :operationId")
     Optional<Car> findByOperationId(@Param("operationId") Long operationId);
+
+    @Query(value = "SELECT r.car FROM rent r " +
+            "WHERE (r.car.id = :id) " +
+            "AND (CURRENT_DATE >= r.dateFrom) " +
+            "AND r.id NOT IN (" +
+            "SELECT r1 FROM retrieve r1 " +
+            "WHERE r1.id = r.id)")
+    Optional<Car> findRentedCarById(@Param("id") Long id);
 }

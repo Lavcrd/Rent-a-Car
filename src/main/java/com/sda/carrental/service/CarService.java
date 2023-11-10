@@ -180,4 +180,12 @@ public class CarService {
             return HttpStatus.BAD_REQUEST;
         }
     }
+
+    public HttpStatus handleStatus(Car c, Car.CarStatus s) {
+        if (s.equals(Car.CarStatus.STATUS_OPEN)) {
+            Optional<Car> car = repository.findRentedCarById(c.getId());
+            if (car.isPresent()) return HttpStatus.PRECONDITION_FAILED;
+        }
+        return updateCarStatus(c, s);
+    }
 }
