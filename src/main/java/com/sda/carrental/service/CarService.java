@@ -188,4 +188,8 @@ public class CarService {
         }
         return updateCarStatus(c, s);
     }
+
+    public Long getCarSizeByCarBase(Long id) {
+        return repository.getCarSizeByCarBase(id);
+    }
 }
