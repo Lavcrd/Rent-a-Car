@@ -204,7 +204,6 @@
         </div>
 
         <div class="col-sm-9 scroll-140">
-            <form th:action="@{/mg-car/car-bases/select}" th:method="POST">
                 <div th:each="result : ${results}" id="car-list">
                     <div class="row">
                         <div class="col-md-12">
@@ -236,13 +235,12 @@
                                     <p style="margin-bottom: 0;"
                                        th:text="${#numbers.formatDecimal((result.depositValue), 1, 2, 'POINT')} + ' PLN'"></p>
                                 </div>
-                                <button type="submit" class="btn btn-dark" th:text="Inspect"
-                                        name="select_button" th:value="${result.getId()}"></button>
+                                <a type="button" class="btn btn-dark" th:text="Inspect"
+                                         th:href="'/mg-car/car-bases/' + ${result.getId()}"></a>
                             </div>
                         </div>
                     </div>
                 </div>
-            </form>
 
             <!--Modal add car base-->
             <form th:method="POST" th:object="${register_form}" th:action="@{'/mg-car/car-bases/register'}" enctype="multipart/form-data">

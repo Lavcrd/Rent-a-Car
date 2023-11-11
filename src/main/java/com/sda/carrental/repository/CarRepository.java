@@ -51,4 +51,7 @@ public interface CarRepository extends CrudRepository<Car, Long> {
             "SELECT r1 FROM retrieve r1 " +
             "WHERE r1.id = r.id)")
     Optional<Car> findRentedCarById(@Param("id") Long id);
+
+    @Query("SELECT COUNT(c) FROM car c WHERE c.carBase.id = :carBaseId")
+    Long getCarSizeByCarBase(@Param("carBaseId") Long carBaseId);
 }

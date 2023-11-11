@@ -121,6 +121,21 @@ public class ManageCarsController {
         }
     }
 
+    @RequestMapping(method = RequestMethod.GET, value = "/car-bases/{carBaseId}")
+    public String viewCarBasePage(ModelMap map, @PathVariable(value = "carBaseId") Long carBaseId, RedirectAttributes redAtt) {
+        try {
+            CarBase carBase = carBaseService.findById(carBaseId);
+
+            map.addAttribute("result", carBase);
+            map.addAttribute("resultSize", carService.getCarSizeByCarBase(carBase.getId()));
+
+            return "management/viewCarBase";
+        } catch (ResourceNotFoundException err) {
+            redAtt.addFlashAttribute("message", "Failure: Not found");
+            return "redirect:/mg-car/car-bases";
+        }
+    }
+
     //Search cars page buttons
     @RequestMapping(method = RequestMethod.POST, value = "/search")
     public String filterCarsButton(@ModelAttribute("searchCarsForm") @Valid SearchCarsForm form, Errors err, RedirectAttributes redAtt) {
@@ -150,12 +165,6 @@ public class ManageCarsController {
             redAtt.addFlashAttribute("message", "Failure: Unexpected database error.");
         }
         return "redirect:/mg-car";
-    }
-
-    @RequestMapping(method = RequestMethod.POST, value = "/select")
-    public String carViewButton(RedirectAttributes redAtt, @RequestParam("select_button") Long carId) {
-        redAtt.addAttribute("carId", carId);
-        return "redirect:/mg-car/{carId}";
     }
 
     //Search car bases page buttons
