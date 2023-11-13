@@ -117,10 +117,47 @@
                                                  class="bi bi-circle cb-svg" viewBox="0 0 16 16">
                                                 <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
                                             </svg>
-                                            <div class="list-button-text">Example</div>
+                                            <div class="list-button-text">Add</div>
                                         </button>
                                     </td>
-                                    <td class="short-description-cell">Example button row</td>
+                                    <td class="short-description-cell">Adds car under this car base</td>
+                                </tr>
+                                <tr>
+                                    <td class="button-cell">
+                                        <button type="button" class="btn btn-dark bg-dark mt-1 list-button w-100">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                                 class="bi bi-circle cb-svg" viewBox="0 0 16 16">
+                                                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                                            </svg>
+                                            <div class="list-button-text">Transfer</div>
+                                        </button>
+                                    </td>
+                                    <td class="short-description-cell">Transfer all cars to another car base</td>
+                                </tr>
+                                <tr>
+                                    <td class="button-cell">
+                                        <button type="button" class="btn btn-dark bg-dark mt-1 list-button w-100">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                                 class="bi bi-circle cb-svg" viewBox="0 0 16 16">
+                                                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                                            </svg>
+                                            <div class="list-button-text">Update</div>
+                                        </button>
+                                    </td>
+                                    <td class="short-description-cell">Update with new image</td>
+                                </tr>
+                                <tr>
+                                    <td class="button-cell" data-toggle="tooltip" data-placement="top" th:title="${(resultSize > 0) ? 'Requires no cars under this car base' : ''}">
+                                        <button type="button" class="btn btn-dark bg-dark mt-1 list-button w-100"
+                                                th:disabled="${resultSize > 0}">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                                 class="bi bi-circle cb-svg" viewBox="0 0 16 16">
+                                                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                                            </svg>
+                                            <div class="list-button-text">Delete</div>
+                                        </button>
+                                    </td>
+                                    <td class="short-description-cell">Deletes this car base</td>
                                 </tr>
                             </tbody>
                         </table>
