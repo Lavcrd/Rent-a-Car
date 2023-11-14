@@ -9,11 +9,11 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class ChangeCarStatus extends ConfirmationForm {
+public class ChangeCarStatusForm extends ConfirmationForm {
     @CarStatus
     private String status;
 
-    public ChangeCarStatus(String status) {
+    public ChangeCarStatusForm(String status) {
         super();
         this.status = status;
     }

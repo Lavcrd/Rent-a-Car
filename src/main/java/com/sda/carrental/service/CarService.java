@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import java.util.*;
 
@@ -167,7 +168,8 @@ public class CarService {
     public HttpStatus register(RegisterCarForm form) {
         try {
             CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            if (departmentService.departmentAccess(cud, form.getDepartment()).equals(HttpStatus.FORBIDDEN)) throw new RuntimeException();
+            if (departmentService.departmentAccess(cud, form.getDepartment()).equals(HttpStatus.FORBIDDEN))
+                throw new RuntimeException();
 
             CarBase carBase = carBaseService.findById(form.getPattern());
             Department department = departmentService.findDepartmentWhereId(form.getDepartment());
@@ -191,5 +193,24 @@ public class CarService {
 
     public Long getCarSizeByCarBase(Long id) {
         return repository.getCarSizeByCarBase(id);
+    }
+
+    @Transactional
+    public HttpStatus delete(Car car) {
+        try {
+            repository.delete(car);
+            return HttpStatus.ACCEPTED;
+        } catch (RuntimeException err) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            return HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+    }
+
+    @Transactional
+    public HttpStatus handleCarDelete(Long id) {
+        Optional<Car> c = repository.findCarByIdAndNoRentals(id);
+        if (c.isEmpty()) return HttpStatus.PRECONDITION_FAILED;
+
+        return delete(c.get());
     }
 }

@@ -2,11 +2,14 @@ package com.sda.carrental.web.mvc.management;
 
 import com.sda.carrental.exceptions.ResourceNotFoundException;
 import com.sda.carrental.global.enums.Country;
+import com.sda.carrental.model.operational.Rent;
+import com.sda.carrental.model.operational.Retrieve;
 import com.sda.carrental.model.property.car.Car;
 import com.sda.carrental.model.property.Department;
 import com.sda.carrental.model.property.car.CarBase;
 import com.sda.carrental.service.*;
 import com.sda.carrental.service.auth.CustomUserDetails;
+import com.sda.carrental.web.mvc.form.common.ConfirmationForm;
 import com.sda.carrental.web.mvc.form.property.cars.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -98,16 +101,23 @@ public class ManageCarsController {
                 return "redirect:/mg-car";
             }
 
-            map.addAttribute("mileage_form", map.getOrDefault("mileage_form", new ChangeCarMileage(car.getMileage())));
+            map.addAttribute("mileage_form", map.getOrDefault("mileage_form", new ChangeCarMileageForm(car.getMileage())));
 
-            map.addAttribute("department_form", map.getOrDefault("department_form", new ChangeCarDepartment(car.getDepartment().getId())));
+            map.addAttribute("department_form", map.getOrDefault("department_form", new ChangeCarDepartmentForm(car.getDepartment().getId())));
             map.addAttribute("departments", departmentService.findAll());
 
-            map.addAttribute("status_form", map.getOrDefault("status_form", new ChangeCarStatus(car.getCarStatus().name())));
+            map.addAttribute("status_form", map.getOrDefault("status_form", new ChangeCarStatusForm(car.getCarStatus().name())));
             map.addAttribute("statuses", Car.CarStatus.values());
 
-            map.addAttribute("currentRental", rentService.findActiveByCar(car).orElse(null));
-            map.addAttribute("previousRentals", retrieveService.findRetrievalsByCar(car, 3));
+
+            Rent currentRent = rentService.findActiveByCar(car).orElse(null);
+            List<Retrieve> previousRentals = retrieveService.findRetrievalsByCar(car, 3);
+            map.addAttribute("currentRental", currentRent);
+            map.addAttribute("previousRentals", previousRentals);
+
+            if (currentRent == null && previousRentals.isEmpty()) {
+                map.addAttribute("confirmation_form", new ConfirmationForm());
+            }
 
             //Hardcoded map coordinates due to lack of real data
             map.addAttribute("latitude", "50.556140369367725");
@@ -198,7 +208,7 @@ public class ManageCarsController {
 
     //View car page buttons
     @RequestMapping(method = RequestMethod.POST, value = "/{id}/status")
-    public String statusChangeButton(@ModelAttribute("status_form") @Valid ChangeCarStatus form, Errors errors, RedirectAttributes redAtt, @PathVariable("id") Long carId) {
+    public String statusChangeButton(@ModelAttribute("status_form") @Valid ChangeCarStatusForm form, Errors errors, RedirectAttributes redAtt, @PathVariable("id") Long carId) {
         redAtt.addAttribute("carId", carId);
 
         try {
@@ -232,7 +242,7 @@ public class ManageCarsController {
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/{id}/mileage")
-    public String mileageChangeButton(@ModelAttribute("mileage_form") @Valid ChangeCarMileage form, Errors errors, RedirectAttributes redAtt, @PathVariable("id") Long carId) {
+    public String mileageChangeButton(@ModelAttribute("mileage_form") @Valid ChangeCarMileageForm form, Errors errors, RedirectAttributes redAtt, @PathVariable("id") Long carId) {
         redAtt.addAttribute("carId", carId);
 
         try {
@@ -263,7 +273,7 @@ public class ManageCarsController {
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/{id}/department")
-    public String departmentChangeButton(@ModelAttribute("department_form") @Valid ChangeCarDepartment form, Errors errors, RedirectAttributes redAtt, @PathVariable("id") Long carId) {
+    public String departmentChangeButton(@ModelAttribute("department_form") @Valid ChangeCarDepartmentForm form, Errors errors, RedirectAttributes redAtt, @PathVariable("id") Long carId) {
         redAtt.addAttribute("carId", carId);
 
         try {
@@ -292,5 +302,40 @@ public class ManageCarsController {
             redAtt.addFlashAttribute("message", "Failure: Unexpected value");
         }
         return "redirect:/mg-car/{carId}";
+    }
+
+    @RequestMapping(method = RequestMethod.POST, value = "/{id}/delete")
+    public String deleteCarButton(@ModelAttribute("delete_form") @Valid ConfirmationForm form, Errors errors, RedirectAttributes redAtt, @PathVariable("id") Long carId) {
+        try {
+            CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+            Car car = carService.findCarById(carId);
+            if (userService.hasNoAccessToProperty(cud, car)) {
+                redAtt.addFlashAttribute("message", "Access rejected.");
+                return "redirect:/mg-car";
+            }
+
+            if (errors.hasErrors()) {
+                redAtt.addFlashAttribute("message", errors.getAllErrors().get(0).getDefaultMessage());
+                return "redirect:/mg-car/{carId}";
+            }
+
+            HttpStatus status = carService.handleCarDelete(car.getId());
+            if (status.equals(HttpStatus.ACCEPTED)) {
+                redAtt.addFlashAttribute("message", "Success: Car \"" + car.getPlate() + "\" successfully deleted");
+                return "redirect:/mg-car";
+            } else if (status.equals(HttpStatus.PRECONDITION_FAILED)) {
+                redAtt.addFlashAttribute("message", "Failure: Car cannot have rental history");
+            } else {
+                redAtt.addFlashAttribute("message", "Failure: Unexpected error");
+            }
+            return "redirect:/mg-car/{carId}";
+        } catch (ResourceNotFoundException err) {
+            redAtt.addFlashAttribute("message", "Failure: Not found");
+        } catch (RuntimeException err) {
+            redAtt.addFlashAttribute("message", "Failure: Unexpected value");
+        }
+
+        return null;
     }
 }

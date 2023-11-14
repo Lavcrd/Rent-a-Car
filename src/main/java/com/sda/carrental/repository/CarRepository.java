@@ -54,4 +54,11 @@ public interface CarRepository extends CrudRepository<Car, Long> {
 
     @Query("SELECT COUNT(c) FROM car c WHERE c.carBase.id = :carBaseId")
     Long getCarSizeByCarBase(@Param("carBaseId") Long carBaseId);
+
+    @Query("SELECT c FROM car c " +
+            "WHERE c.id = :id " +
+            "AND c.id NOT IN (" +
+            "   SELECT r.car.id FROM rent r " +
+            "   WHERE r.car.id = :id)")
+    Optional<Car> findCarByIdAndNoRentals(@Param("id") Long id);
 }
