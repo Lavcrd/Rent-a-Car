@@ -11,13 +11,13 @@ import javax.validation.constraints.NotNull;
 @Getter
 @Setter
 @NoArgsConstructor
-public class ChangeCarMileage extends ConfirmationForm {
+public class ChangeCarDepartmentForm extends ConfirmationForm {
     @NotNull(message = "Failure: Value cannot be empty")
-    @Min(value = 0, message = "Failure: Provided value must be positive")
-    private Long mileage;
+    @Min(value = 0, message = "Failure: Provided value is not valid")
+    private Long departmentId;
 
-    public ChangeCarMileage(Long mileage) {
+    public ChangeCarDepartmentForm(Long departmentId) {
         super();
-        this.mileage = mileage;
+        this.departmentId = departmentId;
     }
 }
