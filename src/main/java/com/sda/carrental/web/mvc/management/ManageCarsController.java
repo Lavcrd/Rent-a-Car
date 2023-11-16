@@ -66,7 +66,7 @@ public class ManageCarsController {
         }
     }
 
-    @RequestMapping(method = RequestMethod.GET, value="/car-bases")
+    @RequestMapping(method = RequestMethod.GET, value = "/car-bases")
     public String searchCarBasesPage(ModelMap map, RedirectAttributes redAtt) {
         try {
             List<CarBase> carBases = carBaseService.findAll();
@@ -136,6 +136,8 @@ public class ManageCarsController {
         try {
             CarBase carBase = carBaseService.findById(carBaseId);
 
+            map.addAttribute("confirmation_form", new ConfirmationForm());
+
             map.addAttribute("result", carBase);
             map.addAttribute("resultSize", carService.getCarSizeByCarBase(carBase.getId()));
 
@@ -204,6 +206,7 @@ public class ManageCarsController {
             redAtt.addFlashAttribute("message", "Failure: Unexpected database error.");
         }
         return "redirect:/mg-car/car-bases";
+
     }
 
     //View car page buttons
@@ -230,7 +233,7 @@ public class ManageCarsController {
             HttpStatus status = carService.handleStatus(car, carStatus);
             if (status.equals(HttpStatus.OK)) {
                 redAtt.addFlashAttribute("message", "Success: Car status successfully changed to - " + carStatus.name().substring(7));
-            } else if (status.equals(HttpStatus.PRECONDITION_FAILED)){
+            } else if (status.equals(HttpStatus.PRECONDITION_FAILED)) {
                 redAtt.addFlashAttribute("message", "Failure: Rejected due to active reservation.");
             }
         } catch (ResourceNotFoundException err) {
@@ -305,7 +308,7 @@ public class ManageCarsController {
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/{id}/delete")
-    public String deleteCarButton(@ModelAttribute("delete_form") @Valid ConfirmationForm form, Errors errors, RedirectAttributes redAtt, @PathVariable("id") Long carId) {
+    public String deleteCarButton(@ModelAttribute("confirmation_form") @Valid ConfirmationForm form, Errors errors, RedirectAttributes redAtt, @PathVariable("id") Long carId) {
         try {
             CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
@@ -338,4 +341,34 @@ public class ManageCarsController {
 
         return null;
     }
+
+    //View car base page buttons
+    @RequestMapping(method = RequestMethod.POST, value = "/car-bases/{carBaseId}/delete")
+    public String deleteCarBaseButton(@ModelAttribute("confirmation_form") @Valid ConfirmationForm form, Errors errors, RedirectAttributes redAtt, @PathVariable("carBaseId") Long carBaseId) {
+        try {
+            if (errors.hasErrors()) {
+                redAtt.addFlashAttribute("message", errors.getAllErrors().get(0).getDefaultMessage());
+                return "redirect:/mg-car/car-bases/{carBaseId}";
+            }
+
+            CarBase cb = carBaseService.findById(carBaseId);
+            HttpStatus status = carBaseService.handleCarBaseDelete(cb);
+            if (status.equals(HttpStatus.ACCEPTED)) {
+                redAtt.addFlashAttribute("message", "Success: Pattern '" + cb.getBrand() + ' ' + cb.getModel() + "' successfully deleted");
+                return "redirect:/mg-car/car-bases";
+            } else if (status.equals(HttpStatus.PRECONDITION_FAILED)) {
+                redAtt.addFlashAttribute("message", "Failure: Car base cannot be deleted while it has cars");
+            } else {
+                redAtt.addFlashAttribute("message", "Failure: Unexpected error");
+            }
+            return "redirect:/mg-car/car-bases/{carBaseId}";
+        } catch (ResourceNotFoundException err) {
+            redAtt.addFlashAttribute("message", "Failure: Not found");
+        } catch (RuntimeException err) {
+            redAtt.addFlashAttribute("message", "Failure: Unexpected value");
+        }
+
+        return null;
+    }
+
 }

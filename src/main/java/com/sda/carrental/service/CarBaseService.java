@@ -135,4 +135,13 @@ public class CarBaseService {
             return HttpStatus.BAD_REQUEST;
         }
     }
+
+    @Transactional
+    public HttpStatus handleCarBaseDelete(CarBase carBase) {
+        Optional<CarBase> cb = repository.findByIdAndNoCars(carBase.getId());
+        if (cb.isEmpty()) return HttpStatus.PRECONDITION_FAILED;
+
+        repository.delete(carBase);
+        return HttpStatus.ACCEPTED;
+    }
 }

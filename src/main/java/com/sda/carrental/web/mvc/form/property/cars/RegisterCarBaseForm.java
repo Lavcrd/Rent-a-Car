@@ -1,9 +1,6 @@
 package com.sda.carrental.web.mvc.form.property.cars;
 
-import com.sda.carrental.web.mvc.form.validation.constraint.CarType;
-import com.sda.carrental.web.mvc.form.validation.constraint.CurrentPassword;
-import com.sda.carrental.web.mvc.form.validation.constraint.ImageFile;
-import com.sda.carrental.web.mvc.form.validation.constraint.PastOrPresentYear;
+import com.sda.carrental.web.mvc.form.validation.constraint.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
