@@ -57,8 +57,9 @@ public interface CarRepository extends CrudRepository<Car, Long> {
 
     @Query("SELECT c FROM car c " +
             "WHERE c.id = :id " +
-            "AND c.id NOT IN (" +
-            "   SELECT r.car.id FROM rent r " +
-            "   WHERE r.car.id = :id)")
+            "AND NOT EXISTS (" +
+            "   SELECT 1 " +
+            "   FROM rent r " +
+            "   WHERE r.car.id = c.id)")
     Optional<Car> findCarByIdAndNoRentals(@Param("id") Long id);
 }

@@ -16,7 +16,7 @@ public class ImageFileValidator implements ConstraintValidator<ImageFile, Multip
     public boolean isValid(MultipartFile input, ConstraintValidatorContext cvc) {
         try {
             String filename = input.getOriginalFilename();
-            return filename.endsWith(".jpg") || filename.endsWith(".png");
+            return filename.toLowerCase().endsWith(".jpg") || filename.toLowerCase().endsWith(".png");
         } catch (RuntimeException err) {
             return false;
         }

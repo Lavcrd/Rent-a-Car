@@ -51,4 +51,13 @@ public interface CarBaseRepository extends CrudRepository<CarBase, Long> {
             "AND (:depositMax IS NULL OR cb.depositValue <= :depositMax) " +
             "AND (COALESCE(:years, 0) = 0 OR cb.year IN (:years))")
     List<CarBase> findByDepositAndModelYear(@Param("depositMin") Double depositMin, @Param("depositMax") Double depositMax, @Param("years") List<Integer> years);
+
+    @Query("SELECT cb " +
+            "FROM car_base cb " +
+            "WHERE cb.id = :id " +
+            "AND NOT EXISTS (" +
+            "   SELECT 1 " +
+            "   FROM car c " +
+            "   WHERE c.carBase.id = cb.id)")
+    Optional<CarBase> findByIdAndNoCars(@Param("id") Long id);
 }

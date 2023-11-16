@@ -24,4 +24,8 @@ public class ConstantValues {
 
     // Duration of the gap in days required between the return of a reserved car and making another reservation
     private int reservationGap = 4;
+
+    // Maximum permitted file size in bytes
+    private long fileSize = 1024*1024;
+    
 }
