@@ -1,7 +1,7 @@
 package com.sda.carrental.web.mvc.form.operational;
 
+import com.sda.carrental.web.mvc.form.common.ConfirmationForm;
 import com.sda.carrental.web.mvc.form.validation.constraint.ConsistentMileage;
-import com.sda.carrental.web.mvc.form.validation.constraint.CurrentPassword;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -15,7 +15,7 @@ import java.time.LocalDate;
 @Setter
 @NoArgsConstructor
 @ConsistentMileage(message = "Failure: Inconsistent mileage")
-public class ConfirmRentalForm {
+public class ConfirmRentalForm extends ConfirmationForm {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate dateFrom;
 
@@ -30,10 +30,6 @@ public class ConfirmRentalForm {
 
     @NotEmpty(message = "Failure: Remarks field must contain a statement or description")
     private String remarks;
-
-    @NotEmpty(message = "Field cannot be empty")
-    @CurrentPassword(message = "Provided password confirmation is not valid")
-    private String currentPassword;
 
     public ConfirmRentalForm(Long reservationId, LocalDate dateFrom) {
         this.reservationId = reservationId;

@@ -26,6 +26,6 @@ public class ConstantValues {
     private int reservationGap = 4;
 
     // Maximum permitted file size in bytes
-    private long fileSize = 1024*1024;
+    private long maxFileSize = 1024*1024;
     
 }

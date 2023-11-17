@@ -1,6 +1,8 @@
 package com.sda.carrental.web.mvc.management;
 
+import com.sda.carrental.exceptions.IllegalActionException;
 import com.sda.carrental.exceptions.ResourceNotFoundException;
+import com.sda.carrental.global.Utility;
 import com.sda.carrental.global.enums.Country;
 import com.sda.carrental.model.operational.Rent;
 import com.sda.carrental.model.operational.Retrieve;
@@ -20,6 +22,7 @@ import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
@@ -28,6 +31,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 @RequestMapping("/mg-car")
 public class ManageCarsController {
+    private final Utility utility;
     private final CarService carService;
     private final CarBaseService carBaseService;
     private final DepartmentService departmentService;
@@ -67,9 +71,10 @@ public class ManageCarsController {
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/car-bases")
-    public String searchCarBasesPage(ModelMap map, RedirectAttributes redAtt) {
+    public String searchCarBasesPage(ModelMap map, HttpServletRequest res, RedirectAttributes redAtt) {
         try {
             List<CarBase> carBases = carBaseService.findAll();
+            utility.retrieveSessionMessage(map, res);
 
             map.addAttribute("results", map.getOrDefault("results", carBases));
 
@@ -132,11 +137,21 @@ public class ManageCarsController {
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/car-bases/{carBaseId}")
-    public String viewCarBasePage(ModelMap map, @PathVariable(value = "carBaseId") Long carBaseId, RedirectAttributes redAtt) {
+    public String viewCarBasePage(ModelMap map, @PathVariable(value = "carBaseId") Long carBaseId, HttpServletRequest req, RedirectAttributes redAtt) {
         try {
+            CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            List<Department> departments = departmentService.getDepartmentsByUserContext(cud);
+            map.addAttribute("departments", departments);
+
+            utility.retrieveSessionMessage(map, req);
+
             CarBase carBase = carBaseService.findById(carBaseId);
 
             map.addAttribute("confirmation_form", new ConfirmationForm());
+            map.addAttribute("update_image_form", new UpdateCarBaseImageForm());
+            map.addAttribute("update_price_form", map.getOrDefault("update_price_form", new UpdateCarBasePricesForm(carBase.getPriceDay(), carBase.getDepositValue())));
+            map.addAttribute("register_form", map.getOrDefault("register_form", new RegisterCarForm(carBase.getId())));
+
 
             map.addAttribute("result", carBase);
             map.addAttribute("resultSize", carService.getCarSizeByCarBase(carBase.getId()));
@@ -367,8 +382,86 @@ public class ManageCarsController {
         } catch (RuntimeException err) {
             redAtt.addFlashAttribute("message", "Failure: Unexpected value");
         }
-
-        return null;
+        return "redirect:/mg-car/car-bases";
     }
 
+    @RequestMapping(method = RequestMethod.POST, value = "/car-bases/{carBaseId}/update-image")
+    public String updateCarBaseImageButton(@ModelAttribute("update_image_form") @Valid UpdateCarBaseImageForm form, Errors errors, RedirectAttributes redAtt, @PathVariable("carBaseId") Long carBaseId) {
+        try {
+            if (errors.hasErrors()) {
+                redAtt.addFlashAttribute("message", errors.getAllErrors().get(0).getDefaultMessage());
+                return "redirect:/mg-car/car-bases/{carBaseId}";
+            }
+
+            CarBase cb = carBaseService.findById(carBaseId);
+            HttpStatus status = carBaseService.handleCarBaseImageUpdate(cb, form.getImage());
+            if (status.equals(HttpStatus.ACCEPTED)) {
+                redAtt.addFlashAttribute("message", "Success: Image file of '" + cb.getBrand() + ' ' + cb.getModel() + "' successfully updated");
+                return "redirect:/mg-car/car-bases/{carBaseId}";
+            } else {
+                redAtt.addFlashAttribute("message", "Failure: Unexpected error");
+            }
+            return "redirect:/mg-car/car-bases/{carBaseId}";
+        } catch (ResourceNotFoundException err) {
+            redAtt.addFlashAttribute("message", "Failure: Not found");
+        } catch (RuntimeException err) {
+            redAtt.addFlashAttribute("message", "Failure: Unexpected value");
+        }
+        return "redirect:/mg-car/car-bases";
+    }
+
+    @RequestMapping(method = RequestMethod.POST, value = "/car-bases/{carBaseId}/update-price")
+    public String updateCarBasePricesButton(@ModelAttribute("update_price_form") @Valid UpdateCarBasePricesForm form, Errors errors, RedirectAttributes redAtt, @PathVariable("carBaseId") Long carBaseId) {
+        try {
+            if (errors.hasErrors()) {
+                redAtt.addFlashAttribute("update_price_form", form);
+                redAtt.addFlashAttribute("message", errors.getAllErrors().get(0).getDefaultMessage());
+                return "redirect:/mg-car/car-bases/{carBaseId}";
+            }
+
+            CarBase cb = carBaseService.findById(carBaseId);
+            HttpStatus status = carBaseService.handleCarBasePricesUpdate(cb, form);
+            if (status.equals(HttpStatus.ACCEPTED)) {
+                redAtt.addFlashAttribute("message", "Success: Prices of '" + cb.getBrand() + ' ' + cb.getModel() + "' successfully updated");
+                return "redirect:/mg-car/car-bases/{carBaseId}";
+            } else {
+                redAtt.addFlashAttribute("message", "Failure: Unexpected error");
+            }
+            return "redirect:/mg-car/car-bases/{carBaseId}";
+        } catch (ResourceNotFoundException err) {
+            redAtt.addFlashAttribute("message", "Failure: Not found");
+        } catch (RuntimeException err) {
+            redAtt.addFlashAttribute("message", "Failure: Unexpected value");
+        }
+        return "redirect:/mg-car/car-bases";
+    }
+
+    @RequestMapping(method = RequestMethod.POST, value = "/car-bases/{carBaseId}/register-car")
+    public String updateCarBasePricesButton(@ModelAttribute("register_form") @Valid RegisterCarForm form, Errors errors, RedirectAttributes redAtt, @PathVariable("carBaseId") Long carBaseId) {
+        try {
+            if (errors.hasErrors()) {
+                redAtt.addFlashAttribute("message", errors.getAllErrors().get(0).getDefaultMessage());
+                redAtt.addFlashAttribute("register_form", form);
+                return "redirect:/mg-car/car-bases/{carBaseId}";
+            }
+
+            CarBase cb = carBaseService.findById(carBaseId);
+            if (!cb.getId().equals(form.getPattern())) throw new IllegalActionException();
+
+            HttpStatus status = carService.register(form);
+            if (status.equals(HttpStatus.CREATED)) {
+                redAtt.addFlashAttribute("message", "Success: Car " + form.getPlate() + " successfully registered.");
+            } else if (status.equals(HttpStatus.NOT_FOUND)) {
+                redAtt.addFlashAttribute("message", "Failure: Provided car information might not be valid.");
+            } else {
+                redAtt.addFlashAttribute("message", "Failure: Unexpected database error.");
+            }
+            return "redirect:/mg-car/car-bases/{carBaseId}";
+        } catch (ResourceNotFoundException err) {
+            redAtt.addFlashAttribute("message", "Failure: Not found");
+        } catch (RuntimeException err) {
+            redAtt.addFlashAttribute("message", "Failure: Unexpected value");
+        }
+        return "redirect:/mg-car/car-bases";
+    }
 }
