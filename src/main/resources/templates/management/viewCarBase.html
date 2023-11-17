@@ -110,57 +110,68 @@
                             </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td class="button-cell">
-                                        <button type="button" class="btn btn-dark bg-dark mt-1 list-button w-100">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                                 class="bi bi-circle cb-svg" viewBox="0 0 16 16">
-                                                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
-                                            </svg>
-                                            <div class="list-button-text">Add</div>
-                                        </button>
-                                    </td>
-                                    <td class="short-description-cell">Adds car under this car base</td>
-                                </tr>
-                                <tr>
-                                    <td class="button-cell">
-                                        <button type="button" class="btn btn-dark bg-dark mt-1 list-button w-100">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                                 class="bi bi-circle cb-svg" viewBox="0 0 16 16">
-                                                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
-                                            </svg>
-                                            <div class="list-button-text">Transfer</div>
-                                        </button>
-                                    </td>
-                                    <td class="short-description-cell">Transfer all cars to another car base</td>
-                                </tr>
-                                <tr>
-                                    <td class="button-cell">
-                                        <button type="button" class="btn btn-dark bg-dark mt-1 list-button w-100">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                                 class="bi bi-circle cb-svg" viewBox="0 0 16 16">
-                                                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
-                                            </svg>
-                                            <div class="list-button-text">Update</div>
-                                        </button>
-                                    </td>
-                                    <td class="short-description-cell">Update with new image</td>
-                                </tr>
-                                <tr>
-                                    <td class="button-cell" data-toggle="tooltip" data-placement="top" th:title="${(resultSize > 0) ? 'Requires no cars under this car base' : ''}">
-                                        <button type="button" class="btn btn-dark bg-dark mt-1 list-button w-100"
-                                                data-bs-toggle="modal"
-                                                data-bs-target="#deleteModal"
-                                                th:disabled="${resultSize > 0}">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                                 class="bi bi-circle cb-svg" viewBox="0 0 16 16">
-                                                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
-                                            </svg>
-                                            <div class="list-button-text">Delete</div>
-                                        </button>
-                                    </td>
-                                    <td class="short-description-cell">Deletes this car base</td>
-                                </tr>
+                            <tr>
+                                <td class="button-cell">
+                                    <button type="button" class="btn btn-dark bg-dark mt-1 list-button w-100"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#registerModal">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                             fill="currentColor"
+                                             class="bi bi-circle cb-svg" viewBox="0 0 16 16">
+                                            <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                                        </svg>
+                                        <div class="list-button-text">Add</div>
+                                    </button>
+                                </td>
+                                <td class="short-description-cell">Adds car under this car base</td>
+                            </tr>
+                            <tr>
+                                <td class="button-cell">
+                                    <button type="button" class="btn btn-dark bg-dark mt-1 list-button w-100"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#updatePricesModal">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                             fill="currentColor"
+                                             class="bi bi-circle cb-svg" viewBox="0 0 16 16">
+                                            <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                                        </svg>
+                                        <div class="list-button-text">Prices</div>
+                                    </button>
+                                </td>
+                                <td class="short-description-cell">Update with new price per day and deposit</td>
+                            </tr>
+                            <tr>
+                                <td class="button-cell">
+                                    <button type="button" class="btn btn-dark bg-dark mt-1 list-button w-100"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#updateImageModal">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                             fill="currentColor"
+                                             class="bi bi-circle cb-svg" viewBox="0 0 16 16">
+                                            <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                                        </svg>
+                                        <div class="list-button-text">Image</div>
+                                    </button>
+                                </td>
+                                <td class="short-description-cell">Update with new image</td>
+                            </tr>
+                            <tr>
+                                <td class="button-cell" data-toggle="tooltip" data-placement="top"
+                                    th:title="${(resultSize > 0) ? 'Requires no cars under this car base' : ''}">
+                                    <button type="button" class="btn btn-dark bg-dark mt-1 list-button w-100"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#deleteModal"
+                                            th:disabled="${resultSize > 0}">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                             fill="currentColor"
+                                             class="bi bi-circle cb-svg" viewBox="0 0 16 16">
+                                            <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                                        </svg>
+                                        <div class="list-button-text">Delete</div>
+                                    </button>
+                                </td>
+                                <td class="short-description-cell">Deletes this car base</td>
+                            </tr>
                             </tbody>
                         </table>
                     </div>
@@ -184,8 +195,168 @@
         </div>
     </div>
 
+    <!--Modal add car-->
+    <form th:method="POST" th:object="${register_form}"
+          th:action="@{'/mg-car/car-bases/' + ${carBaseId} + '/register-car'}">
+        <input th:value="${result.id}" th:field="*{pattern}" style="hidden" required>
+        <div class="modal fade" id="registerModal" tabindex="-1" role="dialog"
+             aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Register new car</h5>
+                        <button type="button" class="close" data-bs-dismiss="modal"
+                                aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Please fill car information fields.</p>
+                        <div class="modal-row mt-2">
+                            <label style="justify-self: start;" for="r_department"
+                                   class="form-label">Department: </label>
+                            <select id="r_department" class="form-select modal-input"
+                                    th:field="*{department}" required>
+                                <div th:each="department:${departments}">
+                                    <option th:text="${department.city} + ' - ' + ${department.address}"
+                                            th:value="${department.id}"
+                                            th:field="*{department}"></option>
+                                </div>
+                            </select>
+                        </div>
+                        <div class="modal-row mt-2">
+                            <label style="justify-self: start;" for="r_plate" class="form-label">Plate: </label>
+                            <input id="r_plate" class="text-black bg-white modal-input"
+                                   th:placeholder="'Registered car plates'"
+                                   th:type="text" th:field="*{plate}"
+                                   required/>
+                        </div>
+                        <div class="modal-row mt-2">
+                            <label style="justify-self: start;" for="r_mileage" class="form-label">Mileage: </label>
+                            <input id="r_mileage" class="text-black bg-white modal-input"
+                                   th:placeholder="'Registered car mileage'"
+                                   th:type="number" th:field="*{mileage}"
+                                   required/>
+                        </div>
+                        <div class="my-3 d-flex" style="justify-content: center; align-content: center;">
+                            <span class="border w-100"></span>
+                        </div>
+                        <div class="modal-row mt-2">
+                            <label style="justify-self: start;" for="r_car_confirmation"
+                                   class="text-md">Password: </label>
+                            <input id="r_car_confirmation" class="text-black bg-white modal-input"
+                                   th:placeholder="'Password confirmation'"
+                                   th:type="password" th:field="*{currentPassword}"
+                                   autocomplete="new-password"
+                                   required/>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-dark" data-bs-dismiss="modal">
+                            Close
+                        </button>
+                        <button type="submit" class="btn btn-dark">Create</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <!--Modal update prices-->
+    <form th:method="POST" th:object="${update_price_form}"
+          th:action="@{'/mg-car/car-bases/' + ${carBaseId} + '/update-price'}">
+        <div class="modal fade" id="updatePricesModal" tabindex="-1" role="dialog"
+             aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Update prices</h5>
+                        <button type="button" class="close" data-bs-dismiss="modal"
+                                aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Change and confirm <u>car base prices</u> with password.</p>
+                        <div class="modal-row mt-2">
+                            <label style="justify-self: start;" for="r_price" class="form-label">Price/Day: </label>
+                            <input id="r_price" class="text-black bg-white modal-input"
+                                   th:placeholder="'Provide initial price per day'"
+                                   th:type="number" th:field="*{price}"
+                                   required/>
+                        </div>
+                        <div class="modal-row mt-2">
+                            <label style="justify-self: start;" for="r_deposit" class="form-label">Deposit: </label>
+                            <input id="r_deposit" class="text-black bg-white modal-input"
+                                   th:placeholder="'Provide initial deposit value'"
+                                   th:type="number" th:field="*{deposit}"
+                                   required/>
+                        </div>
+                        <div class="modal-row mt-2">
+                            <label style="justify-self: start;" for="cb_update_prices_confirmation"
+                                   class="text-md">Password: </label>
+                            <input id="cb_update_prices_confirmation" class="text-black bg-white modal-input"
+                                   th:placeholder="'Confirm with password'"
+                                   th:type="password" th:field="*{currentPassword}"
+                                   autocomplete="new-password"
+                                   required/>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-dark" data-bs-dismiss="modal">
+                            Close
+                        </button>
+                        <button type="submit" class="btn btn-dark">Confirm</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <!--Modal update image-->
+    <form th:method="POST" th:object="${update_image_form}"
+          th:action="@{'/mg-car/car-bases/' + ${carBaseId} + '/update-image'}" enctype="multipart/form-data">
+        <div class="modal fade" id="updateImageModal" tabindex="-1" role="dialog"
+             aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Update image file</h5>
+                        <button type="button" class="close" data-bs-dismiss="modal"
+                                aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Please upload and confirm <u>image file</u> with password.</p>
+                        <div class="input-group my-3">
+                            <input id="cb_update_image" class="text-black bg-white form-control"
+                                   th:type="file" th:field="*{image}" required/>
+                        </div>
+                        <div class="modal-row mt-2">
+                            <label style="justify-self: start;" for="cb_update_image_confirmation"
+                                   class="text-md">Password: </label>
+                            <input id="cb_update_image_confirmation" class="text-black bg-white modal-input"
+                                   th:placeholder="'Confirm with password'"
+                                   th:type="password" th:field="*{currentPassword}"
+                                   autocomplete="new-password"
+                                   required/>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-dark" data-bs-dismiss="modal">
+                            Close
+                        </button>
+                        <button type="submit" class="btn btn-dark">Confirm</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
     <!--Modal delete-->
-    <form th:method="POST" th:object="${confirmation_form}" th:action="@{'/mg-car/car-bases/' + ${carBaseId} + '/delete'}">
+    <form th:method="POST" th:object="${confirmation_form}"
+          th:action="@{'/mg-car/car-bases/' + ${carBaseId} + '/delete'}">
         <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog"
              aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered" role="document">

@@ -1,12 +1,11 @@
 package com.sda.carrental.web.mvc.form.property.cars;
 
-import com.sda.carrental.web.mvc.form.validation.constraint.CurrentPassword;
+import com.sda.carrental.web.mvc.form.common.ConfirmationForm;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.PositiveOrZero;
 
@@ -14,7 +13,7 @@ import javax.validation.constraints.PositiveOrZero;
 @Setter
 @RequiredArgsConstructor
 @AllArgsConstructor
-public class RegisterCarForm {
+public class RegisterCarForm extends ConfirmationForm {
 
     private Long pattern;
 
@@ -26,7 +25,7 @@ public class RegisterCarForm {
     @Pattern(regexp = "\\S{1,10}", message = "Invalid length of license plate.")
     private String plate;
 
-    @NotEmpty(message = "Failure: Field cannot be empty")
-    @CurrentPassword(message = "Failure: Provided password confirmation is not valid")
-    private String currentPassword;
+    public RegisterCarForm(Long pattern) {
+        this.pattern = pattern;
+    }
 }

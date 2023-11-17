@@ -1,12 +1,10 @@
 package com.sda.carrental.web.mvc.form.property.cars;
 
 import com.sda.carrental.web.mvc.form.common.ConfirmationForm;
-import com.sda.carrental.web.mvc.form.validation.constraint.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.Positive;
 
@@ -14,23 +12,7 @@ import javax.validation.constraints.Positive;
 @Setter
 @RequiredArgsConstructor
 @AllArgsConstructor
-public class RegisterCarBaseForm extends ConfirmationForm {
-
-    @ImageFile
-    private MultipartFile image;
-
-    private String brand;
-
-    private String model;
-
-    @CarType
-    private String type;
-
-    @PastOrPresentYear
-    private Integer year;
-
-    @Positive(message = "Failure: Seats value must be positive.")
-    private Integer seats;
+public class UpdateCarBasePricesForm extends ConfirmationForm {
 
     @Positive(message = "Failure: Price value must be positive.")
     private Double price;

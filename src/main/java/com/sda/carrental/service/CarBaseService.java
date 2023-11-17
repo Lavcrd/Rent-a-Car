@@ -10,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -128,7 +130,7 @@ public class CarBaseService {
     @Transactional
     public HttpStatus register(RegisterCarBaseForm form) {
         try {
-            String image = "/cars/i30.png"; //car base image hardcoded due to absence of external storage system and need of demo
+            String image = "/cars/i30.png"; // Car base image hardcoded due to absence of external storage system and need of demo
             repository.save(new CarBase(image, form.getBrand(), form.getModel(), form.getYear(), CarBase.CarType.valueOf(form.getType()), form.getSeats(), form.getPrice(), form.getDeposit()));
             return HttpStatus.CREATED;
         } catch (RuntimeException err) {
@@ -138,10 +140,41 @@ public class CarBaseService {
 
     @Transactional
     public HttpStatus handleCarBaseDelete(CarBase carBase) {
-        Optional<CarBase> cb = repository.findByIdAndNoCars(carBase.getId());
-        if (cb.isEmpty()) return HttpStatus.PRECONDITION_FAILED;
+        try {
+            Optional<CarBase> cb = repository.findByIdAndNoCars(carBase.getId());
+            if (cb.isEmpty()) return HttpStatus.PRECONDITION_FAILED;
 
-        repository.delete(carBase);
-        return HttpStatus.ACCEPTED;
+            repository.delete(carBase);
+            return HttpStatus.ACCEPTED;
+        } catch (RuntimeException err) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            return HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+    }
+
+    @Transactional
+    public HttpStatus handleCarBaseImageUpdate(CarBase cb, MultipartFile image) {
+        try {
+            // Method would delete old file and upload new file to the external storage system
+            // After successfully replacing files it would update CarBase in database with new image reference
+            repository.save(cb);
+            return HttpStatus.ACCEPTED;
+        } catch (RuntimeException err) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            return HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+    }
+
+    @Transactional
+    public HttpStatus handleCarBasePricesUpdate(CarBase cb, UpdateCarBasePricesForm form) {
+        try {
+            cb.setPriceDay(form.getPrice());
+            cb.setDepositValue(form.getDeposit());
+            repository.save(cb);
+            return HttpStatus.ACCEPTED;
+        } catch (RuntimeException err) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            return HttpStatus.INTERNAL_SERVER_ERROR;
+        }
     }
 }
