@@ -15,8 +15,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 @Service
 @RequiredArgsConstructor
@@ -25,8 +23,8 @@ public class CarBaseService {
     private final CarBaseRepository repository;
     private final DepartmentService departmentService;
 
-    public List<CarBase> findAll() {
-        return StreamSupport.stream(repository.findAll().spliterator(), false).collect(Collectors.toList());
+    public List<CarBase> findAllSorted() {
+        return repository.findAllAndSort();
     }
 
     public CarBase findById(Long id) throws ResourceNotFoundException {

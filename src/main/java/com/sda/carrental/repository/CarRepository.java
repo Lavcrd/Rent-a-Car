@@ -6,6 +6,7 @@ import java.util.Optional;
 import com.sda.carrental.model.property.car.Car;
 import com.sda.carrental.model.property.Department;
 import com.sda.carrental.model.property.car.CarBase;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
@@ -62,4 +63,22 @@ public interface CarRepository extends CrudRepository<Car, Long> {
             "   FROM rent r " +
             "   WHERE r.car.id = c.id)")
     Optional<Car> findCarByIdAndNoRentals(@Param("id") Long id);
+
+    @Query("SELECT c " +
+            "FROM car c " +
+            "WHERE c.carBase = :carBase " +
+            "AND c.department IN (:departments) " +
+            "ORDER BY c.plate")
+    List<Car> findAllByDepartmentsAndCarBase(@Param("departments") List<Department> departments, @Param("carBase") CarBase carBase);
+
+    @Modifying
+    @Query("UPDATE car c " +
+            "SET c.carBase = :targetCarBase " +
+            "WHERE c.id IN (:carIdList) " +
+            "AND c.department IN (:departments) " +
+            "AND c.carBase = :carBase")
+    int updateCarsToCarBase(@Param("targetCarBase") CarBase targetCarBase,
+                            @Param("carIdList") List<Long> carIdList,
+                            @Param("departments") List<Department> departments,
+                            @Param("carBase") CarBase carBase);
 }

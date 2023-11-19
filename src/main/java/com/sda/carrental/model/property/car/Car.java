@@ -24,6 +24,7 @@ public class Car {
     @Column(name = "id", nullable = false)
     private Long id;
 
+    @Setter
     @ManyToOne
     @JoinColumn(name = "car_base", referencedColumnName = "id")
     CarBase carBase;
