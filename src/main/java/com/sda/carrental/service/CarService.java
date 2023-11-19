@@ -1,5 +1,6 @@
 package com.sda.carrental.service;
 
+import com.sda.carrental.exceptions.IllegalActionException;
 import com.sda.carrental.exceptions.ResourceNotFoundException;
 import com.sda.carrental.global.enums.Country;
 import com.sda.carrental.model.operational.Reservation;
@@ -212,5 +213,34 @@ public class CarService {
         if (c.isEmpty()) return HttpStatus.PRECONDITION_FAILED;
 
         return delete(c.get());
+    }
+
+    public List<Car> findCarsByDepartmentsAndCarBase(List<Department> departments, CarBase carBase) {
+        return repository.findAllByDepartmentsAndCarBase(departments, carBase);
+    }
+
+    @Transactional
+    public HttpStatus splitCarsToCarBase(CarBase carBase, CarBase targetCarBase, List<Long> carIdList) {
+        try {
+            if (carBase == null || targetCarBase == null || carIdList.isEmpty()) {
+                return HttpStatus.BAD_REQUEST;
+            }
+
+            CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            List<Department> departments = departmentService.getDepartmentsByUserContext(cud);
+
+            int updatedCount = repository.updateCarsToCarBase(targetCarBase, carIdList, departments, carBase);
+
+            if (updatedCount != carIdList.size()) {
+                throw new IllegalActionException();
+            }
+            return HttpStatus.ACCEPTED;
+        } catch (IllegalActionException err) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            return HttpStatus.CONFLICT;
+        } catch (RuntimeException err) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            return HttpStatus.INTERNAL_SERVER_ERROR;
+        }
     }
 }

@@ -60,4 +60,11 @@ public interface CarBaseRepository extends CrudRepository<CarBase, Long> {
             "   FROM car c " +
             "   WHERE c.carBase.id = cb.id)")
     Optional<CarBase> findByIdAndNoCars(@Param("id") Long id);
+
+    @Query("SELECT cb " +
+            "FROM car_base cb " +
+            "ORDER BY cb.brand ASC, cb.model ASC, " +
+            "cb.year ASC, cb.seats ASC, " +
+            "cb.priceDay ASC, cb.depositValue ASC")
+    List<CarBase> findAllAndSort();
 }

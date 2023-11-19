@@ -58,7 +58,7 @@ public class ManageCarsController {
             map.addAttribute("departments", departments);
             map.addAttribute("statuses", Car.CarStatus.values());
 
-            map.addAttribute("patterns", carBaseService.findAll());
+            map.addAttribute("patterns", carBaseService.findAllSorted());
 
             map.addAttribute("searchCarsForm", map.getOrDefault("searchCarsForm", new SearchCarsForm()));
             map.addAttribute("register_form", map.getOrDefault("register_form", new RegisterCarForm()));
@@ -73,7 +73,7 @@ public class ManageCarsController {
     @RequestMapping(method = RequestMethod.GET, value = "/car-bases")
     public String searchCarBasesPage(ModelMap map, HttpServletRequest res, RedirectAttributes redAtt) {
         try {
-            List<CarBase> carBases = carBaseService.findAll();
+            List<CarBase> carBases = carBaseService.findAllSorted();
             utility.retrieveSessionMessage(map, res);
 
             map.addAttribute("results", map.getOrDefault("results", carBases));
@@ -149,11 +149,14 @@ public class ManageCarsController {
 
             map.addAttribute("confirmation_form", new ConfirmationForm());
             map.addAttribute("update_image_form", new UpdateCarBaseImageForm());
+            map.addAttribute("split_form", map.getOrDefault("split_form", new SplitCarBaseForm()));
             map.addAttribute("update_price_form", map.getOrDefault("update_price_form", new UpdateCarBasePricesForm(carBase.getPriceDay(), carBase.getDepositValue())));
             map.addAttribute("register_form", map.getOrDefault("register_form", new RegisterCarForm(carBase.getId())));
 
 
             map.addAttribute("result", carBase);
+            map.addAttribute("carList", carService.findCarsByDepartmentsAndCarBase(departments, carBase));
+            map.addAttribute("patterns", carBaseService.findAllSorted());
             map.addAttribute("resultSize", carService.getCarSizeByCarBase(carBase.getId()));
 
             return "management/viewCarBase";
@@ -358,6 +361,40 @@ public class ManageCarsController {
     }
 
     //View car base page buttons
+    @RequestMapping(method = RequestMethod.POST, value = "/car-bases/{carBaseId}/split")
+    public String splitCarBaseButton(@ModelAttribute("split_form") @Valid SplitCarBaseForm form, Errors errors, RedirectAttributes redAtt, @PathVariable("carBaseId") Long carBaseId) {
+        try {
+            if (errors.hasErrors()) {
+                redAtt.addFlashAttribute("split_form", form);
+                redAtt.addFlashAttribute("message", errors.getAllErrors().get(0).getDefaultMessage());
+                return "redirect:/mg-car/car-bases/{carBaseId}";
+            }
+
+            CarBase cb = carBaseService.findById(carBaseId);
+            CarBase tcb = carBaseService.findById(form.getPattern());
+            if (cb.getId().equals(tcb.getId())) throw new IllegalActionException();
+
+            HttpStatus status = carService.splitCarsToCarBase(cb, tcb, form.getCars());
+            if (status.equals(HttpStatus.ACCEPTED)) {
+                redAtt.addFlashAttribute("message", "Success: Split " + form.getCars().size() + " cars to '" + tcb.getBrand() + " " + tcb.getModel() + " [" + tcb.getYear() + "/" + tcb.getSeats() + "/pd: " +tcb.getPriceDay() + "/d: " +tcb.getDepositValue() + "]' pattern");
+                return "redirect:/mg-car/car-bases/{carBaseId}";
+            } else if (status.equals(HttpStatus.BAD_REQUEST ) || status.equals(HttpStatus.CONFLICT)) {
+                redAtt.addFlashAttribute("message", "Failure: Provided values are invalid");
+            } else {
+                redAtt.addFlashAttribute("message", "Failure: Unexpected error");
+            }
+            return "redirect:/mg-car/car-bases/{carBaseId}";
+        } catch (ResourceNotFoundException err) {
+            redAtt.addFlashAttribute("message", "Failure: Not found");
+        } catch (IllegalActionException err) {
+            redAtt.addFlashAttribute("message", "Failure: Target pattern is equal to current pattern");
+            return "redirect:/mg-car/car-bases/{carBaseId}";
+        } catch (RuntimeException err) {
+            redAtt.addFlashAttribute("message", "Failure: Unexpected value");
+        }
+        return "redirect:/mg-car/car-bases";
+    }
+
     @RequestMapping(method = RequestMethod.POST, value = "/car-bases/{carBaseId}/delete")
     public String deleteCarBaseButton(@ModelAttribute("confirmation_form") @Valid ConfirmationForm form, Errors errors, RedirectAttributes redAtt, @PathVariable("carBaseId") Long carBaseId) {
         try {

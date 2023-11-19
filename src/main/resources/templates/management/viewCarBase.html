@@ -157,6 +157,23 @@
                             </tr>
                             <tr>
                                 <td class="button-cell" data-toggle="tooltip" data-placement="top"
+                                    th:title="${(resultSize <= 0) ? 'Requires at least one car under this car base' : ''}">
+                                    <button type="button" class="btn btn-dark bg-dark mt-1 list-button w-100"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#splitModal"
+                                            th:disabled="${resultSize <= 0}">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                             fill="currentColor"
+                                             class="bi bi-circle cb-svg" viewBox="0 0 16 16">
+                                            <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                                        </svg>
+                                        <div class="list-button-text">Split</div>
+                                    </button>
+                                </td>
+                                <td class="short-description-cell">Split cars to another pattern</td>
+                            </tr>
+                            <tr>
+                                <td class="button-cell" data-toggle="tooltip" data-placement="top"
                                     th:title="${(resultSize > 0) ? 'Requires no cars under this car base' : ''}">
                                     <button type="button" class="btn btn-dark bg-dark mt-1 list-button w-100"
                                             data-bs-toggle="modal"
@@ -170,7 +187,7 @@
                                         <div class="list-button-text">Delete</div>
                                     </button>
                                 </td>
-                                <td class="short-description-cell">Deletes this car base</td>
+                                <td class="short-description-cell">Delete this car base</td>
                             </tr>
                             </tbody>
                         </table>
@@ -198,7 +215,7 @@
     <!--Modal add car-->
     <form th:method="POST" th:object="${register_form}"
           th:action="@{'/mg-car/car-bases/' + ${carBaseId} + '/register-car'}">
-        <input th:value="${result.id}" th:field="*{pattern}" style="hidden" required>
+        <input th:value="${result.id}" th:field="*{pattern}" hidden="hidden" required>
         <div class="modal fade" id="registerModal" tabindex="-1" role="dialog"
              aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered" role="document">
@@ -338,6 +355,95 @@
                                    class="text-md">Password: </label>
                             <input id="cb_update_image_confirmation" class="text-black bg-white modal-input"
                                    th:placeholder="'Confirm with password'"
+                                   th:type="password" th:field="*{currentPassword}"
+                                   autocomplete="new-password"
+                                   required/>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-dark" data-bs-dismiss="modal">
+                            Close
+                        </button>
+                        <button type="submit" class="btn btn-dark">Confirm</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <!--Modal split-->
+    <form th:method="POST" th:object="${split_form}"
+          th:action="@{'/mg-car/car-bases/' + ${carBaseId} + '/split'}">
+        <div class="modal fade" id="splitModal" tabindex="-1" role="dialog"
+             aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Split</h5>
+                        <button type="button" class="close" data-bs-dismiss="modal"
+                                aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mt-2 form-floating">
+                            <select id="s_pattern" class="form-select"
+                                    th:field="*{pattern}" required>
+                                <option value="" selected>Open this select menu</option>
+                                <div th:each="pattern:${patterns}">
+                                    <option th:text="${pattern.brand} + ' - ' + ${pattern.model} + ' (' + ${pattern.year} + ') - ' + ${pattern.seats} + ' seats - [pd: ' + ${pattern.priceDay} + ', d: ' + ${pattern.depositValue} + ']'"
+                                            th:value="${pattern.id}"
+                                            th:field="*{pattern}"></option>
+                                </div>
+                            </select>
+                            <label for="s_pattern" class="form-label">Target pattern</label>
+                        </div>
+                        <div class="d-grid mt-2 scroll-40">
+                            <h5 th:text="'Cars'" style="text-align:center;"></h5>
+                            <table class="table table-hover">
+                                <thead>
+                                <tr>
+                                    <td>Plates</td>
+                                    <td>Status</td>
+                                    <td>Department</td>
+                                    <td></td>
+                                </tr>
+                                </thead>
+                                <tbody th:if="${#lists.isEmpty(carList)}">
+                                <tr>
+                                    <td>—</td>
+                                    <td>—</td>
+                                    <td>—</td>
+                                    <td></td>
+                                </tr>
+                                </tbody>
+
+                                <tbody th:if="${!#lists.isEmpty(carList)}">
+                                <tr th:each="car:${carList}">
+                                    <td><label class="form-check-label" th:for="'car' + ${car.id}"
+                                               th:text="${car.plate}"></label></td>
+                                    <td><label class="form-check-label" th:for="'car' + ${car.id}"
+                                               th:text="${car.carStatus.name().substring(7)}"></label></td>
+                                    <td><label class="form-check-label" th:for="'car' + ${car.id}"
+                                               th:text="${car.department.city}"></label></td>
+                                    <td>
+                                        <input class="form-check-input" th:id="'car' + ${car.id}"
+                                               th:value="${car.id}"
+                                               th:field="*{cars}" type="checkbox">
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="my-3 d-flex" style="justify-content: center; align-content: center;">
+                            <span class="border w-100"></span>
+                        </div>
+                        <div class="modal-row mt-2">
+                            <label style="justify-self: start;" for="s_cars_confirmation"
+                                   class="text-md">Password: </label>
+                            <input id="s_cars_confirmation" class="text-black bg-white modal-input"
+                                   th:placeholder="'Password confirmation'"
                                    th:type="password" th:field="*{currentPassword}"
                                    autocomplete="new-password"
                                    required/>

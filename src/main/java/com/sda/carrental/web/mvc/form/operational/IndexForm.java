@@ -7,6 +7,7 @@ import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.FutureOrPresent;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
 @Getter
@@ -15,8 +16,10 @@ import java.time.LocalDate;
 @CorrectChronology(message = "Incorrect date order")
 public class IndexForm {
 
+    @NotNull(message = "No departure location selected")
     private Long departmentIdFrom;
 
+    @NotNull(message = "No arrival location selected")
     private Long departmentIdTo;
 
     private boolean firstBranchChecked;

@@ -125,7 +125,8 @@ public class PredefiniedData implements CommandLineRunner {
         carBaseRepository.save(new CarBase("https://cdn2.rcstatic.com/images/car_images/web/fiat/500_lrg.jpg", "Fiat", "Fiat 500", 2007, CarBase.CarType.TYPE_HATCHBACK, 2, 85.0, 750.0));
         carBaseRepository.save(new CarBase("/cars/bmw3.jpg", "BMW", "F34", 2013, CarBase.CarType.TYPE_HATCHBACK, 5, 100.0, 1500.0));
         carBaseRepository.save(new CarBase("/cars/yaris.png", "Toyota", "Yaris", 1999, CarBase.CarType.TYPE_HATCHBACK, 4, 90.0, 1000.0));
-        carBaseRepository.save(new CarBase("/cars/hyundai-elantra.jpg", "Hyundai", "Lantra", 1990, CarBase.CarType.TYPE_COMPACT, 5, 95.0, 1400.0));
+        carBaseRepository.save(new CarBase("/cars/hyundai-elantra.jpg", "Hyundai", "Lantra", 1991, CarBase.CarType.TYPE_COMPACT, 5, 95.0, 1400.0));
+        carBaseRepository.save(new CarBase("/cars/x5.jpg", "BMW", "X5 I", 1999, CarBase.CarType.TYPE_SUV, 5, 95.0, 1350.0));
     }
 
     private void createCars() {

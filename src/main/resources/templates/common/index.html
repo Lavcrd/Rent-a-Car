@@ -24,11 +24,10 @@
                 <h4>Check availability</h4>
 
                 <br/>
-                <label for="dpt1" class="text-lg">Pickup location</label>
+                <label for="dpt1" class="text-lg">Pick-up location</label>
                 <select name="lf" id="dpt1" class="form-select text-white bg-dark" th:field="*{departmentIdFrom}"
                         required>
-                    <option selected disabled
-                            value="">Select...
+                    <option selected value="">Open this select menu...
                     </option>
                     <option th:each="department: ${departments}"
                             th:value="${department.getId()}"
@@ -50,10 +49,6 @@
 
                         <label for="dpt2" class="text-lg">Return location</label>
                         <select name="lt" id="dpt2" class="form-select text-white bg-dark" th:field="*{departmentIdTo}">
-
-                            <option selected disabled
-                                    value="">Select...
-                            </option>
                             <option th:each="department: ${departments}"
                                     th:value="${department.getId()}"
                                     th:text="${department.getCity()+ ', '+ department.getAddress()}"></option>
