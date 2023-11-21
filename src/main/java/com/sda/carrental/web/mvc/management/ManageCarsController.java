@@ -116,11 +116,11 @@ public class ManageCarsController {
 
 
             Rent currentRent = rentService.findActiveByCar(car).orElse(null);
-            List<Retrieve> previousRentals = retrieveService.findRetrievalsByCar(car, 3);
+            List<Retrieve> archivedRentals = retrieveService.findRetrievalsByCar(car, 50);
             map.addAttribute("currentRental", currentRent);
-            map.addAttribute("previousRentals", previousRentals);
+            map.addAttribute("archivedRentals", archivedRentals);
 
-            if (currentRent == null && previousRentals.isEmpty()) {
+            if (currentRent == null && archivedRentals.isEmpty()) {
                 map.addAttribute("confirmation_form", new ConfirmationForm());
             }
 
