@@ -445,8 +445,8 @@ input {
 
 /* Global helpers */
 
-.scroll-40 {
-    max-height: 40vh;
+.scroll-35 {
+    max-height: 35vh;
     overflow-y: auto;
 }
 

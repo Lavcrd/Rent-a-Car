@@ -116,10 +116,10 @@
                          th:text="${payment_details.initialDeposit}">
                     </div>
 
-                    <div style="margin-top: 20%;"
+                    <div th:if="${payment_details.deposit > 0}" style="margin-top: 20%;"
                          th:utext="'<strong>Balance:</strong>'">
                     </div>
-                    <div style="margin-top: 2%;"
+                    <div th:if="${payment_details.deposit > 0}" style="margin-top: 2%;"
                          th:text="${payment_details.deposit}">
                     </div>
 
@@ -155,7 +155,7 @@
                 <div class="col-md-6"></div>
                 <div class="col-md-3 p-0">
                     <div class="d-flex flex-column">
-                        <form th:action="@{/mg-depo/release}" th:object="${form}" th:method="POST">
+                        <form th:action="@{/mg-depo/release}" th:object="${form}" th:method="POST" th:if="${payment_details.deposit > 0}">
                             <input type="hidden" th:name="retrieve" th:value="${retrieve.id}">
                             <input type="hidden" th:name="customer" th:value="${retrieve.rent.reservation.customer.id}">
 
@@ -210,7 +210,7 @@
                             </div>
                         </form>
 
-                        <form th:action="@{/mg-depo/charge}" th:object="${form}" th:method="POST">
+                        <form th:action="@{/mg-depo/charge}" th:object="${form}" th:method="POST" th:if="${payment_details.deposit > 0}">
                             <input type="hidden" th:name="retrieve" th:value="${retrieve.id}">
                             <input type="hidden" th:name="customer" th:value="${retrieve.rent.reservation.customer.id}">
 
