@@ -74,7 +74,7 @@ public class PredefiniedData implements CommandLineRunner {
 
 
         userRepository.save(new Manager("Maria", "Fajna", departmentRepository.findById(1L).orElse(null), LocalDate.ofYearDay(9999, 1)));
-        userRepository.save(new Manager("Aleksandra", "Ładna", departmentRepository.findById(2L).orElse(null), LocalDate.ofYearDay(2023, 1)));
+        userRepository.save(new Manager("Aleksandra", "Ładna", departmentRepository.findById(2L).orElse(null), LocalDate.ofYearDay(9999, 1)));
         userRepository.save(new Manager("Katarzyna", "Nieładna", departmentRepository.findById(3L).orElse(null), LocalDate.ofYearDay(9999, 1)));
 
         userRepository.save(new Employee("Anna", "Mniejfajna", departmentRepository.findById(1L).orElse(null), LocalDate.ofYearDay(9999, 1)));
@@ -212,21 +212,33 @@ public class PredefiniedData implements CommandLineRunner {
         PaymentDetails pd2 = new PaymentDetails(500D, 0D, 1500D, 0D, 800D, reservationRepository.findById(2L).get());
         PaymentDetails pd3 = new PaymentDetails(700D, 120D, 1500D, 0D, 800D, reservationRepository.findById(3L).get());
         PaymentDetails pd4 = new PaymentDetails(800D, 0D, 1500D, 0D, 750D, reservationRepository.findById(4L).get());
+        PaymentDetails pd5 = new PaymentDetails(800D, 0D, 1500D, 0D, 1500D, reservationRepository.findById(5L).get());
+        PaymentDetails pd9 = new PaymentDetails(800D, 0D, 1500D, 0D, 1500D, reservationRepository.findById(9L).get());
+        PaymentDetails pd10 = new PaymentDetails(800D, 0D, 1500D, 0D, 1500D, reservationRepository.findById(10L).get());
 
         pd1.setSecured(600D);
         pd2.setSecured(700D);
         pd3.setSecured(920D);
         pd4.setSecured(900D);
+        pd5.setSecured(800D);
+        pd9.setSecured(800D);
+        pd10.setSecured(800D);
 
         pd1.setReleasedDeposit(0);
         pd2.setReleasedDeposit(100);
         pd3.setReleasedDeposit(700);
         pd4.setReleasedDeposit(100);
+        pd5.setReleasedDeposit(0);
+        pd9.setReleasedDeposit(0);
+        pd10.setReleasedDeposit(0);
 
         paymentDetailsRepository.save(pd1);
         paymentDetailsRepository.save(pd2);
         paymentDetailsRepository.save(pd3);
         paymentDetailsRepository.save(pd4);
+        paymentDetailsRepository.save(pd5);
+        paymentDetailsRepository.save(pd9);
+        paymentDetailsRepository.save(pd10);
     }
 
     private void createVerification() {

@@ -18,14 +18,22 @@
     <div th:include="fragments/top::reg-options"></div>
 
     <div class="row">
-        <form id="res" th:action="@{/mg-depo/search}" th:object="${searchDepositsForm}" th:method="POST"
+        <form th:action="@{/archive/search}" th:object="${searchArchiveForm}" th:method="POST"
               class="form-inline">
 
             <div class="row mb-2" style="margin-top: 5%">
 
                 <div class="row"
                      style="width: 100%; flex-shrink: 1; display:inline-flex; flex-wrap: nowrap; padding-right: 0;">
-                    <div class="col-sm-3 c-input">
+                    <div class="col c-input" style="justify-content: start; white-space: nowrap;">
+                        <a class="btn btn-dark bg-dark" href="/mg-depo"
+                                type="button">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-arrow-left-circle" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8m15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-4.5-.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5z"/>
+                            </svg>
+                        </a>
+                    </div>
+                    <div class="col-sm-2 c-input">
                         <input type="text" class="form-control" placeholder="Name"
                                th:field="*{name}">
                     </div>
@@ -34,18 +42,20 @@
                                th:field="*{surname}">
                     </div>
 
-                    <div class="col-sm-6 c-input px-0" style="justify-content:end;">
-                        <a class="btn btn-dark bg-dark"
-                                type="button" href="/archive">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-folder" viewBox="0 0 16 16">
-                                <path d="M.54 3.87.5 3a2 2 0 0 1 2-2h3.672a2 2 0 0 1 1.414.586l.828.828A2 2 0 0 0 9.828 3h3.982a2 2 0 0 1 1.992 2.181l-.637 7A2 2 0 0 1 13.174 14H2.826a2 2 0 0 1-1.991-1.819l-.637-7a1.99 1.99 0 0 1 .342-1.31zM2.19 4a1 1 0 0 0-.996 1.09l.637 7a1 1 0 0 0 .995.91h10.348a1 1 0 0 0 .995-.91l.637-7A1 1 0 0 0 13.81 4H2.19zm4.69-1.707A1 1 0 0 0 6.172 2H2.5a1 1 0 0 0-1 .981l.006.139C1.72 3.042 1.95 3 2.19 3h5.396l-.707-.707z"/>
-                            </svg>
-                            Archive
-                        </a>
+                    <div class="between-fields" style="justify-content: flex-end;" th:text="'Retrieved:'"></div>
+
+                    <div class="col-sm-3 c-input" style="width: fit-content;">
+                        <input type="date" class="form-control"
+                               th:field="*{dateFrom}">
+                    </div>
+                    <div class="between-fields c-input" th:text="'↔'" style="width: fit-content;"></div>
+                    <div class="col-sm-3 c-input" style="width: fit-content; padding-right: 0;">
+                        <input type="date" class="form-control"
+                               th:field="*{dateTo}">
                     </div>
                 </div>
                 <div class="row" style="margin-top: 1%; flex-wrap: nowrap; padding-right: 0;">
-                    <div class="col-sm-3">
+                    <div class="col-sm-2">
                         <select type="text" id="country" th:field="*{country}" class="form-control">
                             <div th:each="country:${countries}">
                                 <option th:text="${country.getCountryName()}"
@@ -70,15 +80,21 @@
                             </div>
                         </select>
                     </div>
-                    <div class="col c-input" style="justify-content: end; padding-right: 0; white-space: nowrap;">
+                    <div class="col-sm-3 c-input" style="width: fit-content;">
+                        <input id="is_arrival1" name="is_arrival" type="radio" value="false" class="btn-check"
+                               th:field="*{arrival}" checked>
+                        <label for="is_arrival1" class="btn btn-outline-dark btn-sm">Departure</label>
+                        <input id="is_arrival2" name="is_arrival" type="radio" value="true" class="btn-check"
+                               th:field="*{arrival}">
+                        <label for="is_arrival2" class="btn btn-outline-dark btn-sm" style="margin-left: 0.5em;">Arrival</label>
+                    </div>
+                    <div class="col c-input px-0" style="justify-content: end; white-space: nowrap;">
                         <button class="btn btn-dark bg-dark"
                                 type="submit">
-
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                                  class="bi bi-search" viewBox="0 0 16 16">
                                 <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"></path>
                             </svg>
-                            Search
                         </button>
                     </div>
                 </div>
@@ -97,44 +113,41 @@
                 <tr>
                     <th scope="row">Name</th>
                     <th scope="row">Car</th>
-                    <th scope="row">Department</th>
-                    <th scope="row">Deadline</th>
+                    <th scope="row">Retrieved</th>
+                    <th scope="row">At</th>
                     <th scope="row"></th>
                 </tr>
                 </thead>
-                <form th:action="@{/mg-depo/check}" th:method="POST">
-                    <tbody>
-                    <th:block th:if="${#lists.isEmpty(results)}">
-                        <td th:text="'—'"></td>
-                        <td th:text="'—'"></td>
-                        <td th:text="'—'"></td>
-                        <td th:text="'—'"></td>
-                        <td></td>
-                    </th:block>
-                    <tr th:each="result: ${results}">
-                        <td>
-                            <div class="overflow-cell-hs"
-                                 th:utext="${result.rent.reservation.customer.getName()} + '<br>' + ${result.rent.reservation.customer.getSurname()}"></div>
-                        </td>
-                        <td>
-                            <div class="overflow-cell-hs"
-                                 th:text="${result.rent.car.getPlate()}"></div>
-                        </td>
-                        <td>
-                            <div class="overflow-cell-hs"
-                                 th:utext="${result.rent.reservation.departmentBack.getCity()} + ', <br>' + ${result.rent.reservation.departmentBack.getAddress()}"></div>
-                        </td>
-                        <td>
-                            <div class="overflow-cell-hs" th:text="${result.dateTo}"></div>
-                        </td>
-                        <td style="position: relative;">
-                            <button type="submit" class="btn btn-dark list-button" th:text="Check"
-                                    th:name="check_button"
-                                    th:value="${result.id}"></button>
-                        </td>
-                    </tr>
-                    </tbody>
-                </form>
+                <tbody>
+                <th:block th:if="${#lists.isEmpty(results)}">
+                    <td th:text="'—'"></td>
+                    <td th:text="'—'"></td>
+                    <td th:text="'—'"></td>
+                    <td th:text="'—'"></td>
+                    <td></td>
+                </th:block>
+                <tr th:each="result: ${results}">
+                    <td>
+                        <div class="overflow-cell-hs"
+                             th:utext="${result.rent.reservation.customer.getName()} + '<br>' + ${result.rent.reservation.customer.getSurname()}"></div>
+                    </td>
+                    <td>
+                        <div class="overflow-cell-hs"
+                             th:text="${result.rent.car.getPlate()}"></div>
+                    </td>
+                    <td>
+                        <div class="overflow-cell-hs" th:text="${result.dateTo}"></div>
+                    </td>
+                    <td>
+                        <div class="overflow-cell-hs"
+                             th:utext="${result.department.getCity()} + ', <br>' + ${result.department.getAddress()}"></div>
+                    </td>
+                    <td style="position: relative;">
+                        <a type="button" class="btn btn-dark list-button" th:text="View"
+                                th:href="'/archive/' + ${result.id}"></a>
+                    </td>
+                </tr>
+                </tbody>
             </table>
         </div>
     </div>
