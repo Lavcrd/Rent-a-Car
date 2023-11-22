@@ -46,7 +46,7 @@ public class ManageDepositController {
 
             List<Department> employeeDepartments = departmentService.getDepartmentsByUserContext(cud);
             map.addAttribute("countries", Country.values());
-            map.addAttribute("departments", departmentService.findAllWhereCountry(employeeDepartments.get(0).getCountry()));
+            map.addAttribute("departments", employeeDepartments);
 
             map.addAttribute("searchDepositsForm", map.getOrDefault("searchDepositsForm", new SearchDepositsForm()));
 
@@ -61,7 +61,7 @@ public class ManageDepositController {
     public String viewDepositPage(@PathVariable(value = "retrieve") Long retrieveId, ModelMap map, RedirectAttributes redAtt) {
         try {
             CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            Retrieve retrieve = retrieveService.findById(retrieveId);
+            Retrieve retrieve = retrieveService.findById(retrieveId).orElseThrow(ResourceNotFoundException::new);
             PaymentDetails paymentDetails = paymentDetailsService.getOptionalPaymentDetails(retrieve.getId()).orElseThrow(ResourceNotFoundException::new);
             if (departmentService.departmentAccess(cud, retrieve.getRent().getReservation().getDepartmentBack().getId()).equals(HttpStatus.FORBIDDEN)) {
                 redAtt.addFlashAttribute("message", "Inaccessible department.");
@@ -85,7 +85,7 @@ public class ManageDepositController {
 
     //Search page buttons
     @RequestMapping(method = RequestMethod.POST, value = "/search")
-    public String searchDepositsButton(@ModelAttribute("searchCustomersForm") @Valid SearchDepositsForm form, Errors err, RedirectAttributes redAtt) {
+    public String searchDepositsButton(@ModelAttribute("searchDepositsForm") @Valid SearchDepositsForm form, Errors err, RedirectAttributes redAtt) {
         CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         redAtt.addFlashAttribute("searchDepositsForm", form);

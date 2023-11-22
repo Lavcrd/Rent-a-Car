@@ -36,6 +36,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/mg-depo/**").hasAnyAuthority(User.Roles.ROLE_MANAGER.name(), User.Roles.ROLE_COORDINATOR.name(), User.Roles.ROLE_ADMIN.name())
                 .antMatchers("/mg-car/car-bases/**").hasAnyAuthority(User.Roles.ROLE_COORDINATOR.name(), User.Roles.ROLE_ADMIN.name())
                 .antMatchers("/mg-car/**").hasAnyAuthority(User.Roles.ROLE_MANAGER.name(), User.Roles.ROLE_COORDINATOR.name(), User.Roles.ROLE_ADMIN.name())
+                .antMatchers("/archive/**").hasAnyAuthority(User.Roles.ROLE_MANAGER.name(), User.Roles.ROLE_COORDINATOR.name(), User.Roles.ROLE_ADMIN.name())
                 .anyRequest().permitAll()
                 .and()
                 .formLogin()

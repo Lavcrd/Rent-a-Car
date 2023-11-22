@@ -133,7 +133,7 @@ public class ManageReservationsController {
                 }
             } else if (reservation.getStatus().equals(Reservation.ReservationStatus.STATUS_COMPLETED)) {
                 map.addAttribute("rent_details", rentService.findById(reservation.getId()));
-                map.addAttribute("retrieve_details", retrieveService.findById(reservation.getId()));
+                map.addAttribute("retrieve_details", retrieveService.findById(reservation.getId()).orElseThrow(ResourceNotFoundException::new));
             }
             return "management/viewReservation";
         } catch (ResourceNotFoundException err) {

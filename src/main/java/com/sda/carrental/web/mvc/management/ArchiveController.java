@@ -1,0 +1,106 @@
+package com.sda.carrental.web.mvc.management;
+
+import com.sda.carrental.exceptions.ResourceNotFoundException;
+import com.sda.carrental.global.enums.Country;
+import com.sda.carrental.model.operational.Rent;
+import com.sda.carrental.model.operational.Retrieve;
+import com.sda.carrental.model.property.Department;
+import com.sda.carrental.model.property.PaymentDetails;
+import com.sda.carrental.service.*;
+import com.sda.carrental.service.auth.CustomUserDetails;
+import com.sda.carrental.web.mvc.form.operational.SearchArchiveForm;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
+import org.springframework.validation.Errors;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import javax.validation.Valid;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
+
+@Controller
+@RequiredArgsConstructor
+@RequestMapping("/archive")
+public class ArchiveController {
+    private final UserService userService;
+    private final DepartmentService departmentService;
+    private final RetrieveService retrieveService;
+    private final RentService rentService;
+    private final PaymentDetailsService paymentDetailsService;
+
+
+    //Pages
+    @RequestMapping(method = RequestMethod.GET)
+    public String searchArchivePage(ModelMap map, RedirectAttributes redAtt) {
+        try {
+            CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+            SearchArchiveForm defaultForm = new SearchArchiveForm(LocalDate.now().minusMonths(1), LocalDate.now().plusDays(1));
+
+            map.addAttribute("results", map.getOrDefault("results", retrieveService.findByUserContextAndForm(cud, defaultForm)));
+
+            List<Department> employeeDepartments = departmentService.getDepartmentsByUserContext(cud);
+            map.addAttribute("countries", Country.values());
+            map.addAttribute("departments", employeeDepartments);
+
+            map.addAttribute("searchArchiveForm", map.getOrDefault("searchArchiveForm", defaultForm));
+
+            return "management/searchArchive";
+        } catch (ResourceNotFoundException err) {
+            redAtt.addFlashAttribute("message", "An unexpected error occurred. Please try again.");
+            return "redirect:/";
+        }
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/{operation}")
+    public String viewOperationPage(@PathVariable(value = "operation") Long operationId, ModelMap map, RedirectAttributes redAtt) {
+        try {
+            CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            Optional<Retrieve> retrieveOptional = retrieveService.findById(operationId);
+
+            Rent rent;
+            if (retrieveOptional.isEmpty()) {
+                rent = rentService.findById(operationId);
+            } else {
+                Retrieve retrieve = retrieveOptional.get();
+                rent = retrieve.getRent();
+                map.addAttribute("retrieve", retrieve);
+                map.addAttribute("retrieve_employee", userService.findById(retrieve.getEmployeeId()));
+            }
+
+            map.addAttribute("isObscured", userService.hasNoAccessToUserOperation(cud, rent.getReservation().getCustomer().getId(), operationId));
+
+            PaymentDetails paymentDetails = paymentDetailsService.getOptionalPaymentDetails(operationId).orElseThrow(ResourceNotFoundException::new);
+            map.addAttribute("charged_deposit", paymentDetailsService.calculateChargedDeposit(paymentDetails));
+
+            map.addAttribute("rent", rent);
+            map.addAttribute("isComplete", retrieveOptional.isPresent());
+            map.addAttribute("payment_details", paymentDetails);
+            map.addAttribute("rent_employee", userService.findById(rent.getEmployeeId()));
+
+            return "management/viewOperation";
+        } catch (RuntimeException err) {
+            redAtt.addFlashAttribute("message", "An unexpected error occurred. Please try again.");
+            return "redirect:/";
+        }
+    }
+
+    //Search page buttons
+    @RequestMapping(method = RequestMethod.POST, value = "/search")
+    public String searchArchiveButton(@ModelAttribute("searchArchiveForm") @Valid SearchArchiveForm form, Errors err, RedirectAttributes redAtt) {
+        CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        redAtt.addFlashAttribute("searchArchiveForm", form);
+
+        if (err.hasErrors()) {
+            return "redirect:/archive";
+        }
+
+        redAtt.addFlashAttribute("results", retrieveService.findByUserContextAndForm(cud, form));
+        return "redirect:/archive";
+    }
+}

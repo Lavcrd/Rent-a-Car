@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="Content-Type" content="text/html"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    <title>Rent-a-Car</title>
+
+    <link rel="stylesheet" type="text/css" href="/css/styles.css"/>
+    <link rel="stylesheet" href="/webjars/bootstrap/5.2.3/css/bootstrap.min.css">
+</head>
+
+<body>
+<div id="container">
+    <div th:include="fragments/top::top-menu"></div>
+    <div th:include="fragments/top::reg-options"></div>
+
+    <div class="main">
+        <div class="container text-center">
+            <div class="row">
+                <div class="col-md-2 p-0 mt-3 mb-5">
+                    <table class="table table-borderless table-fixed" style="text-align:start;">
+                        <tbody>
+                        <tr class="table-dark">
+                            <td>Name:</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="overflow-cell-hs"
+                                     th:text="${isObscured} ? '*****' : ${rent.reservation.customer.name} + ' ' + ${rent.reservation.customer.surname}"></div>
+                            </td>
+                        </tr>
+
+                        <tr class="table-dark">
+                            <td>Car:</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="overflow-cell-hs"
+                                     th:text="${rent.car.plate}"></div>
+                            </td>
+                        </tr>
+
+                        <tr class="table-dark">
+                            <td>Expec. departure:</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="overflow-cell-hs"
+                                     th:utext="
+                                     ${rent.reservation.dateFrom} + '<br>' +
+                                     ${rent.reservation.departmentTake.city} + ' ' + ${rent.reservation.departmentTake.postcode} + '<br>' +
+                                     ${rent.reservation.departmentTake.address}"></div>
+                            </td>
+                        </tr>
+                        <tr class="table-dark">
+                            <td>Expec. arrival:</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="overflow-cell-hs"
+                                     th:utext="
+                                     ${rent.reservation.dateTo} + '<br>' +
+                                     ${rent.reservation.departmentBack.city} + ' ' + ${rent.reservation.departmentBack.postcode} + '<br>' +
+                                     ${rent.reservation.departmentBack.address}">
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col-md-8 mb-5" style="padding-left:2em;padding-right:0;">
+                    <div class="d-flex justify-content-between" style="margin-top: 3%;">
+                        <div style="text-align:start;" th:utext="'<strong>ID: </strong>' + ${rent.id}"></div>
+                    </div>
+
+                    <div class="my-3 d-flex" style="justify-content: center; align-content: center;">
+                        <span class="border w-100"></span>
+                    </div>
+
+                    <div class="d-flex" style="margin-top: 3%;justify-content:space-between;">
+                        <div style="text-align:start;" th:utext="'<strong>Rent date:</strong><br>' + ${rent.dateFrom}"></div>
+                        <div style="text-align:end;" th:utext="'<strong>Mileage:</strong><br>' + ${rent.mileage} + ' [km]'"></div>
+                    </div>
+                    <div style="margin-top: 3%;"
+                         th:utext="'<strong>Rental remarks:</strong><br>' + ${rent.remarks}">
+                    </div>
+                    <div th:if="${isObscured}" style="margin-top: 3%;text-align:end;"
+                         th:utext="'<strong>Renting employee:</strong><br>' + ${rent_employee.name} + ' ' + ${rent_employee.surname.charAt(0)} + '.'">
+                    </div>
+                    <div th:if="${!isObscured}" style="margin-top: 3%;text-align:end;"
+                         th:utext="'<strong>Renting employee:</strong><br>' + ${rent_employee.name} + ' ' + ${rent_employee.surname}">
+                    </div>
+
+                    <th:block th:if="${isComplete}">
+                    <div class="my-3 d-flex" style="justify-content: center; align-content: center;">
+                        <span class="border w-100"></span>
+                    </div>
+                    <div class="d-flex" style="margin-top: 3%;justify-content:space-between;">
+                        <div style="text-align:start;" th:utext="'<strong>Retrieve date:</strong><br>' + ${retrieve.dateTo}"></div>
+                        <div style="text-align:end;" th:utext="'<strong>Mileage:</strong><br>' + ${retrieve.mileage} + ' [km]'"></div>
+                    </div>
+                    <div style="margin-top: 3%;"
+                         th:utext="'<strong>Retrieval remarks:</strong><br>' + ${retrieve.remarks}">
+                    </div>
+                    <div class="d-flex" style="margin-top: 3%;justify-content:space-between;">
+                        <div style="text-align:start;" th:utext="'<strong>Location:</strong><br>' + ${retrieve.department.city} + ' ' + ${retrieve.department.postcode} + '<br>' + ${retrieve.department.address}"></div>
+                        <div th:if="${isObscured}" style="text-align:end;" th:utext="'<strong>Retrieving employee:</strong><br>' + ${retrieve_employee.name} + ' ' + ${retrieve_employee.surname.charAt(0)} + '.'"></div>
+                        <div th:if="${!isObscured}" style="text-align:end;" th:utext="'<strong>Retrieving employee:</strong><br>' + ${retrieve_employee.name} + ' ' + ${retrieve_employee.surname}"></div>
+                    </div>
+                    </th:block>
+                </div>
+                <div class="col-md-2 mb-5" style="font-size:small;text-align:end;">
+                    <div style="margin-top: 20%;"
+                         th:utext="'<strong>Deposit:</strong>'">
+                    </div>
+                    <div style="margin-top: 2%;"
+                         th:text="${payment_details.initialDeposit}">
+                    </div>
+
+                    <div th:if="${payment_details.deposit > 0}" style="margin-top: 20%;"
+                         th:utext="'<strong>Balance:</strong>'">
+                    </div>
+                    <div th:if="${payment_details.deposit > 0}" style="margin-top: 2%;"
+                         th:text="${payment_details.deposit}">
+                    </div>
+
+                    <div style="margin-top: 20%;"
+                         th:utext="'<strong>Released:</strong>'">
+                    </div>
+                    <div style="margin-top: 2%;"
+                         th:text="${payment_details.releasedDeposit}">
+                    </div>
+
+                    <div style="margin-top: 20%;"
+                         th:utext="'<strong>Charged:</strong>'">
+                    </div>
+                    <div style="margin-top: 2%;"
+                         th:text="${charged_deposit}">
+                    </div>
+                </div>
+            </div>
+            <div class="row" style="margin-top:3%;">
+                <div class="col-md-3 p-0">
+                    <div class="d-flex flex-column">
+                        <a class="btn btn-dark bg-dark mt-2 def-button-text"
+                           type="button" href="/archive">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                 class="bi bi-arrow-left-circle" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd"
+                                      d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-4.5-.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5z"/>
+                            </svg>
+                            Back
+                        </a>
+                    </div>
+                </div>
+                <div class="col-md-6"></div>
+                <div class="col-md-3 p-0">
+                    <div class="d-flex flex-column">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:include="fragments/bottom::bottom-footer"></div>
+    <div th:insert="fragments/bottom::message-handler"></div>
+</div>
+<div th:include="fragments/bottom::common-scripts"></div>
+</body>
+</html>

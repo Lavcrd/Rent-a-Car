@@ -11,6 +11,7 @@ import com.sda.carrental.model.property.Department;
 import com.sda.carrental.repository.RetrieveRepository;
 import com.sda.carrental.service.auth.CustomUserDetails;
 import com.sda.carrental.web.mvc.form.operational.ConfirmClaimForm;
+import com.sda.carrental.web.mvc.form.operational.SearchArchiveForm;
 import com.sda.carrental.web.mvc.form.property.payments.SearchDepositsForm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataAccessException;
@@ -23,6 +24,7 @@ import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -35,8 +37,8 @@ public class RetrieveService {
     private final CarService carService;
 
 
-    public Retrieve findById(Long id) throws ResourceNotFoundException {
-        return repository.findById(id).orElseThrow(ResourceNotFoundException::new);
+    public Optional<Retrieve> findById(Long id) {
+        return repository.findById(id);
     }
 
     @Transactional
@@ -117,5 +119,35 @@ public class RetrieveService {
 
     public List<Retrieve> findRetrievalsByCar(Car car, Integer limit) {
         return repository.findRetrievalsByCar(car, Pageable.ofSize(limit));
+    }
+
+    public List<Retrieve> findByUserContextAndForm(CustomUserDetails cud, SearchArchiveForm form) {
+        try {
+            Country formCountry = Country.valueOf(form.getCountry());
+            String country;
+            if (formCountry.equals(Country.COUNTRY_NONE)) {
+                country = null;
+            } else {
+                country = formCountry.getCode();
+            }
+
+            List<Department> departments;
+            if (form.getDepartment() == null) {
+                departments = departmentService.getDepartmentsByUserContext(cud);
+            } else {
+                if (departmentService.departmentAccess(cud, form.getDepartment()).equals(HttpStatus.FORBIDDEN))
+                    return Collections.emptyList();
+                departments = List.of(departmentService.findDepartmentWhereId(form.getDepartment()));
+            }
+
+            return repository.findRetrievedByCriteria(
+                    form.getName(), form.getSurname(),
+                    country, form.getPlate(),
+                    form.getDateFrom(), form.getDateTo(),
+                    departments, form.isArrival()
+            );
+        } catch (RuntimeException err) {
+            return Collections.emptyList();
+        }
     }
 }
