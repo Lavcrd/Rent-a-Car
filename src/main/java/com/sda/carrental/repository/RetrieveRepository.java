@@ -51,7 +51,7 @@ public interface RetrieveRepository extends CrudRepository<Retrieve, Long> {
             "AND (:plate IS NULL OR LOWER(c.plate) LIKE LOWER(CONCAT('%-%', :plate, '%'))) " +
             "AND (:dateFrom IS NULL OR :dateFrom <= r.dateTo) " +
             "AND (:dateTo IS NULL OR :dateTo >= r.dateTo) " +
-            "ORDER BY r.dateTo ASC"
+            "ORDER BY r.dateTo DESC"
     )
     List<Retrieve> findRetrievedByCriteria(@Param("name") String name, @Param("surname") String surname,
                                            @Param("country") String country, @Param("plate") String plate,

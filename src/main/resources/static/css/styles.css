@@ -460,6 +460,12 @@ input {
     overflow-y: auto;
 }
 
+.transparent {
+    border-color: transparent;
+    background: none;
+    padding: 0;
+}
+
 .car-img {
     object-fit: contain;
     max-width: 100%;

@@ -270,4 +270,10 @@ public class ManageCarsController {
 
         return null;
     }
+
+    @RequestMapping(method = RequestMethod.POST, value = "/{id}/logs")
+    public String checkLogsButton(RedirectAttributes redAtt, @PathVariable("id") Long carId, @RequestParam("o_id") Long operationId) {
+        redAtt.addFlashAttribute("previousPage", "/mg-car/" + carId);
+        return "redirect:/archive/" + operationId;
+    }
 }
