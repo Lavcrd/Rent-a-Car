@@ -1,5 +1,6 @@
 package com.sda.carrental.web.mvc.management;
 
+import com.sda.carrental.exceptions.IllegalActionException;
 import com.sda.carrental.global.ConstantValues;
 import com.sda.carrental.exceptions.ResourceNotFoundException;
 import com.sda.carrental.global.enums.Country;
@@ -47,9 +48,14 @@ public class ManageReservationsController {
     private final UserService userService;
     private final ConstantValues cv;
 
+    private final String MSG_KEY = "message";
+    private final String MSG_ACCESS_REJECTED = "Failure: Access rejected";
+    private final String MSG_GENERIC_EXCEPTION = "Failure: An unexpected error occurred";
+    private final String MSG_NO_RESOURCE = "Failure: Resource not found";
+
     //Pages
     @RequestMapping(method = RequestMethod.GET)
-    public String redirectPage(ModelMap map, RedirectAttributes redAtt) {
+    public String redirectPage() {
         CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return "redirect:/mg-cus";
     }
@@ -59,8 +65,8 @@ public class ManageReservationsController {
         try {
             CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             if (userService.hasNoAccessToUserData(cud, customerId, departmentId)) {
-                redAtt.addFlashAttribute("message", "Access rejected.");
-                return "redirect:/mg-res";
+                redAtt.addFlashAttribute(MSG_KEY, MSG_ACCESS_REJECTED);
+                return "redirect:/mg-cus";
             }
 
             Customer customer = customerService.findById(customerId);
@@ -77,8 +83,11 @@ public class ManageReservationsController {
             }
             return "management/viewCustomerReservations";
         } catch (ResourceNotFoundException err) {
-            redAtt.addFlashAttribute("message", "An unexpected error occurred. Please try again.");
-            return "redirect:/mg-res";
+            redAtt.addFlashAttribute(MSG_KEY, MSG_NO_RESOURCE);
+            return "redirect:/mg-cus";
+        } catch (RuntimeException err) {
+            redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
+            return "redirect:/mg-cus";
         }
     }
 
@@ -87,16 +96,11 @@ public class ManageReservationsController {
         try {
             CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             if (userService.hasNoAccessToUserOperation(cud, customerId, reservationId)) {
-                redAtt.addFlashAttribute("message", "Access rejected.");
-                return "redirect:/mg-res";
+                redAtt.addFlashAttribute(MSG_KEY, MSG_ACCESS_REJECTED);
+                return "redirect:/mg-cus";
             }
 
             Reservation reservation = reservationService.findCustomerReservation(customerId, reservationId);
-
-            if (departmentService.departmentAccess(cud, reservation.getDepartmentTake().getId()).equals(HttpStatus.FORBIDDEN)) {
-                redAtt.addFlashAttribute("message", "Incorrect data. Access not allowed.");
-                return "redirect:/mg-res";
-            }
             Optional<PaymentDetails> receipt = paymentDetailsService.getOptionalPaymentDetails(reservation.getId());
 
             if (receipt.isPresent()) {
@@ -137,8 +141,11 @@ public class ManageReservationsController {
             }
             return "management/viewReservation";
         } catch (ResourceNotFoundException err) {
-            redAtt.addFlashAttribute("message", "An unexpected error occurred. Please try again.");
-            return "redirect:/mg-res";
+            redAtt.addFlashAttribute(MSG_KEY, MSG_NO_RESOURCE);
+            return "redirect:/mg-cus";
+        } catch (RuntimeException err) {
+            redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
+            return "redirect:/mg-cus";
         }
     }
 
@@ -147,13 +154,13 @@ public class ManageReservationsController {
         try {
             CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             if (userService.hasNoAccessToUserOperation(cud, customerId, reservationId)) {
-                redAtt.addFlashAttribute("message", "Access rejected.");
-                return "redirect:/mg-res";
+                redAtt.addFlashAttribute(MSG_KEY, MSG_ACCESS_REJECTED);
+                return "redirect:/mg-cus";
             }
 
             Reservation reservation = reservationService.findCustomerReservation(customerId, reservationId);
             List<CarBase> carList = carBaseService.findAvailableCarBasesInDepartment(reservation.getDepartmentTake().getId());
-            if (carList.isEmpty()) throw new RuntimeException();
+            if (carList.isEmpty()) throw new IllegalActionException();
 
             map.addAttribute("carBases", map.getOrDefault("filteredCarBases", carList));
 
@@ -169,14 +176,17 @@ public class ManageReservationsController {
             map.addAttribute("carFilterForm", map.getOrDefault("carFilterForm", new SubstituteCarBaseFilterForm(reservation.getDepartmentTake().getId())));
             return "management/substituteCar";
         } catch (ResourceNotFoundException err) {
-            redAtt.addFlashAttribute("message", "Error occurred. Resource not found.");
-            return "redirect:/mg-res";
-        } catch (RuntimeException err) {
+            redAtt.addFlashAttribute(MSG_KEY, MSG_NO_RESOURCE);
+            return "redirect:/mg-cus";
+        } catch (IllegalActionException err) {
             redAtt.addFlashAttribute("customer", customerId);
             redAtt.addAttribute("reservation", reservationId);
             redAtt.addAttribute("department", departmentId);
-            redAtt.addFlashAttribute("message", "No cars available for selected department and dates.");
+            redAtt.addFlashAttribute(MSG_KEY, "No cars available for selected department and dates.");
             return "redirect:/mg-res/reservation/{reservation}";
+        } catch (RuntimeException err) {
+            redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
+            return "redirect:/mg-cus";
         }
     }
 
@@ -208,15 +218,15 @@ public class ManageReservationsController {
     public String reservationRefundButton(@ModelAttribute("confirmation_form") @Valid ConfirmationForm form, Errors err, RedirectAttributes redAtt, @RequestParam("reservation") Long reservationId, @RequestParam("customer") Long customerId, @RequestParam("department") Long departmentId) {
         CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (userService.hasNoAccessToUserOperation(cud, customerId, reservationId)) {
-            redAtt.addFlashAttribute("message", "Access rejected.");
-            return "redirect:/mg-res";
+            redAtt.addFlashAttribute(MSG_KEY, MSG_ACCESS_REJECTED);
+            return "redirect:/mg-cus";
         }
 
         if (err.hasErrors()) {
             redAtt.addAttribute("reservation", reservationId);
             redAtt.addFlashAttribute("customer", customerId);
             redAtt.addFlashAttribute("department", departmentId);
-            redAtt.addFlashAttribute("message", err.getAllErrors().get(0).getDefaultMessage());
+            redAtt.addFlashAttribute(MSG_KEY, err.getAllErrors().get(0).getDefaultMessage());
             return "redirect:/mg-res/reservation/{reservation}";
         }
 
@@ -226,26 +236,26 @@ public class ManageReservationsController {
             redAtt.addAttribute("reservation", reservationId);
             redAtt.addFlashAttribute("customer", customerId);
             redAtt.addFlashAttribute("department", departmentId);
-            redAtt.addFlashAttribute("message", "Refund completed successfully!");
+            redAtt.addFlashAttribute(MSG_KEY, "Success: Refund completed successfully");
             return "redirect:/mg-res/reservation/{reservation}";
         }
-        redAtt.addFlashAttribute("message", "An unexpected error occurred. Please try again later or contact customer service.");
-        return "redirect:/mg-res";
+        redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
+        return "redirect:/mg-cus";
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/reservation/cancel")
     public String reservationCancelButton(@ModelAttribute("confirmation_form") @Valid ConfirmationForm form, Errors err, RedirectAttributes redAtt, @RequestParam("reservation") Long reservationId, @RequestParam("customer") Long customerId, @RequestParam("department") Long departmentId) {
         CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (userService.hasNoAccessToUserOperation(cud, customerId, reservationId)) {
-            redAtt.addFlashAttribute("message", "Access rejected.");
-            return "redirect:/mg-res";
+            redAtt.addFlashAttribute(MSG_KEY, MSG_ACCESS_REJECTED);
+            return "redirect:/mg-cus";
         }
 
         if (err.hasErrors()) {
             redAtt.addAttribute("reservation", reservationId);
             redAtt.addFlashAttribute("customer", customerId);
             redAtt.addFlashAttribute("department", departmentId);
-            redAtt.addFlashAttribute("message", err.getAllErrors().get(0).getDefaultMessage());
+            redAtt.addFlashAttribute(MSG_KEY, err.getAllErrors().get(0).getDefaultMessage());
             return "redirect:/mg-res/reservation/{reservation}";
         }
 
@@ -255,26 +265,26 @@ public class ManageReservationsController {
             redAtt.addAttribute("reservation", reservationId);
             redAtt.addFlashAttribute("customer", customerId);
             redAtt.addFlashAttribute("department", departmentId);
-            redAtt.addFlashAttribute("message", "Cancel completed successfully!");
+            redAtt.addFlashAttribute(MSG_KEY, "Success: Cancel completed successfully");
             return "redirect:/mg-res/reservation/{reservation}";
         }
-        redAtt.addFlashAttribute("message", "An unexpected error occurred. Please try again later or contact customer service.");
-        return "redirect:/mg-res";
+        redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
+        return "redirect:/mg-cus";
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/reservation/rent")
     public String reservationRentButton(@ModelAttribute("rental_confirmation_form") @Valid ConfirmRentalForm form, Errors err, RedirectAttributes redAtt, @RequestParam("customer") Long customerId, @RequestParam("department") Long departmentId) {
         CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (userService.hasNoAccessToUserOperation(cud, customerId, form.getReservationId())) {
-            redAtt.addFlashAttribute("message", "Access rejected.");
-            return "redirect:/mg-res";
+            redAtt.addFlashAttribute(MSG_KEY, MSG_ACCESS_REJECTED);
+            return "redirect:/mg-cus";
         }
 
         if (err.hasErrors()) {
             redAtt.addAttribute("reservation", form.getReservationId());
             redAtt.addFlashAttribute("customer", customerId);
             redAtt.addFlashAttribute("department", departmentId);
-            redAtt.addFlashAttribute("message", err.getAllErrors().get(0).getDefaultMessage());
+            redAtt.addFlashAttribute(MSG_KEY, err.getAllErrors().get(0).getDefaultMessage());
             return "redirect:/mg-res/reservation/{reservation}";
         }
 
@@ -285,15 +295,15 @@ public class ManageReservationsController {
         redAtt.addFlashAttribute("department", departmentId);
 
         if (response.equals(HttpStatus.ACCEPTED)) {
-            redAtt.addFlashAttribute("message", "Success: Rent completed successfully!");
+            redAtt.addFlashAttribute(MSG_KEY, "Success: Rent completed successfully");
         } else if (response.equals(HttpStatus.PAYMENT_REQUIRED)) {
-            redAtt.addFlashAttribute("message", "Failure: Payment not registered.");
+            redAtt.addFlashAttribute(MSG_KEY, "Failure: Payment not registered");
         } else if (response.equals(HttpStatus.PRECONDITION_REQUIRED)) {
-            redAtt.addFlashAttribute("message", "Failure: Verification not registered.");
+            redAtt.addFlashAttribute(MSG_KEY, "Failure: Verification not registered");
         } else if (response.equals(HttpStatus.CONFLICT)) {
-            redAtt.addFlashAttribute("message", "Failure: Status unavailable.");
+            redAtt.addFlashAttribute(MSG_KEY, "Failure: Status unavailable");
         } else {
-            redAtt.addFlashAttribute("message", "Failure: An unexpected error occurred.");
+            redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
         }
         return "redirect:/mg-res/reservation/{reservation}";
     }
@@ -302,15 +312,15 @@ public class ManageReservationsController {
     public String reservationRetrieveButton(@ModelAttribute("retrieve_confirmation_form") @Valid ConfirmClaimForm form, Errors err, RedirectAttributes redAtt, @RequestParam("customer") Long customerId, @RequestParam("department") Long departmentId) {
         CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (userService.hasNoAccessToUserOperation(cud, customerId, form.getReservationId())) {
-            redAtt.addFlashAttribute("message", "Access rejected.");
-            return "redirect:/mg-res";
+            redAtt.addFlashAttribute(MSG_KEY, MSG_ACCESS_REJECTED);
+            return "redirect:/mg-cus";
         }
 
         if (err.hasErrors()) {
             redAtt.addAttribute("reservation", form.getReservationId());
             redAtt.addFlashAttribute("customer", customerId);
             redAtt.addFlashAttribute("department", departmentId);
-            redAtt.addFlashAttribute("message", err.getAllErrors().get(0).getDefaultMessage());
+            redAtt.addFlashAttribute(MSG_KEY, err.getAllErrors().get(0).getDefaultMessage());
             return "redirect:/mg-res/reservation/{reservation}";
         }
 
@@ -321,9 +331,9 @@ public class ManageReservationsController {
         redAtt.addFlashAttribute("department", departmentId);
 
         if (response.equals(HttpStatus.ACCEPTED)) {
-            redAtt.addFlashAttribute("message", "Success: Retrieve completed");
+            redAtt.addFlashAttribute(MSG_KEY, "Success: Retrieve completed");
         } else {
-            redAtt.addFlashAttribute("message", "An unexpected error occurred. Please try again later.");
+            redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
         }
         return "redirect:/mg-res/reservation/{reservation}";
     }
@@ -349,8 +359,8 @@ public class ManageReservationsController {
     public String substituteCarFilterButton(@ModelAttribute("carFilterForm") SubstituteCarBaseFilterForm filterData, RedirectAttributes redAtt, @RequestParam("reservation") Long reservationId, @RequestParam("customer") Long customerId, @RequestParam("department") Long departmentId) {
         CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (userService.hasNoAccessToUserOperation(cud, customerId, reservationId)) {
-            redAtt.addFlashAttribute("message", "Access rejected.");
-            return "redirect:/mg-res";
+            redAtt.addFlashAttribute(MSG_KEY, MSG_ACCESS_REJECTED);
+            return "redirect:/mg-cus";
         }
 
         redAtt.addFlashAttribute("filteredCarBases", carBaseService.findCarBasesByForm(filterData));
@@ -366,8 +376,8 @@ public class ManageReservationsController {
     public String substituteCarSelectButton(@RequestParam("select") Long carId, RedirectAttributes redAtt, @RequestParam("reservation") Long reservationId, @RequestParam("customer") Long customerId, @RequestParam("department") Long departmentId) {
         CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (userService.hasNoAccessToUserOperation(cud, customerId, reservationId)) {
-            redAtt.addFlashAttribute("message", "Access rejected.");
-            return "redirect:/mg-res";
+            redAtt.addFlashAttribute(MSG_KEY, MSG_ACCESS_REJECTED);
+            return "redirect:/mg-cus";
         }
 
         HttpStatus status = reservationService.substituteCarBase(reservationId, customerId, carId);
@@ -377,10 +387,10 @@ public class ManageReservationsController {
         redAtt.addAttribute("department", departmentId);
 
         if (status.equals(HttpStatus.ACCEPTED)) {
-            redAtt.addFlashAttribute("message", "Success: Car successfully substituted.");
+            redAtt.addFlashAttribute(MSG_KEY, "Success: Car successfully substituted");
             return "redirect:/mg-res/reservation/{reservation}";
         }
-        redAtt.addFlashAttribute("message", "Failure: An unexpected error occurred. Please try again later.");
+        redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
         return "redirect:/mg-cus";
     }
 }

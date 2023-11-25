@@ -63,7 +63,7 @@ public class RetrieveService {
     }
 
     @Transactional
-    public HttpStatus handleRetrieve(Long customerId, Long departmentId, ConfirmClaimForm form) throws IllegalActionException {
+    public HttpStatus handleRetrieve(Long customerId, Long departmentId, ConfirmClaimForm form) {
         try {
             CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             if (departmentService.departmentAccess(cud, departmentId).equals(HttpStatus.FORBIDDEN)) {

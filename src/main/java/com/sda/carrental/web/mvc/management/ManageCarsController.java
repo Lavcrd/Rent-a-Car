@@ -34,6 +34,11 @@ public class ManageCarsController {
     private final RentService rentService;
     private final RetrieveService retrieveService;
 
+    private final String MSG_KEY = "message";
+    private final String MSG_ACCESS_REJECTED = "Failure: Access rejected";
+    private final String MSG_GENERIC_EXCEPTION = "Failure: An unexpected error occurred";
+    private final String MSG_NO_RESOURCE = "Failure: Not found";
+
     //Pages
     @RequestMapping(method = RequestMethod.GET)
     public String searchCarsPage(ModelMap map, RedirectAttributes redAtt) {
@@ -60,7 +65,7 @@ public class ManageCarsController {
 
             return "management/searchCars";
         } catch (RuntimeException err) {
-            redAtt.addFlashAttribute("message", "Failure: Unexpected exception");
+            redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
             return "redirect:/";
         }
     }
@@ -71,7 +76,7 @@ public class ManageCarsController {
             CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             Car car = carService.findCarById(carId);
             if (userService.hasNoAccessToProperty(cud, car)) {
-                redAtt.addFlashAttribute("message", "Access rejected.");
+                redAtt.addFlashAttribute(MSG_KEY, MSG_ACCESS_REJECTED);
                 return "redirect:/mg-car";
             }
 
@@ -102,7 +107,10 @@ public class ManageCarsController {
             map.addAttribute("car", car);
             return "management/viewCar";
         } catch (ResourceNotFoundException err) {
-            redAtt.addFlashAttribute("message", "Failure: Not found");
+            redAtt.addFlashAttribute(MSG_KEY, MSG_NO_RESOURCE);
+            return "redirect:/mg-car";
+        } catch (RuntimeException err) {
+            redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
             return "redirect:/mg-car";
         }
     }
@@ -122,18 +130,16 @@ public class ManageCarsController {
     @RequestMapping(method = RequestMethod.POST, value = "/register")
     public String registerCarButton(@ModelAttribute("register_form") @Valid RegisterCarForm form, Errors err, RedirectAttributes redAtt) {
         if (err.hasErrors()) {
-            redAtt.addFlashAttribute("message", err.getAllErrors().get(0).getDefaultMessage());
+            redAtt.addFlashAttribute(MSG_KEY, err.getAllErrors().get(0).getDefaultMessage());
             redAtt.addFlashAttribute("register_form", form);
             return "redirect:/mg-car";
         }
 
         HttpStatus status = carService.register(form);
         if (status.equals(HttpStatus.CREATED)) {
-            redAtt.addFlashAttribute("message", "Success: Car successfully registered.");
-        } else if (status.equals(HttpStatus.NOT_FOUND)) {
-            redAtt.addFlashAttribute("message", "Failure: Provided car information might not be valid.");
+            redAtt.addFlashAttribute(MSG_KEY, "Success: Car successfully registered.");
         } else {
-            redAtt.addFlashAttribute("message", "Failure: Unexpected database error.");
+            redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
         }
         return "redirect:/mg-car";
     }
@@ -148,12 +154,12 @@ public class ManageCarsController {
 
             Car car = carService.findCarById(carId);
             if (userService.hasNoAccessToProperty(cud, car)) {
-                redAtt.addFlashAttribute("message", "Access rejected.");
+                redAtt.addFlashAttribute(MSG_KEY, MSG_ACCESS_REJECTED);
                 return "redirect:/mg-car";
             }
 
             if (errors.hasErrors()) {
-                redAtt.addFlashAttribute("message", errors.getAllErrors().get(0).getDefaultMessage());
+                redAtt.addFlashAttribute(MSG_KEY, errors.getAllErrors().get(0).getDefaultMessage());
                 redAtt.addFlashAttribute("status_form", form);
                 return "redirect:/mg-car/{carId}";
             }
@@ -161,14 +167,14 @@ public class ManageCarsController {
             Car.CarStatus carStatus = Car.CarStatus.valueOf(form.getStatus());
             HttpStatus status = carService.handleStatus(car, carStatus);
             if (status.equals(HttpStatus.OK)) {
-                redAtt.addFlashAttribute("message", "Success: Car status successfully changed to - " + carStatus.name().substring(7));
+                redAtt.addFlashAttribute(MSG_KEY, "Success: Car status successfully changed to - " + carStatus.name().substring(7));
             } else if (status.equals(HttpStatus.PRECONDITION_FAILED)) {
-                redAtt.addFlashAttribute("message", "Failure: Rejected due to active reservation.");
+                redAtt.addFlashAttribute(MSG_KEY, "Failure: Rejected due to active reservation.");
             }
         } catch (ResourceNotFoundException err) {
-            redAtt.addFlashAttribute("message", "Failure: Not found");
+            redAtt.addFlashAttribute(MSG_KEY, MSG_NO_RESOURCE);
         } catch (RuntimeException err) {
-            redAtt.addFlashAttribute("message", "Failure: Unexpected value");
+            redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
         }
         return "redirect:/mg-car/{carId}";
     }
@@ -182,24 +188,24 @@ public class ManageCarsController {
 
             Car car = carService.findCarById(carId);
             if (userService.hasNoAccessToProperty(cud, car)) {
-                redAtt.addFlashAttribute("message", "Access rejected.");
+                redAtt.addFlashAttribute(MSG_KEY, MSG_ACCESS_REJECTED);
                 return "redirect:/mg-car";
             }
 
             if (errors.hasErrors()) {
-                redAtt.addFlashAttribute("message", errors.getAllErrors().get(0).getDefaultMessage());
+                redAtt.addFlashAttribute(MSG_KEY, errors.getAllErrors().get(0).getDefaultMessage());
                 redAtt.addFlashAttribute("mileage_form", form);
                 return "redirect:/mg-car/{carId}";
             }
 
             HttpStatus status = carService.updateCarMileage(car, form.getMileage());
             if (status.equals(HttpStatus.OK)) {
-                redAtt.addFlashAttribute("message", "Success: Car mileage successfully changed to - " + form.getMileage());
+                redAtt.addFlashAttribute(MSG_KEY, "Success: Car mileage successfully changed to - " + form.getMileage());
             }
         } catch (ResourceNotFoundException err) {
-            redAtt.addFlashAttribute("message", "Failure: Not found");
+            redAtt.addFlashAttribute(MSG_KEY, MSG_NO_RESOURCE);
         } catch (RuntimeException err) {
-            redAtt.addFlashAttribute("message", "Failure: Unexpected value");
+            redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
         }
         return "redirect:/mg-car/{carId}";
     }
@@ -213,12 +219,12 @@ public class ManageCarsController {
 
             Car car = carService.findCarById(carId);
             if (userService.hasNoAccessToProperty(cud, car)) {
-                redAtt.addFlashAttribute("message", "Access rejected.");
+                redAtt.addFlashAttribute(MSG_KEY, MSG_ACCESS_REJECTED);
                 return "redirect:/mg-car";
             }
 
             if (errors.hasErrors()) {
-                redAtt.addFlashAttribute("message", errors.getAllErrors().get(0).getDefaultMessage());
+                redAtt.addFlashAttribute(MSG_KEY, errors.getAllErrors().get(0).getDefaultMessage());
                 redAtt.addFlashAttribute("department_form", form);
                 return "redirect:/mg-car/{carId}";
             }
@@ -226,12 +232,12 @@ public class ManageCarsController {
             Department department = departmentService.findDepartmentWhereId(form.getDepartmentId());
             HttpStatus status = carService.updateCarLocation(car, department);
             if (status.equals(HttpStatus.OK)) {
-                redAtt.addFlashAttribute("message", "Success: Car location successfully changed to - " + department.getCity() + ", " + department.getAddress());
+                redAtt.addFlashAttribute(MSG_KEY, "Success: Car location successfully changed to - " + department.getCity() + ", " + department.getAddress());
             }
         } catch (ResourceNotFoundException err) {
-            redAtt.addFlashAttribute("message", "Failure: Not found");
+            redAtt.addFlashAttribute(MSG_KEY, MSG_NO_RESOURCE);
         } catch (RuntimeException err) {
-            redAtt.addFlashAttribute("message", "Failure: Unexpected value");
+            redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
         }
         return "redirect:/mg-car/{carId}";
     }
@@ -243,29 +249,29 @@ public class ManageCarsController {
 
             Car car = carService.findCarById(carId);
             if (userService.hasNoAccessToProperty(cud, car)) {
-                redAtt.addFlashAttribute("message", "Access rejected.");
+                redAtt.addFlashAttribute(MSG_KEY, MSG_ACCESS_REJECTED);
                 return "redirect:/mg-car";
             }
 
             if (errors.hasErrors()) {
-                redAtt.addFlashAttribute("message", errors.getAllErrors().get(0).getDefaultMessage());
+                redAtt.addFlashAttribute(MSG_KEY, errors.getAllErrors().get(0).getDefaultMessage());
                 return "redirect:/mg-car/{carId}";
             }
 
             HttpStatus status = carService.handleCarDelete(car.getId());
             if (status.equals(HttpStatus.ACCEPTED)) {
-                redAtt.addFlashAttribute("message", "Success: Car \"" + car.getPlate() + "\" successfully deleted");
+                redAtt.addFlashAttribute(MSG_KEY, "Success: Car \"" + car.getPlate() + "\" successfully deleted");
                 return "redirect:/mg-car";
             } else if (status.equals(HttpStatus.PRECONDITION_FAILED)) {
-                redAtt.addFlashAttribute("message", "Failure: Car cannot have rental history");
+                redAtt.addFlashAttribute(MSG_KEY, "Failure: Car cannot have rental history");
             } else {
-                redAtt.addFlashAttribute("message", "Failure: Unexpected error");
+                redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
             }
             return "redirect:/mg-car/{carId}";
         } catch (ResourceNotFoundException err) {
-            redAtt.addFlashAttribute("message", "Failure: Not found");
+            redAtt.addFlashAttribute(MSG_KEY, MSG_NO_RESOURCE);
         } catch (RuntimeException err) {
-            redAtt.addFlashAttribute("message", "Failure: Unexpected value");
+            redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
         }
 
         return null;

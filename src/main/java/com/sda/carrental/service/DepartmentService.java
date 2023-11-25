@@ -22,26 +22,26 @@ import static java.util.stream.Collectors.toList;
 @RequiredArgsConstructor
 public class DepartmentService {
 
-    private final DepartmentRepository departmentRepository;
+    private final DepartmentRepository repository;
     private final CoordinatorService coordinatorService;
     private final ManagerService managerService;
     private final EmployeeService employeeService;
 
     public List<Department> findAll() {
-        return StreamSupport.stream(departmentRepository.findAll().spliterator(), false)
+        return StreamSupport.stream(repository.findAll().spliterator(), false)
                 .collect(toList());
     }
 
     public List<Department> findAllWhereCountry(Country country) {
-        return departmentRepository.findDepartmentsByCountry(country);
+        return repository.findDepartmentsByCountry(country);
     }
 
     public Department findAllWhereCountryAndHq(Country country) {
-        return departmentRepository.findDepartmentByCountryAndHq(country, true).orElse(new Department(Country.COUNTRY_PL, "—", "—", "—", "—", "—", true));
+        return repository.findDepartmentByCountryAndHq(country, true).orElse(new Department(Country.COUNTRY_PL, "—", "—", "—", "—", "—", true));
     }
 
     public Department findDepartmentWhereId(long id) throws ResourceNotFoundException {
-        return departmentRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Department", "id", id));
+        return repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Department", "id", id));
     }
 
     public List<Department> getDepartmentsByUserContext(CustomUserDetails cud) {

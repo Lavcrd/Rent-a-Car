@@ -31,6 +31,10 @@ public class ProfileController {
     private final CredentialsService credentialsService;
     private final UserService userService;
 
+    private final String MSG_KEY = "message";
+    private final String MSG_USER_NOT_RECOGNIZED = "User not recognized. Please login again.";
+    private final String MSG_GENERIC_EXCEPTION = "An unexpected error occurred. Please try again later or contact customer service.";
+
     //Pages
     @RequestMapping(method = RequestMethod.GET)
     public String profilePage(ModelMap map, RedirectAttributes redAtt) {
@@ -40,7 +44,7 @@ public class ProfileController {
             map.addAttribute("user", userService.findById(cud.getId()));
         } catch (RuntimeException err) {
             SecurityContextHolder.getContext().setAuthentication(null);
-            redAtt.addFlashAttribute("message", "Something went wrong. Please login again.");
+            redAtt.addFlashAttribute(MSG_KEY, "Something went wrong. Please login again.");
             return "redirect:/";
         }
 
@@ -61,7 +65,7 @@ public class ProfileController {
     @RequestMapping(method = RequestMethod.POST, value = "/contact")
     public String changeContactConfirmButton(RedirectAttributes redAtt, @ModelAttribute("contact_form") @Valid ChangeContactForm form, Errors errors) {
         if (errors.hasErrors()) {
-            redAtt.addFlashAttribute("message", errors.getAllErrors().get(0).getDefaultMessage());
+            redAtt.addFlashAttribute(MSG_KEY, errors.getAllErrors().get(0).getDefaultMessage());
             redAtt.addFlashAttribute("contact_form", form);
             return "redirect:/profile";
         }
@@ -69,12 +73,12 @@ public class ProfileController {
         CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         HttpStatus response = customerService.changeContact(form.getContactNumber(), cud.getId());
         if (response.equals(HttpStatus.ACCEPTED)) {
-            redAtt.addFlashAttribute("message", "Contact number has been changed successfully.");
+            redAtt.addFlashAttribute(MSG_KEY, "Contact number has been successfully changed.");
             return "redirect:/profile";
         } else if (response.equals(HttpStatus.NOT_FOUND)) {
-            redAtt.addFlashAttribute("message", "User not recognized. Please login again.");
+            redAtt.addFlashAttribute(MSG_KEY, MSG_USER_NOT_RECOGNIZED);
         } else {
-            redAtt.addFlashAttribute("message", "An unexpected error occurred. Please try again later or contact customer service.");
+            redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
         }
         SecurityContextHolder.getContext().setAuthentication(null);
         return "redirect:/";
@@ -83,18 +87,18 @@ public class ProfileController {
     @RequestMapping(method = RequestMethod.POST, value = "/email")
     public String changeEmailConfirmButton(RedirectAttributes redAtt, @ModelAttribute("email_form") @Valid ChangeEmailForm form, Errors errors) {
         if (errors.hasErrors()) {
-            redAtt.addFlashAttribute("message", errors.getAllErrors().get(0).getDefaultMessage());
+            redAtt.addFlashAttribute(MSG_KEY, errors.getAllErrors().get(0).getDefaultMessage());
             redAtt.addFlashAttribute("email_form", form);
             return "redirect:/profile";
         }
 
         HttpStatus response = credentialsService.changeUsername(form.getNewEmail());
         if (response.equals(HttpStatus.ACCEPTED)) {
-            redAtt.addFlashAttribute("message", "The email has been successfully changed. Please login again.");
+            redAtt.addFlashAttribute(MSG_KEY, "The email has been successfully changed. Please login again.");
         } else if (response.equals(HttpStatus.NOT_FOUND)) {
-            redAtt.addFlashAttribute("message", "User not recognized. Please login again.");
+            redAtt.addFlashAttribute(MSG_KEY, MSG_USER_NOT_RECOGNIZED);
         } else {
-            redAtt.addFlashAttribute("message", "An unexpected error occurred. Please try again later or contact customer service.");
+            redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
         }
         SecurityContextHolder.getContext().setAuthentication(null);
         return "redirect:/";
@@ -103,19 +107,19 @@ public class ProfileController {
     @RequestMapping(method = RequestMethod.POST, value = "/password")
     public String changePasswordConfirmButton(RedirectAttributes redAtt, @ModelAttribute("password_form") @Valid ChangePasswordForm form, Errors errors) {
         if (errors.hasErrors()) {
-            redAtt.addFlashAttribute("message", errors.getAllErrors().get(0).getDefaultMessage());
+            redAtt.addFlashAttribute(MSG_KEY, errors.getAllErrors().get(0).getDefaultMessage());
             redAtt.addFlashAttribute("password_form", form);
             return "redirect:/profile";
         }
 
         HttpStatus response = credentialsService.changePassword(form.getNewPassword());
         if (response.equals(HttpStatus.ACCEPTED)) {
-            redAtt.addFlashAttribute("message", "Password has been changed successfully.");
+            redAtt.addFlashAttribute(MSG_KEY, "Password has been successfully changed.");
             return "redirect:/profile";
         } else if (response.equals(HttpStatus.NOT_FOUND)) {
-            redAtt.addFlashAttribute("message", "User not recognized. Please login again.");
+            redAtt.addFlashAttribute(MSG_KEY, MSG_USER_NOT_RECOGNIZED);
         } else {
-            redAtt.addFlashAttribute("message", "An unexpected error occurred. Please try again later or contact customer service.");
+            redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
         }
         SecurityContextHolder.getContext().setAuthentication(null);
         return "redirect:/";
@@ -124,7 +128,7 @@ public class ProfileController {
     @RequestMapping(method = RequestMethod.POST, value = "/delete")
     public String deleteAccountConfirmButton(RedirectAttributes redAtt, @ModelAttribute("delete_form") @Valid ConfirmationForm form, Errors errors) {
         if (errors.hasErrors()) {
-            redAtt.addFlashAttribute("message", errors.getAllErrors().get(0).getDefaultMessage());
+            redAtt.addFlashAttribute(MSG_KEY, errors.getAllErrors().get(0).getDefaultMessage());
             redAtt.addFlashAttribute("delete_form", form);
             return "redirect:/profile";
         }
@@ -133,14 +137,14 @@ public class ProfileController {
         HttpStatus response = userService.deleteUser(cud.getId());
 
         if (response.equals(HttpStatus.OK)) {
-            redAtt.addFlashAttribute("message", "Account has been successfully deleted.");
+            redAtt.addFlashAttribute(MSG_KEY, "Account has been successfully deleted.");
         } else if (response.equals(HttpStatus.NOT_FOUND)) {
-            redAtt.addFlashAttribute("message", "User not recognized. Please login again.");
+            redAtt.addFlashAttribute(MSG_KEY, MSG_USER_NOT_RECOGNIZED);
         } else if (response.equals(HttpStatus.CONFLICT)) {
-            redAtt.addFlashAttribute("message", "Action not allowed due to active reservations.");
+            redAtt.addFlashAttribute(MSG_KEY, "Action not allowed due to active reservations.");
             return "redirect:/profile";
         } else {
-            redAtt.addFlashAttribute("message", "An unexpected error occurred. Please try again later or contact customer service.");
+            redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
         }
         SecurityContextHolder.getContext().setAuthentication(null);
         return "redirect:/";

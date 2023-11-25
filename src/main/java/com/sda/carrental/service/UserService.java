@@ -27,7 +27,7 @@ public class UserService {
     private final DepartmentService departmentService;
     private final CredentialsService credentialsService;
 
-    public User findById(Long id) {
+    public User findById(Long id) throws ResourceNotFoundException {
         return repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User", "ID", id));
     }
 
@@ -72,10 +72,10 @@ public class UserService {
     public boolean hasNoAccessToUserData(CustomUserDetails cud, Long customerId, Long departmentId) {
         try {
             if (departmentService.departmentAccess(cud, departmentId).equals(HttpStatus.ACCEPTED)) {
-                boolean hasReservationsDepTake = reservationService.findUserReservationsByDepartmentTake(customerId, departmentId).isEmpty();
-                boolean hasReservationsDepBack = reservationService.findUserReservationsByDepartmentBack(customerId, departmentId).isEmpty();
+                boolean hasNoReservationsDepTake = reservationService.findUserReservationsByDepartmentTake(customerId, departmentId).isEmpty();
+                boolean hasNoReservationsDepBack = reservationService.findUserReservationsByDepartmentBack(customerId, departmentId).isEmpty();
 
-                return hasReservationsDepTake && hasReservationsDepBack;
+                return hasNoReservationsDepTake && hasNoReservationsDepBack;
             }
             return true;
         } catch (ResourceNotFoundException err) {

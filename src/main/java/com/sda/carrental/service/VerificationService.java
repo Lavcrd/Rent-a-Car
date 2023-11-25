@@ -1,7 +1,6 @@
 package com.sda.carrental.service;
 
 import com.sda.carrental.exceptions.IllegalActionException;
-import com.sda.carrental.exceptions.ResourceNotFoundException;
 import com.sda.carrental.global.enums.Country;
 import com.sda.carrental.model.users.auth.Verification;
 import com.sda.carrental.repository.VerificationRepository;
@@ -50,12 +49,12 @@ public class VerificationService {
                 return HttpStatus.CREATED;
             }
             return HttpStatus.EXPECTATION_FAILED;
-        } catch (ResourceNotFoundException err) {
-            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            return HttpStatus.NOT_FOUND;
         } catch (DataIntegrityViolationException err) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return HttpStatus.CONFLICT;
+        } catch (RuntimeException err) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            return HttpStatus.BAD_REQUEST;
         }
     }
 

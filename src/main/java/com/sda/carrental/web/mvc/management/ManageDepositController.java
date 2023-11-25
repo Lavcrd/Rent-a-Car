@@ -36,6 +36,11 @@ public class ManageDepositController {
     private final UserService userService;
     private final PaymentDetailsService paymentDetailsService;
 
+    private final String MSG_KEY = "message";
+    private final String MSG_ACCESS_REJECTED = "Failure: Access rejected";
+    private final String MSG_GENERIC_EXCEPTION = "Failure: An unexpected error occurred";
+    private final String MSG_NO_RESOURCE = "Failure: Resource not found";
+
     //Pages
     @RequestMapping(method = RequestMethod.GET)
     public String searchDepositsPage(ModelMap map, RedirectAttributes redAtt) {
@@ -51,8 +56,8 @@ public class ManageDepositController {
             map.addAttribute("searchDepositsForm", map.getOrDefault("searchDepositsForm", new SearchDepositsForm()));
 
             return "management/searchDeposits";
-        } catch (ResourceNotFoundException err) {
-            redAtt.addFlashAttribute("message", "An unexpected error occurred. Please try again.");
+        } catch (RuntimeException err) {
+            redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
             return "redirect:/";
         }
     }
@@ -64,7 +69,7 @@ public class ManageDepositController {
             Retrieve retrieve = retrieveService.findById(retrieveId).orElseThrow(ResourceNotFoundException::new);
             PaymentDetails paymentDetails = paymentDetailsService.getOptionalPaymentDetails(retrieve.getId()).orElseThrow(ResourceNotFoundException::new);
             if (departmentService.departmentAccess(cud, retrieve.getRent().getReservation().getDepartmentBack().getId()).equals(HttpStatus.FORBIDDEN)) {
-                redAtt.addFlashAttribute("message", "Inaccessible department.");
+                redAtt.addFlashAttribute(MSG_KEY, MSG_ACCESS_REJECTED);
                 return "redirect:/";
             }
 
@@ -77,8 +82,11 @@ public class ManageDepositController {
 
             map.addAttribute("form", new DepositForm());
             return "management/viewDeposit";
+        } catch (ResourceNotFoundException err) {
+            redAtt.addFlashAttribute(MSG_KEY, MSG_NO_RESOURCE);
+            return "redirect:/mg-depo";
         } catch (RuntimeException err) {
-            redAtt.addFlashAttribute("message", "An unexpected error occurred. Please try again.");
+            redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
             return "redirect:/";
         }
     }
@@ -109,25 +117,27 @@ public class ManageDepositController {
     public String checkReleaseButton(@ModelAttribute("form") @Valid DepositForm form, Errors err, RedirectAttributes redAtt, @RequestParam("retrieve") Long retrieveId, @RequestParam("customer") Long customerId) {
         CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (userService.hasNoAccessToUserOperation(cud, customerId, retrieveId)) {
-            redAtt.addFlashAttribute("message", "Access rejected.");
+            redAtt.addFlashAttribute(MSG_KEY, MSG_ACCESS_REJECTED);
             return "redirect:/mg-depo";
         }
 
         redAtt.addAttribute("retrieve", retrieveId);
 
         if (err.hasErrors()) {
-            redAtt.addFlashAttribute("message", err.getAllErrors().get(0).getDefaultMessage());
+            redAtt.addFlashAttribute(MSG_KEY, err.getAllErrors().get(0).getDefaultMessage());
             return "redirect:/mg-depo/{retrieve}";
         }
 
         HttpStatus status = paymentDetailsService.transferDeposit(retrieveId, utility.valueToDouble(form.getValue()), false);
 
         if (status.equals(HttpStatus.OK)) {
-            redAtt.addFlashAttribute("message", "Success: Value successfully released from deposit.");
+            redAtt.addFlashAttribute(MSG_KEY, "Success: Value successfully released from deposit");
         } else if (status.equals(HttpStatus.NOT_ACCEPTABLE)) {
-            redAtt.addFlashAttribute("message", "Failure: Value exceeds deposit.");
+            redAtt.addFlashAttribute(MSG_KEY, "Failure: Value exceeds deposit");
+        } else if (status.equals(HttpStatus.NOT_FOUND)) {
+            redAtt.addFlashAttribute(MSG_KEY, MSG_NO_RESOURCE);
         } else {
-            redAtt.addFlashAttribute("message", "Failure: Unexpected error.");
+            redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
         }
         return "redirect:/mg-depo/{retrieve}";
     }
@@ -136,25 +146,27 @@ public class ManageDepositController {
     public String checkChargeButton(@ModelAttribute("form") @Valid DepositForm form, Errors err, RedirectAttributes redAtt, @RequestParam("retrieve") Long retrieveId, @RequestParam("customer") Long customerId) {
         CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (userService.hasNoAccessToUserOperation(cud, customerId, retrieveId)) {
-            redAtt.addFlashAttribute("message", "Access rejected.");
+            redAtt.addFlashAttribute(MSG_KEY, MSG_ACCESS_REJECTED);
             return "redirect:/mg-depo";
         }
 
         redAtt.addAttribute("retrieve", retrieveId);
 
         if (err.hasErrors()) {
-            redAtt.addFlashAttribute("message", err.getAllErrors().get(0).getDefaultMessage());
+            redAtt.addFlashAttribute(MSG_KEY, err.getAllErrors().get(0).getDefaultMessage());
             return "redirect:/mg-depo/{retrieve}";
         }
 
         HttpStatus status = paymentDetailsService.transferDeposit(retrieveId, utility.valueToDouble(form.getValue()), true);
 
         if (status.equals(HttpStatus.OK)) {
-            redAtt.addFlashAttribute("message", "Success: Value successfully charged from deposit.");
+            redAtt.addFlashAttribute(MSG_KEY, "Success: Value successfully charged from deposit");
         } else if (status.equals(HttpStatus.NOT_ACCEPTABLE)) {
-            redAtt.addFlashAttribute("message", "Failure: Value exceeds deposit.");
+            redAtt.addFlashAttribute(MSG_KEY, "Failure: Value exceeds deposit");
+        } else if (status.equals(HttpStatus.NOT_FOUND)) {
+            redAtt.addFlashAttribute(MSG_KEY, MSG_NO_RESOURCE);
         } else {
-            redAtt.addFlashAttribute("message", "Failure: Unexpected error.");
+            redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
         }
         return "redirect:/mg-depo/{retrieve}";
     }

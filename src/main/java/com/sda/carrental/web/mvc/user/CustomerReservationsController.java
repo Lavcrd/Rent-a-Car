@@ -29,6 +29,9 @@ public class CustomerReservationsController {
     private final PaymentDetailsService paymentDetailsService;
     private final ConstantValues cv;
 
+    private final String MSG_KEY = "message";
+    private final String MSG_CUSTOMER_GENERIC_EXCEPTION = "An unexpected error occurred. Please try again later or contact customer service.";
+
     //Pages
     @RequestMapping(method = RequestMethod.GET)
     public String reservationsPage(ModelMap map) {
@@ -69,7 +72,7 @@ public class CustomerReservationsController {
             map.addAttribute("deposit_deadline", cv.getRefundDepositDeadlineDays());
             return "user/reservationDetailsCustomer";
         } catch (ResourceNotFoundException err) {
-            redAtt.addFlashAttribute("message", "An unexpected error occurred. Please try again later or contact customer service.");
+            redAtt.addFlashAttribute(MSG_KEY, MSG_CUSTOMER_GENERIC_EXCEPTION);
             return "redirect:/reservations";
         }
     }
@@ -88,10 +91,10 @@ public class CustomerReservationsController {
         HttpStatus response = reservationService.handleReservationStatus(cud.getId(), reservationId, Reservation.ReservationStatus.STATUS_REFUNDED);
 
         if (response.equals(HttpStatus.ACCEPTED)) {
-            redAtt.addFlashAttribute("message", "Refund completed successfully!");
+            redAtt.addFlashAttribute(MSG_KEY, "Refund completed successfully!");
             return "redirect:/reservations";
         }
-        redAtt.addFlashAttribute("message", "An unexpected error occurred. Please try again later.");
+        redAtt.addFlashAttribute(MSG_KEY, MSG_CUSTOMER_GENERIC_EXCEPTION);
         return "redirect:/";
     }
 }
