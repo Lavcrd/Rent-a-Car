@@ -18,6 +18,8 @@ import javax.validation.Valid;
 public class RegisterController {
     private final CustomerService customerService;
 
+    private final String MSG_KEY = "message";
+
     //Pages
     @RequestMapping(method = RequestMethod.GET)
     public String createCustomerPage(final ModelMap map) {
@@ -36,10 +38,10 @@ public class RegisterController {
 
         HttpStatus status = customerService.createCustomer(form);
         if (status.equals(HttpStatus.CREATED)) {
-        map.addAttribute("message", "User " + form.getName() + " " + form.getSurname() + " with login " + form.getUsername() + " has been added.");
+        map.addAttribute(MSG_KEY, "User " + form.getName() + " " + form.getSurname() + " with login " + form.getUsername() + " has been added.");
             return "user/login";
         }
-        redAtt.addFlashAttribute("message", "Something went wrong. Please try again or contact customer service.");
+        redAtt.addFlashAttribute(MSG_KEY, "Something went wrong. Please try again later.");
         return "redirect:/register";
     }
 }

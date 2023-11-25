@@ -36,6 +36,11 @@ public class ManageCustomersController {
     private final CustomerService customerService;
     private final VerificationService verificationService;
 
+    private final String MSG_KEY = "message";
+    private final String MSG_ACCESS_REJECTED = "Failure: Access rejected";
+    private final String MSG_GENERIC_EXCEPTION = "Failure: An unexpected error occurred";
+    private final String MSG_NO_RESOURCE = "Failure: Customer not found";
+
     //Pages
     @RequestMapping(method = RequestMethod.GET)
     public String searchReservationsPage(ModelMap map, RedirectAttributes redAtt) {
@@ -51,8 +56,8 @@ public class ManageCustomersController {
                 map.addAttribute("isArrival", false);
             }
             return "management/searchCustomers";
-        } catch (ResourceNotFoundException | IndexOutOfBoundsException err) {
-            redAtt.addFlashAttribute("message", "An unexpected error occurred. Please try again.");
+        } catch (RuntimeException err) {
+            redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
             return "redirect:/";
         }
     }
@@ -62,7 +67,7 @@ public class ManageCustomersController {
         try {
             CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             if (userService.hasNoAccessToUserData(cud, customerId, departmentId)) {
-                redAtt.addFlashAttribute("message", "Access rejected.");
+                redAtt.addFlashAttribute(MSG_KEY, MSG_ACCESS_REJECTED);
                 return "redirect:/mg-cus";
             }
 
@@ -90,7 +95,10 @@ public class ManageCustomersController {
             }
             return "management/viewCustomer";
         } catch (ResourceNotFoundException err) {
-            redAtt.addFlashAttribute("message", "An unexpected error occurred. Please try again.");
+            redAtt.addFlashAttribute(MSG_KEY, MSG_NO_RESOURCE);
+            return "redirect:/mg-cus";
+        } catch (RuntimeException err) {
+            redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
             return "redirect:/mg-cus";
         }
     }
@@ -100,7 +108,7 @@ public class ManageCustomersController {
         try {
             CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             if (userService.hasNoAccessToUserData(cud, customerId, departmentId)) {
-                redAtt.addFlashAttribute("message", "Access rejected.");
+                redAtt.addFlashAttribute(MSG_KEY, MSG_ACCESS_REJECTED);
                 return "redirect:/mg-cus";
             }
 
@@ -109,10 +117,13 @@ public class ManageCustomersController {
             map.addAttribute("confirmation_form", new ConfirmationForm());
             return "management/mergeCustomer";
         } catch (ResourceNotFoundException err) {
-            redAtt.addFlashAttribute("message", "No verified account found");
+            redAtt.addFlashAttribute(MSG_KEY, MSG_NO_RESOURCE);
             redAtt.addAttribute("customer", customerId);
             redAtt.addFlashAttribute("department", departmentId);
             return "redirect:/mg-cus/{customer}";
+        } catch (RuntimeException err) {
+            redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
+            return "redirect:/mg-cus";
         }
     }
 
@@ -122,7 +133,7 @@ public class ManageCustomersController {
         try {
             CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             if (departmentService.departmentAccess(cud, reservationsData.getDepartmentTake()).equals(HttpStatus.FORBIDDEN)) {
-                redAtt.addFlashAttribute("message", "Incorrect data provided. Search rejected.");
+                redAtt.addFlashAttribute(MSG_KEY, MSG_ACCESS_REJECTED);
                 return "redirect:/mg-cus";
             }
 
@@ -132,9 +143,9 @@ public class ManageCustomersController {
 
             redAtt.addFlashAttribute("results", customerService.findCustomersWithResults(reservationsData, false));
             return "redirect:/mg-cus";
-        } catch (ResourceNotFoundException err) {
-            redAtt.addFlashAttribute("message", "An unexpected error occurred. Please try again.");
-            return "redirect:/";
+        } catch (RuntimeException err) {
+            redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
+            return "redirect:/mg-cus";
         }
     }
 
@@ -143,7 +154,7 @@ public class ManageCustomersController {
         try {
             CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             if (departmentService.departmentAccess(cud, reservationsData.getDepartmentBack()).equals(HttpStatus.FORBIDDEN)) {
-                redAtt.addFlashAttribute("message", "Incorrect data provided. Search rejected.");
+                redAtt.addFlashAttribute(MSG_KEY, MSG_ACCESS_REJECTED);
                 return "redirect:/mg-cus";
             }
 
@@ -154,9 +165,9 @@ public class ManageCustomersController {
 
             redAtt.addFlashAttribute("results", customerService.findCustomersWithResults(reservationsData, true));
             return "redirect:/mg-cus";
-        } catch (ResourceNotFoundException err) {
-            redAtt.addFlashAttribute("message", "An unexpected error occurred. Please try again.");
-            return "redirect:/";
+        } catch (RuntimeException err) {
+            redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
+            return "redirect:/mg-cus";
         }
     }
 
@@ -164,7 +175,7 @@ public class ManageCustomersController {
     public String customerViewButton(RedirectAttributes redAtt, @RequestParam("select_button") Long customerId, @RequestParam("department") Long departmentId) {
         CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (userService.hasNoAccessToUserData(cud, customerId, departmentId)) {
-            redAtt.addFlashAttribute("message", "Access rejected.");
+            redAtt.addFlashAttribute(MSG_KEY, MSG_ACCESS_REJECTED);
             return "redirect:/mg-cus";
         }
 
@@ -178,35 +189,29 @@ public class ManageCustomersController {
     public String verifyButton(RedirectAttributes redAtt, @ModelAttribute("verification_form") @Valid VerificationForm form, Errors err, @RequestParam("department") Long departmentId) {
         CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (userService.hasNoAccessToUserData(cud, form.getCustomerId(), departmentId)) {
-            redAtt.addFlashAttribute("message", "Access rejected.");
+            redAtt.addFlashAttribute(MSG_KEY, MSG_ACCESS_REJECTED);
             return "redirect:/mg-cus";
         }
 
+        redAtt.addFlashAttribute("department", departmentId);
+        redAtt.addAttribute("customer", form.getCustomerId());
+
         if (err.hasErrors()) {
-            redAtt.addFlashAttribute("department", departmentId);
-            redAtt.addAttribute("customer", form.getCustomerId());
-            redAtt.addFlashAttribute("message", err.getAllErrors().get(0).getDefaultMessage());
+            redAtt.addFlashAttribute(MSG_KEY, err.getAllErrors().get(0).getDefaultMessage());
             return "redirect:/mg-cus/{customer}";
         }
 
         HttpStatus status = verificationService.createVerification(form);
         if (status.equals(HttpStatus.CREATED)) {
-            redAtt.addFlashAttribute("message", "Verification successfully registered.");
+            redAtt.addFlashAttribute(MSG_KEY, "Success: Verification registered");
         } else if (status.equals(HttpStatus.EXPECTATION_FAILED)) {
-            redAtt.addFlashAttribute("message", "Customer is already verified.");
-        } else if (status.equals(HttpStatus.NOT_FOUND)) {
-            redAtt.addFlashAttribute("message", "Customer not found. Try again.");
-            return "redirect:/mg-cus";
+            redAtt.addFlashAttribute(MSG_KEY, "Failure: Customer is already verified");
         } else if (status.equals(HttpStatus.CONFLICT)) {
-            redAtt.addFlashAttribute("department", departmentId);
-            redAtt.addAttribute("customer", form.getCustomerId());
-
-            redAtt.addFlashAttribute("message", "The identification is already linked to another account.");
-            return "redirect:/mg-cus/{customer}";
+            redAtt.addFlashAttribute(MSG_KEY, "Failure: Already linked to another account.");
+        } else {
+            redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
         }
 
-        redAtt.addAttribute("customer", form.getCustomerId());
-        redAtt.addFlashAttribute("department", departmentId);
         return "redirect:/mg-cus/{customer}";
     }
 
@@ -214,14 +219,14 @@ public class ManageCustomersController {
     public String unverifyConfirmButton(RedirectAttributes redAtt, @ModelAttribute("unverifyConfirmationForm") @Valid ConfirmationForm form, Errors err, @RequestParam("customer") Long customerId, @RequestParam("department") Long departmentId) {
         CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (userService.hasNoAccessToUserData(cud, customerId, departmentId)) {
-            redAtt.addFlashAttribute("message", "Access rejected.");
+            redAtt.addFlashAttribute(MSG_KEY, MSG_ACCESS_REJECTED);
             return "redirect:/mg-cus";
         }
 
         if (err.hasErrors()) {
             redAtt.addFlashAttribute("department", departmentId);
             redAtt.addAttribute("customer", customerId);
-            redAtt.addFlashAttribute("message", err.getAllErrors().get(0).getDefaultMessage());
+            redAtt.addFlashAttribute(MSG_KEY, err.getAllErrors().get(0).getDefaultMessage());
             return "redirect:/mg-cus/{customer}";
         }
 
@@ -229,13 +234,13 @@ public class ManageCustomersController {
         if (status.equals(HttpStatus.OK)) {
             redAtt.addAttribute("customer", customerId);
             redAtt.addFlashAttribute("department", departmentId);
-            redAtt.addFlashAttribute("message", "Verification successfully removed");
+            redAtt.addFlashAttribute(MSG_KEY, "Success: Verification removed");
         } else if (status.equals(HttpStatus.CONFLICT)) {
             redAtt.addAttribute("customer", customerId);
             redAtt.addFlashAttribute("department", departmentId);
-            redAtt.addFlashAttribute("message", "Verification removal unsuccessful: Active reservations");
+            redAtt.addFlashAttribute(MSG_KEY, "Failure: Active reservations");
         } else {
-            redAtt.addFlashAttribute("message", "An unexpected error occurred. Please try again.");
+            redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
             return "redirect:/mg-cus";
         }
         return "redirect:/mg-cus/{customer}";
@@ -252,13 +257,13 @@ public class ManageCustomersController {
     public String mergeCustomersButton(@ModelAttribute("findVerifiedForm") @Valid FindVerifiedForm form, Errors err, RedirectAttributes redAtt, @RequestParam("customer") Long customerId, @RequestParam("department") Long departmentId) {
         CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (userService.hasNoAccessToUserData(cud, customerId, departmentId)) {
-            redAtt.addFlashAttribute("message", "Access rejected.");
+            redAtt.addFlashAttribute(MSG_KEY, MSG_ACCESS_REJECTED);
             return "redirect:/mg-cus";
         }
 
         redAtt.addFlashAttribute("department", departmentId);
         if (err.hasErrors()) {
-            redAtt.addFlashAttribute("message", err.getFieldErrors().get(0).getDefaultMessage());
+            redAtt.addFlashAttribute(MSG_KEY, err.getFieldErrors().get(0).getDefaultMessage());
             redAtt.addAttribute("customer", customerId);
             return "redirect:/mg-cus/{customer}";
         }
@@ -272,7 +277,7 @@ public class ManageCustomersController {
     public String deleteCustomerButton(RedirectAttributes redAtt, @ModelAttribute("deleteConfirmationForm") @Valid ConfirmationForm form, Errors err, @RequestParam("customer") Long customerId, @RequestParam("department") Long departmentId) {
         CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (userService.hasNoAccessToUserData(cud, customerId, departmentId)) {
-            redAtt.addFlashAttribute("message", "Access rejected.");
+            redAtt.addFlashAttribute(MSG_KEY, MSG_ACCESS_REJECTED);
             return "redirect:/mg-cus";
         }
 
@@ -280,18 +285,18 @@ public class ManageCustomersController {
         redAtt.addAttribute("customer", customerId);
 
         if (err.hasErrors()) {
-            redAtt.addFlashAttribute("message", err.getAllErrors().get(0).getDefaultMessage());
+            redAtt.addFlashAttribute(MSG_KEY, err.getAllErrors().get(0).getDefaultMessage());
             return "redirect:/mg-cus/{customer}";
         }
 
         HttpStatus status = userService.deleteUser(customerId);
 
         if (status.equals(HttpStatus.OK)) {
-            redAtt.addFlashAttribute("message", "Data successfully removed");
+            redAtt.addFlashAttribute(MSG_KEY, "Success: Data removed");
         } else if (status.equals(HttpStatus.CONFLICT)) {
-            redAtt.addFlashAttribute("message", "Removal unsuccessful: Active reservations");
+            redAtt.addFlashAttribute(MSG_KEY, "Failure: Active reservations");
         } else {
-            redAtt.addFlashAttribute("message", "Removal unsuccessful: Temporary error");
+            redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
         }
         return "redirect:/mg-cus/{customer}";
     }
@@ -300,7 +305,7 @@ public class ManageCustomersController {
     public String changeContactButton(RedirectAttributes redAtt, @ModelAttribute("changeContactForm") @Valid ChangeContactForm form, Errors err, @RequestParam("customer") Long customerId, @RequestParam("department") Long departmentId) {
         CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (userService.hasNoAccessToUserData(cud, customerId, departmentId)) {
-            redAtt.addFlashAttribute("message", "Access rejected.");
+            redAtt.addFlashAttribute(MSG_KEY, MSG_ACCESS_REJECTED);
             return "redirect:/mg-cus";
         }
 
@@ -308,19 +313,19 @@ public class ManageCustomersController {
         redAtt.addAttribute("customer", customerId);
 
         if (err.hasErrors()) {
-            redAtt.addFlashAttribute("message", err.getAllErrors().get(0).getDefaultMessage());
+            redAtt.addFlashAttribute(MSG_KEY, err.getAllErrors().get(0).getDefaultMessage());
             return "redirect:/mg-cus/{customer}";
         }
 
         HttpStatus status = customerService.changeContact(form.getContactNumber(), customerId);
 
         if (status.equals(HttpStatus.ACCEPTED)) {
-            redAtt.addFlashAttribute("message", "Data successfully changed");
+            redAtt.addFlashAttribute(MSG_KEY, "Success: Data changed");
         } else if (status.equals(HttpStatus.NOT_FOUND)) {
-            redAtt.addFlashAttribute("message", "Change unsuccessful: Customer not found");
+            redAtt.addFlashAttribute(MSG_KEY, MSG_NO_RESOURCE);
             return "redirect:/mg-cus";
         } else {
-            redAtt.addFlashAttribute("message", "Change unsuccessful: Temporary error");
+            redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
         }
         return "redirect:/mg-cus/{customer}";
     }
@@ -332,21 +337,21 @@ public class ManageCustomersController {
             redAtt.addFlashAttribute("department", departmentId);
             redAtt.addAttribute("customer", customerId);
 
-            redAtt.addFlashAttribute("message", "Incorrect password. Please repeat process again.");
+            redAtt.addFlashAttribute(MSG_KEY, errors.getAllErrors().get(0));
             return "redirect:/mg-cus/{customer}";
         }
 
         CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (userService.hasNoAccessToUserData(cud, customerId, departmentId)) {
-            redAtt.addFlashAttribute("message", "Access rejected.");
+            redAtt.addFlashAttribute(MSG_KEY, MSG_ACCESS_REJECTED);
             return "redirect:/mg-cus";
         }
 
         HttpStatus status = customerService.mergeCustomer(customerId, verifiedCustomer);
         if (status.equals(HttpStatus.OK)) {
-            redAtt.addFlashAttribute("message", "Accounts successfully merged");
+            redAtt.addFlashAttribute(MSG_KEY, "Success: Accounts merged");
         } else {
-            redAtt.addFlashAttribute("message", "Unexpected error. Action cancelled.");
+            redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
         }
 
         redAtt.addAttribute("customer", customerId);

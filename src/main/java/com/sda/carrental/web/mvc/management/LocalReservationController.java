@@ -33,6 +33,11 @@ public class LocalReservationController {
     private final DepartmentService departmentService;
     private final ReservationService reservationService;
 
+    private final String MSG_KEY = "message";
+    private final String MSG_ACCESS_REJECTED = "Failure: Access rejected";
+    private final String MSG_GENERIC_EXCEPTION = "Failure: An unexpected error occurred";
+    private final String MSG_NO_RESOURCE = "Failure: Resource not found";
+
     //Pages
     @RequestMapping(method = RequestMethod.GET)
     public String localReservationPage(final ModelMap map, @ModelAttribute("reservationDetails") SelectCarForm form, RedirectAttributes redAtt) {
@@ -43,7 +48,7 @@ public class LocalReservationController {
             if (!reservationService.isChronologyValid(index.getDateFrom(), index.getDateTo(), index.getDateCreated()))
                 throw new ResourceNotFoundException();
             if (departmentService.departmentAccess(cud, form.getIndexData().getDepartmentIdFrom()).equals(HttpStatus.FORBIDDEN)) {
-                redAtt.addFlashAttribute("message", "Inaccessible department.");
+                redAtt.addFlashAttribute(MSG_KEY, MSG_ACCESS_REJECTED);
                 return "redirect:/";
             }
 
@@ -54,10 +59,10 @@ public class LocalReservationController {
 
             return "management/localReservation";
         } catch (JsonProcessingException | ResourceNotFoundException err) {
-            redAtt.addFlashAttribute("message", "An unexpected error occurred. Please try again later.");
+            redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
             return "redirect:/";
         } catch (IllegalActionException err) {
-            redAtt.addFlashAttribute("message", "Action not allowed.");
+            redAtt.addFlashAttribute(MSG_KEY, "Failure: Action not allowed");
             return "redirect:/";
         }
     }
@@ -80,26 +85,26 @@ public class LocalReservationController {
             HttpStatus status = customerService.appendLocalReservationToCustomer(cud, form);
 
             if (status.equals(HttpStatus.FORBIDDEN)) {
-                redAtt.addFlashAttribute("message", "Failure: Inaccessible department");
+                redAtt.addFlashAttribute(MSG_KEY, MSG_ACCESS_REJECTED);
                 return "redirect:/";
             } else if (status.equals(HttpStatus.INTERNAL_SERVER_ERROR)) {
-                redAtt.addFlashAttribute("message", "Failure: Unexpected error. Operation cancelled");
+                redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
                 return "redirect:/";
             } else if (status.equals(HttpStatus.NOT_FOUND)) {
-                redAtt.addFlashAttribute("message", "Failure: Resources not found");
+                redAtt.addFlashAttribute(MSG_KEY, MSG_NO_RESOURCE);
                 return "redirect:/";
             } else if (status.equals(HttpStatus.CREATED)) {
-                redAtt.addFlashAttribute("message", "Success: Reservation applied to created guest");
+                redAtt.addFlashAttribute(MSG_KEY, "Success: Reservation applied to created guest");
             } else if (status.equals(HttpStatus.OK)) {
-                redAtt.addFlashAttribute("message", "Success: Reservation applied to existing user");
+                redAtt.addFlashAttribute(MSG_KEY, "Success: Reservation applied to existing user");
             }
 
             Customer customer = customerService.findCustomerByVerification(Country.valueOf(form.getCountry()), form.getPersonalId());
             redAtt.addFlashAttribute("department", reservation.getIndexData().getDepartmentIdFrom());
             redAtt.addAttribute("customer", customer.getId());
             return "redirect:/mg-res/{customer}";
-        } catch (JsonProcessingException | ResourceNotFoundException err) {
-            redAtt.addFlashAttribute("message", "Failure: Unexpected error");
+        } catch (JsonProcessingException | RuntimeException err) {
+            redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
             return "redirect:/";
         }
     }
@@ -111,7 +116,7 @@ public class LocalReservationController {
         try {
             redAtt.addFlashAttribute("showData", objectMapper.readValue(formData, SelectCarForm.class));
         } catch (JsonProcessingException err) {
-            redAtt.addFlashAttribute("message", "An unexpected error occurred. Please try again later.");
+            redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
             return "redirect:/";
         }
         return "redirect:/reservation";

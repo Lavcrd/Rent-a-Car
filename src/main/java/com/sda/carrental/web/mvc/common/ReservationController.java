@@ -34,6 +34,9 @@ public class ReservationController {
     private final ReservationService reservationService;
     private final ConstantValues cv;
 
+    private final String MSG_KEY = "message";
+    private final String MSG_GENERIC_EXCEPTION = "An unexpected error occurred. Please try again later or contact customer service.";
+
     //Pages
     @RequestMapping(method = RequestMethod.GET)
     public String reservationRecapPage(final ModelMap map, @ModelAttribute("showData") SelectCarForm reservationData, RedirectAttributes redAtt) {
@@ -67,8 +70,8 @@ public class ReservationController {
             map.addAttribute("deposit_deadline", cv.getRefundDepositDeadlineDays());
 
             return "common/reservationRecap";
-        } catch (IllegalActionException | ResourceNotFoundException err) {
-            redAtt.addFlashAttribute("message", "An unexpected error occurred. Please try again later or contact customer service.");
+        } catch (RuntimeException err) {
+            redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
             return "redirect:/";
         }
     }
@@ -86,14 +89,11 @@ public class ReservationController {
             return "redirect:/loc-res";
         }
 
-        if (status == HttpStatus.CREATED) {
-            redAtt.addFlashAttribute("message", "Reservation has been successfully registered!");
+        if (status.equals(HttpStatus.CREATED)) {
+            redAtt.addFlashAttribute(MSG_KEY, "Reservation has been successfully registered!");
             return "redirect:/reservations";
-        } else if (status == HttpStatus.NOT_FOUND) {
-            redAtt.addFlashAttribute("message", "Reservation encountered an error while creating. \nIn case of further problems, please contact us by phone.");
-            return "redirect:/";
         } else {
-            redAtt.addFlashAttribute("message", "Server error! \nPlease contact customer service or try again later.");
+            redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
             return "redirect:/";
         }
     }

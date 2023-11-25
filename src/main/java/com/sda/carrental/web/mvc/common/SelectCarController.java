@@ -28,6 +28,8 @@ public class SelectCarController {
     private final CarBaseService carBaseService;
     private final DepartmentService departmentService;
 
+    private final String MSG_KEY = "message";
+
     //Pages
     @RequestMapping(method = RequestMethod.GET)
     public String selectCarPage(final ModelMap map, RedirectAttributes redAtt, @ModelAttribute("indexData") IndexForm indexData) {
@@ -53,11 +55,11 @@ public class SelectCarController {
             map.addAttribute("carFilterForm", map.getOrDefault("carFilterForm", new SelectCarBaseFilterForm(indexData)));
 
             return "common/selectCar";
-        } catch (IllegalActionException err) {
-            redAtt.addFlashAttribute("message", "An unexpected error occurred. Please try again later or contact customer service.");
+        }  catch (ResourceNotFoundException err) {
+            redAtt.addFlashAttribute(MSG_KEY, "No cars available for selected department and dates.");
             return "redirect:/";
-        } catch (ResourceNotFoundException err) {
-            redAtt.addFlashAttribute("message", "No cars available for selected department and dates.");
+        } catch (RuntimeException err) {
+            redAtt.addFlashAttribute(MSG_KEY, "An unexpected error occurred. Please try again later or contact customer service.");
             return "redirect:/";
         }
     }

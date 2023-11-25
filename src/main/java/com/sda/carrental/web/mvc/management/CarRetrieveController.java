@@ -31,11 +31,14 @@ import java.time.LocalDate;
 public class CarRetrieveController {
 
     private final ConstantValues cv;
-    private final ReservationService reservationService;
     private final RentService rentService;
     private final RetrieveService retrieveService;
     private final PaymentDetailsService paymentDetailsService;
     private final DepartmentService departmentService;
+
+    private final String MSG_KEY = "message";
+    private final String MSG_GENERIC_EXCEPTION = "Failure: An unexpected error occurred";
+    private final String MSG_NO_RESOURCE = "Failure: Resource not found";
 
     //Pages
     @RequestMapping(method = RequestMethod.GET)
@@ -62,13 +65,12 @@ public class CarRetrieveController {
                 map.addAttribute("fee_percentage", cv.getCancellationFeePercentage() * 100);
                 map.addAttribute("refund_fee_days", cv.getRefundSubtractDaysDuration());
             }
-
             return "management/carRetrieve";
         } catch (ResourceNotFoundException err) {
-            redAtt.addFlashAttribute("message", "Failure: Cannot retrieve - possible server side issues");
+            redAtt.addFlashAttribute(MSG_KEY, MSG_NO_RESOURCE);
             return "redirect:/c-ret";
         } catch (RuntimeException err) {
-            redAtt.addFlashAttribute("message", "An unexpected error occurred. Please try again.");
+            redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
             return "redirect:/";
         }
     }
@@ -89,10 +91,10 @@ public class CarRetrieveController {
             redAtt.addFlashAttribute("reservation", rent.getReservation());
             return "redirect:/c-ret";
         } catch (ResourceNotFoundException err) {
-            redAtt.addFlashAttribute("message", "Failed: No active rent found for: " + Country.valueOf(form.getCountry()).getCode() + '-' + form.getPlate());
+            redAtt.addFlashAttribute(MSG_KEY, "Failed: No active rent found for: " + Country.valueOf(form.getCountry()).getCode() + '-' + form.getPlate());
             return "redirect:/c-ret";
         } catch (RuntimeException err) {
-            redAtt.addFlashAttribute("message", "An unexpected error occurred. Please try again.");
+            redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
             return "redirect:/";
         }
     }
@@ -107,7 +109,7 @@ public class CarRetrieveController {
             redAtt.addFlashAttribute("reservation", rent.getReservation());
             String[] plateValues = plate.split("-", 2);
             redAtt.addFlashAttribute("searchCarForm", new SearchCarForm("COUNTRY_" + plateValues[0], plateValues[1]));
-            redAtt.addFlashAttribute("message", err.getAllErrors().get(0).getDefaultMessage());
+            redAtt.addFlashAttribute(MSG_KEY, err.getAllErrors().get(0).getDefaultMessage());
             redAtt.addFlashAttribute("confirm_claim_form", form);
             return "redirect:/c-ret";
         }
@@ -119,13 +121,13 @@ public class CarRetrieveController {
         redAtt.addFlashAttribute("department", form.getDepartmentId());
 
         if (response.equals(HttpStatus.ACCEPTED)) {
-            redAtt.addFlashAttribute("message", "Success: Return claimed");
+            redAtt.addFlashAttribute(MSG_KEY, "Success: Return claimed");
         } else if (response.equals(HttpStatus.NOT_FOUND)) {
-            redAtt.addFlashAttribute("message", "Failure: Value mismatch");
+            redAtt.addFlashAttribute(MSG_KEY, "Failure: Value mismatch");
         } else if (response.equals(HttpStatus.BAD_REQUEST)) {
-            redAtt.addFlashAttribute("message", "Failure: Not allowed action");
+            redAtt.addFlashAttribute(MSG_KEY, "Failure: Action not allowed");
         } else {
-            redAtt.addFlashAttribute("message", "An unexpected error occurred. Please try again later.");
+            redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
         }
         return "redirect:/mg-res/reservation/{reservation}";
     }

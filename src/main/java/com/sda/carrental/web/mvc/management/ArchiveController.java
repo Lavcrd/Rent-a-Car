@@ -32,6 +32,9 @@ public class ArchiveController {
     private final RentService rentService;
     private final PaymentDetailsService paymentDetailsService;
 
+    private final String MSG_KEY = "message";
+    private final String MSG_GENERIC_EXCEPTION = "Failure: An unexpected error occurred";
+    private final String MSG_NO_RESOURCE = "Failure: Resource not found";
 
     //Pages
     @RequestMapping(method = RequestMethod.GET)
@@ -50,8 +53,8 @@ public class ArchiveController {
             map.addAttribute("searchArchiveForm", map.getOrDefault("searchArchiveForm", defaultForm));
 
             return "management/searchArchive";
-        } catch (ResourceNotFoundException err) {
-            redAtt.addFlashAttribute("message", "An unexpected error occurred. Please try again.");
+        } catch (RuntimeException err) {
+            redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
             return "redirect:/";
         }
     }
@@ -84,8 +87,11 @@ public class ArchiveController {
             map.addAttribute("rent_employee", userService.findById(rent.getEmployeeId()));
 
             return "management/viewOperation";
+        } catch (ResourceNotFoundException err) {
+            redAtt.addFlashAttribute(MSG_KEY, MSG_NO_RESOURCE);
+            return "redirect:/";
         } catch (RuntimeException err) {
-            redAtt.addFlashAttribute("message", "An unexpected error occurred. Please try again.");
+            redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
             return "redirect:/";
         }
     }
@@ -94,7 +100,6 @@ public class ArchiveController {
     @RequestMapping(method = RequestMethod.POST, value = "/search")
     public String searchArchiveButton(@ModelAttribute("searchArchiveForm") @Valid SearchArchiveForm form, Errors err, RedirectAttributes redAtt) {
         CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
         redAtt.addFlashAttribute("searchArchiveForm", form);
 
         if (err.hasErrors()) {
