@@ -19,25 +19,21 @@
 
     <div class="row">
         <div class="col-sm-3">
-            <form class="change_action_form" th:object="${carFilterForm}" th:action="@{submit}" th:method="POST">
-
-                <input type="hidden" name="customer" th:value="${customer}">
-                <input type="hidden" name="reservation" th:value="${reservation}">
-                <input type="hidden" name="department" th:value="${department}">
+            <form th:object="${carFilterForm}" th:action="@{'/mg-res/' + ${department} + '-' + ${customer} + '/' + ${reservation} + '/filter'}" th:method="POST">
                 <input type="hidden" th:field="*{departmentId}">
 
                 <div style="display: grid; grid-template-columns: repeat(2, 1fr);">
-                    <button class="btn btn-dark bg-dark"
+                    <a class="btn btn-dark bg-dark"
                             style="margin: 1%"
-                            type="submit" onclick="setFormAction('/mg-res/reservation/{reservation}/back', 0)">
+                            type="button" th:href="'/mg-res/' + ${department} + '-' + ${customer} + '/' + ${reservation}">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left-circle" viewBox="0 0 16 16">
                             <path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-4.5-.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5z"/>
                         </svg>
                         Back
-                    </button>
+                    </a>
                     <button class="btn btn-dark bg-dark"
                             style="margin: 1%"
-                            type="submit" onclick="setFormAction('/mg-res/reservation/{reservation}/filter', 0)">
+                            type="submit">
                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor"
                              class="bi bi-search" viewBox="0 0 16 16">
                             <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"></path>
@@ -131,11 +127,7 @@
         </div>
 
         <div class="col-sm-9 scroll-140">
-            <form th:action="@{/mg-res/reservation/{reservation}/select}" th:method="POST">
-                <input type="hidden" name="customer" th:value="${customer}">
-                <input type="hidden" name="reservation" th:value="${reservation}">
-                <input type="hidden" name="department" th:value="${department}">
-
+            <form th:action="@{'/mg-res/' + ${department} + '-' + ${customer} + '/' + ${reservation} + '/select'}" th:method="POST">
                 <div th:each="carBase : ${carBases}" id="car-list">
                     <div class="row">
                         <div class="col-md-12">

@@ -2,22 +2,15 @@ package com.sda.carrental.web.mvc.form.users;
 
 import com.sda.carrental.web.mvc.form.validation.constraint.ValidCountry;
 import lombok.Getter;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
 @Getter
 @Setter
 @RequiredArgsConstructor
 public class VerificationForm {
-
-    @NonNull
-    @NotNull
-    private Long customerId;
-
     @ValidCountry(canBeUnselected = false)
     private String country;
 
