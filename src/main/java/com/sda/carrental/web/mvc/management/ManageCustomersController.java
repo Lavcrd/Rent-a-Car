@@ -62,8 +62,8 @@ public class ManageCustomersController {
         }
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "/{customer}")
-    public String manageCustomerPage(ModelMap map, RedirectAttributes redAtt, @PathVariable(value = "customer") Long customerId, @ModelAttribute("department") Long departmentId) {
+    @RequestMapping(method = RequestMethod.GET, value = "/{department}-{customer}")
+    public String viewCustomerPage(ModelMap map, RedirectAttributes redAtt, @PathVariable(value = "customer") Long customerId, @PathVariable("department") Long departmentId) {
         try {
             CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             if (userService.hasNoAccessToUserData(cud, customerId, departmentId)) {
@@ -84,7 +84,7 @@ public class ManageCustomersController {
                 map.addAttribute("verification", new Verification(customerId, Country.COUNTRY_NONE, "N/D", "N/D"));
                 map.addAttribute("countries", Country.values());
                 map.addAttribute("findVerifiedForm", new FindVerifiedForm());
-                map.addAttribute("verification_form", new VerificationForm(customerId));
+                map.addAttribute("verification_form", new VerificationForm());
             }
             if (!customer.getStatus().equals(Customer.CustomerStatus.STATUS_DELETED)) {
                 map.addAttribute("is_deleted", false);
@@ -103,7 +103,7 @@ public class ManageCustomersController {
         }
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "/merge")
+    @RequestMapping(method = RequestMethod.GET, value = "/{department}-{customer}/merge")
     public String mergePage(ModelMap map, @ModelAttribute("customer") Long customerId, @ModelAttribute("department") Long departmentId, RedirectAttributes redAtt, @ModelAttribute("verificationData") FindVerifiedForm verificationData) {
         try {
             CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -119,8 +119,8 @@ public class ManageCustomersController {
         } catch (ResourceNotFoundException err) {
             redAtt.addFlashAttribute(MSG_KEY, MSG_NO_RESOURCE);
             redAtt.addAttribute("customer", customerId);
-            redAtt.addFlashAttribute("department", departmentId);
-            return "redirect:/mg-cus/{customer}";
+            redAtt.addAttribute("department", departmentId);
+            return "redirect:/mg-cus/{department}-{customer}";
         } catch (RuntimeException err) {
             redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
             return "redirect:/mg-cus";
@@ -180,28 +180,28 @@ public class ManageCustomersController {
         }
 
         redAtt.addAttribute("customer", customerId);
-        redAtt.addFlashAttribute("department", departmentId);
-        return "redirect:/mg-cus/{customer}";
+        redAtt.addAttribute("department", departmentId);
+        return "redirect:/mg-cus/{department}-{customer}";
     }
 
     //Manage customer page buttons
-    @RequestMapping(method = RequestMethod.POST, value = "/verify")
-    public String verifyButton(RedirectAttributes redAtt, @ModelAttribute("verification_form") @Valid VerificationForm form, Errors err, @RequestParam("department") Long departmentId) {
+    @RequestMapping(method = RequestMethod.POST, value = "/{department}-{customer}/verify")
+    public String verifyButton(RedirectAttributes redAtt, @ModelAttribute("verification_form") @Valid VerificationForm form, Errors err, @PathVariable("customer") Long customerId, @PathVariable("department") Long departmentId) {
         CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (userService.hasNoAccessToUserData(cud, form.getCustomerId(), departmentId)) {
+        if (userService.hasNoAccessToUserData(cud, customerId, departmentId)) {
             redAtt.addFlashAttribute(MSG_KEY, MSG_ACCESS_REJECTED);
             return "redirect:/mg-cus";
         }
 
-        redAtt.addFlashAttribute("department", departmentId);
-        redAtt.addAttribute("customer", form.getCustomerId());
+        redAtt.addAttribute("department", departmentId);
+        redAtt.addAttribute("customer", customerId);
 
         if (err.hasErrors()) {
             redAtt.addFlashAttribute(MSG_KEY, err.getAllErrors().get(0).getDefaultMessage());
-            return "redirect:/mg-cus/{customer}";
+            return "redirect:/mg-cus/{department}-{customer}";
         }
 
-        HttpStatus status = verificationService.createVerification(form);
+        HttpStatus status = verificationService.createVerification(customerId, form);
         if (status.equals(HttpStatus.CREATED)) {
             redAtt.addFlashAttribute(MSG_KEY, "Success: Verification registered");
         } else if (status.equals(HttpStatus.EXPECTATION_FAILED)) {
@@ -212,11 +212,11 @@ public class ManageCustomersController {
             redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
         }
 
-        return "redirect:/mg-cus/{customer}";
+        return "redirect:/mg-cus/{department}-{customer}";
     }
 
-    @RequestMapping(method = RequestMethod.POST, value = "/unverify")
-    public String unverifyConfirmButton(RedirectAttributes redAtt, @ModelAttribute("unverifyConfirmationForm") @Valid ConfirmationForm form, Errors err, @RequestParam("customer") Long customerId, @RequestParam("department") Long departmentId) {
+    @RequestMapping(method = RequestMethod.POST, value = "/{department}-{customer}/unverify")
+    public String unverifyConfirmButton(RedirectAttributes redAtt, @ModelAttribute("unverifyConfirmationForm") @Valid ConfirmationForm form, Errors err, @PathVariable("customer") Long customerId, @PathVariable("department") Long departmentId) {
         CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (userService.hasNoAccessToUserData(cud, customerId, departmentId)) {
             redAtt.addFlashAttribute(MSG_KEY, MSG_ACCESS_REJECTED);
@@ -224,69 +224,62 @@ public class ManageCustomersController {
         }
 
         if (err.hasErrors()) {
-            redAtt.addFlashAttribute("department", departmentId);
+            redAtt.addAttribute("department", departmentId);
             redAtt.addAttribute("customer", customerId);
             redAtt.addFlashAttribute(MSG_KEY, err.getAllErrors().get(0).getDefaultMessage());
-            return "redirect:/mg-cus/{customer}";
+            return "redirect:/mg-cus/{department}-{customer}";
         }
 
         HttpStatus status = customerService.unverifyCustomer(customerId);
         if (status.equals(HttpStatus.OK)) {
             redAtt.addAttribute("customer", customerId);
-            redAtt.addFlashAttribute("department", departmentId);
+            redAtt.addAttribute("department", departmentId);
             redAtt.addFlashAttribute(MSG_KEY, "Success: Verification removed");
         } else if (status.equals(HttpStatus.CONFLICT)) {
             redAtt.addAttribute("customer", customerId);
-            redAtt.addFlashAttribute("department", departmentId);
+            redAtt.addAttribute("department", departmentId);
             redAtt.addFlashAttribute(MSG_KEY, "Failure: Active reservations");
         } else {
             redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
             return "redirect:/mg-cus";
         }
-        return "redirect:/mg-cus/{customer}";
+        return "redirect:/mg-cus/{department}-{customer}";
     }
 
-    @RequestMapping(method = RequestMethod.POST, value = "/mg-res")
-    public String manageReservationsButton(RedirectAttributes redAtt, @RequestParam("customer") Long customerId, @RequestParam("department") Long departmentId) {
-        redAtt.addAttribute("customer", customerId);
-        redAtt.addFlashAttribute("department", departmentId);
-        return "redirect:/mg-res/{customer}";
-    }
-
-    @RequestMapping(method = RequestMethod.POST, value = "/merge")
-    public String mergeCustomersButton(@ModelAttribute("findVerifiedForm") @Valid FindVerifiedForm form, Errors err, RedirectAttributes redAtt, @RequestParam("customer") Long customerId, @RequestParam("department") Long departmentId) {
+    @RequestMapping(method = RequestMethod.POST, value = "/{department}-{customer}/merge")
+    public String mergeCustomersButton(@ModelAttribute("findVerifiedForm") @Valid FindVerifiedForm form, Errors err, RedirectAttributes redAtt, @PathVariable("customer") Long customerId, @PathVariable("department") Long departmentId) {
         CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (userService.hasNoAccessToUserData(cud, customerId, departmentId)) {
             redAtt.addFlashAttribute(MSG_KEY, MSG_ACCESS_REJECTED);
             return "redirect:/mg-cus";
         }
 
-        redAtt.addFlashAttribute("department", departmentId);
+        redAtt.addAttribute("department", departmentId);
+        redAtt.addAttribute("customer", customerId);
+
         if (err.hasErrors()) {
             redAtt.addFlashAttribute(MSG_KEY, err.getFieldErrors().get(0).getDefaultMessage());
-            redAtt.addAttribute("customer", customerId);
-            return "redirect:/mg-cus/{customer}";
+            return "redirect:/mg-cus/{department}-{customer}";
         }
 
-        redAtt.addFlashAttribute("customer", customerId);
         redAtt.addFlashAttribute("verificationData", form);
-        return "redirect:/mg-cus/merge";
+        return "redirect:/mg-cus/{department}-{customer}/merge";
     }
 
-    @RequestMapping(method = RequestMethod.POST, value = "/delete")
-    public String deleteCustomerButton(RedirectAttributes redAtt, @ModelAttribute("deleteConfirmationForm") @Valid ConfirmationForm form, Errors err, @RequestParam("customer") Long customerId, @RequestParam("department") Long departmentId) {
+    @RequestMapping(method = RequestMethod.POST, value = "/{department}-{customer}/delete")
+    public String deleteCustomerButton(RedirectAttributes redAtt, @ModelAttribute("deleteConfirmationForm") @Valid ConfirmationForm form, Errors err, @PathVariable("customer") Long customerId, @PathVariable("department") Long departmentId) {
         CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (userService.hasNoAccessToUserData(cud, customerId, departmentId)) {
             redAtt.addFlashAttribute(MSG_KEY, MSG_ACCESS_REJECTED);
             return "redirect:/mg-cus";
         }
 
-        redAtt.addFlashAttribute("department", departmentId);
+        redAtt.addAttribute("department", departmentId);
         redAtt.addAttribute("customer", customerId);
 
         if (err.hasErrors()) {
             redAtt.addFlashAttribute(MSG_KEY, err.getAllErrors().get(0).getDefaultMessage());
-            return "redirect:/mg-cus/{customer}";
+            return "redirect:/mg-cus/{department}-{customer}";
         }
 
         HttpStatus status = userService.deleteUser(customerId);
@@ -298,23 +291,23 @@ public class ManageCustomersController {
         } else {
             redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
         }
-        return "redirect:/mg-cus/{customer}";
+        return "redirect:/mg-cus/{department}-{customer}";
     }
 
-    @RequestMapping(method = RequestMethod.POST, value = "/contact")
-    public String changeContactButton(RedirectAttributes redAtt, @ModelAttribute("changeContactForm") @Valid ChangeContactForm form, Errors err, @RequestParam("customer") Long customerId, @RequestParam("department") Long departmentId) {
+    @RequestMapping(method = RequestMethod.POST, value = "/{department}-{customer}/contact")
+    public String changeContactButton(RedirectAttributes redAtt, @ModelAttribute("changeContactForm") @Valid ChangeContactForm form, Errors err, @PathVariable("customer") Long customerId, @PathVariable("department") Long departmentId) {
         CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (userService.hasNoAccessToUserData(cud, customerId, departmentId)) {
             redAtt.addFlashAttribute(MSG_KEY, MSG_ACCESS_REJECTED);
             return "redirect:/mg-cus";
         }
 
-        redAtt.addFlashAttribute("department", departmentId);
+        redAtt.addAttribute("department", departmentId);
         redAtt.addAttribute("customer", customerId);
 
         if (err.hasErrors()) {
             redAtt.addFlashAttribute(MSG_KEY, err.getAllErrors().get(0).getDefaultMessage());
-            return "redirect:/mg-cus/{customer}";
+            return "redirect:/mg-cus/{department}-{customer}";
         }
 
         HttpStatus status = customerService.changeContact(form.getContactNumber(), customerId);
@@ -327,18 +320,18 @@ public class ManageCustomersController {
         } else {
             redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
         }
-        return "redirect:/mg-cus/{customer}";
+        return "redirect:/mg-cus/{department}-{customer}";
     }
 
     //Merge page buttons
-    @RequestMapping(method = RequestMethod.POST, value = "/merge/proceed")
-    public String mergeConfirmButton(RedirectAttributes redAtt, @ModelAttribute("confirmation_form") @Valid ConfirmationForm form, Errors errors, @RequestParam("customer") Long customerId, @RequestParam("department") Long departmentId, @RequestParam("target") Long verifiedCustomer) {
+    @RequestMapping(method = RequestMethod.POST, value = "/{department}-{customer}/merge/{target}")
+    public String mergeConfirmButton(RedirectAttributes redAtt, @ModelAttribute("confirmation_form") @Valid ConfirmationForm form, Errors errors, @PathVariable("customer") Long customerId, @PathVariable("department") Long departmentId, @PathVariable("target") Long verifiedCustomer) {
         if (errors.hasErrors()) {
-            redAtt.addFlashAttribute("department", departmentId);
+            redAtt.addAttribute("department", departmentId);
             redAtt.addAttribute("customer", customerId);
 
             redAtt.addFlashAttribute(MSG_KEY, errors.getAllErrors().get(0));
-            return "redirect:/mg-cus/{customer}";
+            return "redirect:/mg-cus/{department}-{customer}";
         }
 
         CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -355,14 +348,7 @@ public class ManageCustomersController {
         }
 
         redAtt.addAttribute("customer", customerId);
-        redAtt.addFlashAttribute("department", departmentId);
-        return "redirect:/mg-cus/{customer}";
-    }
-
-    @RequestMapping(method = RequestMethod.POST, value = "/merge/back")
-    public String mergeBackButton(RedirectAttributes redAtt, @ModelAttribute("confirmation_form") ConfirmationForm form, @RequestParam("customer") Long customerId, @RequestParam("department") Long departmentId) {
-        redAtt.addAttribute("customer", customerId);
-        redAtt.addFlashAttribute("department", departmentId);
-        return "redirect:/mg-cus/{customer}";
+        redAtt.addAttribute("department", departmentId);
+        return "redirect:/mg-cus/{department}-{customer}";
     }
 }

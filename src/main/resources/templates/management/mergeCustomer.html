@@ -17,10 +17,7 @@
     <div th:include="fragments/top::reg-options"></div>
 
     <div id="main">
-        <form class="change_action_form" th:method="POST" th:object="${confirmation_form}" th:action="@{submit}">
-            <input type="hidden" name="department" th:value="${department}">
-            <input type="hidden" name="customer" th:value="${unverified_customer.getId()}">
-            <input type="hidden" name="target" th:value="${verified_customer.getId()}">
+        <form th:method="POST" th:object="${confirmation_form}" th:action="@{'/mg-cus/' + ${department} + '-' + ${unverified_customer.getId()} + '/merge/' + ${verified_customer.getId()}}">
             <table class="table table-borderless">
                 <thead class="table-dark">
                 <tr>
@@ -45,8 +42,8 @@
                 </tr>
                 <tr>
                     <td>
-                        <button type="submit" class="btn btn-dark" th:text="Back" onclick="setFormAction('/mg-cus/merge/back', 0)"></button>
-                        <button type="submit" class="btn btn-dark mx-2" th:text="Confirm" onclick="setFormAction('/mg-cus/merge/proceed', 0)"></button>
+                        <a th:href="'/mg-cus/' + ${department} + '-' + ${unverified_customer.getId()}" type="button" class="btn btn-dark" th:text="Back"></a>
+                        <button type="submit" class="btn btn-dark mx-2" th:text="Confirm"></button>
                     </td>
                 </tr>
                 </tbody>

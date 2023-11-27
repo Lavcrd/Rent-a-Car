@@ -81,31 +81,22 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <form class="change_action_form" th:action="@{submit}" th:method="POST">
-                        <input type="hidden" th:if="${customer != null}" th:name="customer"
-                               th:value="${customer.getId()}">
                         <tr>
                             <td class="button-cell">
-                                <button type="submit" class="btn btn-dark bg-dark mt-1 list-button w-100"
-                                        name="department" th:value="${department}"
-                                        onclick="setFormAction('/mg-cus/mg-res', 0)">
+                                <a th:href="'/mg-res/' + ${department} + '-' + ${customer.id}" type="button" class="btn btn-dark bg-dark mt-1 list-button w-100">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                                          class="bi bi-list-check cb-svg" viewBox="0 0 16 16">
                                         <path fill-rule="evenodd"
                                               d="M5 11.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zM3.854 2.146a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 1 1 .708-.708L2 3.293l1.146-1.147a.5.5 0 0 1 .708 0zm0 4a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 1 1 .708-.708L2 7.293l1.146-1.147a.5.5 0 0 1 .708 0zm0 4a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 0 1 .708-.708l.146.147 1.146-1.147a.5.5 0 0 1 .708 0z"/>
                                     </svg>
                                     <div class="list-button-text">Reservations</div>
-                                </button>
+                                </a>
                             </td>
                             <td class="short-description-cell">View customer's local reservations list</td>
                         </tr>
-                    </form>
-
                     <th:block th:if="${!is_deleted}">
                         <th:block th:if="${!is_verified}">
-                            <form th:action="@{/mg-cus/verify}" th:object="${verification_form}" th:method="POST">
-                                <input type="hidden" th:name="department" th:value="${department}">
-                                <input type="hidden" th:field="*{customerId}" th:value="${customer.getId()}">
+                            <form th:action="@{'/mg-cus/' + ${department} + '-' + ${customer.id} + '/verify'}" th:object="${verification_form}" th:method="POST">
                                 <tr>
                                     <td class="button-cell">
                                         <button type="button" class="btn btn-dark bg-dark mt-1 list-button w-100"
@@ -172,10 +163,8 @@
                             </form>
                         </th:block>
                         <th:block th:if="${is_verified}">
-                            <form th:action="@{/mg-cus/unverify}" th:object="${unverifyConfirmationForm}"
+                            <form th:action="@{'/mg-cus/' + ${department} + '-' + ${customer.id} + '/unverify'}" th:object="${unverifyConfirmationForm}"
                                   th:method="POST">
-                                <input type="hidden" th:name="department" th:value="${department}">
-                                <input type="hidden" th:name="customer" th:value="${customer.getId()}">
                                 <tr>
                                     <td class="button-cell">
                                         <!--Trigger for unverify modal-->
@@ -226,9 +215,7 @@
                                 </tr>
                             </form>
                         </th:block>
-                        <form th:action="@{/mg-cus/contact}" th:object="${changeContactForm}" th:method="POST">
-                            <input type="hidden" th:name="department" th:value="${department}">
-                            <input type="hidden" th:name="customer" th:value="${customer.getId()}">
+                        <form th:action="@{'/mg-cus/' + ${department} + '-' + ${customer.id} + '/contact'}" th:object="${changeContactForm}" th:method="POST">
                             <tr>
                                 <td class="button-cell">
                                     <button class="btn btn-dark bg-dark mt-1 list-button w-100"
@@ -260,6 +247,15 @@
                                                         <input style="justify-self: end; width: 15em;" id="c_contact_n" class="text-black bg-white"
                                                                th:placeholder="'Enter contact number'"
                                                                th:type="text" th:field="*{contactNumber}" required/></div>
+                                                    <div class="modal-row mt-2">
+                                                        <label style="justify-self: start;" for="c_contact_confirm"
+                                                               class="text-md">Password: </label>
+                                                        <input id="c_contact_confirm" class="text-black bg-white modal-input"
+                                                               th:placeholder="'Confirm with password'"
+                                                               th:type="password" th:field="*{currentPassword}"
+                                                               autocomplete="new-password"
+                                                               required/>
+                                                    </div>
                                                 </div>
                                                 <div class="modal-footer">
                                                     <button type="button" class="btn btn-dark" data-bs-dismiss="modal">
@@ -277,9 +273,7 @@
                     </th:block>
 
                     <th:block th:if="${!is_deleted && !is_verified}">
-                        <form th:action="@{/mg-cus/merge}" th:object="${findVerifiedForm}" th:method="POST">
-                            <input type="hidden" th:name="department" th:value="${department}">
-                            <input type="hidden" th:name="customer" th:value="${customer.getId()}">
+                        <form th:action="@{'/mg-cus/' + ${department} + '-' + ${customer.id} + '/merge'}" th:object="${findVerifiedForm}" th:method="POST">
                             <tr>
                                 <td class="button-cell">
                                     <button type="button" class="btn btn-dark bg-dark mt-1 list-button w-100"
@@ -341,9 +335,7 @@
                     </th:block>
 
                     <th:block th:if="${!is_deleted}">
-                        <form th:action="@{/mg-cus/delete}" th:object="${deleteConfirmationForm}" th:method="POST">
-                            <input type="hidden" th:name="department" th:value="${department}">
-                            <input type="hidden" th:name="customer" th:value="${customer.getId()}">
+                        <form th:action="@{'/mg-cus/' + ${department} + '-' + ${customer.id} + '/delete'}" th:object="${deleteConfirmationForm}" th:method="POST">
                             <tr>
                                 <td class="button-cell">
                                     <button type="button" class="btn btn-dark bg-dark mt-1 list-button w-100"

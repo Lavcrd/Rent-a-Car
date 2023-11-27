@@ -32,7 +32,7 @@ public class CustomerService {
     private final ReservationService reservationService;
     private final DepartmentService departmentService;
 
-    public Customer findById(Long customerId) {
+    public Customer findById(Long customerId) throws ResourceNotFoundException {
         return repository.findById(customerId).orElseThrow(ResourceNotFoundException::new);
     }
 

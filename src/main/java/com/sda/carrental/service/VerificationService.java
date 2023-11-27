@@ -39,13 +39,13 @@ public class VerificationService {
     }
 
     @Transactional
-    public HttpStatus createVerification(VerificationForm form) {
+    public HttpStatus createVerification(Long customerId, VerificationForm form) {
         try {
-            if (getOptionalVerificationByCustomer(form.getCustomerId()).isEmpty()) {
+            if (getOptionalVerificationByCustomer(customerId).isEmpty()) {
                 Country country = Country.valueOf(Country.class, form.getCountry());
                 if (getOptionalVerification(country, form.getPersonalId()).isPresent())
                     return HttpStatus.CONFLICT;
-                repository.save(new Verification(form.getCustomerId(), country, form.getPersonalId(), form.getDriverId()));
+                repository.save(new Verification(customerId, country, form.getPersonalId(), form.getDriverId()));
                 return HttpStatus.CREATED;
             }
             return HttpStatus.EXPECTATION_FAILED;
@@ -73,14 +73,14 @@ public class VerificationService {
         if (verification.isEmpty()) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             throw new IllegalActionException();
+        }
+
+        if (!repository.existsById(mainCustomerId)) {
+            Verification v = verification.get();
+            repository.save(new Verification(mainCustomerId, v.getCountry(), v.getPersonalId(), v.getDriverId()));
         } else {
-            if (!repository.existsById(mainCustomerId)) {
-                Verification v = verification.get();
-                repository.save(new Verification(mainCustomerId, v.getCountry(), v.getPersonalId(), v.getDriverId()));
-            } else {
-                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-                throw new IllegalActionException();
-            }
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            throw new IllegalActionException();
         }
     }
 }
