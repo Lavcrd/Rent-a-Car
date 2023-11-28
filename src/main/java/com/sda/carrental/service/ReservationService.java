@@ -189,26 +189,25 @@ public class ReservationService {
         }
     }
 
-    public List<Reservation> findDeparturesByDetails(SearchCustomersForm reservationsData) {
+    public List<Reservation> findDeparturesByDetails(SearchCustomersForm reservationsData, Reservation.ReservationStatus status) {
         return repository.findDeparturesByDetails(
                 reservationsData.getCustomerName(), reservationsData.getCustomerSurname(),
                 reservationsData.getDepartmentTake(), reservationsData.getDepartmentBack(),
                 reservationsData.getDateFrom(), reservationsData.getDateTo(),
-                reservationsData.getStatus());
+                status);
     }
 
-    public List<Reservation> findArrivalsByDetails(SearchCustomersForm reservationsData) {
+    public List<Reservation> findArrivalsByDetails(SearchCustomersForm reservationsData, Reservation.ReservationStatus status) {
         return repository.findArrivalsByDetails(
                 reservationsData.getCustomerName(), reservationsData.getCustomerSurname(),
                 reservationsData.getDepartmentTake(), reservationsData.getDepartmentBack(),
                 reservationsData.getDateFrom(), reservationsData.getDateTo(),
-                reservationsData.getStatus());
+                status);
     }
 
     @Transactional
-    public HttpStatus substituteCarBase(Long reservationId, Long customerId, Long carBaseId) {
+    public HttpStatus substituteCarBase(Reservation r, Long carBaseId) {
         try {
-            Reservation r = findCustomerReservation(customerId, reservationId);
             if (!r.getStatus().equals(Reservation.ReservationStatus.STATUS_RESERVED)) throw new IllegalArgumentException();
             CarBase cb = carBaseService.findAvailableCarBaseInDepartment(carBaseId, r.getDepartmentTake().getId());
             r.setCarBase(cb);

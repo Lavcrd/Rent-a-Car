@@ -1,19 +1,16 @@
 package com.sda.carrental.web.mvc.form.users;
 
-import com.sda.carrental.model.operational.Reservation;
+import com.sda.carrental.web.mvc.form.validation.constraint.ReservationStatus;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
 @Getter
 @Setter
-@NoArgsConstructor
 public class SearchCustomersForm {
-    @NotBlank(message = "Field 'department' cannot be empty")
     private Long departmentTake;
 
     private String customerName;
@@ -22,17 +19,19 @@ public class SearchCustomersForm {
 
     private Long departmentBack;
 
-    @NotBlank(message = "Field 'starting date' cannot be empty")
+    @NotNull(message = "Failure: Field 'date from' cannot be empty")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate dateFrom;
 
+    @NotNull(message = "Failure: Field 'date to' cannot be empty")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate dateTo;
 
-    private Reservation.ReservationStatus status;
+    @ReservationStatus(canBeEmpty = true)
+    private String status;
 
-    public SearchCustomersForm(LocalDate dateFrom, LocalDate dateTo) {
-        this.dateFrom = dateFrom;
-        this.dateTo = dateTo;
+    public SearchCustomersForm() {
+        this.dateFrom = LocalDate.now().minusWeeks(1);
+        this.dateTo = LocalDate.now().plusWeeks(1);
     }
 }

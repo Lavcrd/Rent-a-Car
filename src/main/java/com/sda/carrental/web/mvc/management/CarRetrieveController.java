@@ -1,5 +1,6 @@
 package com.sda.carrental.web.mvc.management;
 
+import com.sda.carrental.exceptions.IllegalActionException;
 import com.sda.carrental.exceptions.ResourceNotFoundException;
 import com.sda.carrental.global.ConstantValues;
 import com.sda.carrental.global.enums.Country;
@@ -103,32 +104,45 @@ public class CarRetrieveController {
     public String claimReservationButton(@ModelAttribute @Valid ConfirmClaimForm form, Errors err, RedirectAttributes redAtt,
                                          @RequestParam("plate") String plate, @RequestParam("department") Long departmentId,
                                          @RequestParam("customer") Long customerId) {
-        if (err.hasErrors()) {
-            Rent rent = rentService.findActiveOperationByCarPlate(plate);
-            redAtt.addFlashAttribute("rent_details", rent);
-            redAtt.addFlashAttribute("reservation", rent.getReservation());
-            String[] plateValues = plate.split("-", 2);
-            redAtt.addFlashAttribute("searchCarForm", new SearchCarForm("COUNTRY_" + plateValues[0], plateValues[1]));
-            redAtt.addFlashAttribute(MSG_KEY, err.getAllErrors().get(0).getDefaultMessage());
-            redAtt.addFlashAttribute("confirm_claim_form", form);
+        try {
+            CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            Rent r = rentService.findActiveOperationByCarPlate(plate);
+            if (!form.getReservationId().equals(r.getId()) ||
+                    !form.getDepartmentId().equals(departmentId) ||
+                    departmentService.departmentAccess(cud, departmentId).equals(HttpStatus.FORBIDDEN)) throw new IllegalActionException();
+
+            if (err.hasErrors()) {
+                redAtt.addFlashAttribute("rent_details", r);
+                redAtt.addFlashAttribute("reservation", r.getReservation());
+                String[] plateValues = plate.split("-", 2);
+                redAtt.addFlashAttribute("searchCarForm", new SearchCarForm("COUNTRY_" + plateValues[0], plateValues[1]));
+                redAtt.addFlashAttribute(MSG_KEY, err.getAllErrors().get(0).getDefaultMessage());
+                redAtt.addFlashAttribute("confirm_claim_form", form);
+                return "redirect:/c-ret";
+            }
+
+            HttpStatus response = retrieveService.handleRetrieve(customerId, departmentId, form);
+
+            redAtt.addAttribute("reservation", form.getReservationId());
+            redAtt.addAttribute("customer", customerId);
+            redAtt.addAttribute("department", form.getDepartmentId());
+
+            if (response.equals(HttpStatus.ACCEPTED)) {
+                redAtt.addFlashAttribute(MSG_KEY, "Success: Return claimed");
+            } else if (response.equals(HttpStatus.NOT_FOUND)) {
+                redAtt.addFlashAttribute(MSG_KEY, "Failure: Value mismatch");
+            } else if (response.equals(HttpStatus.BAD_REQUEST)) {
+                redAtt.addFlashAttribute(MSG_KEY, "Failure: Action not allowed");
+            } else {
+                redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
+            }
+            return "redirect:/mg-res/{department}-{customer}/{reservation}";
+        } catch (ResourceNotFoundException e) {
+            redAtt.addFlashAttribute(MSG_KEY, MSG_NO_RESOURCE);
+            return "redirect:/c-ret";
+        } catch (RuntimeException e) {
+            redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
             return "redirect:/c-ret";
         }
-
-        HttpStatus response = retrieveService.handleRetrieve(customerId, departmentId, form);
-
-        redAtt.addAttribute("reservation", form.getReservationId());
-        redAtt.addFlashAttribute("customer", customerId);
-        redAtt.addFlashAttribute("department", form.getDepartmentId());
-
-        if (response.equals(HttpStatus.ACCEPTED)) {
-            redAtt.addFlashAttribute(MSG_KEY, "Success: Return claimed");
-        } else if (response.equals(HttpStatus.NOT_FOUND)) {
-            redAtt.addFlashAttribute(MSG_KEY, "Failure: Value mismatch");
-        } else if (response.equals(HttpStatus.BAD_REQUEST)) {
-            redAtt.addFlashAttribute(MSG_KEY, "Failure: Action not allowed");
-        } else {
-            redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
-        }
-        return "redirect:/mg-res/reservation/{reservation}";
     }
 }

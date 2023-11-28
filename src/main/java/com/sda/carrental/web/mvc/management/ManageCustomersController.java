@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -43,7 +42,7 @@ public class ManageCustomersController {
 
     //Pages
     @RequestMapping(method = RequestMethod.GET)
-    public String searchReservationsPage(ModelMap map, RedirectAttributes redAtt) {
+    public String searchCustomersPage(ModelMap map, RedirectAttributes redAtt) {
         try {
             CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             List<Department> employeeDepartments = departmentService.getDepartmentsByUserContext(cud);
@@ -52,7 +51,8 @@ public class ManageCustomersController {
             map.addAttribute("reservationStatuses", Reservation.ReservationStatus.values());
 
             if (!map.containsKey("searchCustomersForm")) {
-                map.addAttribute("searchCustomersForm", new SearchCustomersForm(LocalDate.now().minusWeeks(1), LocalDate.now().plusWeeks(1)));
+                map.addAttribute("searchCustomersForm", map.getOrDefault("searchCustomersForm", new SearchCustomersForm())
+                        );
                 map.addAttribute("isArrival", false);
             }
             return "management/searchCustomers";
@@ -129,43 +129,50 @@ public class ManageCustomersController {
 
     //Search page buttons
     @RequestMapping(value = "/search-departure", method = RequestMethod.POST)
-    public String reservationSearchDepartureButton(@ModelAttribute("searchCustomersForm") SearchCustomersForm reservationsData, RedirectAttributes redAtt) {
+    public String searchDepartureButton(@ModelAttribute("searchCustomersForm") @Valid SearchCustomersForm form, Errors err, RedirectAttributes redAtt) {
         try {
+            redAtt.addFlashAttribute("searchCustomersForm", form);
+            redAtt.addFlashAttribute("isArrival", false);
+
             CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            if (departmentService.departmentAccess(cud, reservationsData.getDepartmentTake()).equals(HttpStatus.FORBIDDEN)) {
+            if (departmentService.departmentAccess(cud, form.getDepartmentTake()).equals(HttpStatus.FORBIDDEN)) {
                 redAtt.addFlashAttribute(MSG_KEY, MSG_ACCESS_REJECTED);
                 return "redirect:/mg-cus";
             }
 
-            redAtt.addFlashAttribute("searchCustomersForm", reservationsData);
-            redAtt.addFlashAttribute("departments", departmentService.getDepartmentsByUserContext(cud));
-            redAtt.addFlashAttribute("isArrival", false);
+            if (err.hasErrors()) {
+                redAtt.addFlashAttribute(MSG_KEY, err.getAllErrors().get(0).getDefaultMessage());
+                return "redirect:/mg-cus";
+            }
 
-            redAtt.addFlashAttribute("results", customerService.findCustomersWithResults(reservationsData, false));
+            redAtt.addFlashAttribute("results", customerService.findCustomersWithResults(form, false));
             return "redirect:/mg-cus";
-        } catch (RuntimeException err) {
+        } catch (RuntimeException e) {
             redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
             return "redirect:/mg-cus";
         }
     }
 
     @RequestMapping(value = "/search-arrival", method = RequestMethod.POST)
-    public String reservationSearchArrivalButton(@ModelAttribute("searchCustomersForm") SearchCustomersForm reservationsData, RedirectAttributes redAtt) {
+    public String searchArrivalButton(@ModelAttribute("searchCustomersForm") @Valid SearchCustomersForm form, Errors err, RedirectAttributes redAtt) {
         try {
+            redAtt.addFlashAttribute("searchCustomersForm", form);
+            redAtt.addFlashAttribute("isArrival", true);
+
             CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            if (departmentService.departmentAccess(cud, reservationsData.getDepartmentBack()).equals(HttpStatus.FORBIDDEN)) {
+            if (departmentService.departmentAccess(cud, form.getDepartmentBack()).equals(HttpStatus.FORBIDDEN)) {
                 redAtt.addFlashAttribute(MSG_KEY, MSG_ACCESS_REJECTED);
                 return "redirect:/mg-cus";
             }
 
-            redAtt.addFlashAttribute("searchCustomersForm", reservationsData);
-            redAtt.addFlashAttribute("departments", departmentService.getDepartmentsByUserContext(cud));
-            redAtt.addFlashAttribute("isArrival", true);
+            if (err.hasErrors()) {
+                redAtt.addFlashAttribute(MSG_KEY, err.getAllErrors().get(0).getDefaultMessage());
+                return "redirect:/mg-cus";
+            }
 
-
-            redAtt.addFlashAttribute("results", customerService.findCustomersWithResults(reservationsData, true));
+            redAtt.addFlashAttribute("results", customerService.findCustomersWithResults(form, true));
             return "redirect:/mg-cus";
-        } catch (RuntimeException err) {
+        } catch (RuntimeException e) {
             redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
             return "redirect:/mg-cus";
         }

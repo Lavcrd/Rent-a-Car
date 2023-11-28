@@ -68,8 +68,7 @@ public class DepartmentService {
         Department department = findDepartmentWhereId(departmentId);
         if (getDepartmentsByUserContext(cud).contains(department)) {
             return HttpStatus.ACCEPTED;
-        } else {
-            return HttpStatus.FORBIDDEN;
         }
+        return HttpStatus.FORBIDDEN;
     }
 }
