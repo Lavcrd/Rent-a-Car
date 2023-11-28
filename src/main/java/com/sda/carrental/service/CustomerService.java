@@ -163,10 +163,15 @@ public class CustomerService {
     }
 
     public Map<Customer, Long> findCustomersWithResults(SearchCustomersForm form, boolean isArrival) {
+        Reservation.ReservationStatus status = null;
+        if (!form.getStatus().isEmpty()) {
+            status = Reservation.ReservationStatus.valueOf(form.getStatus());
+        }
+
         if (isArrival) {
-            return reservationService.findArrivalsByDetails(form).stream().collect(Collectors.groupingBy(Reservation::getCustomer, Collectors.counting()));
+            return reservationService.findArrivalsByDetails(form, status).stream().collect(Collectors.groupingBy(Reservation::getCustomer, Collectors.counting()));
         } else {
-            return reservationService.findDeparturesByDetails(form).stream().collect(Collectors.groupingBy(Reservation::getCustomer, Collectors.counting()));
+            return reservationService.findDeparturesByDetails(form, status).stream().collect(Collectors.groupingBy(Reservation::getCustomer, Collectors.counting()));
         }
     }
 }

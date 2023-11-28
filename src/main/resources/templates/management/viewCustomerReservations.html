@@ -65,103 +65,105 @@
                         </div>
                     </td>
                 </tr>
-                    <tr>
-                        <td style="padding-left:0;">
-                            <a class="btn btn-dark bg-dark mt-2 w-100 def-button-text"
-                                    type="button" name="customer" th:href="'/mg-cus/' + ${department.id} + '-' + ${customer.id}">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left-circle" viewBox="0 0 16 16">
-                                    <path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-4.5-.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5z"/>
-                                </svg>
-                                Back
-                            </a>
-                        </td>
-                    </tr>
+                <tr>
+                    <td style="padding-left:0;">
+                        <a class="btn btn-dark bg-dark mt-2 w-100 def-button-text"
+                           type="button" name="customer" th:href="'/mg-cus/' + ${department.id} + '-' + ${customer.id}">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                 class="bi bi-arrow-left-circle" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd"
+                                      d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-4.5-.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5z"/>
+                            </svg>
+                            Back
+                        </a>
+                    </td>
+                </tr>
                 </tbody>
             </table>
         </div>
 
         <div class="col-sm-9 scroll-70">
-                <table id="res_l" class="table table-borderless table-hover table-fixed"
-                       style="text-align: center; vertical-align: middle;">
-                    <thead class="table-dark">
-                    <tr>
-                        <th scope="row">To</th>
-                        <th scope="row">Period</th>
-                        <th scope="row">Status</th>
-                        <th scope="row" style="position: relative;">
-                            <button onclick="swapContent('res_l', 'ret_l');"
-                                    class="btn btn-outline-light list-center-button btn-sm" type="button"
-                                    th:text="'Mode: Departure'"></button>
-                        </th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr th:if="${#lists.isEmpty(reservations)}">
-                        <td th:text="'—'"></td>
-                        <td th:text="'—'"></td>
-                        <td th:text="'—'"></td>
-                        <td></td>
-                    </tr>
-                    <tr th:each="reservation: ${reservations}">
-                        <td>
-                            <div class="overflow-cell-hidden"
-                                 th:utext="${reservation.getDepartmentBack().getCity()} + ', <br>' + ${reservation.getDepartmentBack().getAddress()}"></div>
-                        </td>
-                        <td>
-                            <div class="overflow-cell-hidden"
-                                 th:utext="${reservation.getDateFrom()} + '<br> ⟶ ' + ${reservation.getDateTo()}"></div>
-                        </td>
-                        <td>
-                            <div class="overflow-cell-hidden" th:utext="${reservation.status.getText()}"></div>
-                        </td>
-                        <td>
-                            <a type="button" class="btn btn-dark" th:text="Details" th:name="details_button"
-                                    th:href="'/mg-res/' + ${department.id} + '-' + ${customer.id} + '/' + ${reservation.id}"></a>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
+            <table id="res_l" class="table table-borderless table-hover table-fixed"
+                   style="text-align: center; vertical-align: middle;">
+                <thead class="table-dark">
+                <tr>
+                    <th scope="row">To</th>
+                    <th scope="row">Period</th>
+                    <th scope="row">Status</th>
+                    <th scope="row" style="position: relative;">
+                        <button onclick="swapContent('res_l', 'ret_l');"
+                                class="btn btn-outline-light list-center-button btn-sm" type="button"
+                                th:text="'Mode: Departure'"></button>
+                    </th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:if="${#lists.isEmpty(reservations)}">
+                    <td th:text="'—'"></td>
+                    <td th:text="'—'"></td>
+                    <td th:text="'—'"></td>
+                    <td></td>
+                </tr>
+                <tr th:each="reservation: ${reservations}">
+                    <td>
+                        <div class="overflow-cell-hidden"
+                             th:utext="${reservation.getDepartmentBack().getCity()} + ', <br>' + ${reservation.getDepartmentBack().getAddress()}"></div>
+                    </td>
+                    <td>
+                        <div class="overflow-cell-hidden"
+                             th:utext="${reservation.getDateFrom()} + '<br> ⟶ ' + ${reservation.getDateTo()}"></div>
+                    </td>
+                    <td>
+                        <div class="overflow-cell-hidden" th:utext="${reservation.status.getText()}"></div>
+                    </td>
+                    <td>
+                        <a type="button" class="btn btn-dark" th:text="Details" th:name="details_button"
+                           th:href="'/mg-res/' + ${department.id} + '-' + ${customer.id} + '/' + ${reservation.id}"></a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
 
-                <table id="ret_l" class="table table-borderless table-hover table-fixed"
-                       style="text-align: center; vertical-align: middle; display: none;">
-                    <thead class="table-dark">
-                    <tr>
-                        <th scope="row">From</th>
-                        <th scope="row">Period</th>
-                        <th scope="row">Status</th>
-                        <th scope="row" style="position: relative;">
-                            <button onclick="swapContent('res_l', 'ret_l');"
-                                    class="btn btn-outline-light list-center-button btn-sm" type="button"
-                                    th:text="'Mode: Arrival'"></button>
-                        </th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr th:if="${#lists.isEmpty(reservations_incoming)}">
-                        <td th:text="'—'"></td>
-                        <td th:text="'—'"></td>
-                        <td th:text="'—'"></td>
-                        <td></td>
-                    </tr>
-                    <tr th:each="reservation: ${reservations_incoming}">
-                        <td>
-                            <div class="overflow-cell-hidden"
-                                 th:utext="${reservation.getDepartmentTake().getCity()} + ', <br>' + ${reservation.getDepartmentTake().getAddress()}"></div>
-                        </td>
-                        <td>
-                            <div class="overflow-cell-hidden"
-                                 th:utext="${reservation.getDateFrom()} + '<br> ⟶ ' + ${reservation.getDateTo()}"></div>
-                        </td>
-                        <td>
-                            <div class="overflow-cell-hidden" th:utext="${reservation.status.getText()}"></div>
-                        </td>
-                        <td>
-                            <a type="button" class="btn btn-dark" th:text="Details" th:name="details_button"
-                                    th:href="'/mg-res/' + ${department.id} + '-' + ${customer.id} + '/' + ${reservation.id}"></a>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
+            <table id="ret_l" class="table table-borderless table-hover table-fixed"
+                   style="text-align: center; vertical-align: middle;display: none;">
+                <thead class="table-dark">
+                <tr>
+                    <th scope="row">From</th>
+                    <th scope="row">Period</th>
+                    <th scope="row">Status</th>
+                    <th scope="row" style="position: relative;">
+                        <button onclick="swapContent('res_l', 'ret_l');"
+                                class="btn btn-outline-light list-center-button btn-sm" type="button"
+                                th:text="'Mode: Arrival'"></button>
+                    </th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:if="${#lists.isEmpty(reservations_incoming)}">
+                    <td th:text="'—'"></td>
+                    <td th:text="'—'"></td>
+                    <td th:text="'—'"></td>
+                    <td></td>
+                </tr>
+                <tr th:each="reservation: ${reservations_incoming}">
+                    <td>
+                        <div class="overflow-cell-hidden"
+                             th:utext="${reservation.getDepartmentTake().getCity()} + ', <br>' + ${reservation.getDepartmentTake().getAddress()}"></div>
+                    </td>
+                    <td>
+                        <div class="overflow-cell-hidden"
+                             th:utext="${reservation.getDateFrom()} + '<br> ⟶ ' + ${reservation.getDateTo()}"></div>
+                    </td>
+                    <td>
+                        <div class="overflow-cell-hidden" th:utext="${reservation.status.getText()}"></div>
+                    </td>
+                    <td>
+                        <a type="button" class="btn btn-dark" th:text="Details" th:name="details_button"
+                           th:href="'/mg-res/' + ${department.id} + '-' + ${customer.id} + '/' + ${reservation.id}"></a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
         </div>
         <div th:insert="fragments/bottom::message-handler"></div>
     </div>
