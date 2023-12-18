@@ -1,5 +1,6 @@
 package com.sda.carrental.web.mvc.form.users;
 
+import com.sda.carrental.web.mvc.form.validation.constraint.CorrectChronology;
 import com.sda.carrental.web.mvc.form.validation.constraint.ReservationStatus;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,6 +11,7 @@ import java.time.LocalDate;
 
 @Getter
 @Setter
+@CorrectChronology(message = "Failure: Invalid date chronology")
 public class SearchCustomersForm {
     private Long departmentTake;
 

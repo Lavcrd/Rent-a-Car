@@ -26,7 +26,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ReservationService {
     private final ReservationRepository repository;
-    private final CarService carService;
     private final CarBaseService carBaseService;
     private final DepartmentService departmentService;
     private final PaymentDetailsService paymentDetailsService;
