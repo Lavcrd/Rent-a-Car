@@ -8,13 +8,14 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class SelectCarForm {
+public class ReservationForm {
 
     private Long carBaseId;
 
     private IndexForm indexData;
 
-    public SelectCarForm(IndexForm indexData) {
+    public ReservationForm(Long carBaseId, IndexForm indexData) {
+        this.carBaseId = carBaseId;
         this.indexData = indexData;
     }
 }

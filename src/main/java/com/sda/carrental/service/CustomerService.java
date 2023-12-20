@@ -9,7 +9,7 @@ import com.sda.carrental.repository.CustomerRepository;
 import com.sda.carrental.service.auth.CustomUserDetails;
 import com.sda.carrental.service.mappers.CustomerMapper;
 import com.sda.carrental.web.mvc.form.operational.LocalReservationForm;
-import com.sda.carrental.web.mvc.form.operational.SelectCarForm;
+import com.sda.carrental.web.mvc.form.operational.ReservationForm;
 import com.sda.carrental.web.mvc.form.users.RegisterCustomerForm;
 import com.sda.carrental.web.mvc.form.users.SearchCustomersForm;
 import lombok.RequiredArgsConstructor;
@@ -113,7 +113,7 @@ public class CustomerService {
     }
 
     @Transactional
-    public HttpStatus appendReservationToCustomer(Long customerId, SelectCarForm form) {
+    public HttpStatus appendReservationToCustomer(Long customerId, ReservationForm form) {
         try {
             Customer customer = findById(customerId);
             return reservationService.createReservation(customer, form);

@@ -21,12 +21,14 @@
         <br>
 
         <form class="change_action_form" th:object="${reservationData}" th:action="@{/reservation}" th:method="POST">
+            <input type="hidden" th:value="${s1_time}" name="s1_time">
+            <input type="hidden" th:value="${s2_time}" name="s2_time">
+
             <input type="hidden" th:field="*{indexData.departmentIdFrom}">
             <input type="hidden" th:field="*{indexData.departmentIdTo}">
-            <input type="hidden" th:field="*{indexData.firstBranchChecked}">
+            <input type="hidden" th:field="*{indexData.differentDepartment}">
             <input type="hidden" th:field="*{indexData.dateFrom}">
             <input type="hidden" th:field="*{indexData.dateTo}">
-            <input type="hidden" th:field="*{indexData.dateCreated}">
             <input type="hidden" th:field="*{carBaseId}">
 
             <div class="container text-center">

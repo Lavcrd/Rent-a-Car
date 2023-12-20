@@ -11,9 +11,8 @@ import com.sda.carrental.service.DepartmentService;
 import com.sda.carrental.service.ReservationService;
 import com.sda.carrental.service.auth.CustomUserDetails;
 import com.sda.carrental.service.mappers.CustomObjectMapper;
-import com.sda.carrental.web.mvc.form.operational.IndexForm;
 import com.sda.carrental.web.mvc.form.operational.LocalReservationForm;
-import com.sda.carrental.web.mvc.form.operational.SelectCarForm;
+import com.sda.carrental.web.mvc.form.operational.ReservationForm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -31,7 +30,6 @@ import javax.validation.Valid;
 public class LocalReservationController {
     private final CustomerService customerService;
     private final DepartmentService departmentService;
-    private final ReservationService reservationService;
 
     private final String MSG_KEY = "message";
     private final String MSG_ACCESS_REJECTED = "Failure: Access rejected";
@@ -40,13 +38,13 @@ public class LocalReservationController {
 
     //Pages
     @RequestMapping(method = RequestMethod.GET)
-    public String localReservationPage(final ModelMap map, @ModelAttribute("reservationDetails") SelectCarForm form, RedirectAttributes redAtt) {
+    public String localReservationPage(final ModelMap map, @ModelAttribute("reservationDetails") ReservationForm form, RedirectAttributes redAtt) {
         try {
             CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+            //Html input values should exist - also assumed they are validated after previous step (variant for employee due to flexibility and trustworthiness)
             if (form.getIndexData() == null) throw new IllegalActionException();
-            IndexForm index = form.getIndexData();
-            if (!reservationService.isChronologyValid(index.getDateFrom(), index.getDateTo(), index.getDateCreated()))
-                throw new ResourceNotFoundException();
+
             if (departmentService.departmentAccess(cud, form.getIndexData().getDepartmentIdFrom()).equals(HttpStatus.FORBIDDEN)) {
                 redAtt.addFlashAttribute(MSG_KEY, MSG_ACCESS_REJECTED);
                 return "redirect:/";
@@ -78,7 +76,7 @@ public class LocalReservationController {
             }
 
             ObjectMapper objectMapper = new CustomObjectMapper();
-            SelectCarForm reservation = objectMapper.readValue(reservationData, SelectCarForm.class);
+            ReservationForm reservation = objectMapper.readValue(reservationData, ReservationForm.class);
             form.setReservationForm(reservation);
 
             CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -100,9 +98,9 @@ public class LocalReservationController {
             }
 
             Customer customer = customerService.findCustomerByVerification(Country.valueOf(form.getCountry()), form.getPersonalId());
-            redAtt.addFlashAttribute("department", reservation.getIndexData().getDepartmentIdFrom());
+            redAtt.addAttribute("department", reservation.getIndexData().getDepartmentIdFrom());
             redAtt.addAttribute("customer", customer.getId());
-            return "redirect:/mg-res/{customer}";
+            return "redirect:/mg-res/{department}-{customer}";
         } catch (JsonProcessingException | RuntimeException err) {
             redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
             return "redirect:/";
@@ -114,7 +112,7 @@ public class LocalReservationController {
         ObjectMapper objectMapper = new CustomObjectMapper();
 
         try {
-            redAtt.addFlashAttribute("showData", objectMapper.readValue(formData, SelectCarForm.class));
+            redAtt.addFlashAttribute("showData", objectMapper.readValue(formData, ReservationForm.class));
         } catch (JsonProcessingException err) {
             redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
             return "redirect:/";

@@ -14,7 +14,12 @@ import lombok.ToString;
 public class SelectCarBaseFilterForm extends GenericCarForm {
     private IndexForm indexData;
 
-    public SelectCarBaseFilterForm(IndexForm indexData) {
+    public SelectCarBaseFilterForm(GenericCarForm form, IndexForm indexData) {
         this.indexData = indexData;
+        this.setPriceMin(form.getPriceMin());
+        this.setPriceMax(form.getPriceMax());
+        this.setBrands(form.getBrands());
+        this.setTypes(form.getTypes());
+        this.setSeats(form.getSeats());
     }
 }

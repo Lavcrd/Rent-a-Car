@@ -11,7 +11,7 @@ import com.sda.carrental.model.users.Customer;
 import com.sda.carrental.repository.ReservationRepository;
 import com.sda.carrental.web.mvc.form.operational.IndexForm;
 import com.sda.carrental.web.mvc.form.users.SearchCustomersForm;
-import com.sda.carrental.web.mvc.form.operational.SelectCarForm;
+import com.sda.carrental.web.mvc.form.operational.ReservationForm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,16 +36,12 @@ public class ReservationService {
         return repository.findById(id).orElseThrow(ResourceNotFoundException::new);
     }
 
-    public boolean isChronologyValid(LocalDate dateFrom, LocalDate dateTo, LocalDate dateCreated) {
-        return !dateFrom.isAfter(dateTo) && dateCreated.isEqual(LocalDate.now());
-    }
-
     @Transactional
-    public HttpStatus createReservation(Customer customer, SelectCarForm form) {
+    public HttpStatus createReservation(Customer customer, ReservationForm form) {
         try {
             IndexForm index = form.getIndexData();
 
-            if (!isChronologyValid(index.getDateFrom(), index.getDateTo(), index.getDateCreated())) throw new ResourceNotFoundException();
+            if (index.getDateFrom().isAfter(index.getDateTo())) throw new ResourceNotFoundException();
             CarBase carBase = carBaseService.findById(form.getCarBaseId());
             Department depRepFrom = departmentService.findDepartmentWhereId(index.getDepartmentIdFrom());
             Department depRepTo = departmentService.findDepartmentWhereId(index.getDepartmentIdTo());
@@ -53,7 +50,7 @@ public class ReservationService {
                     customer, carBase,
                     depRepFrom, depRepTo,
                     index.getDateFrom(), index.getDateTo(),
-                    index.getDateCreated());
+                    LocalDate.now());
 
             //payment method here linked with methods below this comment vvv + differ it for customer/employee process
             reservation.setStatus(Reservation.ReservationStatus.STATUS_RESERVED);
@@ -235,6 +232,34 @@ public class ReservationService {
             return true;
         } catch (RuntimeException err) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            return false;
+        }
+    }
+
+    public boolean isValidRequest(IndexForm indexForm, Long carBaseId, LocalDateTime requestTime1, LocalDateTime requestTime2) {
+        try {
+            //If request calls for different department, dptFrom should not be equal to dptTo - nor the reverse way should be allowed
+            if (indexForm.isDifferentDepartment() == indexForm.getDepartmentIdFrom().equals(indexForm.getDepartmentIdTo())) return false;
+
+            //Request data should be correct chronologically
+            if (!requestTime2.isAfter(requestTime1) || indexForm.getDateFrom().isAfter(indexForm.getDateTo())) return false;
+
+            //Request was done within 1 hour - to prevent refreshing || processing after long time - to be checked if redundant
+            if (!LocalDateTime.now().isBefore(requestTime2.plusHours(1))) return false;
+
+            //Checks if exists with exceptions from respective services
+            CarBase carBase = carBaseService.findById(carBaseId);
+            Department departmentFrom = departmentService.findDepartmentWhereId(indexForm.getDepartmentIdFrom());
+            departmentService.findDepartmentWhereId(indexForm.getDepartmentIdTo());
+
+            //Checks if Car Base is available within provided request assuming overbooking is not allowed
+            List<CarBase> carBaseList = carBaseService.findAvailableCarBasesInCountry(
+                    indexForm.getDateFrom(),
+                    indexForm.getDateTo(),
+                    departmentFrom.getCountry());
+
+            return carBaseList.contains(carBase);
+        } catch (RuntimeException err) {
             return false;
         }
     }

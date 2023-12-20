@@ -20,13 +20,7 @@
     <div class="row">
         <div class="col-sm-3">
             <form th:object="${carFilterForm}" th:action="@{/cars/filter}" th:method="POST">
-
-                <input type="hidden" th:field="*{indexData.departmentIdFrom}">
-                <input type="hidden" th:field="*{indexData.departmentIdTo}">
-                <input type="hidden" th:field="*{indexData.firstBranchChecked}">
-                <input type="hidden" th:field="*{indexData.dateFrom}">
-                <input type="hidden" th:field="*{indexData.dateTo}">
-                <input type="hidden" th:field="*{indexData.dateCreated}">
+                <input type="hidden" th:value="${s1_time}" name="s1_time">
 
                 <button class="btn btn-dark bg-dark w-100 def-button-text"
                         style="text-align: center"
@@ -118,18 +112,12 @@
                         </div>
                     </div>
                 </div>
-                <div th:insert="fragments/bottom::form-error-handler"></div>
             </form>
         </div>
 
         <div class="col-sm-9 scroll-140">
-            <form th:action="@{/cars/proceed}" th:object="${selectCarForm}" th:method="POST">
-                <input type="hidden" th:field="*{indexData.departmentIdFrom}">
-                <input type="hidden" th:field="*{indexData.departmentIdTo}">
-                <input type="hidden" th:field="*{indexData.firstBranchChecked}">
-                <input type="hidden" th:field="*{indexData.dateFrom}">
-                <input type="hidden" th:field="*{indexData.dateTo}">
-                <input type="hidden" th:field="*{indexData.dateCreated}">
+            <form th:action="@{/cars/proceed}" th:method="POST">
+                <input type="hidden" th:value="${s1_time}" name="s1_time">
 
                 <div th:each="carBase : ${carBases}" id="car-list">
                     <div class="row">
@@ -170,7 +158,6 @@
                         </div>
                     </div>
                 </div>
-                <div th:insert="fragments/bottom::form-error-handler"></div>
             </form>
         </div>
     </div>

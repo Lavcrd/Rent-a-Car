@@ -9,7 +9,7 @@ import com.sda.carrental.model.users.User;
 import com.sda.carrental.service.*;
 import com.sda.carrental.service.auth.CustomUserDetails;
 import com.sda.carrental.web.mvc.form.operational.IndexForm;
-import com.sda.carrental.web.mvc.form.operational.SelectCarForm;
+import com.sda.carrental.web.mvc.form.operational.ReservationForm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -19,9 +19,13 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.servlet.http.HttpSession;
+import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.Objects;
 
 @Controller
 @RequiredArgsConstructor
@@ -35,23 +39,30 @@ public class ReservationController {
     private final ConstantValues cv;
 
     private final String MSG_KEY = "message";
+    private final String MSG_SESSION_EXPIRED = "This request session expired";
     private final String MSG_GENERIC_EXCEPTION = "An unexpected error occurred. Please try again later or contact customer service.";
 
     //Pages
     @RequestMapping(method = RequestMethod.GET)
-    public String reservationRecapPage(final ModelMap map, @ModelAttribute("showData") SelectCarForm reservationData, RedirectAttributes redAtt) {
+    public String reservationRecapPage(final ModelMap map, HttpSession httpSession, RedirectAttributes redAtt) {
         try {
-            if (reservationData == null) throw new IllegalActionException();
-            if (reservationData.getIndexData() == null) throw new IllegalActionException();
-            IndexForm index = reservationData.getIndexData();
-            if (!reservationService.isChronologyValid(index.getDateFrom(), index.getDateTo(), index.getDateCreated())) throw new ResourceNotFoundException();
+            IndexForm indexForm = (IndexForm) httpSession.getAttribute("process_indexForm");
+            Long carBaseId = (Long) httpSession.getAttribute("process_carBaseId");
+            LocalDateTime dateTime1 = (LocalDateTime) httpSession.getAttribute("process_step1_time");
+            LocalDateTime dateTime2 = (LocalDateTime) httpSession.getAttribute("process_step2_time");
+            Object htmlTime1 = map.get("s1_time");
+            LocalDateTime htmlTime2 = (LocalDateTime) map.getOrDefault("s2_time", dateTime2);
+            if (indexForm == null || htmlTime1 == null || !dateTime1.isEqual(LocalDateTime.parse(htmlTime1.toString())) || !dateTime2.isEqual(htmlTime2) || !dateTime2.isAfter(dateTime1)) throw new IllegalActionException();
+            map.addAttribute("s1_time", htmlTime1.toString());
+            map.addAttribute("s2_time", dateTime2);
+            if (!reservationService.isValidRequest(indexForm, carBaseId, dateTime1, dateTime2)) throw new ResourceNotFoundException();
 
-            CarBase carBase = carBaseService.findById(reservationData.getCarBaseId());
-            Department depFrom = depService.findDepartmentWhereId(reservationData.getIndexData().getDepartmentIdFrom());
-            Department depTo = depService.findDepartmentWhereId(reservationData.getIndexData().getDepartmentIdTo());
-            long days = reservationData.getIndexData().getDateFrom().until(reservationData.getIndexData().getDateTo(), ChronoUnit.DAYS) + 1;
+            CarBase carBase = carBaseService.findById(carBaseId);
+            Department depFrom = depService.findDepartmentWhereId(indexForm.getDepartmentIdFrom());
+            Department depTo = depService.findDepartmentWhereId(indexForm.getDepartmentIdTo());
+            long days = indexForm.getDateFrom().until(indexForm.getDateTo(), ChronoUnit.DAYS) + 1;
 
-            if (reservationData.getIndexData().isFirstBranchChecked()) {
+            if (indexForm.isDifferentDepartment()) {
                 map.addAttribute("diff_return_price", cv.getDeptReturnPriceDiff());
                 map.addAttribute("total_price", cv.getDeptReturnPriceDiff() + (days * carBase.getPriceDay()));
             } else {
@@ -59,10 +70,10 @@ public class ReservationController {
                 map.addAttribute("total_price", days * carBase.getPriceDay());
             }
 
-            map.addAttribute("days", (reservationData.getIndexData().getDateFrom().until(reservationData.getIndexData().getDateTo(), ChronoUnit.DAYS) + 1));
+            map.addAttribute("days", (indexForm.getDateFrom().until(indexForm.getDateTo(), ChronoUnit.DAYS) + 1));
             map.addAttribute("branchFrom", depFrom);
             map.addAttribute("branchTo", depTo);
-            map.addAttribute("reservationData", reservationData);
+            map.addAttribute("reservationData", new ReservationForm(carBaseId, indexForm));
             map.addAttribute("carBase", carBase);
             map.addAttribute("raw_price", days * carBase.getPriceDay());
             map.addAttribute("fee_percentage", cv.getCancellationFeePercentage() * 100);
@@ -70,37 +81,93 @@ public class ReservationController {
             map.addAttribute("deposit_deadline", cv.getRefundDepositDeadlineDays());
 
             return "common/reservationRecap";
+        } catch (IllegalActionException err) {
+            redAtt.addFlashAttribute(MSG_KEY, MSG_SESSION_EXPIRED);
+            clearSessionValues(httpSession);
+            return "redirect:/";
         } catch (RuntimeException err) {
             redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
+            clearSessionValues(httpSession);
             return "redirect:/";
         }
     }
 
     //Reservation summary buttons
     @RequestMapping(value = "/confirm", method = RequestMethod.POST)
-    public String reservationConfirmationButton(@ModelAttribute("reservationData") SelectCarForm form, RedirectAttributes redAtt) {
-        CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    public String reservationConfirmationButton(@ModelAttribute("reservationData") ReservationForm htmlForm, @RequestParam("s1_time") String htmlTime1Raw, @RequestParam("s2_time") String htmlTime2Raw, HttpSession httpSession, RedirectAttributes redAtt) {
+        try {
+            CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        HttpStatus status;
-        if (cud.getAuthorities().contains(new SimpleGrantedAuthority(User.Roles.ROLE_CUSTOMER.name()))) {
-            status = customerService.appendReservationToCustomer(cud.getId(), form);
-        } else {
-            redAtt.addFlashAttribute("reservationDetails", form);
-            return "redirect:/loc-res";
-        }
+            //HttpSession should exist
+            IndexForm indexForm = (IndexForm) httpSession.getAttribute("process_indexForm");
+            Long carBaseId = (Long) httpSession.getAttribute("process_carBaseId");
+            LocalDateTime dateTime1 = (LocalDateTime) httpSession.getAttribute("process_step1_time");
+            LocalDateTime dateTime2 = (LocalDateTime) httpSession.getAttribute("process_step2_time");
+            LocalDateTime htmlTime1 = LocalDateTime.parse(htmlTime1Raw);
+            LocalDateTime htmlTime2 = LocalDateTime.parse(htmlTime2Raw);
+            if (indexForm == null ||  !dateTime1.isEqual(htmlTime1) || !dateTime2.isEqual(htmlTime2) || !dateTime2.isAfter(dateTime1)) throw new IllegalActionException();
 
-        if (status.equals(HttpStatus.CREATED)) {
-            redAtt.addFlashAttribute(MSG_KEY, "Reservation has been successfully registered!");
-            return "redirect:/reservations";
-        } else {
+            if (!reservationService.isValidRequest(indexForm, carBaseId, dateTime1, dateTime2)) throw new ResourceNotFoundException();
+
+            //Html variables should exist and HttpSession should be equal during this step
+            if (!isIdentical(htmlForm, indexForm, carBaseId)) throw new IllegalActionException();
+
+
+            HttpStatus status;
+            ReservationForm form = new ReservationForm(carBaseId, indexForm);
+            clearSessionValues(httpSession);
+
+            if (cud.getAuthorities().contains(new SimpleGrantedAuthority(User.Roles.ROLE_CUSTOMER.name()))) {
+                status = customerService.appendReservationToCustomer(cud.getId(), form);
+            } else {
+                redAtt.addFlashAttribute("reservationDetails", form);
+                return "redirect:/loc-res";
+            }
+
+            if (status.equals(HttpStatus.CREATED)) {
+                redAtt.addFlashAttribute(MSG_KEY, "Reservation has been successfully registered!");
+                return "redirect:/reservations";
+            } else {
+                redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
+                return "redirect:/";
+            }
+        } catch (IllegalActionException err) {
+            redAtt.addFlashAttribute(MSG_KEY, MSG_SESSION_EXPIRED);
+            clearSessionValues(httpSession);
+            return "redirect:/";
+        } catch (RuntimeException err) {
             redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
+            clearSessionValues(httpSession);
             return "redirect:/";
         }
     }
 
     @RequestMapping(value = "/back", method = RequestMethod.POST)
-    public String reservationBackButton(@ModelAttribute("reservationData") SelectCarForm form, RedirectAttributes redAtt) {
-        redAtt.addFlashAttribute("indexData", form.getIndexData());
+    public String reservationBackButton(HttpSession httpSession, @RequestParam("s1_time") String htmlTime1, RedirectAttributes redAtt) {
+        httpSession.removeAttribute("process_step2_time");
+        httpSession.removeAttribute("process_carBaseId");
+        redAtt.addFlashAttribute("s1_time", LocalDateTime.parse(htmlTime1));
         return "redirect:/cars";
+    }
+
+    private void clearSessionValues(HttpSession httpSession) {
+        httpSession.removeAttribute("process_indexForm");
+        httpSession.removeAttribute("process_carBaseId");
+        httpSession.removeAttribute("process_step1_time");
+        httpSession.removeAttribute("process_step2_time");
+    }
+
+    private boolean isIdentical(ReservationForm htmlForm, IndexForm sessionIndex, Long sessionCarBaseId) {
+        // Checks if nulls
+        if (htmlForm.getIndexData() == null || sessionIndex == null || htmlForm.getCarBaseId() == null || sessionCarBaseId == null) {
+            return false;
+        }
+
+        // Compare index values
+        return Objects.equals(htmlForm.getIndexData().getDateFrom(), sessionIndex.getDateFrom())
+                && Objects.equals(htmlForm.getIndexData().getDateTo(), sessionIndex.getDateTo())
+                && Objects.equals(htmlForm.getIndexData().getDepartmentIdFrom(), sessionIndex.getDepartmentIdFrom())
+                && Objects.equals(htmlForm.getIndexData().getDepartmentIdTo(), sessionIndex.getDepartmentIdTo())
+                && htmlForm.getIndexData().isDifferentDepartment() == sessionIndex.isDifferentDepartment();
     }
 }
