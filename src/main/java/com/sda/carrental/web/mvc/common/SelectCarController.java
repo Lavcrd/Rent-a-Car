@@ -30,7 +30,7 @@ public class SelectCarController {
     private final DepartmentService departmentService;
 
     private final String MSG_KEY = "message";
-    private final String MSG_SESSION_EXPIRED = "This request session expired";
+    private final String MSG_SESSION_EXPIRED = "The session request might be invalid or could have expired";
     private final String MSG_GENERIC_EXCEPTION = "An unexpected error occurred. Please try again later or contact customer service.";
 
     //Pages

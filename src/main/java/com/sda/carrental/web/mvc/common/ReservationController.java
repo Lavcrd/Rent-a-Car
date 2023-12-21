@@ -39,7 +39,7 @@ public class ReservationController {
     private final ConstantValues cv;
 
     private final String MSG_KEY = "message";
-    private final String MSG_SESSION_EXPIRED = "This request session expired";
+    private final String MSG_SESSION_EXPIRED = "The session request might be invalid or could have expired";
     private final String MSG_GENERIC_EXCEPTION = "An unexpected error occurred. Please try again later or contact customer service.";
 
     //Pages
@@ -50,12 +50,14 @@ public class ReservationController {
             Long carBaseId = (Long) httpSession.getAttribute("process_carBaseId");
             LocalDateTime dateTime1 = (LocalDateTime) httpSession.getAttribute("process_step1_time");
             LocalDateTime dateTime2 = (LocalDateTime) httpSession.getAttribute("process_step2_time");
-            Object htmlTime1 = map.get("s1_time");
+            LocalDateTime htmlTime1 = LocalDateTime.parse(map.get("s1_time").toString());
             LocalDateTime htmlTime2 = (LocalDateTime) map.getOrDefault("s2_time", dateTime2);
-            if (indexForm == null || htmlTime1 == null || !dateTime1.isEqual(LocalDateTime.parse(htmlTime1.toString())) || !dateTime2.isEqual(htmlTime2) || !dateTime2.isAfter(dateTime1)) throw new IllegalActionException();
-            map.addAttribute("s1_time", htmlTime1.toString());
-            map.addAttribute("s2_time", dateTime2);
+            if (indexForm == null || !dateTime1.isEqual(htmlTime1) || !dateTime2.isEqual(htmlTime2) || !dateTime2.isAfter(dateTime1)) throw new IllegalActionException();
+
             if (!reservationService.isValidRequest(indexForm, carBaseId, dateTime1, dateTime2)) throw new ResourceNotFoundException();
+
+            map.addAttribute("s1_time", htmlTime1);
+            map.addAttribute("s2_time", dateTime2);
 
             CarBase carBase = carBaseService.findById(carBaseId);
             Department depFrom = depService.findDepartmentWhereId(indexForm.getDepartmentIdFrom());
@@ -109,18 +111,21 @@ public class ReservationController {
 
             if (!reservationService.isValidRequest(indexForm, carBaseId, dateTime1, dateTime2)) throw new ResourceNotFoundException();
 
-            //Html variables should exist and HttpSession should be equal during this step
+            //Html variables should exist and HttpSession should be equal during this step - role of html variables are to be valid at the final step of reservation from customer pov
             if (!isIdentical(htmlForm, indexForm, carBaseId)) throw new IllegalActionException();
 
 
             HttpStatus status;
             ReservationForm form = new ReservationForm(carBaseId, indexForm);
-            clearSessionValues(httpSession);
 
             if (cud.getAuthorities().contains(new SimpleGrantedAuthority(User.Roles.ROLE_CUSTOMER.name()))) {
                 status = customerService.appendReservationToCustomer(cud.getId(), form);
+                clearSessionValues(httpSession);
             } else {
                 redAtt.addFlashAttribute("reservationDetails", form);
+                redAtt.addFlashAttribute("s1_time", htmlTime1);
+                redAtt.addFlashAttribute("s2_time", htmlTime2);
+
                 return "redirect:/loc-res";
             }
 
@@ -158,7 +163,7 @@ public class ReservationController {
     }
 
     private boolean isIdentical(ReservationForm htmlForm, IndexForm sessionIndex, Long sessionCarBaseId) {
-        // Checks if nulls
+        // Checks if required values are null
         if (htmlForm.getIndexData() == null || sessionIndex == null || htmlForm.getCarBaseId() == null || sessionCarBaseId == null) {
             return false;
         }

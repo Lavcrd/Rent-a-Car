@@ -52,7 +52,9 @@ public class ReservationService {
                     index.getDateFrom(), index.getDateTo(),
                     LocalDate.now());
 
-            //payment method here linked with methods below this comment vvv + differ it for customer/employee process
+            //Assume employee has to register transaction to another employee responsible for finances
+            //Assume customer pays at reservation process - until that moment status should be ReservationStatus.STATUS_PENDING by default
+            //Payment method here linked with methods below this comment vvv
             reservation.setStatus(Reservation.ReservationStatus.STATUS_RESERVED);
             repository.save(reservation);
             // ^^^
@@ -244,8 +246,8 @@ public class ReservationService {
             //Request data should be correct chronologically
             if (!requestTime2.isAfter(requestTime1) || indexForm.getDateFrom().isAfter(indexForm.getDateTo())) return false;
 
-            //Request was done within 1 hour - to prevent refreshing || processing after long time - to be checked if redundant
-            if (!LocalDateTime.now().isBefore(requestTime2.plusHours(1))) return false;
+            //Request was done within 1 hour - to prevent refreshing || processing after long time - session in config lasts 60m without activity - might be reconsidered
+            if (!LocalDateTime.now().isBefore(requestTime2.plusHours(1).plusMinutes(30))) return false;
 
             //Checks if exists with exceptions from respective services
             CarBase carBase = carBaseService.findById(carBaseId);
