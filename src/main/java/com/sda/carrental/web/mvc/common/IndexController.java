@@ -9,11 +9,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Controller
 @RequiredArgsConstructor
@@ -33,20 +34,19 @@ public class IndexController {
 
     //Index buttons
     @RequestMapping(method = RequestMethod.POST)
-    public String handleRequest(@ModelAttribute("indexForm") @Valid IndexForm form, Errors errors, RedirectAttributes redirectAttributes, ModelMap map) {
+    public String indexReservationProcessButton(@ModelAttribute("indexForm") @Valid IndexForm form, Errors errors, HttpSession httpSession, ModelMap map) {
         if (errors.hasErrors()) {
-            if (form.isFirstBranchChecked()) form.setFirstBranchChecked(false);
             map.addAttribute("departments", departmentService.findAll());
             return "common/index";
         }
 
-        if (!form.isFirstBranchChecked()) form.setDepartmentIdTo(form.getDepartmentIdFrom());
-        if (form.isFirstBranchChecked()) {
-            if (form.getDepartmentIdFrom().equals(form.getDepartmentIdTo())) form.setFirstBranchChecked(false);
+        if (!form.isDifferentDepartment()) form.setDepartmentIdTo(form.getDepartmentIdFrom());
+        if (form.isDifferentDepartment()) {
+            if (form.getDepartmentIdFrom().equals(form.getDepartmentIdTo())) form.setDifferentDepartment(false);
         }
-        form.setDateCreated(LocalDate.now());
 
-        redirectAttributes.addFlashAttribute("indexData", form);
+        httpSession.setAttribute("process_indexForm", form);
+        httpSession.setAttribute("process_step1_time", LocalDateTime.now());
         return "redirect:/cars";
     }
 }

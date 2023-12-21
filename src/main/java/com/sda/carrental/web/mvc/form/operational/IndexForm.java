@@ -22,7 +22,7 @@ public class IndexForm {
     @NotNull(message = "No arrival location selected")
     private Long departmentIdTo;
 
-    private boolean firstBranchChecked;
+    private boolean differentDepartment;
 
     @FutureOrPresent(message = "Rental date is out of date")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
@@ -32,10 +32,9 @@ public class IndexForm {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate dateTo;
 
-    private LocalDate dateCreated;
-
     public IndexForm(LocalDate dateFrom, LocalDate dateTo) {
         this.dateFrom = dateFrom;
         this.dateTo = dateTo;
+        this.differentDepartment = false;
     }
 }

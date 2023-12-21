@@ -17,6 +17,8 @@
     <div th:include="fragments/top::reg-options"></div>
 
         <form class="change_action_form" style="width: 70%; margin: auto; margin-top: 5%;" th:object="${localReservation}" th:action="@{submit}" method="post">
+            <input type="hidden" th:value="${s1_time}" name="s1_time">
+            <input type="hidden" th:value="${s2_time}" name="s2_time">
             <input type="hidden" th:name="reservationData" th:value="${reservationData}"/>
 
             <div style="grid-column: 2; display: grid; place-items: center;">

@@ -31,5 +31,5 @@ public class LocalReservationForm {
     @Pattern(regexp = "\\S{4,16}", message = "Driver ID must be in range of 4 to 16 characters")
     private String driverId;
 
-    private SelectCarForm reservationForm;
+    private ReservationForm reservationForm;
 }

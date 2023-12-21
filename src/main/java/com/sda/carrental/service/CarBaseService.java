@@ -32,6 +32,7 @@ public class CarBaseService {
     }
 
     public List<CarBase> findAvailableCarBasesInCountry(LocalDate dateFrom, LocalDate dateTo, Country country) {
+        //Currently queries list of cars for customer to receive - assuming overbooking is not allowed
         return repository.findAvailableCarBasesInCountry(dateFrom.minusDays(cv.getReservationGap()), dateTo.plusDays(cv.getReservationGap()), country);
     }
 

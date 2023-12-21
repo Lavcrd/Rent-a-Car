@@ -28,7 +28,6 @@ public class CredentialsService {
             String storedPassword = repository.getPasswordById(cud.getId()).orElseThrow(() -> new ResourceNotFoundException("Credentials", "ID", cud.getId()));
             return encoder.matches(inputPassword, storedPassword);
         } catch (ResourceNotFoundException err) {
-            err.printStackTrace();
             return false;
         }
     }

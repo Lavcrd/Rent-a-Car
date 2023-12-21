@@ -35,16 +35,16 @@
                 </select><br>
 
                 <div class="form-check form-switch">
-                    <input class="form-check-input btn btn-dark bg-white index-switch" type="checkbox" role="switch" name="firstBranchChecked"
+                    <input class="form-check-input btn btn-dark bg-white index-switch" type="checkbox" role="switch" name="differentDepartment"
                            data-bs-toggle="collapse"
                            data-bs-target="#checkReturn"
                            id="checkSwitch"
-                           th:checked="*{firstBranchChecked}"
+                           th:checked="*{differentDepartment}"
                     />
                     <label for="checkSwitch">Different location return</label><br>
                 </div>
 
-                <div class="collapse" id="checkReturn">
+                <div th:class="*{differentDepartment} ? 'collapse show' : 'collapse'" id="checkReturn">
                     <div class="card card-body">
 
                         <label for="dpt2" class="text-lg">Return location</label>
