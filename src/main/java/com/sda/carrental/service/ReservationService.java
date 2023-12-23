@@ -190,7 +190,7 @@ public class ReservationService {
     public List<Reservation> findDeparturesByDetails(SearchCustomersForm reservationsData, Reservation.ReservationStatus status) {
         return repository.findDeparturesByDetails(
                 reservationsData.getCustomerName(), reservationsData.getCustomerSurname(),
-                reservationsData.getDepartmentTake(), reservationsData.getDepartmentBack(),
+                reservationsData.getPrimaryDepartment(), reservationsData.getSecondaryDepartment(),
                 reservationsData.getDateFrom(), reservationsData.getDateTo(),
                 status);
     }
@@ -198,7 +198,7 @@ public class ReservationService {
     public List<Reservation> findArrivalsByDetails(SearchCustomersForm reservationsData, Reservation.ReservationStatus status) {
         return repository.findArrivalsByDetails(
                 reservationsData.getCustomerName(), reservationsData.getCustomerSurname(),
-                reservationsData.getDepartmentTake(), reservationsData.getDepartmentBack(),
+                reservationsData.getPrimaryDepartment(), reservationsData.getSecondaryDepartment(),
                 reservationsData.getDateFrom(), reservationsData.getDateTo(),
                 status);
     }

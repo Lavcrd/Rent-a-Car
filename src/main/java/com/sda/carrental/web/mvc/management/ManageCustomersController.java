@@ -49,12 +49,9 @@ public class ManageCustomersController {
             map.addAttribute("departments", employeeDepartments);
             map.addAttribute("departmentsCountry", departmentService.findAllWhereCountry(employeeDepartments.get(0).getCountry()));
             map.addAttribute("reservationStatuses", Reservation.ReservationStatus.values());
+            map.addAttribute("searchCustomersForm", map.getOrDefault("searchCustomersForm", new SearchCustomersForm()));
+            map.addAttribute("isArrival", map.getOrDefault("isArrival", false));
 
-            if (!map.containsKey("searchCustomersForm")) {
-                map.addAttribute("searchCustomersForm", map.getOrDefault("searchCustomersForm", new SearchCustomersForm())
-                        );
-                map.addAttribute("isArrival", false);
-            }
             return "management/searchCustomers";
         } catch (RuntimeException err) {
             redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
@@ -135,7 +132,7 @@ public class ManageCustomersController {
             redAtt.addFlashAttribute("isArrival", false);
 
             CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            if (departmentService.departmentAccess(cud, form.getDepartmentTake()).equals(HttpStatus.FORBIDDEN)) {
+            if (departmentService.departmentAccess(cud, form.getPrimaryDepartment()).equals(HttpStatus.FORBIDDEN)) {
                 redAtt.addFlashAttribute(MSG_KEY, MSG_ACCESS_REJECTED);
                 return "redirect:/mg-cus";
             }
@@ -160,7 +157,7 @@ public class ManageCustomersController {
             redAtt.addFlashAttribute("isArrival", true);
 
             CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            if (departmentService.departmentAccess(cud, form.getDepartmentBack()).equals(HttpStatus.FORBIDDEN)) {
+            if (departmentService.departmentAccess(cud, form.getPrimaryDepartment()).equals(HttpStatus.FORBIDDEN)) {
                 redAtt.addFlashAttribute(MSG_KEY, MSG_ACCESS_REJECTED);
                 return "redirect:/mg-cus";
             }

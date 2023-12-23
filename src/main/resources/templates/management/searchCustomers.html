@@ -26,21 +26,21 @@
                 <div class="row"
                      style="width: 100%; flex-shrink: 1; display:inline-flex; flex-wrap: nowrap; padding-right: 0;">
                     <div class="col-sm-3 c-input" style="width: fit-content;">
-                        <select type="text" th:field="*{departmentTake}" class="form-control">
+                        <select type="text" th:field="*{primaryDepartment}" class="form-control">
                             <div th:each="department:${departments}">
-                                <option th:text="${department.getCity()} + ', ' + ${department.getAddress()}"
-                                        th:value="${department.getId()}"></option>
+                                <option th:text="${department.city} + ', ' + ${department.address}"
+                                        th:value="${department.id}"></option>
                             </div>
                         </select>
                     </div>
                     <div class="between-fields" th:text="'⟶'" style="width: fit-content;"></div>
 
                     <div class="col-sm-3 c-input" style="width: fit-content;">
-                        <select type="text" th:field="*{departmentBack}" class="form-control">
+                        <select type="text" th:field="*{secondaryDepartment}" class="form-control">
                             <option th:value="null" th:text="Any"></option>
-                            <div th:each="departmentBack:${departmentsCountry}">
-                                <option th:text="${departmentBack.getCity()} + ', ' + ${departmentBack.getAddress()}"
-                                        th:value="${departmentBack.getId()}"></option>
+                            <div th:each="department:${departmentsCountry}">
+                                <option th:text="${department.city} + ', ' + ${department.address}"
+                                        th:value="${department.id}"></option>
                             </div>
                         </select>
                     </div>
@@ -106,20 +106,20 @@
                 <div class="row"
                      style="width: 100%; flex-shrink: 1; display:inline-flex; flex-wrap: nowrap; padding-right: 0;">
                     <div class="col-sm-3 c-input" style="width: fit-content;">
-                        <select type="text" th:field="*{departmentTake}" class="form-control">
+                        <select type="text" th:field="*{secondaryDepartment}" class="form-control">
                             <option th:value="null" th:text="Any"></option>
-                            <div th:each="departmentTake:${departmentsCountry}">
-                                <option th:text="${departmentTake.getCity()} + ', ' + ${departmentTake.getAddress()}"
-                                        th:value="${departmentTake.getId()}"></option>
+                            <div th:each="department:${departmentsCountry}">
+                                <option th:value="${department.id}"
+                                        th:text="${department.city} + ', ' + ${department.address}"></option>
                             </div>
                         </select>
                     </div>
                     <div class="between-fields" th:text="'⟶'" style="width: fit-content;"></div>
                     <div class="col-sm-3 c-input" style="width: fit-content;">
-                        <select type="text" th:field="*{departmentBack}" class="form-control">
-                            <div th:each="departmentBack:${departments}">
-                                <option th:text="${departmentBack.getCity()} + ', ' + ${departmentBack.getAddress()}"
-                                        th:value="${departmentBack.getId()}"></option>
+                        <select type="text" th:field="*{primaryDepartment}" class="form-control">
+                            <div th:each="department:${departments}">
+                                <option th:value="${department.id}"
+                                        th:text="${department.city} + ', ' + ${department.address}"></option>
                             </div>
                         </select>
                     </div>
@@ -192,10 +192,8 @@
                 </tr>
                 </thead>
                 <form th:action="@{/mg-cus/select}" th:method="POST">
-                    <input type="hidden" th:if="${(searchCustomersForm.departmentTake != null) && (isArrival == false)}" th:name="department"
-                           th:value="${searchCustomersForm.getDepartmentTake()}">
-                    <input type="hidden" th:if="${(searchCustomersForm.departmentBack != null) && (isArrival == true)}" th:name="department"
-                           th:value="${searchCustomersForm.getDepartmentBack()}">
+                    <input type="hidden" th:if="${(searchCustomersForm.primaryDepartment != null)}" th:name="department"
+                           th:value="${searchCustomersForm.primaryDepartment}">
                     <tbody>
                     <th:block th:if="${#maps.isEmpty(results)}">
                         <td th:text="'—'"></td>
