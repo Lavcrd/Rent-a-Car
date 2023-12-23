@@ -64,7 +64,7 @@ public class DepartmentService {
         return new LinkedList<>();
     }
 
-    public HttpStatus departmentAccess(CustomUserDetails cud, Long departmentId) {
+    public HttpStatus departmentAccess(CustomUserDetails cud, Long departmentId) throws ResourceNotFoundException {
         Department department = findDepartmentWhereId(departmentId);
         if (getDepartmentsByUserContext(cud).contains(department)) {
             return HttpStatus.ACCEPTED;

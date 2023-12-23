@@ -13,13 +13,13 @@ import java.time.LocalDate;
 @Setter
 @CorrectChronology(message = "Failure: Invalid date chronology")
 public class SearchCustomersForm {
-    private Long departmentTake;
+    private Long primaryDepartment;
+
+    private Long secondaryDepartment;
 
     private String customerName;
 
     private String customerSurname;
-
-    private Long departmentBack;
 
     @NotNull(message = "Failure: Field 'date from' cannot be empty")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
