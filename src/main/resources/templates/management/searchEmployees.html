@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="Content-Type" content="text/html"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    <title>Rent-a-Car</title>
+
+    <link rel="stylesheet" type="text/css" href="/css/styles.css"/>
+    <link rel="stylesheet" href="/webjars/bootstrap/5.2.3/css/bootstrap.min.css">
+</head>
+
+<body>
+<div id="container">
+
+    <div th:include="fragments/top::top-menu"></div>
+    <div th:include="fragments/top::reg-options"></div>
+
+    <div class="row">
+        <form th:action="@{/mg-emp/search}" th:object="${searchEmployeeForm}" th:method="POST"
+              class="form-inline">
+
+            <div class="row mb-2" style="margin-top: 5%">
+
+                <div class="row" style="margin-top: 1%; flex-wrap: nowrap; padding-right: 0;">
+                    <div class="between-fields" style="justify-content: flex-end;" th:text="'Department:'"></div>
+                    <div class="col-sm-6 c-input" style="width: fit-content;">
+                        <select type="text" th:field="*{department}" class="form-control">
+                            <option th:value="null" th:text="Any"></option>
+                            <div th:each="department:${departments}">
+                                <option th:text="${department.country.getCode()} + ' — ' + ${department.city} + ', ' + ${department.address}"
+                                        th:value="${department.getId()}"></option>
+                            </div>
+                        </select>
+                    </div>
+
+                    <div class="between-fields" style="justify-content: flex-end;" th:text="'Role:'"></div>
+                    <div class="col-sm-3 c-input" style="width: fit-content;">
+                        <select type="text" th:field="*{roles}" class="form-control">
+                            <option th:value="null" th:text="Any"></option>
+                            <div th:each="role:${roles}">
+                                <option th:text="'Role: ' + ${role.name().substring(5)}"
+                                        th:value="${role.name()}"></option>
+                            </div>
+                        </select>
+                    </div>
+                </div>
+                <div class="row"
+                     style="width: 100%; flex-shrink: 1; display:inline-flex; flex-wrap: nowrap; padding-right: 0;">
+                    <div class="col-sm-2 c-input">
+                        <input type="text" class="form-control" placeholder="Name"
+                               th:field="*{name}">
+                    </div>
+                    <div class="col-sm-4 c-input">
+                        <input type="text" class="form-control" placeholder="Surname"
+                               th:field="*{surname}">
+                    </div>
+                    <div class="col-sm-2"></div>
+                    <div class="col-sm-3 c-input" style="width: fit-content;">
+                        <input id="is_expired1" name="is_expired" type="radio" value="false" class="btn-check"
+                               th:field="*{expiry}" checked>
+                        <label for="is_expired1" class="btn btn-outline-dark btn-sm">Active</label>
+                        <input id="is_expired2" name="is_expired" type="radio" value="true" class="btn-check"
+                               th:field="*{expiry}">
+                        <label for="is_expired2" class="btn btn-outline-dark btn-sm" style="margin-left: 0.5em;">Expired</label>
+                    </div>
+                    <div class="col c-input px-0" style="justify-content: end; white-space: nowrap;">
+                        <button class="btn btn-dark bg-dark"
+                                type="submit">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                 class="bi bi-search" viewBox="0 0 16 16">
+                                <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+            <div th:insert="fragments/bottom::form-error-handler"></div>
+        </form>
+
+        <br>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-12 scroll-70">
+            <table class="table table-borderless table-hover table-fixed"
+                   style="text-align: center; vertical-align: middle;">
+                <thead class="table-dark">
+                <tr>
+                    <th scope="row">Name</th>
+                    <th scope="row">Role</th>
+                    <th scope="row">Expiry date</th>
+                    <th scope="row">Department</th>
+                    <th scope="row"></th>
+                </tr>
+                </thead>
+                <tbody>
+                <th:block th:if="${#lists.isEmpty(results)}">
+                    <td th:text="'—'"></td>
+                    <td th:text="'—'"></td>
+                    <td th:text="'—'"></td>
+                    <td th:text="'—'"></td>
+                    <td></td>
+                </th:block>
+                <tr th:each="result: ${results}">
+                    <td>
+                        <div class="overflow-cell-hs"
+                             th:utext="${result.getName()} + '<br>' + ${result.getSurname()}"></div>
+                    </td>
+                    <td>
+                        <div class="overflow-cell-hs"
+                             th:text="${result.role.name().substring(5)}"></div>
+                    </td>
+                    <td>
+                        <div class="overflow-cell-hs" th:text="${result.terminationDate}"></div>
+                    </td>
+                    <td>
+                        <div class="overflow-cell-hs"
+                             th:utext="${result.department.getCity()} + ', <br>' + ${result.department.getAddress()}"></div>
+                    </td>
+                    <td style="position: relative;">
+                        <a type="button" class="btn btn-dark list-button" th:text="Inspect"
+                                th:href="'/archive/' + ${result.id}"></a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div th:include="fragments/bottom::bottom-footer"></div>
+    <div th:insert="fragments/bottom::message-handler"></div>
+</div>
+<div th:include="fragments/bottom::common-scripts"></div>
+</body>
+</html>
