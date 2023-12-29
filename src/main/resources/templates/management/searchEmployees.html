@@ -18,14 +18,14 @@
     <div th:include="fragments/top::reg-options"></div>
 
     <div class="row">
-        <form th:action="@{/mg-emp/search}" th:object="${searchEmployeeForm}" th:method="POST"
+        <form th:action="@{/mg-emp/search}" th:object="${searchEmployeesForm}" th:method="POST"
               class="form-inline">
 
             <div class="row mb-2" style="margin-top: 5%">
 
-                <div class="row" style="margin-top: 1%; flex-wrap: nowrap; padding-right: 0;">
-                    <div class="between-fields" style="justify-content: flex-end;" th:text="'Department:'"></div>
-                    <div class="col-sm-6 c-input" style="width: fit-content;">
+                <div class="row" style="flex-wrap: nowrap; padding-right: 0;">
+                    <div class="col-sm-2 c-input" style="justify-content: flex-end;" th:text="'Department:'"></div>
+                    <div class="col-sm-4 c-input">
                         <select type="text" th:field="*{department}" class="form-control">
                             <option th:value="null" th:text="Any"></option>
                             <div th:each="department:${departments}">
@@ -36,8 +36,8 @@
                     </div>
 
                     <div class="between-fields" style="justify-content: flex-end;" th:text="'Role:'"></div>
-                    <div class="col-sm-3 c-input" style="width: fit-content;">
-                        <select type="text" th:field="*{roles}" class="form-control">
+                    <div class="col-sm-3 c-input" style="padding-right:0;">
+                        <select type="text" th:field="*{role}" class="form-control">
                             <option th:value="null" th:text="Any"></option>
                             <div th:each="role:${roles}">
                                 <option th:text="'Role: ' + ${role.name().substring(5)}"
@@ -47,7 +47,7 @@
                     </div>
                 </div>
                 <div class="row"
-                     style="width: 100%; flex-shrink: 1; display:inline-flex; flex-wrap: nowrap; padding-right: 0;">
+                     style="width: 100%; margin-top: 1%; flex-shrink: 1; display:inline-flex; flex-wrap: nowrap; padding-right: 0;">
                     <div class="col-sm-2 c-input">
                         <input type="text" class="form-control" placeholder="Name"
                                th:field="*{name}">
@@ -56,7 +56,7 @@
                         <input type="text" class="form-control" placeholder="Surname"
                                th:field="*{surname}">
                     </div>
-                    <div class="col-sm-2"></div>
+                    <div class="col-sm-3"></div>
                     <div class="col-sm-3 c-input" style="width: fit-content;">
                         <input id="is_expired1" name="is_expired" type="radio" value="false" class="btn-check"
                                th:field="*{expiry}" checked>
