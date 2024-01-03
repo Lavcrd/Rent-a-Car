@@ -1,9 +1,11 @@
 package com.sda.carrental.web.mvc.management;
 
 import com.sda.carrental.model.property.Department;
+import com.sda.carrental.model.users.Coordinator;
+import com.sda.carrental.model.users.Employee;
+import com.sda.carrental.model.users.Manager;
 import com.sda.carrental.model.users.User;
-import com.sda.carrental.service.DepartmentService;
-import com.sda.carrental.service.UserService;
+import com.sda.carrental.service.*;
 import com.sda.carrental.service.auth.CustomUserDetails;
 import com.sda.carrental.web.mvc.form.users.SearchEmployeesForm;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
+import java.util.Collections;
 import java.util.List;
 
 import static com.sda.carrental.model.users.User.Roles.*;
@@ -25,7 +28,10 @@ import static com.sda.carrental.model.users.User.Roles.*;
 @RequestMapping("/mg-emp")
 public class ManageEmployeesController {
     private final DepartmentService departmentService;
-    private final UserService userService;
+    private final EmployeeService employeeService;
+    private final ManagerService managerService;
+    private final CoordinatorService coordinatorService;
+
     private final String MSG_KEY = "message";
     private final String MSG_ACCESS_REJECTED = "Failure: Access rejected";
     private final String MSG_GENERIC_EXCEPTION = "Failure: An unexpected error occurred";
@@ -40,6 +46,7 @@ public class ManageEmployeesController {
             map.addAttribute("departments", employeeDepartments);
             map.addAttribute("roles", List.of(User.Roles.valueOf(ROLE_EMPLOYEE.name()), User.Roles.valueOf(ROLE_MANAGER.name()), User.Roles.valueOf(ROLE_COORDINATOR.name())));
             map.addAttribute("searchEmployeesForm", map.getOrDefault("searchEmployeesForm", new SearchEmployeesForm()));
+            map.addAttribute("isEmpty", map.getOrDefault("isEmpty", true));
 
             return "management/searchEmployees";
         } catch (RuntimeException err) {
@@ -65,9 +72,23 @@ public class ManageEmployeesController {
                 return "redirect:/mg-emp";
             }
 
-            redAtt.addFlashAttribute("results", null); //TODO prob requires abstraction at worker level
+            List<Employee> eList = Collections.emptyList();
+            List<Manager> mList = Collections.emptyList();
+            List<Coordinator> cList = Collections.emptyList();
+
+            if (form.getRole().isEmpty() || form.getRole().equals(ROLE_EMPLOYEE.name())) eList = employeeService.findByForm(form);
+            if (form.getRole().isEmpty() || form.getRole().equals(ROLE_MANAGER.name())) mList = managerService.findByForm(form);
+            if (form.getRole().isEmpty() || form.getRole().equals(ROLE_COORDINATOR.name())) cList = coordinatorService.findByForm(form);
+
+
+            redAtt.addFlashAttribute("e_results", eList);
+            redAtt.addFlashAttribute("m_results", mList);
+            redAtt.addFlashAttribute("c_results", cList);
+
+            redAtt.addFlashAttribute("isEmpty", eList.isEmpty() && mList.isEmpty() && cList.isEmpty());
             return "redirect:/mg-emp";
         } catch (RuntimeException e) {
+            e.printStackTrace();
             redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
             return "redirect:/mg-emp";
         }
