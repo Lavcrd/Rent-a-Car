@@ -5,10 +5,18 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface EmployeeRepository extends CrudRepository<Employee, Long> {
 
     @Query(value = "SELECT e FROM employee e WHERE e.id=:id")
     Optional<Employee> findEmployeeById(@Param("id") Long id);
+
+    @Query("SELECT e FROM employee e " +
+            "WHERE (:expired = CASE WHEN CURRENT_DATE >= e.terminationDate THEN true ELSE false END) " +
+            "AND (:name IS NULL OR LOWER(e.name) LIKE LOWER(CONCAT(:name, '%'))) " +
+            "AND (:surname IS NULL OR LOWER(e.surname) LIKE LOWER(CONCAT(:surname, '%'))) " +
+            "AND (:department IS NULL OR :department = e.department.id)")
+    List<Employee> findAllByForm(@Param("name") String name, @Param("surname") String surname, @Param("department") Long department, @Param("expired") boolean expired);
 }

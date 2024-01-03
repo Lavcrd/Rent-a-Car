@@ -27,7 +27,6 @@
                     <div class="col-sm-2 c-input" style="justify-content: flex-end;" th:text="'Department:'"></div>
                     <div class="col-sm-4 c-input">
                         <select type="text" th:field="*{department}" class="form-control">
-                            <option th:value="null" th:text="Any"></option>
                             <div th:each="department:${departments}">
                                 <option th:text="${department.country.getCode()} + ' — ' + ${department.city} + ', ' + ${department.address}"
                                         th:value="${department.getId()}"></option>
@@ -59,11 +58,12 @@
                     <div class="col-sm-3"></div>
                     <div class="col-sm-3 c-input" style="width: fit-content;">
                         <input id="is_expired1" name="is_expired" type="radio" value="false" class="btn-check"
-                               th:field="*{expiry}" checked>
+                               th:field="*{expired}" checked>
                         <label for="is_expired1" class="btn btn-outline-dark btn-sm">Active</label>
                         <input id="is_expired2" name="is_expired" type="radio" value="true" class="btn-check"
-                               th:field="*{expiry}">
-                        <label for="is_expired2" class="btn btn-outline-dark btn-sm" style="margin-left: 0.5em;">Expired</label>
+                               th:field="*{expired}">
+                        <label for="is_expired2" class="btn btn-outline-dark btn-sm"
+                               style="margin-left: 0.5em;">Expired</label>
                     </div>
                     <div class="col c-input px-0" style="justify-content: end; white-space: nowrap;">
                         <button class="btn btn-dark bg-dark"
@@ -97,14 +97,35 @@
                 </tr>
                 </thead>
                 <tbody>
-                <th:block th:if="${#lists.isEmpty(results)}">
+                <th:block th:if="${isEmpty}">
                     <td th:text="'—'"></td>
                     <td th:text="'—'"></td>
                     <td th:text="'—'"></td>
                     <td th:text="'—'"></td>
                     <td></td>
                 </th:block>
-                <tr th:each="result: ${results}">
+                <tr th:each="result: ${c_results}">
+                    <td>
+                        <div class="overflow-cell-hs"
+                             th:utext="${result.getName()} + '<br>' + ${result.getSurname()}"></div>
+                    </td>
+                    <td>
+                        <div class="overflow-cell-hs"
+                             th:text="${result.role.name().substring(5)}"></div>
+                    </td>
+                    <td>
+                        <div class="overflow-cell-hs" th:text="${result.terminationDate}"></div>
+                    </td>
+                    <td>
+                        <div class="overflow-cell-hs"
+                             th:utext="'—'"></div>
+                    </td>
+                    <td style="position: relative;">
+                        <a type="button" class="btn btn-dark list-button" th:text="Inspect"
+                           th:href="'/mg-emp/' + ${result.id}"></a>
+                    </td>
+                </tr>
+                <tr th:each="result: ${m_results}">
                     <td>
                         <div class="overflow-cell-hs"
                              th:utext="${result.getName()} + '<br>' + ${result.getSurname()}"></div>
@@ -122,7 +143,28 @@
                     </td>
                     <td style="position: relative;">
                         <a type="button" class="btn btn-dark list-button" th:text="Inspect"
-                                th:href="'/archive/' + ${result.id}"></a>
+                           th:href="'/mg-emp/' + ${result.id}"></a>
+                    </td>
+                </tr>
+                <tr th:each="result: ${e_results}">
+                    <td>
+                        <div class="overflow-cell-hs"
+                             th:utext="${result.getName()} + '<br>' + ${result.getSurname()}"></div>
+                    </td>
+                    <td>
+                        <div class="overflow-cell-hs"
+                             th:text="${result.role.name().substring(5)}"></div>
+                    </td>
+                    <td>
+                        <div class="overflow-cell-hs" th:text="${result.terminationDate}"></div>
+                    </td>
+                    <td>
+                        <div class="overflow-cell-hs"
+                             th:utext="${result.department.getCity()} + ', <br>' + ${result.department.getAddress()}"></div>
+                    </td>
+                    <td style="position: relative;">
+                        <a type="button" class="btn btn-dark list-button" th:text="Inspect"
+                           th:href="'/mg-emp/' + ${result.id}"></a>
                     </td>
                 </tr>
                 </tbody>
