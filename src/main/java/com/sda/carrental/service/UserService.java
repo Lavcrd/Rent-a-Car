@@ -45,9 +45,9 @@ public class UserService {
     public HttpStatus deleteUser(Long userId) {
         try {
             User user = repository.findById(userId).orElseThrow(ResourceNotFoundException::new);
-            User.Roles role = user.getRole();
+            User.Type type = user.getType();
 
-            if (role.equals(User.Roles.ROLE_CUSTOMER)) {
+            if (type.equals(User.Type.TYPE_CUSTOMER)) {
                 if (reservationService.hasActiveReservations(userId)) {
                     TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
                     return HttpStatus.CONFLICT;

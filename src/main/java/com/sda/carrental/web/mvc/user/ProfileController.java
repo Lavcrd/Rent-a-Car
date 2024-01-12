@@ -1,6 +1,6 @@
 package com.sda.carrental.web.mvc.user;
 
-import com.sda.carrental.model.users.User;
+import com.sda.carrental.global.enums.Role;
 import com.sda.carrental.service.CredentialsService;
 import com.sda.carrental.service.CustomerService;
 import com.sda.carrental.service.UserService;
@@ -51,7 +51,7 @@ public class ProfileController {
         map.addAttribute("username", cud.getUsername());
         map.addAttribute("password_form", map.getOrDefault("password_form", new ChangePasswordForm()));
 
-        if (cud.getAuthorities().contains(new SimpleGrantedAuthority(User.Roles.ROLE_CUSTOMER.name()))) {
+        if (cud.getAuthorities().contains(new SimpleGrantedAuthority(Role.ROLE_CUSTOMER.name()))) {
             map.addAttribute("contact_form", map.getOrDefault("contact_form", new ChangeContactForm()));
             map.addAttribute("email_form", map.getOrDefault("email_form", new ChangeEmailForm()));
             map.addAttribute("delete_form", map.getOrDefault("delete_form", new ConfirmationForm()));

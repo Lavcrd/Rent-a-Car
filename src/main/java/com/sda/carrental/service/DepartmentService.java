@@ -3,6 +3,7 @@ package com.sda.carrental.service;
 
 import com.sda.carrental.global.enums.Country;
 import com.sda.carrental.exceptions.ResourceNotFoundException;
+import com.sda.carrental.global.enums.Role;
 import com.sda.carrental.model.property.Department;
 import com.sda.carrental.model.users.User;
 import com.sda.carrental.repository.DepartmentRepository;
@@ -12,7 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 
-import java.util.LinkedList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.StreamSupport;
 
@@ -21,10 +22,7 @@ import static java.util.stream.Collectors.toList;
 @Service
 @RequiredArgsConstructor
 public class DepartmentService {
-
     private final DepartmentRepository repository;
-    private final CoordinatorService coordinatorService;
-    private final ManagerService managerService;
     private final EmployeeService employeeService;
 
     public List<Department> findAll() {
@@ -45,23 +43,11 @@ public class DepartmentService {
     }
 
     public List<Department> getDepartmentsByUserContext(CustomUserDetails cud) {
-        if (cud.getAuthorities().contains(new SimpleGrantedAuthority(User.Roles.ROLE_EMPLOYEE.name()))) {
-            return List.of(employeeService.findEmployeeById(cud.getId()).getDepartment());
-        }
-
-        if (cud.getAuthorities().contains(new SimpleGrantedAuthority(User.Roles.ROLE_MANAGER.name()))) {
-            return List.of(managerService.findManagerById(cud.getId()).getDepartment());
-        }
-
-        if (cud.getAuthorities().contains(new SimpleGrantedAuthority(User.Roles.ROLE_COORDINATOR.name()))) {
-            return coordinatorService.findCoordinatorById(cud.getId()).getDepartments();
-        }
-
-        if (cud.getAuthorities().contains(new SimpleGrantedAuthority(User.Roles.ROLE_ADMIN.name()))) {
+        if (!cud.getType().equals(User.Type.TYPE_EMPLOYEE)) return Collections.emptyList();
+        if (cud.getAuthorities().contains(new SimpleGrantedAuthority(Role.ROLE_ADMIN.name()))) {
             return findAll();
         }
-
-        return new LinkedList<>();
+        return employeeService.findEmployeeById(cud.getId()).getDepartments();
     }
 
     public HttpStatus departmentAccess(CustomUserDetails cud, Long departmentId) throws ResourceNotFoundException {

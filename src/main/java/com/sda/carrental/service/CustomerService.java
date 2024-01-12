@@ -68,7 +68,7 @@ public class CustomerService {
         customer.setSurname("—");
         customer.setContactNumber("—");
         customer.setTerminationDate(LocalDate.now());
-        customer.setStatus(Customer.CustomerStatus.STATUS_DELETED);
+        customer.setStatus(Customer.Status.STATUS_DELETED);
 
         return customer;
     }

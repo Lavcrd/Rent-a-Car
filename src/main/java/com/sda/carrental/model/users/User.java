@@ -12,8 +12,8 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Inheritance(strategy = InheritanceType.JOINED)
 public class User {
-    public User(Roles role, String name, String surname, LocalDate terminationDate) {
-        this.role = role;
+    public User(Type type, String name, String surname, LocalDate terminationDate) {
+        this.type = type;
         this.name = name;
         this.surname = surname;
         this.creationDate = LocalDate.now();
@@ -41,13 +41,10 @@ public class User {
     private LocalDate terminationDate;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "role")
-    private Roles role;
+    @Column(name = "type")
+    private Type type;
 
-    public enum Roles {
-        ROLE_CUSTOMER, ROLE_EMPLOYEE, ROLE_MANAGER, ROLE_COORDINATOR, ROLE_ADMIN;
-
-        Roles() {
-        }
+    public enum Type {
+        TYPE_CUSTOMER, TYPE_EMPLOYEE
     }
 }

@@ -1,5 +1,6 @@
 package com.sda.carrental.model.users;
 
+import com.sda.carrental.global.enums.Role;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -13,6 +14,11 @@ import java.time.LocalDate;
 
 public class Admin extends User {
     public Admin(String name, String surname) {
-        super(Roles.ROLE_ADMIN, name, surname, LocalDate.ofYearDay(9999, 1));
+        super(Type.TYPE_EMPLOYEE, name, surname, LocalDate.ofYearDay(9999, 1));
+        this.role = Role.ROLE_ADMIN;
     }
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role")
+    private Role role;
 }
