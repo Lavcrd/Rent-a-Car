@@ -1,6 +1,7 @@
 package com.sda.carrental.service;
 
 import com.sda.carrental.exceptions.ResourceNotFoundException;
+import com.sda.carrental.global.enums.Role;
 import com.sda.carrental.model.users.Employee;
 import com.sda.carrental.repository.EmployeeRepository;
 import com.sda.carrental.web.mvc.form.users.SearchEmployeesForm;
@@ -19,6 +20,8 @@ public class EmployeeService {
     }
 
     public List<Employee> findByForm(SearchEmployeesForm form) {
-        return repository.findAllByForm(form.getName(), form.getSurname(), form.getDepartment(), form.isExpired());
+        Role role = null;
+        if (!form.getRole().isBlank()) role = Role.valueOf(form.getRole());
+        return repository.findAllByForm(form.getName(), form.getSurname(), form.getDepartment(), form.isExpired(), role);
     }
 }

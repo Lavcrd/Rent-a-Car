@@ -97,55 +97,13 @@
                 </tr>
                 </thead>
                 <tbody>
-                <th:block th:if="${isEmpty}">
+                <th:block th:if="${#lists.isEmpty(e_results)}">
                     <td th:text="'—'"></td>
                     <td th:text="'—'"></td>
                     <td th:text="'—'"></td>
                     <td th:text="'—'"></td>
                     <td></td>
                 </th:block>
-                <tr th:each="result: ${c_results}">
-                    <td>
-                        <div class="overflow-cell-hs"
-                             th:utext="${result.getName()} + '<br>' + ${result.getSurname()}"></div>
-                    </td>
-                    <td>
-                        <div class="overflow-cell-hs"
-                             th:text="${result.role.name().substring(5)}"></div>
-                    </td>
-                    <td>
-                        <div class="overflow-cell-hs" th:text="${result.terminationDate}"></div>
-                    </td>
-                    <td>
-                        <div class="overflow-cell-hs"
-                             th:utext="'—'"></div>
-                    </td>
-                    <td style="position: relative;">
-                        <a type="button" class="btn btn-dark list-button" th:text="Inspect"
-                           th:href="'/mg-emp/' + ${result.id}"></a>
-                    </td>
-                </tr>
-                <tr th:each="result: ${m_results}">
-                    <td>
-                        <div class="overflow-cell-hs"
-                             th:utext="${result.getName()} + '<br>' + ${result.getSurname()}"></div>
-                    </td>
-                    <td>
-                        <div class="overflow-cell-hs"
-                             th:text="${result.role.name().substring(5)}"></div>
-                    </td>
-                    <td>
-                        <div class="overflow-cell-hs" th:text="${result.terminationDate}"></div>
-                    </td>
-                    <td>
-                        <div class="overflow-cell-hs"
-                             th:utext="${result.department.getCity()} + ', <br>' + ${result.department.getAddress()}"></div>
-                    </td>
-                    <td style="position: relative;">
-                        <a type="button" class="btn btn-dark list-button" th:text="Inspect"
-                           th:href="'/mg-emp/' + ${result.id}"></a>
-                    </td>
-                </tr>
                 <tr th:each="result: ${e_results}">
                     <td>
                         <div class="overflow-cell-hs"
@@ -160,7 +118,7 @@
                     </td>
                     <td>
                         <div class="overflow-cell-hs"
-                             th:utext="${result.department.getCity()} + ', <br>' + ${result.department.getAddress()}"></div>
+                             th:utext="${result.departments.size() > 1} ? 'Many' : ${result.departments[0].getCity()} + ', <br>' + ${result.departments[0].getAddress()}"></div>
                     </td>
                     <td style="position: relative;">
                         <a type="button" class="btn btn-dark list-button" th:text="Inspect"

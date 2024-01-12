@@ -2,6 +2,7 @@ package com.sda.carrental.clr;
 
 import com.sda.carrental.global.ConstantValues;
 import com.sda.carrental.global.enums.Country;
+import com.sda.carrental.global.enums.Role;
 import com.sda.carrental.model.Company;
 import com.sda.carrental.model.operational.Rent;
 import com.sda.carrental.model.operational.Reservation;
@@ -64,24 +65,31 @@ public class PredefiniedData implements CommandLineRunner {
     }
 
     private void createUsers() {
-        userRepository.save(new Customer("Anna", "Nazwiskowa", Customer.CustomerStatus.STATUS_REGISTERED, "123312891"));
-        userRepository.save(new Customer("Jakub", "Kowalski", Customer.CustomerStatus.STATUS_REGISTERED, "123312892"));
-        userRepository.save(new Customer("Maciek", "Masło", Customer.CustomerStatus.STATUS_REGISTERED, "123312893"));
-        userRepository.save(new Customer("Jan", "Orzech", Customer.CustomerStatus.STATUS_REGISTERED, "123312894"));
-        userRepository.save(new Customer("Katarzyna", "Kasztan", Customer.CustomerStatus.STATUS_REGISTERED, "123312895"));
-        userRepository.save(new Customer("Igor", "Kasztan", Customer.CustomerStatus.STATUS_REGISTERED, "123312896"));
-        userRepository.save(new Customer("Anna", "Kowalska", Customer.CustomerStatus.STATUS_UNREGISTERED, "123312897"));
+        userRepository.save(new Customer("Anna", "Nazwiskowa", Customer.Status.STATUS_REGISTERED, "123312891"));
+        userRepository.save(new Customer("Jakub", "Kowalski", Customer.Status.STATUS_REGISTERED, "123312892"));
+        userRepository.save(new Customer("Maciek", "Masło", Customer.Status.STATUS_REGISTERED, "123312893"));
+        userRepository.save(new Customer("Jan", "Orzech", Customer.Status.STATUS_REGISTERED, "123312894"));
+        userRepository.save(new Customer("Katarzyna", "Kasztan", Customer.Status.STATUS_REGISTERED, "123312895"));
+        userRepository.save(new Customer("Igor", "Kasztan", Customer.Status.STATUS_REGISTERED, "123312896"));
+        userRepository.save(new Customer("Anna", "Kowalska", Customer.Status.STATUS_UNREGISTERED, "123312897"));
 
+        List<Employee> list = List.of(
+                new Employee("Maria", "Fajna", List.of(departmentRepository.findById(1L).orElse(null)), LocalDate.ofYearDay(9999, 1), "111222333"),
+                new Employee("Aleksandra", "Ładna", List.of(departmentRepository.findById(2L).orElse(null)), LocalDate.ofYearDay(9999, 1), "111222444"),
+                new Employee("Katarzyna", "Nieładna", List.of(departmentRepository.findById(3L).orElse(null)), LocalDate.ofYearDay(9999, 1), "111222555"),
+                new Employee("Anna", "Mniejfajna", List.of(departmentRepository.findById(1L).orElse(null)), LocalDate.ofYearDay(9999, 1), "111222888"),
+                new Employee("Magda", "Piąta", List.of(departmentRepository.findById(2L).orElse(null)), LocalDate.ofYearDay(9999, 1), "111222881"),
+                new Employee("Wioletta", "Fioletowa", List.of(departmentRepository.findById(3L).orElse(null)), LocalDate.ofYearDay(9999, 1), "111222882"),
+                new Employee("Jacek", "Gruby", departmentRepository.findDepartmentsByCountry(Country.COUNTRY_PL), LocalDate.ofYearDay(9999, 1), "111222883")
+        );
 
-        userRepository.save(new Manager("Maria", "Fajna", departmentRepository.findById(1L).orElse(null), LocalDate.ofYearDay(9999, 1)));
-        userRepository.save(new Manager("Aleksandra", "Ładna", departmentRepository.findById(2L).orElse(null), LocalDate.ofYearDay(9999, 1)));
-        userRepository.save(new Manager("Katarzyna", "Nieładna", departmentRepository.findById(3L).orElse(null), LocalDate.ofYearDay(9999, 1)));
+        for (int i = 0; i < list.size(); i++) {
+            Employee e = list.get(i);
+            if (i<3) e.setRole(Role.ROLE_MANAGER);
+            if (i==list.size()-1) e.setRole(Role.ROLE_COORDINATOR);
 
-        userRepository.save(new Employee("Anna", "Mniejfajna", departmentRepository.findById(1L).orElse(null), LocalDate.ofYearDay(9999, 1)));
-        userRepository.save(new Employee("Magda", "Piąta", departmentRepository.findById(2L).orElse(null), LocalDate.ofYearDay(9999, 1)));
-        userRepository.save(new Employee("Wioletta", "Fioletowa", departmentRepository.findById(3L).orElse(null), LocalDate.ofYearDay(9999, 1)));
-
-        userRepository.save(new Coordinator("Jacek", "Gruby", departmentRepository.findDepartmentsByCountry(Country.COUNTRY_PL), LocalDate.ofYearDay(9999, 1)));
+            userRepository.save(e);
+        }
 
         userRepository.save(new Admin("admin", "admin"));
     }
@@ -190,12 +198,12 @@ public class PredefiniedData implements CommandLineRunner {
     }
 
     private void createRent() {
-        rentRepository.save(new Rent(1L,  reservationRepository.findById(1L).get(), carRepository.findById(1L).get(), 12L, "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent imperdiet euismod ex, eget luctus lorem cursus vitae. Morbi mattis vel diam vitae hendrerit. Vivamus efficitur, elit vel pulvinar bibendum, enim. ", LocalDate.now().minusDays(20L), 100000L));
-        rentRepository.save(new Rent(2L,  reservationRepository.findById(2L).get(), carRepository.findById(1L).get(), 13L, "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent imperdiet euismod ex, eget luctus lorem cursus vitae. Morbi mattis vel diam vitae hendrerit. Vivamus efficitur, elit vel pulvinar bibendum, enim. ", LocalDate.now().minusDays(19L), 100000L));
-        rentRepository.save(new Rent(3L,  reservationRepository.findById(3L).get(), carRepository.findById(1L).get(), 14L, "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent imperdiet euismod ex, eget luctus lorem cursus vitae. Morbi mattis vel diam vitae hendrerit. Vivamus efficitur, elit vel pulvinar bibendum, enim. ", LocalDate.now().minusDays(18L), 100000L));
-        rentRepository.save(new Rent(4L,  reservationRepository.findById(4L).get(), carRepository.findById(1L).get(), 14L, "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent imperdiet euismod ex, eget luctus lorem cursus vitae. Morbi mattis vel diam vitae hendrerit. Vivamus efficitur, elit vel pulvinar bibendum, enim. ", LocalDate.now().minusDays(17L), 100000L));
-        rentRepository.save(new Rent(5L,  reservationRepository.findById(5L).get(), carRepository.findById(10L).get(), 13L, "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent imperdiet euismod ex, eget luctus lorem cursus vitae. Morbi mattis vel diam vitae hendrerit. Vivamus efficitur, elit vel pulvinar bibendum, enim. ", LocalDate.now(), 100000L));
-        rentRepository.save(new Rent(9L,  reservationRepository.findById(9L).get(), carRepository.findById(1L).get(), 12L, "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent imperdiet euismod ex, eget luctus lorem cursus vitae. Morbi mattis vel diam vitae hendrerit. Vivamus efficitur, elit vel pulvinar bibendum, enim. ", LocalDate.now().minusDays(16L), 100000L));
+        rentRepository.save(new Rent(1L, reservationRepository.findById(1L).get(), carRepository.findById(1L).get(), 12L, "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent imperdiet euismod ex, eget luctus lorem cursus vitae. Morbi mattis vel diam vitae hendrerit. Vivamus efficitur, elit vel pulvinar bibendum, enim. ", LocalDate.now().minusDays(20L), 100000L));
+        rentRepository.save(new Rent(2L, reservationRepository.findById(2L).get(), carRepository.findById(1L).get(), 13L, "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent imperdiet euismod ex, eget luctus lorem cursus vitae. Morbi mattis vel diam vitae hendrerit. Vivamus efficitur, elit vel pulvinar bibendum, enim. ", LocalDate.now().minusDays(19L), 100000L));
+        rentRepository.save(new Rent(3L, reservationRepository.findById(3L).get(), carRepository.findById(1L).get(), 14L, "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent imperdiet euismod ex, eget luctus lorem cursus vitae. Morbi mattis vel diam vitae hendrerit. Vivamus efficitur, elit vel pulvinar bibendum, enim. ", LocalDate.now().minusDays(18L), 100000L));
+        rentRepository.save(new Rent(4L, reservationRepository.findById(4L).get(), carRepository.findById(1L).get(), 14L, "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent imperdiet euismod ex, eget luctus lorem cursus vitae. Morbi mattis vel diam vitae hendrerit. Vivamus efficitur, elit vel pulvinar bibendum, enim. ", LocalDate.now().minusDays(17L), 100000L));
+        rentRepository.save(new Rent(5L, reservationRepository.findById(5L).get(), carRepository.findById(10L).get(), 13L, "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent imperdiet euismod ex, eget luctus lorem cursus vitae. Morbi mattis vel diam vitae hendrerit. Vivamus efficitur, elit vel pulvinar bibendum, enim. ", LocalDate.now(), 100000L));
+        rentRepository.save(new Rent(9L, reservationRepository.findById(9L).get(), carRepository.findById(1L).get(), 12L, "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent imperdiet euismod ex, eget luctus lorem cursus vitae. Morbi mattis vel diam vitae hendrerit. Vivamus efficitur, elit vel pulvinar bibendum, enim. ", LocalDate.now().minusDays(16L), 100000L));
         rentRepository.save(new Rent(10L, reservationRepository.findById(10L).get(), carRepository.findById(1L).get(), 12L, "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent imperdiet euismod ex, eget luctus lorem cursus vitae. Morbi mattis vel diam vitae hendrerit. Vivamus efficitur, elit vel pulvinar bibendum, enim. ", LocalDate.now(), 100000L));
     }
 

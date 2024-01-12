@@ -3,9 +3,9 @@ package com.sda.carrental.web.mvc.common;
 import com.sda.carrental.exceptions.IllegalActionException;
 import com.sda.carrental.global.ConstantValues;
 import com.sda.carrental.exceptions.ResourceNotFoundException;
+import com.sda.carrental.global.enums.Role;
 import com.sda.carrental.model.property.Department;
 import com.sda.carrental.model.property.car.CarBase;
-import com.sda.carrental.model.users.User;
 import com.sda.carrental.service.*;
 import com.sda.carrental.service.auth.CustomUserDetails;
 import com.sda.carrental.web.mvc.form.operational.IndexForm;
@@ -118,7 +118,7 @@ public class ReservationController {
             HttpStatus status;
             ReservationForm form = new ReservationForm(carBaseId, indexForm);
 
-            if (cud.getAuthorities().contains(new SimpleGrantedAuthority(User.Roles.ROLE_CUSTOMER.name()))) {
+            if (cud.getAuthorities().contains(new SimpleGrantedAuthority(Role.ROLE_CUSTOMER.name()))) {
                 status = customerService.appendReservationToCustomer(cud.getId(), form);
                 clearSessionValues(httpSession);
             } else {

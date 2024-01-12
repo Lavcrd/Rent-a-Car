@@ -8,10 +8,10 @@ import com.sda.carrental.web.mvc.form.users.RegisterCustomerForm;
 public class CustomerMapper {
 
     public static Customer toRegisteredEntity(RegisterCustomerForm form) {
-        return new Customer(form.getName(), form.getSurname(), Customer.CustomerStatus.STATUS_REGISTERED, form.getContactNumber());
+        return new Customer(form.getName(), form.getSurname(), Customer.Status.STATUS_REGISTERED, form.getContactNumber());
     }
 
     public static Customer toGuestEntity(LocalReservationForm form) {
-        return new Customer(form.getName(), form.getSurname(), Customer.CustomerStatus.STATUS_UNREGISTERED, form.getContactNumber());
+        return new Customer(form.getName(), form.getSurname(), Customer.Status.STATUS_UNREGISTERED, form.getContactNumber());
     }
 }

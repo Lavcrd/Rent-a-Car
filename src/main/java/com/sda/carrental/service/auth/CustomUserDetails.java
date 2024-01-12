@@ -4,6 +4,8 @@ import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Collections;
 
+import com.sda.carrental.model.users.Customer;
+import com.sda.carrental.model.users.Employee;
 import com.sda.carrental.model.users.auth.Credentials;
 import org.springframework.security.core.GrantedAuthority;
 
@@ -22,11 +24,20 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singletonList(new SimpleGrantedAuthority(user.getRole().name()));
+        if (user instanceof Customer u) {
+            return Collections.singletonList(new SimpleGrantedAuthority(u.getRole().name()));
+        } else if (user instanceof Employee u) {
+            return Collections.singletonList(new SimpleGrantedAuthority(u.getRole().name()));
+        }
+        return Collections.emptyList();
     }
 
     public Long getId() {
         return user.getId();
+    }
+
+    public User.Type getType() {
+        return user.getType();
     }
 
     @Override

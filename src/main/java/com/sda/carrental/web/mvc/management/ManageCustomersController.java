@@ -83,7 +83,7 @@ public class ManageCustomersController {
                 map.addAttribute("findVerifiedForm", new FindVerifiedForm());
                 map.addAttribute("verification_form", new VerificationForm());
             }
-            if (!customer.getStatus().equals(Customer.CustomerStatus.STATUS_DELETED)) {
+            if (!customer.getStatus().equals(Customer.Status.STATUS_DELETED)) {
                 map.addAttribute("is_deleted", false);
                 map.addAttribute("deleteConfirmationForm", new ConfirmationForm());
                 map.addAttribute("changeContactForm", new ChangeContactForm());

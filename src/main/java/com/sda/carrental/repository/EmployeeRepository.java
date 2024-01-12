@@ -1,5 +1,6 @@
 package com.sda.carrental.repository;
 
+import com.sda.carrental.global.enums.Role;
 import com.sda.carrental.model.users.Employee;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -17,6 +18,10 @@ public interface EmployeeRepository extends CrudRepository<Employee, Long> {
             "WHERE (:expired = CASE WHEN CURRENT_DATE >= e.terminationDate THEN true ELSE false END) " +
             "AND (:name IS NULL OR LOWER(e.name) LIKE LOWER(CONCAT(:name, '%'))) " +
             "AND (:surname IS NULL OR LOWER(e.surname) LIKE LOWER(CONCAT(:surname, '%'))) " +
-            "AND (:department IS NULL OR :department = e.department.id)")
-    List<Employee> findAllByForm(@Param("name") String name, @Param("surname") String surname, @Param("department") Long department, @Param("expired") boolean expired);
+            "AND (SELECT d FROM department d WHERE d.id = :department) MEMBER OF e.departments " +
+            "AND (:role IS NULL OR :role = e.role) " +
+            "ORDER BY e.role, e.name, e.surname")
+    List<Employee> findAllByForm(@Param("name") String name, @Param("surname") String surname,
+                                 @Param("department") Long department, @Param("expired") boolean expired,
+                                 @Param("role") Role role);
 }
