@@ -13,8 +13,8 @@ import java.time.LocalDate;
 @PrimaryKeyJoinColumn(foreignKey = @ForeignKey(name = "admin_id"))
 
 public class Admin extends User {
-    public Admin(String name, String surname) {
-        super(Type.TYPE_EMPLOYEE, name, surname, LocalDate.ofYearDay(9999, 1));
+    public Admin(String name, String surname, String contactNumber) {
+        super(Type.TYPE_EMPLOYEE, name, surname, contactNumber, LocalDate.ofYearDay(9999, 1));
         this.role = Role.ROLE_ADMIN;
     }
 

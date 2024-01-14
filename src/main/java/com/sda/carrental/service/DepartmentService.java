@@ -47,7 +47,7 @@ public class DepartmentService {
         if (cud.getAuthorities().contains(new SimpleGrantedAuthority(Role.ROLE_ADMIN.name()))) {
             return findAll();
         }
-        return employeeService.findEmployeeById(cud.getId()).getDepartments();
+        return employeeService.findById(cud.getId()).getDepartments();
     }
 
     public HttpStatus departmentAccess(CustomUserDetails cud, Long departmentId) throws ResourceNotFoundException {

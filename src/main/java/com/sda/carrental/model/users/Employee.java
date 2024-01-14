@@ -17,14 +17,10 @@ import java.util.List;
 @PrimaryKeyJoinColumn(foreignKey = @ForeignKey(name = "employee_id"))
 public class Employee extends User {
     public Employee(String name, String surname, List<Department> departments, LocalDate terminationDate, String contactNumber) {
-        super(Type.TYPE_EMPLOYEE, name, surname, terminationDate);
+        super(Type.TYPE_EMPLOYEE, name, surname, contactNumber, terminationDate);
         this.role = Role.ROLE_EMPLOYEE;
         this.departments = departments;
-        this.contactNumber = contactNumber;
     }
-
-    @Column(name = "contact_number")
-    private String contactNumber;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "role")

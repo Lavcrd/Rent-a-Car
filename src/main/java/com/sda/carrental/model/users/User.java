@@ -12,12 +12,13 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Inheritance(strategy = InheritanceType.JOINED)
 public class User {
-    public User(Type type, String name, String surname, LocalDate terminationDate) {
+    public User(Type type, String name, String surname, String contactNumber, LocalDate terminationDate) {
         this.type = type;
         this.name = name;
         this.surname = surname;
         this.creationDate = LocalDate.now();
         this.terminationDate = terminationDate;
+        this.contactNumber = contactNumber;
     }
 
     @Id
@@ -32,6 +33,10 @@ public class User {
     @Setter
     @Column(name = "surname")
     private String surname;
+
+    @Setter
+    @Column(name = "contact_number")
+    private String contactNumber;
 
     @Column(name = "creation_date")
     private LocalDate creationDate;

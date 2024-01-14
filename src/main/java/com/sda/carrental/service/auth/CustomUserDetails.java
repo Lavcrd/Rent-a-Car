@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Collections;
 
+import com.sda.carrental.model.users.Admin;
 import com.sda.carrental.model.users.Customer;
 import com.sda.carrental.model.users.Employee;
 import com.sda.carrental.model.users.auth.Credentials;
@@ -27,6 +28,8 @@ public class CustomUserDetails implements UserDetails {
         if (user instanceof Customer u) {
             return Collections.singletonList(new SimpleGrantedAuthority(u.getRole().name()));
         } else if (user instanceof Employee u) {
+            return Collections.singletonList(new SimpleGrantedAuthority(u.getRole().name()));
+        } else if (user instanceof Admin u) {
             return Collections.singletonList(new SimpleGrantedAuthority(u.getRole().name()));
         }
         return Collections.emptyList();

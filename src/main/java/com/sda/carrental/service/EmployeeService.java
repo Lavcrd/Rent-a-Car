@@ -15,7 +15,7 @@ import java.util.List;
 public class EmployeeService {
     private final EmployeeRepository repository;
 
-    public Employee findEmployeeById(Long id) {
+    public Employee findById(Long id) {
         return repository.findEmployeeById(id).orElseThrow(ResourceNotFoundException::new);
     }
 

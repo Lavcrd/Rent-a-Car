@@ -1,8 +1,8 @@
 package com.sda.carrental.web.mvc.user;
 
 import com.sda.carrental.global.enums.Role;
+import com.sda.carrental.model.users.User;
 import com.sda.carrental.service.CredentialsService;
-import com.sda.carrental.service.CustomerService;
 import com.sda.carrental.service.UserService;
 import com.sda.carrental.service.auth.CustomUserDetails;
 import com.sda.carrental.web.mvc.form.common.ConfirmationForm;
@@ -27,7 +27,6 @@ import javax.validation.Valid;
 @RequiredArgsConstructor
 @RequestMapping("/profile")
 public class ProfileController {
-    private final CustomerService customerService;
     private final CredentialsService credentialsService;
     private final UserService userService;
 
@@ -50,15 +49,13 @@ public class ProfileController {
 
         map.addAttribute("username", cud.getUsername());
         map.addAttribute("password_form", map.getOrDefault("password_form", new ChangePasswordForm()));
+        map.addAttribute("contact_form", map.getOrDefault("contact_form", new ChangeContactForm()));
 
         if (cud.getAuthorities().contains(new SimpleGrantedAuthority(Role.ROLE_CUSTOMER.name()))) {
-            map.addAttribute("contact_form", map.getOrDefault("contact_form", new ChangeContactForm()));
             map.addAttribute("email_form", map.getOrDefault("email_form", new ChangeEmailForm()));
             map.addAttribute("delete_form", map.getOrDefault("delete_form", new ConfirmationForm()));
-
-            return "user/profileCustomer";
         }
-        return "user/profileEmployee";
+        return "user/profileUser";
     }
 
     //Confirmation buttons
@@ -71,7 +68,8 @@ public class ProfileController {
         }
 
         CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        HttpStatus response = customerService.changeContact(form.getContactNumber(), cud.getId());
+        HttpStatus response = userService.changeContact(form.getContactNumber(), cud.getId());
+
         if (response.equals(HttpStatus.ACCEPTED)) {
             redAtt.addFlashAttribute(MSG_KEY, "Contact number has been successfully changed.");
             return "redirect:/profile";
@@ -92,7 +90,12 @@ public class ProfileController {
             return "redirect:/profile";
         }
 
-        HttpStatus response = credentialsService.changeUsername(form.getNewEmail());
+        CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        HttpStatus response = HttpStatus.PROCESSING;
+        if (cud.getType().equals(User.Type.TYPE_CUSTOMER)) {
+            response = credentialsService.changeUsername(form.getNewEmail());
+        }
+
         if (response.equals(HttpStatus.ACCEPTED)) {
             redAtt.addFlashAttribute(MSG_KEY, "The email has been successfully changed. Please login again.");
         } else if (response.equals(HttpStatus.NOT_FOUND)) {
@@ -134,7 +137,10 @@ public class ProfileController {
         }
 
         CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        HttpStatus response = userService.deleteUser(cud.getId());
+        HttpStatus response = HttpStatus.PROCESSING;
+        if (cud.getType().equals(User.Type.TYPE_CUSTOMER)) {
+            response = userService.deleteUser(cud.getId());
+        }
 
         if (response.equals(HttpStatus.OK)) {
             redAtt.addFlashAttribute(MSG_KEY, "Account has been successfully deleted.");

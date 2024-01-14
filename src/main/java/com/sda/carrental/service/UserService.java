@@ -112,4 +112,17 @@ public class UserService {
         }
     }
 
+    @Transactional
+    public HttpStatus changeContact(String inputContact, long userId) {
+        try {
+            User user = findById(userId);
+            user.setContactNumber(inputContact);
+            repository.save(user);
+            return HttpStatus.ACCEPTED;
+        } catch (ResourceNotFoundException err) {
+            return HttpStatus.NOT_FOUND;
+        } catch (Error err) {
+            return HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+    }
 }
