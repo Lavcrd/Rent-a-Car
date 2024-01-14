@@ -91,7 +91,7 @@ public class PredefiniedData implements CommandLineRunner {
             userRepository.save(e);
         }
 
-        userRepository.save(new Admin("admin", "admin"));
+        userRepository.save(new Admin("name", "surname", "000111000"));
     }
 
     private void createCredentials() {

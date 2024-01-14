@@ -314,7 +314,7 @@ public class ManageCustomersController {
             return "redirect:/mg-cus/{department}-{customer}";
         }
 
-        HttpStatus status = customerService.changeContact(form.getContactNumber(), customerId);
+        HttpStatus status = userService.changeContact(form.getContactNumber(), customerId);
 
         if (status.equals(HttpStatus.ACCEPTED)) {
             redAtt.addFlashAttribute(MSG_KEY, "Success: Data changed");

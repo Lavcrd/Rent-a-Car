@@ -20,6 +20,7 @@
         <table class="table table-borderless table-hover">
             <thead class="table-dark">
             <tr>
+                <th scope="row"></th>
                 <th scope="row">Created</th>
                 <th scope="row">From</th>
                 <th scope="row">To</th>
@@ -36,12 +37,16 @@
                 <td th:text="'—'"></td>
                 <td th:text="'—'"></td>
                 <td th:text="'—'"></td>
+                <td th:text="'—'"></td>
             </th:block>
                 <tr th:each="reservation: ${reservations}">
-                    <td th:text="${reservation.getDateCreated()}"></td>
-                    <td th:text="${reservation.getDepartmentTake().getCity()} + ', ' + ${reservation.getDepartmentTake().getAddress()}"></td>
-                    <td th:text="${reservation.getDepartmentBack().getCity()} + ', ' + ${reservation.getDepartmentTake().getAddress()}"></td>
-                    <td th:text="${reservation.getDateFrom()} + ' ⟶ ' + ${reservation.getDateTo()}"></td>
+                    <td style="width:14%;">
+                        <img class="car-img" th:src="${reservation.carBase.image}" th:alt="${reservation.carBase.brand} + ' - ' + ${reservation.carBase.model}">
+                    </td>
+                    <td th:text="${reservation.dateCreated}"></td>
+                    <td th:utext="${reservation.departmentTake.city} + ', <br> ' + ${reservation.departmentTake.address}"></td>
+                    <td th:utext="${reservation.departmentBack.city} + ', <br>' + ${reservation.departmentBack.address}"></td>
+                    <td th:text="${reservation.dateFrom} + ' ⟶ ' + ${reservation.dateTo}"></td>
                     <td th:text="${reservation.status.getText()}"></td>
                     <td><button type="submit" class="btn btn-dark" th:text="Details" th:name="details_button"
                                 th:value="${reservation.id}"></button>

@@ -14,10 +14,9 @@ import java.time.LocalDate;
 @PrimaryKeyJoinColumn(foreignKey = @ForeignKey(name = "customer_id"))
 public class Customer extends User {
     public Customer(String name, String surname, Status status, String contactNumber) {
-        super(Type.TYPE_CUSTOMER, name, surname, LocalDate.ofYearDay(9999, 1));
+        super(Type.TYPE_CUSTOMER, name, surname, contactNumber, LocalDate.ofYearDay(9999, 1));
         this.role = Role.ROLE_CUSTOMER;
         this.status = status;
-        this.contactNumber = contactNumber;
     }
 
     @Enumerated(EnumType.STRING)
@@ -27,10 +26,6 @@ public class Customer extends User {
     @Setter
     @Column(name = "status")
     private Status status;
-
-    @Setter
-    @Column(name = "contact_number")
-    private String contactNumber;
 
     public enum Status {
         STATUS_REGISTERED, STATUS_UNREGISTERED, STATUS_DELETED

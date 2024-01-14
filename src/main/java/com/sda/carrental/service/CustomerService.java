@@ -49,20 +49,6 @@ public class CustomerService {
         }
     }
 
-    @Transactional
-    public HttpStatus changeContact(String inputContact, long customerId) {
-        try {
-            Customer user = findById(customerId);
-            user.setContactNumber(inputContact);
-            repository.save(user);
-            return HttpStatus.ACCEPTED;
-        } catch (ResourceNotFoundException err) {
-            return HttpStatus.NOT_FOUND;
-        } catch (Error err) {
-            return HttpStatus.INTERNAL_SERVER_ERROR;
-        }
-    }
-
     private Customer redactCustomer(Customer customer) {
         customer.setName("—");
         customer.setSurname("—");

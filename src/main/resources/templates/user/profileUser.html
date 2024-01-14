@@ -31,7 +31,7 @@
             </tr>
             </thead>
             <tbody>
-            <tr>
+            <tr class="profile-row">
                 <th scope="row">Name</th>
                 <td th:text="${user.getName()} + ' ' + ${user.getSurname()}"></td>
                 <td style="width: min-content;">
@@ -40,7 +40,7 @@
                             th:text="'Change password'"></button>
                 </td>
             </tr>
-            <tr>
+            <tr class="profile-row">
                 <th scope="row">Contact number</th>
                 <td th:text="${user.getContactNumber()}"></td>
                 <td style="width: min-content;">
@@ -49,16 +49,40 @@
                             th:text="'Change contact number'"></button>
                 </td>
             </tr>
-            <tr>
+            <tr class="profile-row">
                 <th scope="row">E-mail</th>
                 <td th:text="${username}"></td>
                 <td style="width: min-content;">
                     <button data-bs-toggle="modal"
                             data-bs-target="#email_modal" type="button" class="btn btn-dark w-100"
-                            th:text="'Change e-mail'"></button>
+                            th:text="'Change e-mail'" th:if="${user.type.name() == 'TYPE_CUSTOMER'}"></button>
                 </td>
             </tr>
-            <tr>
+            <th:block th:if="${user.type.name() == 'TYPE_EMPLOYEE'}">
+                <tr class="profile-row">
+                    <th scope="row">Account type</th>
+                    <td th:text="${user.getRole().name().substring(5)}"></td>
+                </tr>
+                <th:block sec:authorize="hasAnyRole('ROLE_EMPLOYEE', 'ROLE_MANAGER')">
+                    <tr class="profile-row">
+                        <th scope="row">Department</th>
+                        <td th:text="${user.departments[0].country.getCode()} + ' — ' + ${user.departments[0].city} + ', ' + ${user.departments[0].address}"></td>
+                    </tr>
+                </th:block>
+                <th:block sec:authorize="hasAnyRole('ROLE_COORDINATOR')">
+                    <tr class="profile-row">
+                        <th scope="row">Departments</th>
+                        <td th:text="${user.departments.size()}"></td>
+                    </tr>
+                </th:block>
+                <th:block sec:authorize="!hasAnyRole('ROLE_ADMIN')">
+                    <tr class="profile-row">
+                        <th scope="row">Expiry date</th>
+                        <td th:text="${user.getTerminationDate()}"></td>
+                    </tr>
+                </th:block>
+            </th:block>
+            <tr th:if="${user.type.name() == 'TYPE_CUSTOMER'}" class="profile-row">
                 <td></td>
                 <td></td>
                 <td style="width: min-content;">
@@ -70,7 +94,6 @@
             </tbody>
         </table>
 
-        <!--Modal password-->
         <form th:method="POST" th:object="${password_form}" th:action="@{'/profile/password'}">
             <div class="modal fade" id="password_modal" tabindex="-1" role="dialog"
                  aria-hidden="true">
@@ -130,7 +153,6 @@
             </div>
         </form>
 
-        <!--Modal contact-->
         <form th:method="POST" th:object="${contact_form}" th:action="@{'/profile/contact'}">
             <div class="modal fade" id="contact_modal" tabindex="-1" role="dialog"
                  aria-hidden="true">
@@ -180,8 +202,7 @@
             </div>
         </form>
 
-        <!--Modal email-->
-        <form th:method="POST" th:object="${email_form}" th:action="@{'/profile/email'}">
+        <form th:method="POST" th:if="${user.type.name() == 'TYPE_CUSTOMER'}" th:object="${email_form}" th:action="@{'/profile/email'}">
             <div class="modal fade" id="email_modal" tabindex="-1" role="dialog"
                  aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered" role="document">
@@ -239,8 +260,7 @@
             </div>
         </form>
 
-        <!--Modal delete-->
-        <form th:method="POST" th:object="${delete_form}" th:action="@{'/profile/delete'}">
+        <form th:method="POST" th:if="${user.type.name() == 'TYPE_CUSTOMER'}" th:object="${delete_form}" th:action="@{'/profile/delete'}">
             <div class="modal fade" id="delete_modal" tabindex="-1" role="dialog"
                  aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered" role="document">
