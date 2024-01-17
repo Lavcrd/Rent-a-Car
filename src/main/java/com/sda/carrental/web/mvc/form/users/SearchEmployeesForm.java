@@ -1,5 +1,6 @@
 package com.sda.carrental.web.mvc.form.users;
 
+import com.sda.carrental.web.mvc.form.validation.constraint.UserRole;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -18,6 +19,7 @@ public class SearchEmployeesForm {
     @NotNull(message = "Failure: Active-Expired field is invalid")
     private boolean isExpired;
 
+    @UserRole
     private String role;
 
     public SearchEmployeesForm() {
