@@ -21,7 +21,7 @@
             <thead class="table-dark">
             <tr>
                 <th scope="row">Account
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                    <svg th:if="${user.type.name() == 'TYPE_CUSTOMER'}" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                          class="bi bi-info-circle" viewBox="0 0 16 16" data-toggle="tooltip" data-placement="top"
                          title="Personal details will be verified at the rental outlet before the vehicle is handed over. Please make sure that your data is correct!">
                         <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
