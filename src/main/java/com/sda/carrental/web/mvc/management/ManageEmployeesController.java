@@ -1,7 +1,9 @@
 package com.sda.carrental.web.mvc.management;
 
+import com.sda.carrental.exceptions.ResourceNotFoundException;
 import com.sda.carrental.global.enums.Role;
 import com.sda.carrental.model.property.Department;
+import com.sda.carrental.model.users.Employee;
 import com.sda.carrental.service.*;
 import com.sda.carrental.service.auth.CustomUserDetails;
 import com.sda.carrental.web.mvc.form.users.SearchEmployeesForm;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 
@@ -47,6 +50,23 @@ public class ManageEmployeesController {
         } catch (RuntimeException err) {
             redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
             return "redirect:/";
+        }
+    }
+
+        @RequestMapping(method = RequestMethod.GET, value = "/{employee}")
+    public String viewEmployeePage(ModelMap map, RedirectAttributes redAtt, @PathVariable(value = "employee") Long employeeId) {
+        try {
+            Employee employee = employeeService.findById(employeeId);
+            map.addAttribute("employee", employee);
+            map.addAttribute("isExpired", !employee.getTerminationDate().isAfter(LocalDate.now()));
+
+            return "management/viewEmployee";
+        } catch (ResourceNotFoundException err) {
+            redAtt.addFlashAttribute(MSG_KEY, MSG_NO_RESOURCE);
+            return "redirect:/mg-emp";
+        } catch (RuntimeException err) {
+            redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
+            return "redirect:/mg-emp";
         }
     }
 
