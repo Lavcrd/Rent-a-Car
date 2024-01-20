@@ -19,6 +19,16 @@
     <div class="row">
         <th:block th:if="${customer} != null">
             <div class="col-sm-3">
+                <a class="btn btn-dark bg-dark mb-2 w-100 def-button-text"
+                   type="button" th:href="'/mg-cus'">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                         class="bi bi-arrow-left-circle" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd"
+                              d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-4.5-.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5z"/>
+                    </svg>
+                    Search
+                </a>
+
                 <table class="table table-borderless table-fixed">
                     <thead class="table-dark">
                     <tr class="table-dark">
@@ -63,19 +73,6 @@
                             <div class="overflow-cell-hs"
                                  th:utext="${verification.getCountry().getCountryName()} + '<br>' + 'P-ID: ' + ${verification.getPersonalId()} + '<br>' + 'D-ID: ' + ${verification.getDriverId()}">
                             </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="padding-left:0;">
-                            <a class="btn btn-dark bg-dark mt-2 w-100 def-button-text"
-                               type="button" th:href="'/mg-cus'">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                     class="bi bi-arrow-left-circle" viewBox="0 0 16 16">
-                                    <path fill-rule="evenodd"
-                                          d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-4.5-.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5z"/>
-                                </svg>
-                                Search
-                            </a>
                         </td>
                     </tr>
                     </tbody>
