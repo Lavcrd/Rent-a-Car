@@ -24,4 +24,8 @@ public class EmployeeService {
         if (!form.getRole().isBlank()) role = Role.valueOf(form.getRole());
         return repository.findAllByForm(form.getName(), form.getSurname(), form.getDepartment(), form.isExpired(), role);
     }
+
+    public List<Role> getEmployeeEnums() {
+        return List.of(Role.ROLE_EMPLOYEE, Role.ROLE_MANAGER, Role.ROLE_COORDINATOR);
+    }
 }

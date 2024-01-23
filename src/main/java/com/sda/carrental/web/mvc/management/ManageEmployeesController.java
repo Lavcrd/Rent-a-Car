@@ -1,12 +1,12 @@
 package com.sda.carrental.web.mvc.management;
 
 import com.sda.carrental.exceptions.ResourceNotFoundException;
-import com.sda.carrental.global.enums.Role;
 import com.sda.carrental.model.property.Department;
 import com.sda.carrental.model.users.Employee;
 import com.sda.carrental.service.*;
 import com.sda.carrental.service.auth.CustomUserDetails;
 import com.sda.carrental.web.mvc.form.users.SearchEmployeesForm;
+import com.sda.carrental.web.mvc.form.users.employee.UpdateEmployeeForm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -20,8 +20,6 @@ import javax.validation.Valid;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
-
-import static com.sda.carrental.global.enums.Role.*;
 
 @Controller
 @RequiredArgsConstructor
@@ -42,7 +40,7 @@ public class ManageEmployeesController {
             CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             List<Department> employeeDepartments = departmentService.getDepartmentsByUserContext(cud);
             map.addAttribute("departments", employeeDepartments);
-            map.addAttribute("roles", List.of(Role.valueOf(ROLE_EMPLOYEE.name()), Role.valueOf(ROLE_MANAGER.name()), Role.valueOf(ROLE_COORDINATOR.name())));
+            map.addAttribute("roles", employeeService.getEmployeeEnums());
             map.addAttribute("searchEmployeesForm", map.getOrDefault("searchEmployeesForm", new SearchEmployeesForm()));
             map.addAttribute("e_results", map.getOrDefault("e_results", Collections.emptyList()));
 
@@ -59,6 +57,9 @@ public class ManageEmployeesController {
             Employee employee = employeeService.findById(employeeId);
             map.addAttribute("employee", employee);
             map.addAttribute("isExpired", !employee.getTerminationDate().isAfter(LocalDate.now()));
+
+            map.addAttribute("roles", employeeService.getEmployeeEnums());
+            map.addAttribute("details_form", new UpdateEmployeeForm(employee));
 
             return "management/viewEmployee";
         } catch (ResourceNotFoundException err) {

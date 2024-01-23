@@ -103,77 +103,162 @@
                     </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td class="button-cell">
-                                <a th:href="'#'" type="button" class="btn btn-dark bg-dark mt-1 list-button w-100">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                         class="bi bi-list-check cb-svg" viewBox="0 0 16 16">
-                                        <path fill-rule="evenodd"
-                                              d="M5 11.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zM3.854 2.146a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 1 1 .708-.708L2 3.293l1.146-1.147a.5.5 0 0 1 .708 0zm0 4a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 1 1 .708-.708L2 7.293l1.146-1.147a.5.5 0 0 1 .708 0zm0 4a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 0 1 .708-.708l.146.147 1.146-1.147a.5.5 0 0 1 .708 0z"/>
-                                    </svg>
-                                    <div class="list-button-text">Details</div>
-                                </a>
-                            </td>
-                            <td class="short-description-cell">Change employee's account details.</td>
-                        </tr>
+                    <tr>
+                        <td class="button-cell">
+                            <button type="button" class="btn btn-dark bg-dark mt-1 list-button w-100"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#detailsModal">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                     fill="currentColor"
+                                     class="bi bi-circle cb-svg" viewBox="0 0 16 16">
+                                    <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                                </svg>
+                                <div class="list-button-text">Details</div>
+                            </button>
+                        </td>
+                        <td class="short-description-cell">Change employee's account details.</td>
+                    </tr>
 
-                        <tr>
-                            <td class="button-cell">
-                                <a th:href="'#'" type="button" class="btn btn-dark bg-dark mt-1 list-button w-100">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                         class="bi bi-list-check cb-svg" viewBox="0 0 16 16">
-                                        <path fill-rule="evenodd"
-                                              d="M5 11.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zM3.854 2.146a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 1 1 .708-.708L2 3.293l1.146-1.147a.5.5 0 0 1 .708 0zm0 4a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 1 1 .708-.708L2 7.293l1.146-1.147a.5.5 0 0 1 .708 0zm0 4a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 0 1 .708-.708l.146.147 1.146-1.147a.5.5 0 0 1 .708 0z"/>
-                                    </svg>
-                                    <div class="list-button-text">Password</div>
-                                </a>
-                            </td>
-                            <td class="short-description-cell">Changes employee's password.</td>
-                        </tr>
+                    <tr>
+                        <td class="button-cell">
+                            <a th:href="'#'" type="button" class="btn btn-dark bg-dark mt-1 list-button w-100">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                     fill="currentColor"
+                                     class="bi bi-circle cb-svg" viewBox="0 0 16 16">
+                                    <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                                </svg>
+                                <div class="list-button-text">Password</div>
+                            </a>
+                        </td>
+                        <td class="short-description-cell">Changes employee's password.</td>
+                    </tr>
 
-                        <tr>
-                            <td class="button-cell">
-                                <a th:href="'#'" type="button" class="btn btn-dark bg-dark mt-1 list-button w-100">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                         class="bi bi-list-check cb-svg" viewBox="0 0 16 16">
-                                        <path fill-rule="evenodd"
-                                              d="M5 11.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zM3.854 2.146a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 1 1 .708-.708L2 3.293l1.146-1.147a.5.5 0 0 1 .708 0zm0 4a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 1 1 .708-.708L2 7.293l1.146-1.147a.5.5 0 0 1 .708 0zm0 4a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 0 1 .708-.708l.146.147 1.146-1.147a.5.5 0 0 1 .708 0z"/>
-                                    </svg>
-                                    <div class="list-button-text">Departments</div>
-                                </a>
-                            </td>
-                            <td class="short-description-cell">Manages employee's access to departments.</td>
-                        </tr>
+                    <tr>
+                        <td class="button-cell">
+                            <a th:href="'#'" type="button" class="btn btn-dark bg-dark mt-1 list-button w-100">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                     fill="currentColor"
+                                     class="bi bi-circle cb-svg" viewBox="0 0 16 16">
+                                    <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                                </svg>
+                                <div class="list-button-text">Departments</div>
+                            </a>
+                        </td>
+                        <td class="short-description-cell">Manages employee's access to departments.</td>
+                    </tr>
 
-                        <tr th:if="${!isExpired}">
-                            <td class="button-cell">
-                                <a th:href="'#'" type="button" class="btn btn-dark bg-dark mt-1 list-button w-100">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                         class="bi bi-list-check cb-svg" viewBox="0 0 16 16">
-                                        <path fill-rule="evenodd"
-                                              d="M5 11.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zM3.854 2.146a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 1 1 .708-.708L2 3.293l1.146-1.147a.5.5 0 0 1 .708 0zm0 4a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 1 1 .708-.708L2 7.293l1.146-1.147a.5.5 0 0 1 .708 0zm0 4a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 0 1 .708-.708l.146.147 1.146-1.147a.5.5 0 0 1 .708 0z"/>
-                                    </svg>
-                                    <div class="list-button-text">Lock</div>
-                                </a>
-                            </td>
-                            <td class="short-description-cell">Locks employee's account.</td>
-                        </tr>
+                    <tr th:if="${!isExpired}">
+                        <td class="button-cell">
+                            <a th:href="'#'" type="button" class="btn btn-dark bg-dark mt-1 list-button w-100">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                     fill="currentColor"
+                                     class="bi bi-circle cb-svg" viewBox="0 0 16 16">
+                                    <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                                </svg>
+                                <div class="list-button-text">Lock</div>
+                            </a>
+                        </td>
+                        <td class="short-description-cell">Locks employee's account.</td>
+                    </tr>
 
-                        <tr th:if="${isExpired}">
-                            <td class="button-cell">
-                                <a th:href="'#'" type="button" class="btn btn-dark bg-dark mt-1 list-button w-100">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                         class="bi bi-list-check cb-svg" viewBox="0 0 16 16">
-                                        <path fill-rule="evenodd"
-                                              d="M5 11.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zM3.854 2.146a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 1 1 .708-.708L2 3.293l1.146-1.147a.5.5 0 0 1 .708 0zm0 4a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 1 1 .708-.708L2 7.293l1.146-1.147a.5.5 0 0 1 .708 0zm0 4a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 0 1 .708-.708l.146.147 1.146-1.147a.5.5 0 0 1 .708 0z"/>
-                                    </svg>
-                                    <div class="list-button-text">Unlock</div>
-                                </a>
-                            </td>
-                            <td class="short-description-cell">Unlocks employee's account.</td>
-                        </tr>
+                    <tr th:if="${isExpired}">
+                        <td class="button-cell">
+                            <a th:href="'#'" type="button" class="btn btn-dark bg-dark mt-1 list-button w-100">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                     fill="currentColor"
+                                     class="bi bi-circle cb-svg" viewBox="0 0 16 16">
+                                    <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                                </svg>
+                                <div class="list-button-text">Unlock</div>
+                            </a>
+                        </td>
+                        <td class="short-description-cell">Unlocks employee's account.</td>
+                    </tr>
                     </tbody>
                 </table>
+
+                <!--Modal details-->
+                <form th:method="POST" th:object="${details_form}"
+                      th:action="@{'/mg-emp/' + ${employee.id} + '/update-details'}">
+                    <div class="modal fade" id="detailsModal" tabindex="-1" role="dialog"
+                         aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Details</h5>
+                                    <button type="button" class="close" data-bs-dismiss="modal"
+                                            aria-label="Close">
+                                        <span aria-hidden="true">×</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <p>Change employee's details and confirm with password.</p>
+                                    <div class="modal-row mt-2">
+                                        <label style="justify-self: start;" for="d_name"
+                                               class="form-label">Name: </label>
+                                        <input id="d_name" class="text-black bg-white modal-input"
+                                               th:placeholder="'Provide employee name'"
+                                               th:type="text" th:field="*{name}"
+                                               required/>
+                                    </div>
+
+                                    <div class="modal-row mt-2">
+                                        <label style="justify-self: start;" for="d_surname"
+                                               class="form-label">Surname: </label>
+                                        <input id="d_surname" class="text-black bg-white modal-input"
+                                               th:placeholder="'Provide employee surname'"
+                                               th:type="text" th:field="*{surname}"
+                                               required/>
+                                    </div>
+
+                                    <div class="modal-row mt-2">
+                                        <label style="justify-self: start;" for="d_role"
+                                               class="form-label">Role: </label>
+
+                                        <select id="d_role" class="form-select modal-input" th:field="*{role}" required>
+                                            <div th:each="role:${roles}">
+                                                <option
+                                                        th:text="${role.name().substring(5)}"
+                                                        th:value="${role.name()}"
+                                                        th:field="*{role}"></option>
+                                            </div>
+                                        </select>
+                                    </div>
+
+                                    <div class="modal-row mt-2">
+                                        <label style="justify-self: start;" for="d_contact"
+                                               class="form-label">Contact: </label>
+                                        <input id="d_contact" class="text-black bg-white modal-input"
+                                               th:placeholder="'Provide contact number'"
+                                               th:type="text" th:field="*{contactNumber}"
+                                               required/>
+                                    </div>
+
+                                    <div class="my-3 d-flex" style="justify-content: center; align-content: center;">
+                                        <span class="border w-100"></span>
+                                    </div>
+
+                                    <div class="modal-row mt-2">
+                                        <label style="justify-self: start;" for="d_confirmation"
+                                               class="text-md">Password: </label>
+                                        <input id="d_confirmation" class="text-black bg-white modal-input"
+                                               th:placeholder="'Confirm with password'"
+                                               th:type="password" th:field="*{currentPassword}"
+                                               autocomplete="new-password"
+                                               required/>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-dark" data-bs-dismiss="modal">
+                                        Close
+                                    </button>
+                                    <button type="submit" class="btn btn-dark">Confirm</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
             </div>
         </th:block>
         <div th:insert="fragments/bottom::message-handler"></div>
