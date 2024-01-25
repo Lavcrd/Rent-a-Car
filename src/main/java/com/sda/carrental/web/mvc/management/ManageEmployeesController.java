@@ -51,7 +51,7 @@ public class ManageEmployeesController {
         }
     }
 
-        @RequestMapping(method = RequestMethod.GET, value = "/{employee}")
+    @RequestMapping(method = RequestMethod.GET, value = "/{employee}")
     public String viewEmployeePage(ModelMap map, RedirectAttributes redAtt, @PathVariable(value = "employee") Long employeeId) {
         try {
             Employee employee = employeeService.findById(employeeId);
@@ -59,7 +59,7 @@ public class ManageEmployeesController {
             map.addAttribute("isExpired", !employee.getTerminationDate().isAfter(LocalDate.now()));
 
             map.addAttribute("roles", employeeService.getEmployeeEnums());
-            map.addAttribute("details_form", new UpdateEmployeeForm(employee));
+            map.addAttribute("details_form", map.getOrDefault("details_form", new UpdateEmployeeForm(employee)));
 
             return "management/viewEmployee";
         } catch (ResourceNotFoundException err) {
@@ -96,5 +96,47 @@ public class ManageEmployeesController {
             redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
             return "redirect:/mg-emp";
         }
+    }
+
+
+    //Employee page buttons
+    @RequestMapping(value = "/{employee}/update-details", method = RequestMethod.POST)
+    public String employeeDetailsButton(@ModelAttribute("details_form") @Valid UpdateEmployeeForm form, Errors err, RedirectAttributes redAtt, @PathVariable(value = "employee") Long employeeId) {
+        try {
+            redAtt.addFlashAttribute("details_form", form);
+
+            CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            Employee employee = employeeService.findById(employeeId);
+            if (departmentService.departmentAccess(cud, employee.getDepartments().get(0).getId()).equals(HttpStatus.FORBIDDEN)) {
+                redAtt.addFlashAttribute(MSG_KEY, MSG_ACCESS_REJECTED);
+                return "redirect:/mg-emp";
+            }
+
+            /*if (!employeeService.hasAuthority(cud, employee).equals(HttpStatus.FORBIDDEN)) {
+                redAtt.addFlashAttribute(MSG_KEY, MSG_ACCESS_REJECTED);
+                return "redirect:/mg-emp";
+            }*/ //todo
+
+            if (err.hasErrors()) {
+                redAtt.addFlashAttribute(MSG_KEY, err.getAllErrors().get(0).getDefaultMessage());
+                return "redirect:/mg-emp";
+            }
+
+            HttpStatus status = employeeService.updateDetails(employee, form);
+
+            if (status.equals(HttpStatus.OK)) {
+                redAtt.addFlashAttribute(MSG_KEY, "Success: Employee's data has been updated.");
+            } else {
+                redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
+            }
+
+            redAtt.addAttribute("employee", employeeId);
+            return "redirect:/mg-emp/{employee}";
+        } catch (ResourceNotFoundException e) {
+            redAtt.addFlashAttribute(MSG_KEY, MSG_NO_RESOURCE);
+        } catch (RuntimeException e) {
+            redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
+        }
+        return "redirect:/mg-emp";
     }
 }

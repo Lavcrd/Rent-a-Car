@@ -56,7 +56,6 @@ public class ManageReservationsController {
     //Pages
     @RequestMapping(method = RequestMethod.GET)
     public String redirectPage() {
-        CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return "redirect:/mg-cus";
     }
 
@@ -64,7 +63,7 @@ public class ManageReservationsController {
     public String customerReservationsPage(final ModelMap map, RedirectAttributes redAtt, @PathVariable("customer") Long customerId, @PathVariable("department") Long departmentId) {
         try {
             CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            if (userService.hasNoAccessToUserData(cud, customerId, departmentId)) {
+            if (userService.hasNoAccessToCustomerData(cud, customerId, departmentId)) {
                 redAtt.addFlashAttribute(MSG_KEY, MSG_ACCESS_REJECTED);
                 return "redirect:/mg-cus";
             }
@@ -95,7 +94,7 @@ public class ManageReservationsController {
     public String reservationDetailsPage(final ModelMap map, RedirectAttributes redAtt, @PathVariable("reservation") Long reservationId, @PathVariable("customer") Long customerId, @PathVariable("department") Long departmentId) {
         try {
             CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            if (userService.hasNoAccessToUserOperation(cud, customerId, reservationId) ||
+            if (userService.hasNoAccessToCustomerOperation(cud, customerId, reservationId) ||
                     departmentService.departmentAccess(cud, departmentId).equals(HttpStatus.FORBIDDEN)) {
                 redAtt.addFlashAttribute(MSG_KEY, MSG_ACCESS_REJECTED);
                 return "redirect:/mg-cus";

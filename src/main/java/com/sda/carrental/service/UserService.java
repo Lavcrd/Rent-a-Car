@@ -69,7 +69,7 @@ public class UserService {
         }
     }
 
-    public boolean hasNoAccessToUserData(CustomUserDetails cud, Long customerId, Long departmentId) {
+    public boolean hasNoAccessToCustomerData(CustomUserDetails cud, Long customerId, Long departmentId) {
         try {
             if (departmentService.departmentAccess(cud, departmentId).equals(HttpStatus.ACCEPTED)) {
                 boolean hasNoReservationsDepTake = reservationService.findUserReservationsByDepartmentTake(customerId, departmentId).isEmpty();
@@ -83,7 +83,7 @@ public class UserService {
         }
     }
 
-    public boolean hasNoAccessToUserOperation(CustomUserDetails cud, Long customerId, Long operationId) {
+    public boolean hasNoAccessToCustomerOperation(CustomUserDetails cud, Long customerId, Long operationId) {
         try {
             Reservation r = reservationService.findCustomerReservation(customerId, operationId);
 

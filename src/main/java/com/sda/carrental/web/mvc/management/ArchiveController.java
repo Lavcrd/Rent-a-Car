@@ -75,7 +75,7 @@ public class ArchiveController {
                 map.addAttribute("retrieve_employee", userService.findById(retrieve.getEmployeeId()));
             }
 
-            map.addAttribute("isObscured", userService.hasNoAccessToUserOperation(cud, rent.getReservation().getCustomer().getId(), operationId));
+            map.addAttribute("isObscured", userService.hasNoAccessToCustomerOperation(cud, rent.getReservation().getCustomer().getId(), operationId));
             map.addAttribute("previousPage", map.getOrDefault("previousPage", "/archive"));
 
             PaymentDetails paymentDetails = paymentDetailsService.getOptionalPaymentDetails(operationId).orElseThrow(ResourceNotFoundException::new);
