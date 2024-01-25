@@ -5,8 +5,11 @@ import com.sda.carrental.global.enums.Role;
 import com.sda.carrental.model.users.Employee;
 import com.sda.carrental.repository.EmployeeRepository;
 import com.sda.carrental.web.mvc.form.users.SearchEmployeesForm;
+import com.sda.carrental.web.mvc.form.users.employee.UpdateEmployeeForm;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -15,7 +18,7 @@ import java.util.List;
 public class EmployeeService {
     private final EmployeeRepository repository;
 
-    public Employee findById(Long id) {
+    public Employee findById(Long id) throws ResourceNotFoundException {
         return repository.findEmployeeById(id).orElseThrow(ResourceNotFoundException::new);
     }
 
@@ -27,5 +30,20 @@ public class EmployeeService {
 
     public List<Role> getEmployeeEnums() {
         return List.of(Role.ROLE_EMPLOYEE, Role.ROLE_MANAGER, Role.ROLE_COORDINATOR);
+    }
+
+    @Transactional
+    public HttpStatus updateDetails(Employee employee, UpdateEmployeeForm form) {
+        try {
+            employee.setName(form.getName());
+            employee.setSurname(form.getSurname());
+            employee.setRole(Role.valueOf(form.getRole()));
+            employee.setContactNumber(form.getContactNumber());
+
+            repository.save(employee);
+            return HttpStatus.OK;
+        } catch (RuntimeException e) {
+            return HttpStatus.BAD_GATEWAY;
+        }
     }
 }

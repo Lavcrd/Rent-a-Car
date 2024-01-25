@@ -116,7 +116,7 @@ public class ManageDepositController {
     @RequestMapping(method = RequestMethod.POST, value = "/release")
     public String checkReleaseButton(@ModelAttribute("form") @Valid DepositForm form, Errors err, RedirectAttributes redAtt, @RequestParam("retrieve") Long retrieveId, @RequestParam("customer") Long customerId) {
         CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (userService.hasNoAccessToUserOperation(cud, customerId, retrieveId)) {
+        if (userService.hasNoAccessToCustomerOperation(cud, customerId, retrieveId)) {
             redAtt.addFlashAttribute(MSG_KEY, MSG_ACCESS_REJECTED);
             return "redirect:/mg-depo";
         }
@@ -145,7 +145,7 @@ public class ManageDepositController {
     @RequestMapping(method = RequestMethod.POST, value = "/charge")
     public String checkChargeButton(@ModelAttribute("form") @Valid DepositForm form, Errors err, RedirectAttributes redAtt, @RequestParam("retrieve") Long retrieveId, @RequestParam("customer") Long customerId) {
         CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (userService.hasNoAccessToUserOperation(cud, customerId, retrieveId)) {
+        if (userService.hasNoAccessToCustomerOperation(cud, customerId, retrieveId)) {
             redAtt.addFlashAttribute(MSG_KEY, MSG_ACCESS_REJECTED);
             return "redirect:/mg-depo";
         }

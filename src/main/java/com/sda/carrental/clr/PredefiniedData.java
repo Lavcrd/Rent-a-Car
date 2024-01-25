@@ -74,13 +74,13 @@ public class PredefiniedData implements CommandLineRunner {
         userRepository.save(new Customer("Anna", "Kowalska", Customer.Status.STATUS_UNREGISTERED, "123312897"));
 
         List<Employee> list = List.of(
-                new Employee("Maria", "Fajna", List.of(departmentRepository.findById(1L).orElse(null)), LocalDate.ofYearDay(9999, 1), "111222333"),
-                new Employee("Aleksandra", "Ładna", List.of(departmentRepository.findById(2L).orElse(null)), LocalDate.ofYearDay(9999, 1), "111222444"),
-                new Employee("Katarzyna", "Nieładna", List.of(departmentRepository.findById(3L).orElse(null)), LocalDate.ofYearDay(9999, 1), "111222555"),
-                new Employee("Anna", "Mniejfajna", List.of(departmentRepository.findById(1L).orElse(null)), LocalDate.ofYearDay(9999, 1), "111222888"),
-                new Employee("Magda", "Piąta", List.of(departmentRepository.findById(2L).orElse(null)), LocalDate.ofYearDay(9999, 1), "111222881"),
-                new Employee("Wioletta", "Fioletowa", List.of(departmentRepository.findById(3L).orElse(null)), LocalDate.ofYearDay(9999, 1), "111222882"),
-                new Employee("Jacek", "Gruby", departmentRepository.findDepartmentsByCountry(Country.COUNTRY_PL), LocalDate.ofYearDay(9999, 1), "111222883")
+                new Employee("Maria", "Fajna", "1231231111", List.of(departmentRepository.findById(1L).orElse(null)), LocalDate.ofYearDay(9999, 1), "111222333"),
+                new Employee("Aleksandra", "Ładna", "1231232222", List.of(departmentRepository.findById(2L).orElse(null)), LocalDate.ofYearDay(9999, 1), "111222444"),
+                new Employee("Katarzyna", "Nieładna", "1231233333", List.of(departmentRepository.findById(3L).orElse(null)), LocalDate.ofYearDay(9999, 1), "111222555"),
+                new Employee("Anna", "Mniejfajna", "1231234444", List.of(departmentRepository.findById(1L).orElse(null)), LocalDate.ofYearDay(9999, 1), "111222888"),
+                new Employee("Magda", "Piąta", "1231235555", List.of(departmentRepository.findById(2L).orElse(null)), LocalDate.ofYearDay(9999, 1), "111222881"),
+                new Employee("Wioletta", "Fioletowa", "1231236666", List.of(departmentRepository.findById(3L).orElse(null)), LocalDate.ofYearDay(9999, 1), "111222882"),
+                new Employee("Jacek", "Gruby", "1231237777", departmentRepository.findDepartmentsByCountry(Country.COUNTRY_PL), LocalDate.ofYearDay(9999, 1), "111222883")
         );
 
         for (int i = 0; i < list.size(); i++) {
