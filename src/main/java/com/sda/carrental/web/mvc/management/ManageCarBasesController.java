@@ -33,7 +33,7 @@ public class ManageCarBasesController {
     private final Utility utility;
     private final CarService carService;
     private final CarBaseService carBaseService;
-    private final DepartmentService departmentService;
+    private final EmployeeService employeeService;
 
     private final String MSG_KEY = "message";
     private final String MSG_GENERIC_EXCEPTION = "Failure: An unexpected error occurred";
@@ -70,7 +70,7 @@ public class ManageCarBasesController {
     public String viewCarBasePage(ModelMap map, @PathVariable(value = "carBaseId") Long carBaseId, HttpServletRequest req, RedirectAttributes redAtt) {
         try {
             CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            List<Department> departments = departmentService.getDepartmentsByUserContext(cud);
+            List<Department> departments = employeeService.getDepartmentsByUserContext(cud);
             map.addAttribute("departments", departments);
 
             utility.retrieveSessionMessage(map, req);

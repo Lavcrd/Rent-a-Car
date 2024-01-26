@@ -28,6 +28,7 @@ public class CarService {
     private final CarRepository repository;
     private final CarBaseService carBaseService;
     private final DepartmentService departmentService;
+    private final EmployeeService employeeService;
 
     public Car findCarById(long id) {
         return repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Car", "id", id));
@@ -54,9 +55,9 @@ public class CarService {
 
         List<Department> departments;
         if (f.getDepartment() == null) {
-            departments = departmentService.getDepartmentsByUserContext(cud);
+            departments = employeeService.getDepartmentsByUserContext(cud);
         } else {
-            if (departmentService.departmentAccess(cud, f.getDepartment()).equals(HttpStatus.FORBIDDEN))
+            if (employeeService.departmentAccess(cud, f.getDepartment()).equals(HttpStatus.FORBIDDEN))
                 return Collections.emptyList();
             departments = List.of(departmentService.findDepartmentWhereId(f.getDepartment()));
         }
@@ -169,7 +170,7 @@ public class CarService {
     public HttpStatus register(RegisterCarForm form) {
         try {
             CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            if (departmentService.departmentAccess(cud, form.getDepartment()).equals(HttpStatus.FORBIDDEN))
+            if (employeeService.departmentAccess(cud, form.getDepartment()).equals(HttpStatus.FORBIDDEN))
                 throw new RuntimeException();
 
             CarBase carBase = carBaseService.findById(form.getPattern());
@@ -227,7 +228,7 @@ public class CarService {
             }
 
             CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            List<Department> departments = departmentService.getDepartmentsByUserContext(cud);
+            List<Department> departments = employeeService.getDepartmentsByUserContext(cud);
 
             int updatedCount = repository.updateCarsToCarBase(targetCarBase, carIdList, departments, carBase);
 

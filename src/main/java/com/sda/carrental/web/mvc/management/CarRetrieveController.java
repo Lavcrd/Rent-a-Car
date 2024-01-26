@@ -35,7 +35,7 @@ public class CarRetrieveController {
     private final RentService rentService;
     private final RetrieveService retrieveService;
     private final PaymentDetailsService paymentDetailsService;
-    private final DepartmentService departmentService;
+    private final EmployeeService employeeService;
 
     private final String MSG_KEY = "message";
     private final String MSG_GENERIC_EXCEPTION = "Failure: An unexpected error occurred";
@@ -53,7 +53,7 @@ public class CarRetrieveController {
                 Reservation reservation = (Reservation) map.get("reservation");
 
                 map.addAttribute("confirm_claim_form", map.getOrDefault("confirm_claim_form", new ConfirmClaimForm(reservation.getId(), reservation.getDepartmentBack().getId(), LocalDate.now())));
-                map.addAttribute("departments", departmentService.getDepartmentsByUserContext(cud));
+                map.addAttribute("departments", employeeService.getDepartmentsByUserContext(cud));
 
                 PaymentDetails receipt = paymentDetailsService.getOptionalPaymentDetails(reservation.getId()).orElseThrow(ResourceNotFoundException::new);
 
@@ -109,7 +109,7 @@ public class CarRetrieveController {
             Rent r = rentService.findActiveOperationByCarPlate(plate);
             if (!form.getReservationId().equals(r.getId()) ||
                     !form.getDepartmentId().equals(departmentId) ||
-                    departmentService.departmentAccess(cud, departmentId).equals(HttpStatus.FORBIDDEN)) throw new IllegalActionException();
+                    employeeService.departmentAccess(cud, departmentId).equals(HttpStatus.FORBIDDEN)) throw new IllegalActionException();
 
             if (err.hasErrors()) {
                 redAtt.addFlashAttribute("rent_details", r);

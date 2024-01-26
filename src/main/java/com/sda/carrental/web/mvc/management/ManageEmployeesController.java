@@ -25,7 +25,6 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/mg-emp")
 public class ManageEmployeesController {
-    private final DepartmentService departmentService;
     private final EmployeeService employeeService;
 
     private final String MSG_KEY = "message";
@@ -38,7 +37,7 @@ public class ManageEmployeesController {
     public String searchEmployeesPage(ModelMap map, RedirectAttributes redAtt) {
         try {
             CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            List<Department> employeeDepartments = departmentService.getDepartmentsByUserContext(cud);
+            List<Department> employeeDepartments = employeeService.getDepartmentsByUserContext(cud);
             map.addAttribute("departments", employeeDepartments);
             map.addAttribute("roles", employeeService.getEmployeeEnums());
             map.addAttribute("searchEmployeesForm", map.getOrDefault("searchEmployeesForm", new SearchEmployeesForm()));
@@ -54,7 +53,13 @@ public class ManageEmployeesController {
     @RequestMapping(method = RequestMethod.GET, value = "/{employee}")
     public String viewEmployeePage(ModelMap map, RedirectAttributes redAtt, @PathVariable(value = "employee") Long employeeId) {
         try {
+            CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             Employee employee = employeeService.findById(employeeId);
+            if (employeeService.departmentAccess(cud, employee.getDepartments().get(0).getId()).equals(HttpStatus.FORBIDDEN)) {
+                redAtt.addFlashAttribute(MSG_KEY, MSG_ACCESS_REJECTED);
+                return "redirect:/mg-emp";
+            }
+
             map.addAttribute("employee", employee);
             map.addAttribute("isExpired", !employee.getTerminationDate().isAfter(LocalDate.now()));
 
@@ -78,7 +83,7 @@ public class ManageEmployeesController {
             redAtt.addFlashAttribute("searchEmployeesForm", form);
 
             CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            if (departmentService.departmentAccess(cud, form.getDepartment()).equals(HttpStatus.FORBIDDEN)) {
+            if (employeeService.departmentAccess(cud, form.getDepartment()).equals(HttpStatus.FORBIDDEN)) {
                 redAtt.addFlashAttribute(MSG_KEY, MSG_ACCESS_REJECTED);
                 return "redirect:/mg-emp";
             }
@@ -107,19 +112,15 @@ public class ManageEmployeesController {
 
             CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             Employee employee = employeeService.findById(employeeId);
-            if (departmentService.departmentAccess(cud, employee.getDepartments().get(0).getId()).equals(HttpStatus.FORBIDDEN)) {
+            if (!employeeService.isSupervisorOf(cud, employee)) {
                 redAtt.addFlashAttribute(MSG_KEY, MSG_ACCESS_REJECTED);
-                return "redirect:/mg-emp";
+                return "redirect:/mg-emp/{employee}";
             }
 
-            /*if (!employeeService.hasAuthority(cud, employee).equals(HttpStatus.FORBIDDEN)) {
-                redAtt.addFlashAttribute(MSG_KEY, MSG_ACCESS_REJECTED);
-                return "redirect:/mg-emp";
-            }*/ //todo
-
+            redAtt.addAttribute("employee", employeeId);
             if (err.hasErrors()) {
                 redAtt.addFlashAttribute(MSG_KEY, err.getAllErrors().get(0).getDefaultMessage());
-                return "redirect:/mg-emp";
+                return "redirect:/mg-emp/{employee}";
             }
 
             HttpStatus status = employeeService.updateDetails(employee, form);
@@ -130,7 +131,6 @@ public class ManageEmployeesController {
                 redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
             }
 
-            redAtt.addAttribute("employee", employeeId);
             return "redirect:/mg-emp/{employee}";
         } catch (ResourceNotFoundException e) {
             redAtt.addFlashAttribute(MSG_KEY, MSG_NO_RESOURCE);
