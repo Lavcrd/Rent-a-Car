@@ -7,7 +7,7 @@ import com.sda.carrental.exceptions.ResourceNotFoundException;
 import com.sda.carrental.global.enums.Country;
 import com.sda.carrental.model.users.Customer;
 import com.sda.carrental.service.CustomerService;
-import com.sda.carrental.service.DepartmentService;
+import com.sda.carrental.service.EmployeeService;
 import com.sda.carrental.service.ReservationService;
 import com.sda.carrental.service.auth.CustomUserDetails;
 import com.sda.carrental.service.mappers.CustomObjectMapper;
@@ -33,7 +33,7 @@ import java.util.Objects;
 @RequestMapping("/loc-res")
 public class LocalReservationController {
     private final CustomerService customerService;
-    private final DepartmentService departmentService;
+    private final EmployeeService employeeService;
     private final ReservationService reservationService;
 
     private final String MSG_KEY = "message";
@@ -48,7 +48,7 @@ public class LocalReservationController {
         try {
             CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-            if (departmentService.departmentAccess(cud, htmlForm.getIndexData().getDepartmentIdFrom()).equals(HttpStatus.FORBIDDEN)) {
+            if (employeeService.departmentAccess(cud, htmlForm.getIndexData().getDepartmentIdFrom()).equals(HttpStatus.FORBIDDEN)) {
                 redAtt.addFlashAttribute(MSG_KEY, MSG_ACCESS_REJECTED);
                 clearSessionValues(httpSession);
                 return "redirect:/";

@@ -12,7 +12,6 @@ import java.util.List;
 
 @Entity(name = "employee")
 @Getter
-@Setter
 @NoArgsConstructor
 @PrimaryKeyJoinColumn(foreignKey = @ForeignKey(name = "employee_id"))
 public class Employee extends User {
@@ -26,10 +25,12 @@ public class Employee extends User {
     @Column(name = "personal_id")
     private String personalId;
 
+    @Setter
     @Enumerated(EnumType.STRING)
     @Column(name = "role")
     private Role role;
 
+    @Setter
     @ManyToMany(fetch = FetchType.EAGER)
     @Column(name = "departments")
     private List<Department> departments;

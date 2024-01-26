@@ -35,6 +35,7 @@ public class RetrieveService {
     private final RentService rentService;
     private final DepartmentService departmentService;
     private final CarService carService;
+    private final EmployeeService employeeService;
 
 
     public Optional<Retrieve> findById(Long id) {
@@ -66,7 +67,7 @@ public class RetrieveService {
     public HttpStatus handleRetrieve(Long customerId, Long departmentId, ConfirmClaimForm form) {
         try {
             CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            if (departmentService.departmentAccess(cud, departmentId).equals(HttpStatus.FORBIDDEN)) {
+            if (employeeService.departmentAccess(cud, departmentId).equals(HttpStatus.FORBIDDEN)) {
                 throw new IllegalActionException();
             }
             carService.retrieveCar(rentService.findById(form.getReservationId()).getCar(), departmentService.findDepartmentWhereId(form.getDepartmentId()), form.getMileage());
@@ -81,7 +82,7 @@ public class RetrieveService {
     }
 
     public List<Retrieve> findAllUnresolvedByUserContext(CustomUserDetails cud) {
-        return repository.findAllUnresolvedByDepartments(departmentService.getDepartmentsByUserContext(cud));
+        return repository.findAllUnresolvedByDepartments(employeeService.getDepartmentsByUserContext(cud));
     }
 
     public List<Retrieve> replaceDatesWithDeadlines(List<Retrieve> retrieves) {
@@ -103,9 +104,9 @@ public class RetrieveService {
 
         List<Department> departments;
         if (form.getDepartment() == null) {
-            departments = departmentService.getDepartmentsByUserContext(cud);
+            departments = employeeService.getDepartmentsByUserContext(cud);
         } else {
-            if (departmentService.departmentAccess(cud, form.getDepartment()).equals(HttpStatus.FORBIDDEN))
+            if (employeeService.departmentAccess(cud, form.getDepartment()).equals(HttpStatus.FORBIDDEN))
                 return Collections.emptyList();
             departments = List.of(departmentService.findDepartmentWhereId(form.getDepartment()));
         }
@@ -133,9 +134,9 @@ public class RetrieveService {
 
             List<Department> departments;
             if (form.getDepartment() == null) {
-                departments = departmentService.getDepartmentsByUserContext(cud);
+                departments = employeeService.getDepartmentsByUserContext(cud);
             } else {
-                if (departmentService.departmentAccess(cud, form.getDepartment()).equals(HttpStatus.FORBIDDEN))
+                if (employeeService.departmentAccess(cud, form.getDepartment()).equals(HttpStatus.FORBIDDEN))
                     return Collections.emptyList();
                 departments = List.of(departmentService.findDepartmentWhereId(form.getDepartment()));
             }

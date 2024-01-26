@@ -45,7 +45,7 @@ public class ManageReservationsController {
     private final CarBaseService carBaseService;
     private final RentService rentService;
     private final RetrieveService retrieveService;
-    private final UserService userService;
+    private final EmployeeService employeeService;
     private final ConstantValues cv;
 
     private final String MSG_KEY = "message";
@@ -63,7 +63,7 @@ public class ManageReservationsController {
     public String customerReservationsPage(final ModelMap map, RedirectAttributes redAtt, @PathVariable("customer") Long customerId, @PathVariable("department") Long departmentId) {
         try {
             CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            if (userService.hasNoAccessToCustomerData(cud, customerId, departmentId)) {
+            if (employeeService.hasNoAccessToCustomerData(cud, customerId, departmentId)) {
                 redAtt.addFlashAttribute(MSG_KEY, MSG_ACCESS_REJECTED);
                 return "redirect:/mg-cus";
             }
@@ -94,8 +94,8 @@ public class ManageReservationsController {
     public String reservationDetailsPage(final ModelMap map, RedirectAttributes redAtt, @PathVariable("reservation") Long reservationId, @PathVariable("customer") Long customerId, @PathVariable("department") Long departmentId) {
         try {
             CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            if (userService.hasNoAccessToCustomerOperation(cud, customerId, reservationId) ||
-                    departmentService.departmentAccess(cud, departmentId).equals(HttpStatus.FORBIDDEN)) {
+            if (employeeService.hasNoAccessToCustomerOperation(cud, customerId, reservationId) ||
+                    employeeService.departmentAccess(cud, departmentId).equals(HttpStatus.FORBIDDEN)) {
                 redAtt.addFlashAttribute(MSG_KEY, MSG_ACCESS_REJECTED);
                 return "redirect:/mg-cus";
             }
@@ -159,7 +159,7 @@ public class ManageReservationsController {
 
             Reservation reservation = reservationService.findCustomerReservation(customerId, reservationId);
             if (!reservation.getDepartmentTake().getId().equals(departmentId)) throw new IllegalActionException();
-            if (departmentService.departmentAccess(cud, reservation.getDepartmentTake().getId()).equals(HttpStatus.FORBIDDEN)) {
+            if (employeeService.departmentAccess(cud, reservation.getDepartmentTake().getId()).equals(HttpStatus.FORBIDDEN)) {
                 redAtt.addFlashAttribute(MSG_KEY, MSG_ACCESS_REJECTED);
                 return "redirect:/mg-cus";
             }
@@ -209,7 +209,7 @@ public class ManageReservationsController {
             Reservation r = reservationService.findCustomerReservation(customerId, reservationId);
 
             if (!r.getDepartmentTake().getId().equals(departmentId) ||
-                    departmentService.departmentAccess(cud, r.getDepartmentTake().getId()).equals(HttpStatus.FORBIDDEN)) {
+                    employeeService.departmentAccess(cud, r.getDepartmentTake().getId()).equals(HttpStatus.FORBIDDEN)) {
                 redAtt.addFlashAttribute(MSG_KEY, MSG_ACCESS_REJECTED);
                 return "redirect:/mg-cus";
             }
@@ -249,7 +249,7 @@ public class ManageReservationsController {
             Reservation r = reservationService.findCustomerReservation(customerId, reservationId);
 
             if (!r.getDepartmentTake().getId().equals(departmentId) ||
-                    departmentService.departmentAccess(cud, r.getDepartmentTake().getId()).equals(HttpStatus.FORBIDDEN)) {
+                    employeeService.departmentAccess(cud, r.getDepartmentTake().getId()).equals(HttpStatus.FORBIDDEN)) {
                 redAtt.addFlashAttribute(MSG_KEY, MSG_ACCESS_REJECTED);
                 return "redirect:/mg-cus";
             }
@@ -289,7 +289,7 @@ public class ManageReservationsController {
             Reservation r = reservationService.findCustomerReservation(customerId, reservationId);
 
             if (!r.getDepartmentTake().getId().equals(departmentId) ||
-                    departmentService.departmentAccess(cud, r.getDepartmentTake().getId()).equals(HttpStatus.FORBIDDEN)) {
+                    employeeService.departmentAccess(cud, r.getDepartmentTake().getId()).equals(HttpStatus.FORBIDDEN)) {
                 redAtt.addFlashAttribute(MSG_KEY, MSG_ACCESS_REJECTED);
                 return "redirect:/mg-cus";
             }
@@ -333,7 +333,7 @@ public class ManageReservationsController {
             Reservation r = reservationService.findCustomerReservation(customerId, reservationId);
 
             if (!r.getDepartmentTake().getId().equals(departmentId) ||
-                    departmentService.departmentAccess(cud, r.getDepartmentBack().getId()).equals(HttpStatus.FORBIDDEN)) {
+                    employeeService.departmentAccess(cud, r.getDepartmentBack().getId()).equals(HttpStatus.FORBIDDEN)) {
                 redAtt.addFlashAttribute(MSG_KEY, MSG_ACCESS_REJECTED);
                 return "redirect:/mg-cus";
             }
@@ -379,7 +379,7 @@ public class ManageReservationsController {
                 redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
                 return "redirect:/mg-cus";
             }
-            if (departmentService.departmentAccess(cud, reservation.getDepartmentTake().getId()).equals(HttpStatus.FORBIDDEN)) {
+            if (employeeService.departmentAccess(cud, reservation.getDepartmentTake().getId()).equals(HttpStatus.FORBIDDEN)) {
                 redAtt.addFlashAttribute(MSG_KEY, MSG_ACCESS_REJECTED);
                 return "redirect:/mg-cus";
             }
@@ -410,7 +410,7 @@ public class ManageReservationsController {
                 redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
                 return "redirect:/mg-cus";
             }
-            if (departmentService.departmentAccess(cud, reservation.getDepartmentTake().getId()).equals(HttpStatus.FORBIDDEN)) {
+            if (employeeService.departmentAccess(cud, reservation.getDepartmentTake().getId()).equals(HttpStatus.FORBIDDEN)) {
                 redAtt.addFlashAttribute(MSG_KEY, MSG_ACCESS_REJECTED);
                 return "redirect:/mg-cus";
             }

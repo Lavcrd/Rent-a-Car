@@ -27,7 +27,7 @@ import java.util.Optional;
 @RequestMapping("/archive")
 public class ArchiveController {
     private final UserService userService;
-    private final DepartmentService departmentService;
+    private final EmployeeService employeeService;
     private final RetrieveService retrieveService;
     private final RentService rentService;
     private final PaymentDetailsService paymentDetailsService;
@@ -46,7 +46,7 @@ public class ArchiveController {
 
             map.addAttribute("results", map.getOrDefault("results", retrieveService.findByUserContextAndForm(cud, defaultForm)));
 
-            List<Department> employeeDepartments = departmentService.getDepartmentsByUserContext(cud);
+            List<Department> employeeDepartments = employeeService.getDepartmentsByUserContext(cud);
             map.addAttribute("countries", Country.values());
             map.addAttribute("departments", employeeDepartments);
 
@@ -75,7 +75,7 @@ public class ArchiveController {
                 map.addAttribute("retrieve_employee", userService.findById(retrieve.getEmployeeId()));
             }
 
-            map.addAttribute("isObscured", userService.hasNoAccessToCustomerOperation(cud, rent.getReservation().getCustomer().getId(), operationId));
+            map.addAttribute("isObscured", employeeService.hasNoAccessToCustomerOperation(cud, rent.getReservation().getCustomer().getId(), operationId));
             map.addAttribute("previousPage", map.getOrDefault("previousPage", "/archive"));
 
             PaymentDetails paymentDetails = paymentDetailsService.getOptionalPaymentDetails(operationId).orElseThrow(ResourceNotFoundException::new);

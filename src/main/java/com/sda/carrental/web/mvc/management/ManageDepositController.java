@@ -6,7 +6,7 @@ import com.sda.carrental.global.enums.Country;
 import com.sda.carrental.model.operational.Retrieve;
 import com.sda.carrental.model.property.Department;
 import com.sda.carrental.model.property.PaymentDetails;
-import com.sda.carrental.service.DepartmentService;
+import com.sda.carrental.service.EmployeeService;
 import com.sda.carrental.service.PaymentDetailsService;
 import com.sda.carrental.service.RetrieveService;
 import com.sda.carrental.service.UserService;
@@ -32,9 +32,9 @@ public class ManageDepositController {
 
     private final Utility utility;
     private final RetrieveService retrieveService;
-    private final DepartmentService departmentService;
     private final UserService userService;
     private final PaymentDetailsService paymentDetailsService;
+    private final EmployeeService employeeService;
 
     private final String MSG_KEY = "message";
     private final String MSG_ACCESS_REJECTED = "Failure: Access rejected";
@@ -49,7 +49,7 @@ public class ManageDepositController {
 
             map.addAttribute("results", map.getOrDefault("results", retrieveService.replaceDatesWithDeadlines(retrieveService.findAllUnresolvedByUserContext(cud))));
 
-            List<Department> employeeDepartments = departmentService.getDepartmentsByUserContext(cud);
+            List<Department> employeeDepartments = employeeService.getDepartmentsByUserContext(cud);
             map.addAttribute("countries", Country.values());
             map.addAttribute("departments", employeeDepartments);
 
@@ -68,7 +68,7 @@ public class ManageDepositController {
             CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             Retrieve retrieve = retrieveService.findById(retrieveId).orElseThrow(ResourceNotFoundException::new);
             PaymentDetails paymentDetails = paymentDetailsService.getOptionalPaymentDetails(retrieve.getId()).orElseThrow(ResourceNotFoundException::new);
-            if (departmentService.departmentAccess(cud, retrieve.getRent().getReservation().getDepartmentBack().getId()).equals(HttpStatus.FORBIDDEN)) {
+            if (employeeService.departmentAccess(cud, retrieve.getRent().getReservation().getDepartmentBack().getId()).equals(HttpStatus.FORBIDDEN)) {
                 redAtt.addFlashAttribute(MSG_KEY, MSG_ACCESS_REJECTED);
                 return "redirect:/";
             }
@@ -116,7 +116,7 @@ public class ManageDepositController {
     @RequestMapping(method = RequestMethod.POST, value = "/release")
     public String checkReleaseButton(@ModelAttribute("form") @Valid DepositForm form, Errors err, RedirectAttributes redAtt, @RequestParam("retrieve") Long retrieveId, @RequestParam("customer") Long customerId) {
         CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (userService.hasNoAccessToCustomerOperation(cud, customerId, retrieveId)) {
+        if (employeeService.hasNoAccessToCustomerOperation(cud, customerId, retrieveId)) {
             redAtt.addFlashAttribute(MSG_KEY, MSG_ACCESS_REJECTED);
             return "redirect:/mg-depo";
         }
@@ -145,7 +145,7 @@ public class ManageDepositController {
     @RequestMapping(method = RequestMethod.POST, value = "/charge")
     public String checkChargeButton(@ModelAttribute("form") @Valid DepositForm form, Errors err, RedirectAttributes redAtt, @RequestParam("retrieve") Long retrieveId, @RequestParam("customer") Long customerId) {
         CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (userService.hasNoAccessToCustomerOperation(cud, customerId, retrieveId)) {
+        if (employeeService.hasNoAccessToCustomerOperation(cud, customerId, retrieveId)) {
             redAtt.addFlashAttribute(MSG_KEY, MSG_ACCESS_REJECTED);
             return "redirect:/mg-depo";
         }

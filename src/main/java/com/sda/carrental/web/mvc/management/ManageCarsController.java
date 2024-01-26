@@ -30,9 +30,9 @@ public class ManageCarsController {
     private final CarService carService;
     private final CarBaseService carBaseService;
     private final DepartmentService departmentService;
-    private final UserService userService;
     private final RentService rentService;
     private final RetrieveService retrieveService;
+    private final EmployeeService employeeService;
 
     private final String MSG_KEY = "message";
     private final String MSG_ACCESS_REJECTED = "Failure: Access rejected";
@@ -44,7 +44,7 @@ public class ManageCarsController {
     public String searchCarsPage(ModelMap map, RedirectAttributes redAtt) {
         try {
             CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            List<Department> departments = departmentService.getDepartmentsByUserContext(cud);
+            List<Department> departments = employeeService.getDepartmentsByUserContext(cud);
             List<Car> cars = carService.findByDepartments(departments);
 
             map.addAttribute("results", map.getOrDefault("results", cars));
@@ -75,7 +75,7 @@ public class ManageCarsController {
         try {
             CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             Car car = carService.findCarById(carId);
-            if (userService.hasNoAccessToProperty(cud, car)) {
+            if (employeeService.hasNoAccessToProperty(cud, car)) {
                 redAtt.addFlashAttribute(MSG_KEY, MSG_ACCESS_REJECTED);
                 return "redirect:/mg-car";
             }
@@ -153,7 +153,7 @@ public class ManageCarsController {
             CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
             Car car = carService.findCarById(carId);
-            if (userService.hasNoAccessToProperty(cud, car)) {
+            if (employeeService.hasNoAccessToProperty(cud, car)) {
                 redAtt.addFlashAttribute(MSG_KEY, MSG_ACCESS_REJECTED);
                 return "redirect:/mg-car";
             }
@@ -187,7 +187,7 @@ public class ManageCarsController {
             CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
             Car car = carService.findCarById(carId);
-            if (userService.hasNoAccessToProperty(cud, car)) {
+            if (employeeService.hasNoAccessToProperty(cud, car)) {
                 redAtt.addFlashAttribute(MSG_KEY, MSG_ACCESS_REJECTED);
                 return "redirect:/mg-car";
             }
@@ -218,7 +218,7 @@ public class ManageCarsController {
             CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
             Car car = carService.findCarById(carId);
-            if (userService.hasNoAccessToProperty(cud, car)) {
+            if (employeeService.hasNoAccessToProperty(cud, car)) {
                 redAtt.addFlashAttribute(MSG_KEY, MSG_ACCESS_REJECTED);
                 return "redirect:/mg-car";
             }
@@ -248,7 +248,7 @@ public class ManageCarsController {
             CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
             Car car = carService.findCarById(carId);
-            if (userService.hasNoAccessToProperty(cud, car)) {
+            if (employeeService.hasNoAccessToProperty(cud, car)) {
                 redAtt.addFlashAttribute(MSG_KEY, MSG_ACCESS_REJECTED);
                 return "redirect:/mg-car";
             }

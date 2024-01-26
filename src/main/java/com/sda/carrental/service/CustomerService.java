@@ -30,7 +30,7 @@ public class CustomerService {
     private final CredentialsService credentialsService;
     private final VerificationService verificationService;
     private final ReservationService reservationService;
-    private final DepartmentService departmentService;
+    private final EmployeeService employeeService;
 
     public Customer findById(Long customerId) throws ResourceNotFoundException {
         return repository.findById(customerId).orElseThrow(ResourceNotFoundException::new);
@@ -112,7 +112,7 @@ public class CustomerService {
     @Transactional
     public HttpStatus appendLocalReservationToCustomer(CustomUserDetails cud, LocalReservationForm form) {
         try {
-            HttpStatus hasAccess = departmentService.departmentAccess(cud, form.getReservationForm().getIndexData().getDepartmentIdFrom());
+            HttpStatus hasAccess = employeeService.departmentAccess(cud, form.getReservationForm().getIndexData().getDepartmentIdFrom());
             if (hasAccess.equals(HttpStatus.FORBIDDEN)) return HttpStatus.FORBIDDEN;
 
             Country country = Country.valueOf(form.getCountry());
