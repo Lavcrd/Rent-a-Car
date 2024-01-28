@@ -132,16 +132,31 @@
 
                     <tr>
                         <td class="button-cell">
-                            <a th:href="'#'" type="button" class="btn btn-dark bg-dark mt-1 list-button w-100">
+                            <button data-bs-toggle="modal"
+                                    data-bs-target="#passwordModal" type="button" class="btn btn-dark bg-dark mt-1 list-button w-100">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                                      fill="currentColor"
                                      class="bi bi-circle cb-svg" viewBox="0 0 16 16">
                                     <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
                                 </svg>
                                 <div class="list-button-text">Password</div>
-                            </a>
+                            </button>
                         </td>
                         <td class="short-description-cell">Changes employee's password.</td>
+                    </tr>
+
+                    <tr>
+                        <td class="button-cell">
+                            <button type="button" class="btn btn-dark bg-dark mt-1 list-button w-100">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                     fill="currentColor"
+                                     class="bi bi-circle cb-svg" viewBox="0 0 16 16">
+                                    <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                                </svg>
+                                <div class="list-button-text">Activity</div>
+                            </button>
+                        </td>
+                        <td class="short-description-cell">Displays employee's recent activity.</td>
                     </tr>
 
                     <tr>
@@ -264,6 +279,66 @@
                                         Close
                                     </button>
                                     <button type="submit" class="btn btn-dark">Confirm</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+                <form th:method="POST" th:object="${password_form}" th:action="@{'/mg-emp/' + ${employee.id} + '/update-password'}">
+                    <div class="modal fade" id="passwordModal" tabindex="-1" role="dialog"
+                         aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Change password</h5>
+                                    <button type="button" class="close" data-bs-dismiss="modal"
+                                            aria-label="Close">
+                                        <span aria-hidden="true">×</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <p>Please type employee's new password and confirm change.</p>
+
+                                    <div class="modal-row mt-2">
+                                        <label style="justify-self: start;" for="new_password"
+                                               class="text-md">New password: </label>
+                                        <input id="new_password" class="text-black bg-white modal-input"
+                                               placeholder="Employee's new password"
+                                               th:type="password" th:field="*{newPassword}" autocomplete="new-password"
+                                               required/>
+                                    </div>
+
+                                    <div class="modal-row mt-2">
+                                        <label style="justify-self: start;" for="repeat_new_password"
+                                               class="text-md">Repeat new password: </label>
+                                        <input id="repeat_new_password" class="text-black bg-white modal-input"
+                                               placeholder="Employee's new password"
+                                               th:type="password" autocomplete="new-password"
+                                               th:field="*{newPasswordRepeat}" required/>
+                                    </div>
+
+                                    <div class="my-3 d-flex" style="justify-content: center; align-content: center;">
+                                        <span class="border w-100"></span>
+                                    </div>
+
+                                    <div class="modal-row mt-2">
+                                        <label style="justify-self: start;" for="supervisor_password"
+                                               class="text-md">Confirm change: </label>
+                                        <input id="supervisor_password" class="text-black bg-white modal-input"
+                                               placeholder="Supervisor password"
+                                               th:type="password" th:field="*{currentPassword}" autocomplete="new-password"
+                                               required/>
+                                    </div>
+
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-dark" data-bs-dismiss="modal">
+                                        Close
+                                    </button>
+                                    <button type="submit" class="btn btn-dark">
+                                        Confirm
+                                    </button>
                                 </div>
                             </div>
                         </div>
