@@ -33,10 +33,9 @@ public class CredentialsService {
     }
 
     @Transactional
-    public HttpStatus changePassword(String inputPassword) {
+    public HttpStatus changePassword(Long userId, String inputPassword) {
         try {
-            CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            Credentials credentials = findById(cud.getId());
+            Credentials credentials = findById(userId);
             credentials.setPassword(encoder.encode(inputPassword));
             repository.save(credentials);
             return HttpStatus.ACCEPTED;

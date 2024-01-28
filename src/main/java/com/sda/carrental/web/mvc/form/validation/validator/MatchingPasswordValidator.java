@@ -15,10 +15,10 @@ public class MatchingPasswordValidator implements ConstraintValidator<MatchingPa
 
     @Override
     public boolean isValid(Object form, ConstraintValidatorContext cvc) {
-        if (form instanceof ChangePasswordForm cif) {
-            return cif.getNewPassword().equals(cif.getNewPasswordRepeat());
-        } else if (form instanceof RegisterCustomerForm cif) {
-            return cif.getPassword().equals(cif.getConfirmPassword());
+        if (form instanceof ChangePasswordForm f) {
+            return f.getNewPassword().equals(f.getNewPasswordRepeat());
+        } else if (form instanceof RegisterCustomerForm f) {
+            return f.getPassword().equals(f.getConfirmPassword());
         } else {
             return false;
         }

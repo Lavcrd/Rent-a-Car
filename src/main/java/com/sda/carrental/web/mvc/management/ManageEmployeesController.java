@@ -5,6 +5,7 @@ import com.sda.carrental.model.property.Department;
 import com.sda.carrental.model.users.Employee;
 import com.sda.carrental.service.*;
 import com.sda.carrental.service.auth.CustomUserDetails;
+import com.sda.carrental.web.mvc.form.users.ChangePasswordForm;
 import com.sda.carrental.web.mvc.form.users.SearchEmployeesForm;
 import com.sda.carrental.web.mvc.form.users.employee.UpdateEmployeeForm;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +27,7 @@ import java.util.List;
 @RequestMapping("/mg-emp")
 public class ManageEmployeesController {
     private final EmployeeService employeeService;
+    private final CredentialsService credentialsService;
 
     private final String MSG_KEY = "message";
     private final String MSG_ACCESS_REJECTED = "Failure: Access rejected";
@@ -65,6 +67,8 @@ public class ManageEmployeesController {
 
             map.addAttribute("roles", employeeService.getEmployeeEnums());
             map.addAttribute("details_form", map.getOrDefault("details_form", new UpdateEmployeeForm(employee)));
+
+            map.addAttribute("password_form", new ChangePasswordForm());
 
             return "management/viewEmployee";
         } catch (ResourceNotFoundException err) {
@@ -117,7 +121,6 @@ public class ManageEmployeesController {
                 return "redirect:/mg-emp/{employee}";
             }
 
-            redAtt.addAttribute("employee", employeeId);
             if (err.hasErrors()) {
                 redAtt.addFlashAttribute(MSG_KEY, err.getAllErrors().get(0).getDefaultMessage());
                 return "redirect:/mg-emp/{employee}";
@@ -127,6 +130,38 @@ public class ManageEmployeesController {
 
             if (status.equals(HttpStatus.OK)) {
                 redAtt.addFlashAttribute(MSG_KEY, "Success: Employee's data has been updated.");
+            } else {
+                redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
+            }
+
+            return "redirect:/mg-emp/{employee}";
+        } catch (ResourceNotFoundException e) {
+            redAtt.addFlashAttribute(MSG_KEY, MSG_NO_RESOURCE);
+        } catch (RuntimeException e) {
+            redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
+        }
+        return "redirect:/mg-emp";
+    }
+
+    @RequestMapping(value = "/{employee}/update-password", method = RequestMethod.POST)
+    public String employeePasswordButton(@ModelAttribute("password_form") @Valid ChangePasswordForm form, Errors err, RedirectAttributes redAtt, @PathVariable(value = "employee") Long employeeId) {
+        try {
+            CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            Employee employee = employeeService.findById(employeeId);
+            if (!employeeService.isSupervisorOf(cud, employee)) {
+                redAtt.addFlashAttribute(MSG_KEY, MSG_ACCESS_REJECTED);
+                return "redirect:/mg-emp/{employee}";
+            }
+
+            if (err.hasErrors()) {
+                redAtt.addFlashAttribute(MSG_KEY, err.getAllErrors().get(0).getDefaultMessage());
+                return "redirect:/mg-emp/{employee}";
+            }
+
+            HttpStatus status = credentialsService.changePassword(employee.getId(), form.getNewPassword());
+
+            if (status.equals(HttpStatus.ACCEPTED)) {
+                redAtt.addFlashAttribute(MSG_KEY, "Success: Employee's password has been updated.");
             } else {
                 redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
             }

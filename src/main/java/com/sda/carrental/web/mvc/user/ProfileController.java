@@ -115,7 +115,8 @@ public class ProfileController {
             return "redirect:/profile";
         }
 
-        HttpStatus response = credentialsService.changePassword(form.getNewPassword());
+        CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        HttpStatus response = credentialsService.changePassword(cud.getId(), form.getNewPassword());
         if (response.equals(HttpStatus.ACCEPTED)) {
             redAtt.addFlashAttribute(MSG_KEY, "Password has been successfully changed.");
             return "redirect:/profile";
