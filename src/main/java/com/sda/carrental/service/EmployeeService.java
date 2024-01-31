@@ -17,6 +17,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 
@@ -124,5 +125,15 @@ public class EmployeeService {
         } catch (ResourceNotFoundException err) {
             return true;
         }
+    }
+
+    public HttpStatus setLock(Long employeeId, LocalDate date) throws ResourceNotFoundException {
+        Employee employee = findById(employeeId);
+        if (date.isBefore(LocalDate.now())) {
+            return HttpStatus.BAD_REQUEST;
+        }
+        employee.setTerminationDate(date);
+        repository.save(employee);
+        return HttpStatus.ACCEPTED;
     }
 }
