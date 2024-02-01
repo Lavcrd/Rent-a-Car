@@ -1,7 +1,7 @@
 package com.sda.carrental.web.mvc.form.validation.validator;
 
 import com.sda.carrental.web.mvc.form.users.ChangePasswordForm;
-import com.sda.carrental.web.mvc.form.users.RegisterCustomerForm;
+import com.sda.carrental.web.mvc.form.users.customer.RegisterCustomerForm;
 import com.sda.carrental.web.mvc.form.validation.constraint.MatchingPassword;
 
 import javax.validation.ConstraintValidator;

@@ -1,7 +1,7 @@
 package com.sda.carrental.web.mvc.form.validation.validator;
 
 import com.sda.carrental.web.mvc.form.operational.IndexForm;
-import com.sda.carrental.web.mvc.form.users.SearchCustomersForm;
+import com.sda.carrental.web.mvc.form.users.customer.SearchCustomersForm;
 import com.sda.carrental.web.mvc.form.validation.constraint.CorrectChronology;
 
 import javax.validation.ConstraintValidator;

@@ -9,7 +9,7 @@ import com.sda.carrental.model.users.Employee;
 import com.sda.carrental.model.users.User;
 import com.sda.carrental.repository.EmployeeRepository;
 import com.sda.carrental.service.auth.CustomUserDetails;
-import com.sda.carrental.web.mvc.form.users.SearchEmployeesForm;
+import com.sda.carrental.web.mvc.form.users.employee.SearchEmployeesForm;
 import com.sda.carrental.web.mvc.form.users.employee.UpdateEmployeeForm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -135,5 +135,19 @@ public class EmployeeService {
         employee.setTerminationDate(date);
         repository.save(employee);
         return HttpStatus.ACCEPTED;
+    }
+
+    @Transactional
+    public HttpStatus setDepartments(Long employeeId, List<Department> departments) {
+        try {
+            Employee employee = findById(employeeId);
+            if (employee.getRole().equals(Role.ROLE_EMPLOYEE) && departments.size() > 1) return HttpStatus.PRECONDITION_FAILED;
+
+            employee.setDepartments(departments);
+            repository.save(employee);
+            return HttpStatus.ACCEPTED;
+        } catch (RuntimeException e) {
+            return HttpStatus.BAD_GATEWAY;
+        }
     }
 }

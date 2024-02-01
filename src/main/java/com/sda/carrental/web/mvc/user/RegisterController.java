@@ -1,7 +1,7 @@
 package com.sda.carrental.web.mvc.user;
 
 import com.sda.carrental.service.CustomerService;
-import com.sda.carrental.web.mvc.form.users.RegisterCustomerForm;
+import com.sda.carrental.web.mvc.form.users.customer.RegisterCustomerForm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;

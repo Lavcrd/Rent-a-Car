@@ -3,7 +3,7 @@ package com.sda.carrental.service.mappers;
 
 import com.sda.carrental.model.users.Customer;
 import com.sda.carrental.web.mvc.form.operational.LocalReservationForm;
-import com.sda.carrental.web.mvc.form.users.RegisterCustomerForm;
+import com.sda.carrental.web.mvc.form.users.customer.RegisterCustomerForm;
 
 public class CustomerMapper {
 
