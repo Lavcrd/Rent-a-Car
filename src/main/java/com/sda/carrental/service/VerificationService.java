@@ -4,7 +4,7 @@ import com.sda.carrental.exceptions.IllegalActionException;
 import com.sda.carrental.global.enums.Country;
 import com.sda.carrental.model.users.auth.Verification;
 import com.sda.carrental.repository.VerificationRepository;
-import com.sda.carrental.web.mvc.form.users.VerificationForm;
+import com.sda.carrental.web.mvc.form.users.customer.VerificationForm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;

@@ -6,7 +6,8 @@ import com.sda.carrental.model.users.Employee;
 import com.sda.carrental.service.*;
 import com.sda.carrental.service.auth.CustomUserDetails;
 import com.sda.carrental.web.mvc.form.users.ChangePasswordForm;
-import com.sda.carrental.web.mvc.form.users.SearchEmployeesForm;
+import com.sda.carrental.web.mvc.form.users.employee.SearchEmployeesForm;
+import com.sda.carrental.web.mvc.form.users.employee.UpdateDepartmentsForm;
 import com.sda.carrental.web.mvc.form.users.employee.UpdateEmployeeForm;
 import com.sda.carrental.web.mvc.form.users.employee.UpdateLockForm;
 import lombok.RequiredArgsConstructor;
@@ -72,6 +73,9 @@ public class ManageEmployeesController {
             map.addAttribute("password_form", new ChangePasswordForm());
 
             map.addAttribute("lock_form", new UpdateLockForm(LocalDate.now()));
+
+            map.addAttribute("departments_form", new UpdateDepartmentsForm(employee.getDepartments()));
+            map.addAttribute("departmentList", employeeService.getDepartmentsByUserContext(cud));
 
             return "management/viewEmployee";
         } catch (ResourceNotFoundException err) {
@@ -197,6 +201,42 @@ public class ManageEmployeesController {
 
             if (status.equals(HttpStatus.ACCEPTED)) {
                 redAtt.addFlashAttribute(MSG_KEY, "Success: Employee's status has been updated.");
+            } else {
+                redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
+            }
+
+            return "redirect:/mg-emp/{employee}";
+        } catch (ResourceNotFoundException e) {
+            redAtt.addFlashAttribute(MSG_KEY, MSG_NO_RESOURCE);
+        } catch (RuntimeException e) {
+            redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
+        }
+        return "redirect:/mg-emp";
+    }
+
+    @RequestMapping(value = "/{employee}/update-departments", method = RequestMethod.POST)
+    public String employeeDepartmentsButton(@ModelAttribute("departments_form") @Valid UpdateDepartmentsForm form, Errors err, RedirectAttributes redAtt, @PathVariable(value = "employee") Long employeeId) {
+        try {
+            redAtt.addFlashAttribute("departments_form", form);
+
+            CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            Employee employee = employeeService.findById(employeeId);
+            if (!employeeService.isSupervisorOf(cud, employee)) {
+                redAtt.addFlashAttribute(MSG_KEY, MSG_ACCESS_REJECTED);
+                return "redirect:/mg-emp/{employee}";
+            }
+
+            if (err.hasErrors()) {
+                redAtt.addFlashAttribute(MSG_KEY, err.getAllErrors().get(0).getDefaultMessage());
+                return "redirect:/mg-emp/{employee}";
+            }
+
+            HttpStatus status = employeeService.setDepartments(employeeId, form.getDepartments());
+
+            if (status.equals(HttpStatus.ACCEPTED)) {
+                redAtt.addFlashAttribute(MSG_KEY, "Success: Employee's departments has been updated.");
+            } else if (status.equals(HttpStatus.PRECONDITION_FAILED)) {
+                redAtt.addFlashAttribute(MSG_KEY, "Failure: Employee's rank is insufficient.");
             } else {
                 redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
             }

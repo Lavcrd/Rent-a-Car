@@ -1,4 +1,4 @@
-package com.sda.carrental.web.mvc.form.users;
+package com.sda.carrental.web.mvc.form.users.customer;
 
 import com.sda.carrental.web.mvc.form.validation.constraint.MatchingPassword;
 import com.sda.carrental.web.mvc.form.validation.constraint.UniqueUsername;

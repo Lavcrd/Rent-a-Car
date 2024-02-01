@@ -10,7 +10,7 @@ import com.sda.carrental.model.property.car.CarBase;
 import com.sda.carrental.model.users.Customer;
 import com.sda.carrental.repository.ReservationRepository;
 import com.sda.carrental.web.mvc.form.operational.IndexForm;
-import com.sda.carrental.web.mvc.form.users.SearchCustomersForm;
+import com.sda.carrental.web.mvc.form.users.customer.SearchCustomersForm;
 import com.sda.carrental.web.mvc.form.operational.ReservationForm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
