@@ -80,13 +80,15 @@ public class PredefiniedData implements CommandLineRunner {
                 new Employee("Anna", "Mniejfajna", "1231234444", List.of(departmentRepository.findById(1L).orElse(null)), LocalDate.ofYearDay(9999, 1), "111222888"),
                 new Employee("Magda", "Piąta", "1231235555", List.of(departmentRepository.findById(2L).orElse(null)), LocalDate.ofYearDay(9999, 1), "111222881"),
                 new Employee("Wioletta", "Fioletowa", "1231236666", List.of(departmentRepository.findById(3L).orElse(null)), LocalDate.ofYearDay(9999, 1), "111222882"),
-                new Employee("Jacek", "Gruby", "1231237777", departmentRepository.findDepartmentsByCountry(Country.COUNTRY_PL), LocalDate.ofYearDay(9999, 1), "111222883")
+                new Employee("Jacek", "Gruby", "1231237777", departmentRepository.findDepartmentsByCountry(Country.COUNTRY_PL), LocalDate.ofYearDay(9999, 1), "111222883"),
+                new Employee("Tomasz", "Sążny", "1231237778", departmentRepository.findDepartmentsByCountry(Country.COUNTRY_PL), LocalDate.ofYearDay(9999, 1), "111222883")
         );
 
         for (int i = 0; i < list.size(); i++) {
             Employee e = list.get(i);
             if (i<3) e.setRole(Role.ROLE_MANAGER);
-            if (i==list.size()-1) e.setRole(Role.ROLE_COORDINATOR);
+            if (i==list.size()-2) e.setRole(Role.ROLE_COORDINATOR);
+            if (i==list.size()-1) e.setRole(Role.ROLE_DIRECTOR);
 
             userRepository.save(e);
         }
@@ -112,7 +114,9 @@ public class PredefiniedData implements CommandLineRunner {
 
         credentialsRepository.save(new Credentials(14L, "coordinator1@gmail.com", encoder.encode("coordinator1")));
 
-        credentialsRepository.save(new Credentials(15L, "admin@gmail.com", encoder.encode("admin")));
+        credentialsRepository.save(new Credentials(15L, "director1@gmail.com", encoder.encode("director1")));
+
+        credentialsRepository.save(new Credentials(16L, "admin@gmail.com", encoder.encode("admin")));
     }
 
     private void createCompany() {

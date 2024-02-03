@@ -39,7 +39,7 @@ public class EmployeeService {
     }
 
     public List<Role> getEmployeeEnums() {
-        return List.of(Role.ROLE_EMPLOYEE, Role.ROLE_MANAGER, Role.ROLE_COORDINATOR);
+        return List.of(Role.ROLE_EMPLOYEE, Role.ROLE_MANAGER, Role.ROLE_COORDINATOR, Role.ROLE_DIRECTOR);
     }
 
     @Transactional
@@ -141,7 +141,10 @@ public class EmployeeService {
     public HttpStatus setDepartments(Long employeeId, List<Department> departments) {
         try {
             Employee employee = findById(employeeId);
-            if (employee.getRole().equals(Role.ROLE_EMPLOYEE) && departments.size() > 1) return HttpStatus.PRECONDITION_FAILED;
+            if ((employee.getRole().equals(Role.ROLE_EMPLOYEE) || employee.getRole().equals(Role.ROLE_MANAGER))
+                    && departments.size() > 1) {
+                return HttpStatus.PRECONDITION_FAILED;
+            }
 
             employee.setDepartments(departments);
             repository.save(employee);
