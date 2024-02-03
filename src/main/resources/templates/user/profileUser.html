@@ -69,7 +69,7 @@
                         <td th:text="${user.departments[0].country.getCode()} + ' — ' + ${user.departments[0].city} + ', ' + ${user.departments[0].address}"></td>
                     </tr>
                 </th:block>
-                <th:block sec:authorize="hasAnyRole('ROLE_COORDINATOR')">
+                <th:block sec:authorize="hasAnyRole('ROLE_COORDINATOR', 'ROLE_DIRECTOR')">
                     <tr class="profile-row">
                         <th scope="row">Departments</th>
                         <td th:text="${user.departments.size()}"></td>

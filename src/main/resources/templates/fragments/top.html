@@ -34,7 +34,7 @@
                         <a class="dropdown-item" href="/reservations">Reservations</a>
                     </div>
                 </li>
-                <li sec:authorize="hasRole('ROLE_EMPLOYEE') || hasRole('ROLE_MANAGER') || hasRole('ROLE_COORDINATOR') || hasRole('ROLE_ADMIN')" class="dropdown">
+                <li sec:authorize="hasRole('ROLE_EMPLOYEE') || hasRole('ROLE_MANAGER') || hasRole('ROLE_COORDINATOR') || hasRole('ROLE_DIRECTOR') || hasRole('ROLE_ADMIN')" class="dropdown">
                     <a class="dropdown-toggle" href="#" id="employeeZone" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Workspace</a>
                     <div class="dropdown-menu" aria-labelledby="employeeZone">
                         <a class="dropdown-item" href="/profile">Profile</a>
@@ -43,14 +43,14 @@
                         <a class="dropdown-item" href="/mg-cus">Customers</a>
 
                         <!-- Manager, Coordinator and Admin -->
-                        <th:block sec:authorize="hasAnyRole('ROLE_MANAGER', 'ROLE_COORDINATOR', 'ROLE_ADMIN')">
+                        <th:block sec:authorize="hasAnyRole('ROLE_MANAGER', 'ROLE_COORDINATOR', 'ROLE_DIRECTOR', 'ROLE_ADMIN')">
                             <a class="dropdown-item" href="/mg-depo">Deposit management</a>
                             <a class="dropdown-item" href="/mg-car">Cars management</a>
                             <a class="dropdown-item" href="/mg-emp">Employee management</a>
                         </th:block>
 
                         <!-- Coordinator and Admin -->
-                        <th:block sec:authorize="hasAnyRole('ROLE_COORDINATOR', 'ROLE_ADMIN')">
+                        <th:block sec:authorize="hasAnyRole('ROLE_COORDINATOR', 'ROLE_DIRECTOR', 'ROLE_ADMIN')">
                             <a class="dropdown-item" href="#">Departments</a>
                             <a class="dropdown-item" href="#">Statistics</a>
                         </th:block>
