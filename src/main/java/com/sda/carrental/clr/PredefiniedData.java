@@ -104,19 +104,19 @@ public class PredefiniedData implements CommandLineRunner {
         credentialsRepository.save(new Credentials(5L, "user5@gmail.com", encoder.encode("password1")));
         credentialsRepository.save(new Credentials(6L, "user6@gmail.com", encoder.encode("password1")));
 
-        credentialsRepository.save(new Credentials(8L, "manager1@gmail.com", encoder.encode("manager1")));
-        credentialsRepository.save(new Credentials(9L, "manager2@gmail.com", encoder.encode("manager1")));
-        credentialsRepository.save(new Credentials(10L, "manager3@gmail.com", encoder.encode("manager1")));
+        credentialsRepository.save(new Credentials(8L, "manager1@gmail.com", encoder.encode("password1")));
+        credentialsRepository.save(new Credentials(9L, "manager2@gmail.com", encoder.encode("password1")));
+        credentialsRepository.save(new Credentials(10L, "manager3@gmail.com", encoder.encode("password1")));
 
-        credentialsRepository.save(new Credentials(11L, "employee1@gmail.com", encoder.encode("employee1")));
-        credentialsRepository.save(new Credentials(12L, "employee2@gmail.com", encoder.encode("employee1")));
-        credentialsRepository.save(new Credentials(13L, "employee3@gmail.com", encoder.encode("employee1")));
+        credentialsRepository.save(new Credentials(11L, "employee1@gmail.com", encoder.encode("password1")));
+        credentialsRepository.save(new Credentials(12L, "employee2@gmail.com", encoder.encode("password1")));
+        credentialsRepository.save(new Credentials(13L, "employee3@gmail.com", encoder.encode("password1")));
 
-        credentialsRepository.save(new Credentials(14L, "coordinator1@gmail.com", encoder.encode("coordinator1")));
+        credentialsRepository.save(new Credentials(14L, "coordinator1@gmail.com", encoder.encode("password1")));
 
-        credentialsRepository.save(new Credentials(15L, "director1@gmail.com", encoder.encode("director1")));
+        credentialsRepository.save(new Credentials(15L, "director1@gmail.com", encoder.encode("password1")));
 
-        credentialsRepository.save(new Credentials(16L, "admin@gmail.com", encoder.encode("admin")));
+        credentialsRepository.save(new Credentials(16L, "admin@gmail.com", encoder.encode("password1")));
     }
 
     private void createCompany() {

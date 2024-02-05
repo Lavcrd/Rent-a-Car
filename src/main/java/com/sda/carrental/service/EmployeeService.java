@@ -9,6 +9,8 @@ import com.sda.carrental.model.users.Employee;
 import com.sda.carrental.model.users.User;
 import com.sda.carrental.repository.EmployeeRepository;
 import com.sda.carrental.service.auth.CustomUserDetails;
+import com.sda.carrental.service.mappers.EmployeeMapper;
+import com.sda.carrental.web.mvc.form.users.employee.RegisterEmployeeForm;
 import com.sda.carrental.web.mvc.form.users.employee.SearchEmployeesForm;
 import com.sda.carrental.web.mvc.form.users.employee.UpdateEmployeeForm;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import java.time.LocalDate;
 import java.util.Collections;
@@ -27,6 +30,7 @@ public class EmployeeService {
     private final EmployeeRepository repository;
     private final DepartmentService departmentService;
     private final ReservationService reservationService;
+    private final CredentialsService credentialsService;
 
     public Employee findById(Long id) throws ResourceNotFoundException {
         return repository.findEmployeeById(id).orElseThrow(ResourceNotFoundException::new);
@@ -151,6 +155,23 @@ public class EmployeeService {
             return HttpStatus.ACCEPTED;
         } catch (RuntimeException e) {
             return HttpStatus.BAD_GATEWAY;
+        }
+    }
+
+    public boolean hasMinimumAuthority(CustomUserDetails cud, Role role) {
+        return findById(cud.getId()).getRole().ordinal() >= role.ordinal();
+    }
+
+    @Transactional
+    public HttpStatus register(RegisterEmployeeForm form) {
+        try {
+            Employee employee = EmployeeMapper.toRegisteredEntity(form, departmentService.findDepartmentWhereId(form.getDepartment()));
+            repository.save(employee);
+            credentialsService.createCredentials(employee.getId(), form.getUsername(), form.getEmployeePassword());
+            return HttpStatus.CREATED;
+        } catch (Exception e) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            return HttpStatus.INTERNAL_SERVER_ERROR;
         }
     }
 }

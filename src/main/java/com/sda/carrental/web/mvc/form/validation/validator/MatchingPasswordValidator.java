@@ -2,6 +2,7 @@ package com.sda.carrental.web.mvc.form.validation.validator;
 
 import com.sda.carrental.web.mvc.form.users.ChangePasswordForm;
 import com.sda.carrental.web.mvc.form.users.customer.RegisterCustomerForm;
+import com.sda.carrental.web.mvc.form.users.employee.RegisterEmployeeForm;
 import com.sda.carrental.web.mvc.form.validation.constraint.MatchingPassword;
 
 import javax.validation.ConstraintValidator;
@@ -19,6 +20,8 @@ public class MatchingPasswordValidator implements ConstraintValidator<MatchingPa
             return f.getNewPassword().equals(f.getNewPasswordRepeat());
         } else if (form instanceof RegisterCustomerForm f) {
             return f.getPassword().equals(f.getConfirmPassword());
+        } else if (form instanceof RegisterEmployeeForm f) {
+            return f.getEmployeePassword().equals(f.getEmployeePasswordRe());
         } else {
             return false;
         }
