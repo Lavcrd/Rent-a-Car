@@ -1,15 +1,13 @@
 package com.sda.carrental.web.mvc.management;
 
 import com.sda.carrental.exceptions.ResourceNotFoundException;
+import com.sda.carrental.global.enums.Role;
 import com.sda.carrental.model.property.Department;
 import com.sda.carrental.model.users.Employee;
 import com.sda.carrental.service.*;
 import com.sda.carrental.service.auth.CustomUserDetails;
 import com.sda.carrental.web.mvc.form.users.ChangePasswordForm;
-import com.sda.carrental.web.mvc.form.users.employee.SearchEmployeesForm;
-import com.sda.carrental.web.mvc.form.users.employee.UpdateDepartmentsForm;
-import com.sda.carrental.web.mvc.form.users.employee.UpdateEmployeeForm;
-import com.sda.carrental.web.mvc.form.users.employee.UpdateLockForm;
+import com.sda.carrental.web.mvc.form.users.employee.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -46,6 +44,8 @@ public class ManageEmployeesController {
             map.addAttribute("roles", employeeService.getEmployeeEnums());
             map.addAttribute("searchEmployeesForm", map.getOrDefault("searchEmployeesForm", new SearchEmployeesForm()));
             map.addAttribute("e_results", map.getOrDefault("e_results", Collections.emptyList()));
+
+            map.addAttribute("register_form", map.getOrDefault("register_form", new RegisterEmployeeForm()));
 
             return "management/searchEmployees";
         } catch (RuntimeException err) {
@@ -112,6 +112,39 @@ public class ManageEmployeesController {
             redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
             return "redirect:/mg-emp";
         }
+    }
+
+    @RequestMapping(value = "/register", method = RequestMethod.POST)
+    public String employeeRegisterButton(@ModelAttribute("register_form") @Valid RegisterEmployeeForm form, Errors err, RedirectAttributes redAtt) {
+        try {
+            CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+            if (!employeeService.hasMinimumAuthority(cud, Role.ROLE_MANAGER)) {
+                redAtt.addFlashAttribute(MSG_KEY, MSG_ACCESS_REJECTED);
+                return "redirect:/mg-emp";
+            }
+
+            if (err.hasErrors()) {
+                redAtt.addFlashAttribute("register_form", form);
+                redAtt.addFlashAttribute(MSG_KEY, err.getAllErrors().get(0).getDefaultMessage());
+                return "redirect:/mg-emp";
+            }
+
+            HttpStatus status = employeeService.register(form);
+
+            if (status.equals(HttpStatus.CREATED)) {
+                redAtt.addFlashAttribute(MSG_KEY, "Success: Employee created.");
+            } else {
+                redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
+            }
+
+            return "redirect:/mg-emp";
+        } catch (ResourceNotFoundException e) {
+            redAtt.addFlashAttribute(MSG_KEY, MSG_NO_RESOURCE);
+        } catch (RuntimeException e) {
+            redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
+        }
+        return "redirect:/mg-emp";
     }
 
 

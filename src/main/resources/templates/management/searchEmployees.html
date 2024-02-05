@@ -34,15 +34,17 @@
                         </select>
                     </div>
 
-                    <div class="between-fields" style="justify-content: flex-end;" th:text="'Role:'"></div>
-                    <div class="col-sm-3 c-input" style="padding-right:0;">
-                        <select type="text" th:field="*{role}" class="form-control">
-                            <option th:value="null" th:text="Any"></option>
-                            <div th:each="role:${roles}">
-                                <option th:text="'Role: ' + ${role.name().substring(5)}"
-                                        th:value="${role.name()}"></option>
-                            </div>
-                        </select>
+                    <div class="between-fields"></div>
+                    <div class="col-sm-3 px-0 d-flex" style="justify-content: end;">
+                        <button type="button"
+                                data-bs-toggle="modal" data-bs-target="#registerModal"
+                                class="btn btn-dark bg-dark d-flex" style="align-items: center;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                 viewBox="0 0 16 16" class="bi bi-plus-square">
+                                <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"></path>
+                                <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"></path>
+                            </svg>
+                        </button>
                     </div>
                 </div>
                 <div class="row"
@@ -55,7 +57,15 @@
                         <input type="text" class="form-control" placeholder="Surname"
                                th:field="*{surname}">
                     </div>
-                    <div class="col-sm-3"></div>
+                    <div class="col-sm-3 c-input">
+                        <select type="text" th:field="*{role}" class="form-control">
+                            <option th:value="null" th:text="'Any role'"></option>
+                            <div th:each="role:${roles}">
+                                <option th:text="'Role: ' + ${role.name().substring(5)}"
+                                        th:value="${role.name()}"></option>
+                            </div>
+                        </select>
+                    </div>
                     <div class="col-sm-3 c-input" style="width: fit-content;">
                         <input id="is_expired1" name="is_expired" type="radio" value="false" class="btn-check"
                                th:field="*{expired}" checked>
@@ -128,6 +138,135 @@
                 </tbody>
             </table>
         </div>
+
+        <!--Register modal-->
+        <form th:method="POST" th:object="${register_form}"
+              th:action="@{'/mg-emp/register'}">
+            <div class="modal fade" id="registerModal" tabindex="-1" role="dialog"
+                 aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Register</h5>
+                            <button type="button" class="close" data-bs-dismiss="modal"
+                                    aria-label="Close">
+                                <span aria-hidden="true">×</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="modal-row mt-2">
+                                <label style="justify-self: start;" for="r_name"
+                                       class="text-md">Name: </label>
+                                <input id="r_name" class="text-black bg-white modal-input"
+                                       placeholder="Employee's name"
+                                       th:type="text" th:field="*{name}"
+                                       required/>
+                            </div>
+
+                            <div class="modal-row mt-2">
+                                <label style="justify-self: start;" for="r_surname"
+                                       class="text-md">Surname: </label>
+                                <input id="r_surname" class="text-black bg-white modal-input"
+                                       placeholder="Employee's surname"
+                                       th:type="text" th:field="*{surname}"
+                                       required/>
+                            </div>
+
+                            <div class="modal-row mt-2">
+                                <label style="justify-self: start;" for="r_pid"
+                                       class="form-label">P-ID: </label>
+                                <input id="r_pid" class="text-black bg-white modal-input"
+                                       placeholder="Employee's personal ID"
+                                       th:type="text" th:field="*{personalId}"
+                                       required/>
+                            </div>
+
+                            <div class="modal-row mt-2">
+                                <label style="justify-self: start;" for="r_contact"
+                                       class="form-label">Contact: </label>
+                                <input id="r_contact" class="text-black bg-white modal-input"
+                                       placeholder="Employee's contact number"
+                                       th:type="text" th:field="*{contactNumber}"
+                                       required/>
+                            </div>
+
+                            <div class="my-3 d-flex" style="justify-content: center; align-content: center;">
+                                <span class="border w-100"></span>
+                            </div>
+
+                            <div class="modal-row mt-2">
+                                <label style="justify-self: start;" for="r_username"
+                                       class="form-label">E-mail: </label>
+                                <input id="r_username" class="text-black bg-white modal-input"
+                                       placeholder="Employee e-mail"
+                                       th:type="text" th:field="*{username}"
+                                       required/>
+                            </div>
+
+                            <div class="modal-row mt-2">
+                                <label style="justify-self: start;" for="r_password"
+                                       class="text-md">Password: </label>
+                                <input id="r_password" class="text-black bg-white modal-input"
+                                       placeholder="Employee password"
+                                       th:type="password" th:field="*{employeePassword}"
+                                       autocomplete="new-password"
+                                       required/>
+                            </div>
+
+                            <div class="modal-row mt-2">
+                                <label style="justify-self: start;" for="r_password_re"
+                                       class="text-md">Repeat password: </label>
+                                <input id="r_password_re" class="text-black bg-white modal-input"
+                                       placeholder="Employee password"
+                                       th:type="password" th:field="*{employeePasswordRe}"
+                                       autocomplete="new-password"
+                                       required/>
+                            </div>
+
+                            <div class="modal-row mt-2">
+                                <label style="justify-self: start;" for="r_department"
+                                       class="text-md">Department: </label>
+                                <select id="r_department" type="text" th:field="*{department}" class="form-control modal-input">
+                                    <div th:each="department:${departments}">
+                                        <option th:text="${department.country.getCode()} + ' — ' + ${department.city} + ', ' + ${department.address}"
+                                                th:value="${department.getId()}"></option>
+                                    </div>
+                                </select>
+                            </div>
+
+                            <div class="modal-row mt-2">
+                                <label style="justify-self: start;" for="r_date_valid"
+                                       class="text-md">Valid until: </label>
+                                <input id="r_date_valid" class="text-black bg-white modal-input"
+                                       style="width:revert;display:revert;"
+                                       th:type="date" th:field="*{validDate}" required/>
+                            </div>
+
+                            <div class="my-3 d-flex" style="justify-content: center; align-content: center;">
+                                <span class="border w-100"></span>
+                            </div>
+
+                            <div class="modal-row mt-2">
+                                <label style="justify-self: start;" for="r_confirmation"
+                                       class="text-md">Confirm: </label>
+                                <input id="r_confirmation" class="text-black bg-white modal-input"
+                                       placeholder="Supervisor password"
+                                       th:type="password" th:field="*{currentPassword}"
+                                       autocomplete="new-password"
+                                       required/>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-dark" data-bs-dismiss="modal">
+                                Close
+                            </button>
+                            <button type="submit" class="btn btn-dark">Register</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+
     </div>
     <div th:include="fragments/bottom::bottom-footer"></div>
     <div th:insert="fragments/bottom::message-handler"></div>
