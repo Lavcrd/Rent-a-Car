@@ -6,6 +6,7 @@ import com.sda.carrental.model.property.Department;
 import com.sda.carrental.model.users.Employee;
 import com.sda.carrental.service.*;
 import com.sda.carrental.service.auth.CustomUserDetails;
+import com.sda.carrental.web.mvc.form.common.ConfirmationForm;
 import com.sda.carrental.web.mvc.form.users.ChangePasswordForm;
 import com.sda.carrental.web.mvc.form.users.employee.*;
 import lombok.RequiredArgsConstructor;
@@ -76,6 +77,9 @@ public class ManageEmployeesController {
 
             map.addAttribute("departments_form", new UpdateDepartmentsForm(employee.getDepartments()));
             map.addAttribute("departmentList", employeeService.getDepartmentsByUserContext(cud));
+
+            map.addAttribute("hasPresence", employeeService.hasPresence(employee.getId()));
+            map.addAttribute("delete_form", new ConfirmationForm());
 
             return "management/viewEmployee";
         } catch (ResourceNotFoundException err) {
@@ -282,4 +286,42 @@ public class ManageEmployeesController {
         }
         return "redirect:/mg-emp";
     }
+
+    @RequestMapping(value = "/{employee}/delete", method = RequestMethod.POST)
+    public String employeeDeleteButton(@ModelAttribute("delete_form") @Valid ConfirmationForm form, Errors err, RedirectAttributes redAtt, @PathVariable(value = "employee") Long employeeId) {
+        try {
+            redAtt.addFlashAttribute("details_form", form);
+
+            CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            Employee employee = employeeService.findById(employeeId);
+            if (!employeeService.isSupervisorOf(cud, employee)) {
+                redAtt.addFlashAttribute(MSG_KEY, MSG_ACCESS_REJECTED);
+                return "redirect:/mg-emp/{employee}";
+            }
+
+            if (err.hasErrors()) {
+                redAtt.addFlashAttribute(MSG_KEY, err.getAllErrors().get(0).getDefaultMessage());
+                return "redirect:/mg-emp/{employee}";
+            }
+
+            HttpStatus status = employeeService.delete(employee.getId());
+
+            if (status.equals(HttpStatus.OK)) {
+                redAtt.addFlashAttribute(MSG_KEY, "Success: Employee's account has been deleted.");
+                return "redirect:/mg-emp";
+            } else if (status.equals(HttpStatus.PRECONDITION_FAILED)) {
+                redAtt.addFlashAttribute(MSG_KEY, "Failure: Employee's account cannot be deleted.");
+            } else {
+                redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
+            }
+
+            return "redirect:/mg-emp/{employee}";
+        } catch (ResourceNotFoundException e) {
+            redAtt.addFlashAttribute(MSG_KEY, MSG_NO_RESOURCE);
+        } catch (RuntimeException e) {
+            redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
+        }
+        return "redirect:/mg-emp";
+    }
+
 }

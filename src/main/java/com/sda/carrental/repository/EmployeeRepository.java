@@ -24,4 +24,7 @@ public interface EmployeeRepository extends CrudRepository<Employee, Long> {
     List<Employee> findAllByForm(@Param("name") String name, @Param("surname") String surname,
                                  @Param("department") Long department, @Param("expired") boolean expired,
                                  @Param("role") Role role);
+
+    @Query("SELECT COUNT(r1) > 0, COUNT(r2) > 0 FROM rent r1, retrieve r2 WHERE r1.employeeId = :id OR r2.employeeId = :id")
+    List<Boolean> hasPresence(@Param("id") Long id);
 }

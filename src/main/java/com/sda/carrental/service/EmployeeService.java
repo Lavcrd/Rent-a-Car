@@ -174,4 +174,25 @@ public class EmployeeService {
             return HttpStatus.INTERNAL_SERVER_ERROR;
         }
     }
+
+    @Transactional
+    public HttpStatus delete(Long id) {
+        try {
+            if (hasPresence(id)) {
+                return HttpStatus.PRECONDITION_FAILED;
+            }
+
+            Employee employee = findById(id);
+            repository.delete(employee);
+            credentialsService.deleteCredentials(id);
+            return HttpStatus.OK;
+        } catch (Exception e) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            return HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+    }
+
+    public boolean hasPresence(Long id) {
+        return repository.hasPresence(id).contains(true);
+    }
 }
