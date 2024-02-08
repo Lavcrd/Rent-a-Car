@@ -37,6 +37,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/mg-car/**").hasAnyAuthority(Role.ROLE_MANAGER.name(), Role.ROLE_COORDINATOR.name(), Role.ROLE_DIRECTOR.name(), Role.ROLE_ADMIN.name())
                 .antMatchers("/mg-emp/**").hasAnyAuthority(Role.ROLE_MANAGER.name(), Role.ROLE_COORDINATOR.name(), Role.ROLE_DIRECTOR.name(), Role.ROLE_ADMIN.name())
                 .antMatchers("/archive/**").hasAnyAuthority(Role.ROLE_MANAGER.name(), Role.ROLE_COORDINATOR.name(), Role.ROLE_DIRECTOR.name(), Role.ROLE_ADMIN.name())
+                .antMatchers("/mg-dpt/**").hasAnyAuthority(Role.ROLE_COORDINATOR.name(), Role.ROLE_DIRECTOR.name(), Role.ROLE_ADMIN.name())
                 .anyRequest().permitAll()
                 .and()
                 .formLogin()

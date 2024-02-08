@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="Content-Type" content="text/html"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    <title>Rent-a-Car</title>
+
+    <link rel="stylesheet" type="text/css" href="/css/styles.css"/>
+    <link rel="stylesheet" href="/webjars/bootstrap/5.2.3/css/bootstrap.min.css">
+</head>
+
+<body>
+<div id="container">
+
+    <div th:include="fragments/top::top-menu"></div>
+    <div th:include="fragments/top::reg-options"></div>
+
+    <div class="row">
+        <form th:action="@{/mg-dpt/search}" th:object="${searchDepartmentsForm}" th:method="POST"
+              class="form-inline">
+
+            <div class="row mb-2" style="margin-top: 5%">
+
+                <div class="row" style="flex-wrap: nowrap; padding-right: 0;">
+                    <div class="col-sm-3 c-input">
+                        <select type="text" th:field="*{country}" class="form-control">
+                            <div th:each="country:${countries}">
+                                <option th:text="'Country: ' + ${country.getCountryName()}"
+                                        th:value="${country.name()}"></option>
+                            </div>
+                        </select>
+                    </div>
+
+                    <div class="col-sm-3 c-input">
+                        <input type="text" class="form-control" placeholder="Postal code"
+                               th:field="*{postcode}">
+                    </div>
+
+                    <div class="col-sm-3 c-input"></div>
+
+                    <div class="col-sm-3 c-input" style="width: fit-content;">
+                        <input id="is_hq1" name="is_hq" type="radio" value="true" class="btn-check"
+                               th:field="*{headquarter}" checked>
+                        <label for="is_hq1" class="btn btn-outline-dark btn-sm">HQ</label>
+                        <input id="is_hq2" name="is_hq" type="radio" value="false" class="btn-check"
+                               th:field="*{headquarter}">
+                        <label for="is_hq2" class="btn btn-outline-dark btn-sm"
+                               style="margin-left: 0.5em;">Any</label>
+                    </div>
+                    <div class="col px-0 d-flex" style="justify-content: end;">
+                        <button type="button"
+                                data-bs-toggle="modal" data-bs-target="#registerModal"
+                                class="btn btn-dark bg-dark d-flex" style="align-items: center;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                 viewBox="0 0 16 16" class="bi bi-plus-square">
+                                <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"></path>
+                                <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                <div class="row"
+                     style="width: 100%; margin-top: 1%; flex-shrink: 1; display:inline-flex; flex-wrap: nowrap; padding-right: 0;">
+                    <div class="col-sm-3 c-input">
+                        <input type="text" class="form-control" placeholder="City"
+                               th:field="*{city}">
+                    </div>
+                    <div class="col-sm-3 c-input">
+                        <input type="text" class="form-control" placeholder="Address"
+                               th:field="*{address}">
+                    </div>
+                    <div class="col-sm-3 c-input"></div>
+                    <div class="col-sm-3 c-input" style="width: fit-content;">
+                        <input id="is_active1" name="is_active" type="radio" value="true" class="btn-check"
+                               th:field="*{active}" checked>
+                        <label for="is_active1" class="btn btn-outline-dark btn-sm">Active</label>
+                        <input id="is_active2" name="is_active" type="radio" value="false" class="btn-check"
+                               th:field="*{active}">
+                        <label for="is_active2" class="btn btn-outline-dark btn-sm"
+                               style="margin-left: 0.5em;">Inactive</label>
+                    </div>
+                    <div class="col c-input px-0" style="justify-content: end; white-space: nowrap;">
+                        <button class="btn btn-dark bg-dark"
+                                type="submit">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                 class="bi bi-search" viewBox="0 0 16 16">
+                                <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+            <div th:insert="fragments/bottom::form-error-handler"></div>
+        </form>
+
+        <br>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-12 scroll-70">
+            <table class="table table-borderless table-hover table-fixed"
+                   style="text-align: center; vertical-align: middle;">
+                <thead class="table-dark">
+                <tr>
+                    <th scope="row">Postcode</th>
+                    <th scope="row">City</th>
+                    <th scope="row">Address</th>
+                    <th scope="row">Activity</th>
+                    <th scope="row">HQ</th>
+                    <th scope="row"></th>
+                </tr>
+                </thead>
+                <tbody>
+                <th:block th:if="${#lists.isEmpty(d_results)}">
+                    <td th:text="'—'"></td>
+                    <td th:text="'—'"></td>
+                    <td th:text="'—'"></td>
+                    <td th:text="'—'"></td>
+                    <td th:text="'—'"></td>
+                    <td></td>
+                </th:block>
+                <tr th:each="result: ${d_results}">
+                    <td>
+                        <div class="overflow-cell-hs"
+                             th:text="${result.country.getCode()} + ' ' + ${result.postcode}"></div>
+                    </td>
+                    <td>
+                        <div class="overflow-cell-hs"
+                             th:text="${result.city}"></div>
+                    </td>
+                    <td>
+                        <div class="overflow-cell-hs"
+                             th:text="${result.address}"></div>
+                    </td>
+                    <td>
+                        <div class="overflow-cell-hs"
+                             th:utext="${result.isActive} ? '&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; width=&quot;16&quot; height=&quot;16&quot; fill=&quot;currentColor&quot; class=&quot;bi bi-check2&quot; viewBox=&quot;0 0 16 16&quot;&gt;
+  &lt;path d=&quot;M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0&quot;/&gt;
+&lt;/svg&gt;' : ' '"></div>
+                    </td>
+                    <td>
+                        <div class="overflow-cell-hs"
+                             th:utext="${result.hq} ? '&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; width=&quot;16&quot; height=&quot;16&quot; fill=&quot;currentColor&quot; class=&quot;bi bi-check2&quot; viewBox=&quot;0 0 16 16&quot;&gt;
+  &lt;path d=&quot;M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0&quot;/&gt;
+&lt;/svg&gt;' : ' '"></div>
+                    </td>
+                    <td style="position: relative;">
+                        <a type="button" class="btn btn-dark list-button" th:text="Inspect"
+                           th:href="'/mg-dpt/' + ${result.id}"></a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!--        &lt;!&ndash;Register modal&ndash;&gt;
+                <form th:method="POST" th:object="${register_form}"
+                      th:action="@{'/mg-dpt/register'}">
+                    <div class="modal fade" id="registerModal" tabindex="-1" role="dialog"
+                         aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Register</h5>
+                                    <button type="button" class="close" data-bs-dismiss="modal"
+                                            aria-label="Close">
+                                        <span aria-hidden="true">×</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-dark" data-bs-dismiss="modal">
+                                        Close
+                                    </button>
+                                    <button type="submit" class="btn btn-dark">Register</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>-->
+
+    </div>
+    <div th:include="fragments/bottom::bottom-footer"></div>
+    <div th:insert="fragments/bottom::message-handler"></div>
+</div>
+<div th:include="fragments/bottom::common-scripts"></div>
+</body>
+</html>

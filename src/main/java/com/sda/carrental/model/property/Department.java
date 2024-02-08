@@ -5,6 +5,7 @@ import javax.persistence.*;
 import com.sda.carrental.global.enums.Country;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 
 @Entity(name = "department")
@@ -21,6 +22,7 @@ public class Department {
         this.email= email;
         this.contact = contact;
         this.hq = hq;
+        this.isActive = true;
     }
 
     @Id
@@ -28,7 +30,7 @@ public class Department {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @Column(name = "country_code", nullable = false)
+    @Column(name = "country", nullable = false)
     private Country country;
 
     @Column(name = "city", nullable = false)
@@ -40,12 +42,19 @@ public class Department {
     @Column(name = "postcode", nullable = false)
     private String postcode;
 
+    @Setter
     @Column(name = "email", nullable = false)
     private String email;
 
+    @Setter
     @Column(name = "contact", nullable = false)
     private String contact;
 
+    @Setter
+    @Column(name = "is_active", nullable = false)
+    private boolean isActive;
+
+    @Setter
     @Column(name = "hq", nullable = false)
     private boolean hq;
 }
