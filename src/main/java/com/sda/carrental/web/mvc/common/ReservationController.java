@@ -60,8 +60,8 @@ public class ReservationController {
             map.addAttribute("s2_time", dateTime2);
 
             CarBase carBase = carBaseService.findById(carBaseId);
-            Department depFrom = depService.findDepartmentWhereId(indexForm.getDepartmentIdFrom());
-            Department depTo = depService.findDepartmentWhereId(indexForm.getDepartmentIdTo());
+            Department depFrom = depService.findById(indexForm.getDepartmentIdFrom());
+            Department depTo = depService.findById(indexForm.getDepartmentIdTo());
             long days = indexForm.getDateFrom().until(indexForm.getDateTo(), ChronoUnit.DAYS) + 1;
 
             if (indexForm.isDifferentDepartment()) {

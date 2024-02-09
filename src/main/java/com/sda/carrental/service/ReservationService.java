@@ -43,8 +43,8 @@ public class ReservationService {
 
             if (index.getDateFrom().isAfter(index.getDateTo())) throw new ResourceNotFoundException();
             CarBase carBase = carBaseService.findById(form.getCarBaseId());
-            Department depRepFrom = departmentService.findDepartmentWhereId(index.getDepartmentIdFrom());
-            Department depRepTo = departmentService.findDepartmentWhereId(index.getDepartmentIdTo());
+            Department depRepFrom = departmentService.findById(index.getDepartmentIdFrom());
+            Department depRepTo = departmentService.findById(index.getDepartmentIdTo());
 
             Reservation reservation = new Reservation(
                     customer, carBase,
@@ -251,8 +251,8 @@ public class ReservationService {
 
             //Checks if exists with exceptions from respective services
             CarBase carBase = carBaseService.findById(carBaseId);
-            Department departmentFrom = departmentService.findDepartmentWhereId(indexForm.getDepartmentIdFrom());
-            departmentService.findDepartmentWhereId(indexForm.getDepartmentIdTo());
+            Department departmentFrom = departmentService.findById(indexForm.getDepartmentIdFrom());
+            departmentService.findById(indexForm.getDepartmentIdTo());
 
             //Checks if Car Base is available within provided request assuming overbooking is not allowed
             List<CarBase> carBaseList = carBaseService.findAvailableCarBasesInCountry(

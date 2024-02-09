@@ -78,7 +78,7 @@ public class CarBaseService {
             carBases = findAvailableCarBasesInCountry(
                     f.getIndexData().getDateFrom(),
                     f.getIndexData().getDateTo(),
-                    departmentService.findDepartmentWhereId(f.getIndexData().getDepartmentIdFrom()).getCountry());
+                    departmentService.findById(f.getIndexData().getDepartmentIdFrom()).getCountry());
         } else if (form instanceof SubstituteCarBaseFilterForm f) {
             carBases = findAvailableCarBasesInDepartment(f.getDepartmentId());
         } else if (form instanceof SearchCarBasesFilterForm f) {

@@ -51,7 +51,7 @@ public class RetrieveService {
                 repository.save(new Retrieve(
                         form.getReservationId(), rentService.findById(form.getReservationId()),
                         cud.getId(), form.getDateTo(), form.getRemarks(),
-                        departmentService.findDepartmentWhereId(form.getDepartmentId()), form.getMileage()));
+                        departmentService.findById(form.getDepartmentId()), form.getMileage()));
             }
             return status;
         } catch (DataAccessException err) {
@@ -70,7 +70,7 @@ public class RetrieveService {
             if (employeeService.departmentAccess(cud, departmentId).equals(HttpStatus.FORBIDDEN)) {
                 throw new IllegalActionException();
             }
-            carService.retrieveCar(rentService.findById(form.getReservationId()).getCar(), departmentService.findDepartmentWhereId(form.getDepartmentId()), form.getMileage());
+            carService.retrieveCar(rentService.findById(form.getReservationId()).getCar(), departmentService.findById(form.getDepartmentId()), form.getMileage());
             return createRetrieve(customerId, form);
         } catch (IllegalActionException err) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
@@ -108,7 +108,7 @@ public class RetrieveService {
         } else {
             if (employeeService.departmentAccess(cud, form.getDepartment()).equals(HttpStatus.FORBIDDEN))
                 return Collections.emptyList();
-            departments = List.of(departmentService.findDepartmentWhereId(form.getDepartment()));
+            departments = List.of(departmentService.findById(form.getDepartment()));
         }
 
         return repository.findUnresolved(
@@ -138,7 +138,7 @@ public class RetrieveService {
             } else {
                 if (employeeService.departmentAccess(cud, form.getDepartment()).equals(HttpStatus.FORBIDDEN))
                     return Collections.emptyList();
-                departments = List.of(departmentService.findDepartmentWhereId(form.getDepartment()));
+                departments = List.of(departmentService.findById(form.getDepartment()));
             }
 
             return repository.findRetrievedByCriteria(

@@ -229,7 +229,7 @@ public class ManageCarsController {
                 return "redirect:/mg-car/{carId}";
             }
 
-            Department department = departmentService.findDepartmentWhereId(form.getDepartmentId());
+            Department department = departmentService.findById(form.getDepartmentId());
             HttpStatus status = carService.updateCarLocation(car, department);
             if (status.equals(HttpStatus.OK)) {
                 redAtt.addFlashAttribute(MSG_KEY, "Success: Car location successfully changed to - " + department.getCity() + ", " + department.getAddress());

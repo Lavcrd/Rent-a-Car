@@ -69,7 +69,7 @@ public class ManageReservationsController {
             }
 
             Customer customer = customerService.findById(customerId);
-            map.addAttribute("department", departmentService.findDepartmentWhereId(departmentId));
+            map.addAttribute("department", departmentService.findById(departmentId));
             map.addAttribute("customer", customer);
             map.addAttribute("reservations", reservationService.findUserReservationsByDepartmentTake(customer.getId(), departmentId));
             map.addAttribute("reservations_incoming", reservationService.findUserReservationsByDepartmentBack(customer.getId(), departmentId));

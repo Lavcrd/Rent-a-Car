@@ -156,33 +156,101 @@
             </table>
         </div>
 
-        <!--        &lt;!&ndash;Register modal&ndash;&gt;
-                <form th:method="POST" th:object="${register_form}"
-                      th:action="@{'/mg-dpt/register'}">
-                    <div class="modal fade" id="registerModal" tabindex="-1" role="dialog"
-                         aria-hidden="true">
-                        <div class="modal-dialog modal-dialog-centered" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title">Register</h5>
-                                    <button type="button" class="close" data-bs-dismiss="modal"
-                                            aria-label="Close">
-                                        <span aria-hidden="true">×</span>
-                                    </button>
-                                </div>
-                                <div class="modal-body">
+        <!--Register modal-->
+        <form th:method="POST" th:object="${register_form}"
+              th:action="@{'/mg-dpt/register'}">
+            <div class="modal fade" id="registerModal" tabindex="-1" role="dialog"
+                 aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Register</h5>
+                            <button type="button" class="close" data-bs-dismiss="modal"
+                                    aria-label="Close">
+                                <span aria-hidden="true">×</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="modal-row mt-2">
+                                <label style="justify-self: start;" for="r_country"
+                                       class="text-md">Country: </label>
+                                <select id="r_country" type="text" th:field="*{country}" class="form-control modal-input">
+                                    <div th:each="country:${countries}">
+                                        <option th:text="'Country: ' + ${country.getCountryName()}"
+                                                th:value="${country.name()}"></option>
+                                    </div>
+                                </select>
+                            </div>
 
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-dark" data-bs-dismiss="modal">
-                                        Close
-                                    </button>
-                                    <button type="submit" class="btn btn-dark">Register</button>
-                                </div>
+                            <div class="modal-row mt-2">
+                                <label style="justify-self: start;" for="r_postcode"
+                                       class="form-label">Postcode: </label>
+                                <input id="r_postcode" class="text-black bg-white modal-input"
+                                       placeholder="Postcode"
+                                       th:type="text" th:field="*{postcode}"
+                                       required/>
+                            </div>
+
+                            <div class="modal-row mt-2">
+                                <label style="justify-self: start;" for="r_city"
+                                       class="form-label">City: </label>
+                                <input id="r_city" class="text-black bg-white modal-input"
+                                       placeholder="City"
+                                       th:type="text" th:field="*{city}"
+                                       required/>
+                            </div>
+
+                            <div class="modal-row mt-2">
+                                <label style="justify-self: start;" for="r_address"
+                                       class="form-label">Address: </label>
+                                <input id="r_address" class="text-black bg-white modal-input"
+                                       placeholder="St. Street 000"
+                                       th:type="text" th:field="*{address}"
+                                       required/>
+                            </div>
+
+                            <div class="modal-row mt-2">
+                                <label style="justify-self: start;" for="r_email"
+                                       class="form-label">E-mail: </label>
+                                <input id="r_email" class="text-black bg-white modal-input"
+                                       placeholder="department@email.com"
+                                       th:type="text" th:field="*{email}"
+                                       required/>
+                            </div>
+
+                            <div class="modal-row mt-2">
+                                <label style="justify-self: start;" for="r_contact"
+                                       class="form-label">Contact: </label>
+                                <input id="r_contact" class="text-black bg-white modal-input"
+                                       placeholder="000 000 000"
+                                       th:type="text" th:field="*{contact}"
+                                       required/>
+                            </div>
+
+                            <div class="my-3 d-flex" style="justify-content: center; align-content: center;">
+                                <span class="border w-100"></span>
+                            </div>
+
+                            <div class="modal-row mt-2">
+                                <label style="justify-self: start;" for="r_confirmation"
+                                       class="text-md">Confirm: </label>
+                                <input id="r_confirmation" class="text-black bg-white modal-input"
+                                       placeholder="Password"
+                                       th:type="password" th:field="*{currentPassword}"
+                                       autocomplete="new-password"
+                                       required/>
                             </div>
                         </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-dark" data-bs-dismiss="modal">
+                                Close
+                            </button>
+                            <button type="submit" class="btn btn-dark">Register</button>
+                        </div>
                     </div>
-                </form>-->
+                </div>
+            </div>
+        </form>
 
     </div>
     <div th:include="fragments/bottom::bottom-footer"></div>

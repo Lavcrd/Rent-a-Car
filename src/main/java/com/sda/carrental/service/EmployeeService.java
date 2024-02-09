@@ -70,7 +70,7 @@ public class EmployeeService {
     }
 
     public HttpStatus departmentAccess(CustomUserDetails cud, Long departmentId) throws ResourceNotFoundException {
-        Department department = departmentService.findDepartmentWhereId(departmentId);
+        Department department = departmentService.findById(departmentId);
         if (getDepartmentsByUserContext(cud).contains(department)) {
             return HttpStatus.ACCEPTED;
         }
@@ -159,13 +159,17 @@ public class EmployeeService {
     }
 
     public boolean hasMinimumAuthority(CustomUserDetails cud, Role role) {
-        return findById(cud.getId()).getRole().ordinal() >= role.ordinal();
+        try {
+            return findById(cud.getId()).getRole().ordinal() >= role.ordinal();
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     @Transactional
     public HttpStatus register(RegisterEmployeeForm form) {
         try {
-            Employee employee = EmployeeMapper.toRegisteredEntity(form, departmentService.findDepartmentWhereId(form.getDepartment()));
+            Employee employee = EmployeeMapper.toRegisteredEntity(form, departmentService.findById(form.getDepartment()));
             repository.save(employee);
             credentialsService.createCredentials(employee.getId(), form.getUsername(), form.getEmployeePassword());
             return HttpStatus.CREATED;

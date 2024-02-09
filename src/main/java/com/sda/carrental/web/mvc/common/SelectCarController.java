@@ -44,7 +44,7 @@ public class SelectCarController {
             List<CarBase> carBaseList = carBaseService.findAvailableCarBasesInCountry(
                     indexForm.getDateFrom(),
                     indexForm.getDateTo(),
-                    departmentService.findDepartmentWhereId(indexForm.getDepartmentIdFrom()).getCountry());
+                    departmentService.findById(indexForm.getDepartmentIdFrom()).getCountry());
             if (carBaseList.isEmpty()) throw new ResourceNotFoundException();
 
             LocalDateTime htmlTime1 = (LocalDateTime) map.getOrDefault("s1_time", dateTime);
