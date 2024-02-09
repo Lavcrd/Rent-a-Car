@@ -59,7 +59,7 @@ public class CarService {
         } else {
             if (employeeService.departmentAccess(cud, f.getDepartment()).equals(HttpStatus.FORBIDDEN))
                 return Collections.emptyList();
-            departments = List.of(departmentService.findDepartmentWhereId(f.getDepartment()));
+            departments = List.of(departmentService.findById(f.getDepartment()));
         }
 
         Car.CarStatus carStatus;
@@ -174,7 +174,7 @@ public class CarService {
                 throw new RuntimeException();
 
             CarBase carBase = carBaseService.findById(form.getPattern());
-            Department department = departmentService.findDepartmentWhereId(form.getDepartment());
+            Department department = departmentService.findById(form.getDepartment());
 
             repository.save(new Car(carBase, department, department.getCountry().getCode() + "-" + form.getPlate().toUpperCase(), form.getMileage(), Car.CarStatus.STATUS_UNAVAILABLE));
             return HttpStatus.CREATED;

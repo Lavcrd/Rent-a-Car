@@ -18,7 +18,9 @@ public class ValidCountryValidator implements ConstraintValidator<ValidCountry, 
     public boolean isValid(String input, ConstraintValidatorContext cvc) {
         try {
             if (input == null) return false;
-            if (Country.valueOf(Country.class, input).equals(Country.COUNTRY_NONE) && canBeUnselected) return true;
+            if (Country.valueOf(Country.class, input).equals(Country.COUNTRY_NONE)) {
+                return canBeUnselected;
+            }
             return true;
         } catch (RuntimeException err) {
             return false;

@@ -38,7 +38,7 @@
                     <a class="dropdown-toggle" href="#" id="employeeZone" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Workspace</a>
                     <div class="dropdown-menu" aria-labelledby="employeeZone">
                         <a class="dropdown-item" href="/profile">Profile</a>
-                        <a class="dropdown-item" href="#">Overview</a>
+                        <a class="dropdown-item" href="/overview">Overview</a>
                         <a class="dropdown-item" href="/c-ret">Claim return</a>
                         <a class="dropdown-item" href="/mg-cus">Customers</a>
 
@@ -51,12 +51,11 @@
 
                         <!-- Coordinator and Admin -->
                         <th:block sec:authorize="hasAnyRole('ROLE_COORDINATOR', 'ROLE_DIRECTOR', 'ROLE_ADMIN')">
-                            <a class="dropdown-item" href="#">Departments</a>
-                            <a class="dropdown-item" href="#">Statistics</a>
+                            <a class="dropdown-item" href="/mg-dpt">Department management</a>
                         </th:block>
 
                         <!-- Admin -->
-                        <a sec:authorize="hasRole('ROLE_ADMIN')" class="dropdown-item" href="#">Config</a>
+                        <a sec:authorize="hasRole('ROLE_ADMIN')" class="dropdown-item" href="/mg-cfg">Config</a>
                     </div>
                 </li>
             </ul>
