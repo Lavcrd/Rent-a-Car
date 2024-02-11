@@ -148,6 +148,8 @@ public class EmployeeService {
             if ((employee.getRole().equals(Role.ROLE_EMPLOYEE) || employee.getRole().equals(Role.ROLE_MANAGER))
                     && departments.size() > 1) {
                 return HttpStatus.PRECONDITION_FAILED;
+            } else if (departments.isEmpty()) {
+                return HttpStatus.BAD_REQUEST;
             }
 
             employee.setDepartments(departments);

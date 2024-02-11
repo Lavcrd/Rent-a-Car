@@ -59,6 +59,7 @@ public class ManageDepartmentsController {
             Department department = departmentService.findById(departmentId);
 
             map.addAttribute("department", department);
+            map.addAttribute("hasPresence", departmentService.hasPresence(department.getId()));
 
             return "management/viewDepartment";
         } catch (ResourceNotFoundException err) {
