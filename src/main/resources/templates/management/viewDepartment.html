@@ -127,11 +127,80 @@
                                      class="bi bi-circle cb-svg" viewBox="0 0 16 16">
                                     <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
                                 </svg>
-                                <div class="list-button-text">Example</div>
+                                <div class="list-button-text">Details</div>
                             </button>
                         </td>
-                        <td class="short-description-cell">Example button description.</td>
+                        <td class="short-description-cell">Allows to edit department details.</td>
                     </tr>
+
+                    <tr>
+                        <td class="button-cell">
+                            <button type="button" class="btn btn-dark bg-dark mt-1 list-button w-100"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#exampleModal">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                     fill="currentColor"
+                                     class="bi bi-circle cb-svg" viewBox="0 0 16 16">
+                                    <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                                </svg>
+                                <div class="list-button-text">Contacts</div>
+                            </button>
+                        </td>
+                        <td class="short-description-cell">Allows to edit department contacts.</td>
+                    </tr>
+
+                    <tr>
+                        <td class="button-cell">
+                            <button type="button" class="btn btn-dark bg-dark mt-1 list-button w-100"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#exampleModal">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                     fill="currentColor"
+                                     class="bi bi-circle cb-svg" viewBox="0 0 16 16">
+                                    <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                                </svg>
+                                <div th:if="${!department.isActive}" class="list-button-text">Activity ON</div>
+                                <div th:if="${department.isActive}" class="list-button-text">Activity OFF</div>
+                            </button>
+                        </td>
+                        <td th:if="${!department.isActive}" class="short-description-cell">Set department as active.</td>
+                        <td th:if="${department.isActive}" class="short-description-cell">Set department as inactive.</td>
+                    </tr>
+
+                    <tr>
+                        <td class="button-cell">
+                            <button type="button" class="btn btn-dark bg-dark mt-1 list-button w-100"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#exampleModal">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                     fill="currentColor"
+                                     class="bi bi-circle cb-svg" viewBox="0 0 16 16">
+                                    <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                                </svg>
+                                <div th:if="${!department.hq}" class="list-button-text">HQ ON</div>
+                                <div th:if="${department.hq}" class="list-button-text">HQ OFF</div>
+                            </button>
+                        </td>
+                        <td th:if="${!department.hq}" class="short-description-cell">Set department as HQ.</td>
+                        <td th:if="${department.hq}" class="short-description-cell">Set department as common.</td>
+                    </tr>
+
+                    <tr th:if="${!hasPresence}">
+                        <td class="button-cell">
+                            <button type="button" class="btn btn-dark bg-dark mt-1 list-button w-100"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#exampleModal">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                     fill="currentColor"
+                                     class="bi bi-circle cb-svg" viewBox="0 0 16 16">
+                                    <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                                </svg>
+                                <div class="list-button-text">Delete</div>
+                            </button>
+                        </td>
+                        <td class="short-description-cell">Allows to prematurely remove department.</td>
+                    </tr>
+
                     </tbody>
                 </table>
             </div>

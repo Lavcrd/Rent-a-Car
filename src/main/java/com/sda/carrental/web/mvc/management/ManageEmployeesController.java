@@ -274,6 +274,8 @@ public class ManageEmployeesController {
                 redAtt.addFlashAttribute(MSG_KEY, "Success: Employee's departments has been updated.");
             } else if (status.equals(HttpStatus.PRECONDITION_FAILED)) {
                 redAtt.addFlashAttribute(MSG_KEY, "Failure: Employee's rank is insufficient.");
+            } else if (status.equals(HttpStatus.BAD_REQUEST)) {
+                redAtt.addFlashAttribute(MSG_KEY, "Failure: Employee must be in at least one department.");
             } else {
                 redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
             }

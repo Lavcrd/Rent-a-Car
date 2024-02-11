@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
+import java.math.BigInteger;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,4 +25,12 @@ public interface DepartmentRepository extends CrudRepository<Department, Long> {
             "ORDER BY d.country, d.postcode, d.city, d.address")
     List<Department> findAllByForm(@Param("city") String city, @Param("address") String address, @Param("postcode") String postcode,
                                    @Param("active") boolean active, @Param("hq") boolean hq, @Param("country") Country country);
+
+    @Query(nativeQuery = true,
+            value = "SELECT EXISTS (SELECT 1 FROM reservation r WHERE r.department_id = :id) UNION ALL " +
+                    "SELECT EXISTS (SELECT 1 FROM reservation r WHERE r.department_return_id = :id) UNION ALL " +
+                    "SELECT EXISTS (SELECT 1 FROM retrieve r WHERE r.department_id = :id) UNION ALL " +
+                    "SELECT EXISTS (SELECT 1 FROM car c WHERE c.department = :id) UNION ALL " +
+                    "SELECT EXISTS (SELECT 1 FROM employee_departments ed WHERE ed.departments_id = :id);")
+    List<BigInteger> hasPresence(@Param("id") Long id);
 }
