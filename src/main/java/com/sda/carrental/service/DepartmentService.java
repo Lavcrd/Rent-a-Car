@@ -8,6 +8,8 @@ import com.sda.carrental.model.property.Department;
 import com.sda.carrental.repository.DepartmentRepository;
 import com.sda.carrental.web.mvc.form.property.departments.RegisterDepartmentForm;
 import com.sda.carrental.web.mvc.form.property.departments.SearchDepartmentsForm;
+import com.sda.carrental.web.mvc.form.property.departments.UpdateContactsForm;
+import com.sda.carrental.web.mvc.form.property.departments.UpdateDepartmentForm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -43,25 +45,21 @@ public class DepartmentService {
 
     public List<Department> findByForm(SearchDepartmentsForm form) {
         Country country = null;
-        if (!form.getCountry().isBlank() && !form.getCountry().equals(Country.COUNTRY_NONE.name())) country = Country.valueOf(form.getCountry());
+        if (!form.getCountry().isBlank() && !form.getCountry().equals(Country.COUNTRY_NONE.name()))
+            country = Country.valueOf(form.getCountry());
         return repository.findAllByForm(form.getCity(), form.getAddress(), form.getPostcode(), form.isActive(), form.isHeadquarter(), country);
 
     }
 
     @Transactional
-    public HttpStatus register(RegisterDepartmentForm form) {
-        try {
-            Country country = Country.valueOf(form.getCountry());
-            if (country.equals(Country.COUNTRY_NONE)) throw new IllegalActionException();
+    public Department register(RegisterDepartmentForm form) throws RuntimeException {
+        Country country = Country.valueOf(form.getCountry());
+        if (country.equals(Country.COUNTRY_NONE)) throw new IllegalActionException();
 
-            Department department = new Department(country, form.getCity(), form.getAddress(), form.getPostcode(), form.getEmail(), form.getContact(), false);
-            repository.save(department);
+        Department department = new Department(country, form.getCity(), form.getAddress(), form.getPostcode(), form.getEmail(), form.getContact(), false);
 
-            return HttpStatus.CREATED;
-        } catch (RuntimeException e) {
-            return HttpStatus.INTERNAL_SERVER_ERROR;
-        }
-     }
+        return repository.save(department);
+    }
 
     public boolean hasPresence(Long id) {
         List<BigInteger> results = repository.hasPresence(id);
@@ -71,5 +69,75 @@ public class DepartmentService {
             }
         }
         return false;
+    }
+
+    @Transactional
+    public HttpStatus updateDetails(Long id, UpdateDepartmentForm form) {
+        try {
+            Department department = findById(id);
+
+            department.setCity(form.getCity());
+            department.setAddress(form.getAddress());
+            department.setPostcode(form.getPostcode());
+
+            repository.save(department);
+            return HttpStatus.ACCEPTED;
+        } catch (RuntimeException e) {
+            return HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+    }
+
+    @Transactional
+    public HttpStatus updateContacts(Long id, UpdateContactsForm form) {
+        try {
+            Department department = findById(id);
+
+            department.setContact(form.getContact());
+            department.setEmail(form.getEmail());
+
+            repository.save(department);
+            return HttpStatus.ACCEPTED;
+        } catch (RuntimeException e) {
+            return HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+    }
+
+    @Transactional
+    public HttpStatus updateActivity(Long id) {
+        try {
+            Department department = findById(id);
+            department.setActive(!department.isActive());
+
+            repository.save(department);
+            return HttpStatus.ACCEPTED;
+        } catch (RuntimeException e) {
+            return HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+    }
+
+    @Transactional
+    public HttpStatus updateHQ(Long id) {
+        try {
+            Department department = findById(id);
+            department.setHq(!department.isHq());
+
+            repository.save(department);
+            return HttpStatus.ACCEPTED;
+        } catch (RuntimeException e) {
+            return HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+    }
+
+    @Transactional
+    public HttpStatus delete(Long id) {
+        try {
+            if (hasPresence(id)) {
+                return HttpStatus.PRECONDITION_FAILED;
+            }
+            repository.deleteById(id);
+            return HttpStatus.ACCEPTED;
+        } catch (RuntimeException e) {
+            return HttpStatus.INTERNAL_SERVER_ERROR;
+        }
     }
 }

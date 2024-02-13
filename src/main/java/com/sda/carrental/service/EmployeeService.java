@@ -201,4 +201,21 @@ public class EmployeeService {
     public boolean hasPresence(Long id) {
         return repository.hasPresence(id).contains(true);
     }
+
+    @Transactional
+    public HttpStatus assignDepartment(Long id, Department department) {
+        try {
+            Employee employee = findById(id);
+            List<Department> departments = employee.getDepartments();
+            if (departments.contains(department)) return HttpStatus.ACCEPTED;
+
+            departments.add(department);
+            employee.setDepartments(departments);
+
+            repository.save(employee);
+            return HttpStatus.ACCEPTED;
+        } catch (RuntimeException e) {
+            return HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+    }
 }

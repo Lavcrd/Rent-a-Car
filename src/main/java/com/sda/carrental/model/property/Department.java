@@ -33,12 +33,15 @@ public class Department {
     @Column(name = "country", nullable = false)
     private Country country;
 
+    @Setter
     @Column(name = "city", nullable = false)
     private String city;
 
+    @Setter
     @Column(name = "address", nullable = false)
     private String address;
 
+    @Setter
     @Column(name = "postcode", nullable = false)
     private String postcode;
 
