@@ -271,7 +271,7 @@ public class ManageEmployeesController {
             HttpStatus status = employeeService.setDepartments(employeeId, form.getDepartments());
 
             if (status.equals(HttpStatus.ACCEPTED)) {
-                redAtt.addFlashAttribute(MSG_KEY, "Success: Employee's departments has been updated.");
+                redAtt.addFlashAttribute(MSG_KEY, "Success: Employee's departments have been updated.");
             } else if (status.equals(HttpStatus.PRECONDITION_FAILED)) {
                 redAtt.addFlashAttribute(MSG_KEY, "Failure: Employee's rank is insufficient.");
             } else if (status.equals(HttpStatus.BAD_REQUEST)) {
