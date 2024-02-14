@@ -1,6 +1,5 @@
 package com.sda.carrental.web.mvc.form.property.departments;
 
-import com.sda.carrental.model.property.Department;
 import com.sda.carrental.web.mvc.form.common.ConfirmationForm;
 import lombok.Getter;
 import lombok.Setter;
@@ -22,9 +21,4 @@ public class UpdateContactsForm extends ConfirmationForm {
     @NotBlank(message = "Failure: Contact field cannot be empty!")
     @Pattern(regexp = "^\\+{0,1}[\\s\\d]{6,30}+$", message="Failure: Incorrect contact number format.")
     private String contact;
-
-    public UpdateContactsForm(Department department) {
-        this.email = department.getEmail();
-        this.contact = department.getContact();
-    }
 }

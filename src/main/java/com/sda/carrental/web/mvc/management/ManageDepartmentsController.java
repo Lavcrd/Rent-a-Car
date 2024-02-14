@@ -65,10 +65,6 @@ public class ManageDepartmentsController {
             map.addAttribute("department", department);
             map.addAttribute("hasPresence", departmentService.hasPresence(department.getId()));
 
-            map.addAttribute("details_form", map.getOrDefault("details_form", new UpdateDepartmentForm(department)));
-            map.addAttribute("contacts_form", map.getOrDefault("contacts_form", new UpdateContactsForm(department)));
-            map.addAttribute("confirm_form", map.getOrDefault("confirm_form", new ConfirmationForm()));
-
             return "management/viewDepartment";
         } catch (ResourceNotFoundException err) {
             redAtt.addFlashAttribute(MSG_KEY, MSG_NO_RESOURCE);
