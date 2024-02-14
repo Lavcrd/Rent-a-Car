@@ -121,7 +121,7 @@
                         <td class="button-cell">
                             <button type="button" class="btn btn-dark bg-dark mt-1 list-button w-100"
                                     data-bs-toggle="modal"
-                                    data-bs-target="#exampleModal">
+                                    data-bs-target="#detailsModal">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                                      fill="currentColor"
                                      class="bi bi-circle cb-svg" viewBox="0 0 16 16">
@@ -137,7 +137,7 @@
                         <td class="button-cell">
                             <button type="button" class="btn btn-dark bg-dark mt-1 list-button w-100"
                                     data-bs-toggle="modal"
-                                    data-bs-target="#exampleModal">
+                                    data-bs-target="#contactsModal">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                                      fill="currentColor"
                                      class="bi bi-circle cb-svg" viewBox="0 0 16 16">
@@ -153,7 +153,7 @@
                         <td class="button-cell">
                             <button type="button" class="btn btn-dark bg-dark mt-1 list-button w-100"
                                     data-bs-toggle="modal"
-                                    data-bs-target="#exampleModal">
+                                    data-bs-target="#activityModal">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                                      fill="currentColor"
                                      class="bi bi-circle cb-svg" viewBox="0 0 16 16">
@@ -171,7 +171,7 @@
                         <td class="button-cell">
                             <button type="button" class="btn btn-dark bg-dark mt-1 list-button w-100"
                                     data-bs-toggle="modal"
-                                    data-bs-target="#exampleModal">
+                                    data-bs-target="#hqModal">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                                      fill="currentColor"
                                      class="bi bi-circle cb-svg" viewBox="0 0 16 16">
@@ -189,7 +189,7 @@
                         <td class="button-cell">
                             <button type="button" class="btn btn-dark bg-dark mt-1 list-button w-100"
                                     data-bs-toggle="modal"
-                                    data-bs-target="#exampleModal">
+                                    data-bs-target="#deleteModal">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                                      fill="currentColor"
                                      class="bi bi-circle cb-svg" viewBox="0 0 16 16">
@@ -203,6 +203,260 @@
 
                     </tbody>
                 </table>
+
+                <!--Details modal-->
+                <form th:method="POST" th:object="${details_form}"
+                      th:action="@{'/mg-dpt/' + ${department.id} + '/update-details'}">
+                    <div class="modal fade" id="detailsModal" tabindex="-1" role="dialog"
+                         aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Details</h5>
+                                    <button type="button" class="close" data-bs-dismiss="modal"
+                                            aria-label="Close">
+                                        <span aria-hidden="true">×</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <p>Change department details and confirm with password.</p>
+                                    <div class="modal-row mt-2">
+                                        <label style="justify-self: start;" for="d_city"
+                                               class="form-label">City: </label>
+                                        <input id="d_city" class="text-black bg-white modal-input"
+                                               placeholder="City"
+                                               th:type="text" th:field="*{city}"
+                                               required/>
+                                    </div>
+
+                                    <div class="modal-row mt-2">
+                                        <label style="justify-self: start;" for="d_address"
+                                               class="form-label">Address: </label>
+                                        <input id="d_address" class="text-black bg-white modal-input"
+                                               placeholder="St. Street 000"
+                                               th:type="text" th:field="*{address}"
+                                               required/>
+                                    </div>
+
+                                    <div class="modal-row mt-2">
+                                        <label style="justify-self: start;" for="d_postcode"
+                                               class="form-label">Postcode: </label>
+                                        <input id="d_postcode" class="text-black bg-white modal-input"
+                                               placeholder="Postcode"
+                                               th:type="text" th:field="*{postcode}"
+                                               required/>
+                                    </div>
+
+                                    <div class="my-3 d-flex" style="justify-content: center; align-content: center;">
+                                        <span class="border w-100"></span>
+                                    </div>
+
+                                    <div class="modal-row mt-2">
+                                        <label style="justify-self: start;" for="d_confirmation"
+                                               class="text-md">Password: </label>
+                                        <input id="d_confirmation" class="text-black bg-white modal-input"
+                                               placeholder="Confirmation password"
+                                               th:type="password" th:field="*{currentPassword}"
+                                               autocomplete="new-password"
+                                               required/>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-dark" data-bs-dismiss="modal">
+                                        Close
+                                    </button>
+                                    <button type="submit" class="btn btn-dark">Confirm</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+                <!--Contacts modal-->
+                <form th:method="POST" th:object="${contacts_form}"
+                      th:action="@{'/mg-dpt/' + ${department.id} + '/update-contacts'}">
+                    <div class="modal fade" id="contactsModal" tabindex="-1" role="dialog"
+                         aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Contact</h5>
+                                    <button type="button" class="close" data-bs-dismiss="modal"
+                                            aria-label="Close">
+                                        <span aria-hidden="true">×</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <p>Change department contacts and confirm with password.</p>
+                                    <div class="modal-row mt-2">
+                                        <label style="justify-self: start;" for="c_email"
+                                               class="form-label">E-mail: </label>
+                                        <input id="c_email" class="text-black bg-white modal-input"
+                                               placeholder="email@xyz.com"
+                                               th:type="text" th:field="*{email}"
+                                               required/>
+                                    </div>
+
+                                    <div class="modal-row mt-2">
+                                        <label style="justify-self: start;" for="c_number"
+                                               class="form-label">Contact number: </label>
+                                        <input id="c_number" class="text-black bg-white modal-input"
+                                               placeholder="000 000 000"
+                                               th:type="text" th:field="*{contact}"
+                                               required/>
+                                    </div>
+
+                                    <div class="my-3 d-flex" style="justify-content: center; align-content: center;">
+                                        <span class="border w-100"></span>
+                                    </div>
+
+                                    <div class="modal-row mt-2">
+                                        <label style="justify-self: start;" for="c_confirmation"
+                                               class="text-md">Password: </label>
+                                        <input id="c_confirmation" class="text-black bg-white modal-input"
+                                               placeholder="Confirmation password"
+                                               th:type="password" th:field="*{currentPassword}"
+                                               autocomplete="new-password"
+                                               required/>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-dark" data-bs-dismiss="modal">
+                                        Close
+                                    </button>
+                                    <button type="submit" class="btn btn-dark">Confirm</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+                <!--HQ modal-->
+                <form th:method="POST" th:object="${confirm_form}"
+                      th:action="@{'/mg-dpt/' + ${department.id} + '/update-activity'}">
+                    <div class="modal fade" id="activityModal" tabindex="-1" role="dialog"
+                         aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Activity</h5>
+                                    <button type="button" class="close" data-bs-dismiss="modal"
+                                            aria-label="Close">
+                                        <span aria-hidden="true">×</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <p th:if="${department.isActive}">Sets department as inactive.</p>
+                                    <p th:if="${!department.isActive}">Sets department as active.</p>
+
+                                    <div class="modal-row mt-2">
+                                        <label style="justify-self: start;" for="confirm_activity"
+                                               class="text-md">Confirm change: </label>
+                                        <input id="confirm_activity" class="text-black bg-white modal-input"
+                                               placeholder="Confirmation password"
+                                               th:type="password" th:field="*{currentPassword}"
+                                               autocomplete="new-password"
+                                               required/>
+                                    </div>
+
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-dark" data-bs-dismiss="modal">
+                                        Close
+                                    </button>
+                                    <button type="submit" class="btn btn-dark">
+                                        Confirm
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+                <!--HQ modal-->
+                <form th:method="POST" th:object="${confirm_form}"
+                      th:action="@{'/mg-dpt/' + ${department.id} + '/update-hq'}">
+                    <div class="modal fade" id="hqModal" tabindex="-1" role="dialog"
+                         aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">HQ</h5>
+                                    <button type="button" class="close" data-bs-dismiss="modal"
+                                            aria-label="Close">
+                                        <span aria-hidden="true">×</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <p th:if="${department.hq}">Removes HQ status from department.</p>
+                                    <p th:if="${!department.hq}">Sets department with HQ status.</p>
+
+                                    <div class="modal-row mt-2">
+                                        <label style="justify-self: start;" for="confirm_hq"
+                                               class="text-md">Confirm change: </label>
+                                        <input id="confirm_hq" class="text-black bg-white modal-input"
+                                               placeholder="Confirmation password"
+                                               th:type="password" th:field="*{currentPassword}"
+                                               autocomplete="new-password"
+                                               required/>
+                                    </div>
+
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-dark" data-bs-dismiss="modal">
+                                        Close
+                                    </button>
+                                    <button type="submit" class="btn btn-dark">
+                                        Confirm
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+                <!--Delete modal-->
+                <form th:method="POST" th:object="${confirm_form}"
+                      th:if="${!hasPresence}"
+                      th:action="@{'/mg-dpt/' + ${department.id} + '/delete'}">
+                    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog"
+                         aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Delete</h5>
+                                    <button type="button" class="close" data-bs-dismiss="modal"
+                                            aria-label="Close">
+                                        <span aria-hidden="true">×</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <p>Completely removes currently viewed department.</p>
+                                    <p>Requires clean profile with no history.</p>
+
+                                    <div class="modal-row mt-2">
+                                        <label style="justify-self: start;" for="confirm_delete"
+                                               class="text-md">Confirm change: </label>
+                                        <input id="confirm_delete" class="text-black bg-white modal-input"
+                                               placeholder="Confirmation password"
+                                               th:type="password" th:field="*{currentPassword}"
+                                               autocomplete="new-password"
+                                               required/>
+                                    </div>
+
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-dark" data-bs-dismiss="modal">
+                                        Close
+                                    </button>
+                                    <button type="submit" class="btn btn-danger">
+                                        Confirm
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
             </div>
         </th:block>
         <div th:insert="fragments/bottom::message-handler"></div>
