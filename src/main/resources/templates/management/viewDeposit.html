@@ -51,7 +51,7 @@
                                      th:utext="
                                      ${retrieve.rent.reservation.dateFrom} + '<br>' +
                                      ${retrieve.rent.reservation.departmentTake.city} + ' ' + ${retrieve.rent.reservation.departmentTake.postcode} + '<br>' +
-                                     ${retrieve.rent.reservation.departmentTake.address}"></div>
+                                     ${retrieve.rent.reservation.departmentTake.street} + ' ' + ${retrieve.rent.reservation.departmentTake.building}"></div>
                             </td>
                         </tr>
                         <tr class="table-dark">
@@ -63,7 +63,7 @@
                                      th:utext="
                                      ${retrieve.rent.reservation.dateTo} + '<br>' +
                                      ${retrieve.rent.reservation.departmentBack.city} + ' ' + ${retrieve.rent.reservation.departmentBack.postcode} + '<br>' +
-                                     ${retrieve.rent.reservation.departmentBack.address}">
+                                     ${retrieve.rent.reservation.departmentBack.street} + ' ' + ${retrieve.rent.reservation.departmentBack.building}">
                                 </div>
                             </td>
                         </tr>
@@ -104,7 +104,7 @@
                          th:utext="'<strong>Retrieval remarks:</strong><br>' + ${retrieve.remarks}">
                     </div>
                     <div class="d-flex" style="margin-top: 3%;justify-content:space-between;">
-                        <div style="text-align:start;" th:utext="'<strong>Location:</strong><br>' + ${retrieve.department.city} + ' ' + ${retrieve.department.postcode} + '<br>' + ${retrieve.department.address}"></div>
+                        <div style="text-align:start;" th:utext="'<strong>Location:</strong><br>' + ${retrieve.department.city} + ' ' + ${retrieve.department.postcode} + '<br>' + ${retrieve.department.street} + ' ' + ${retrieve.department.building}"></div>
                         <div style="text-align:end;" th:utext="'<strong>Retrieving employee:</strong><br>' + ${retrieve_employee.name} + ' ' + ${retrieve_employee.surname}"></div>
                     </div>
                 </div>

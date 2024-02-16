@@ -28,7 +28,7 @@
                     <div class="col-sm-3 c-input" style="width: fit-content;">
                         <select type="text" th:field="*{primaryDepartment}" class="form-control">
                             <div th:each="department:${departments}">
-                                <option th:text="${department.city} + ', ' + ${department.address}"
+                                <option th:text="${department.city} + ', ' + ${department.street} + ' ' + ${department.building}"
                                         th:value="${department.id}"></option>
                             </div>
                         </select>
@@ -39,7 +39,7 @@
                         <select type="text" th:field="*{secondaryDepartment}" class="form-control">
                             <option th:value="null" th:text="Any"></option>
                             <div th:each="department:${departmentsCountry}">
-                                <option th:text="${department.city} + ', ' + ${department.address}"
+                                <option th:text="${department.city} + ', ' + ${department.street} + ' ' + ${department.building}"
                                         th:value="${department.id}"></option>
                             </div>
                         </select>
@@ -110,7 +110,7 @@
                             <option th:value="null" th:text="Any"></option>
                             <div th:each="department:${departmentsCountry}">
                                 <option th:value="${department.id}"
-                                        th:text="${department.city} + ', ' + ${department.address}"></option>
+                                        th:text="${department.city} + ', ' + ${department.street} + ' ' + ${department.building}"></option>
                             </div>
                         </select>
                     </div>
@@ -119,7 +119,7 @@
                         <select type="text" th:field="*{primaryDepartment}" class="form-control">
                             <div th:each="department:${departments}">
                                 <option th:value="${department.id}"
-                                        th:text="${department.city} + ', ' + ${department.address}"></option>
+                                        th:text="${department.city} + ', ' + ${department.street} + ' ' + ${department.building}"></option>
                             </div>
                         </select>
                     </div>

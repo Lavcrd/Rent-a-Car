@@ -450,7 +450,7 @@
                                                 <td th:text="${department.country.code}"></td>
                                                 <td th:text="${department.postcode}"></td>
                                                 <td th:text="${department.city}"></td>
-                                                <td th:text="${department.address}"></td>
+                                                <td th:text="${department.street} + ' ' + ${department.building}"></td>
                                             </tr>
                                             </tbody>
                                         </table>
@@ -491,7 +491,7 @@
                                                            th:text="${department.city}"></label></td>
                                                 <td><label class="form-check-label"
                                                            th:for="'dpt' + ${department.id}"
-                                                           th:text="${department.address}"></label></td>
+                                                           th:text="${department.street} + ' ' + ${department.building}"></label></td>
                                                 <td>
                                                     <input class="form-check-input"
                                                            th:id="'dpt' + ${department.id}"

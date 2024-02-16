@@ -20,9 +20,13 @@ public class RegisterDepartmentForm extends ConfirmationForm {
     @Length(min = 1, max = 50, message = "Failure: Please enter a valid city.")
     private String city;
 
-    @NotBlank(message = "Failure: Address field cannot be empty!")
-    @Length(min = 1, max = 50, message = "Failure: Please enter a valid address.")
-    private String address;
+    @NotBlank(message = "Failure: Street field cannot be empty!")
+    @Length(min = 1, max = 50, message = "Failure: Please enter a valid street.")
+    private String street;
+
+    @NotBlank(message = "Failure: Building number field cannot be empty!")
+    @Length(min = 1, max = 15, message = "Failure: Please enter a valid building number.")
+    private String building;
 
     @NotBlank(message = "Failure: Postcode field cannot be empty!")
     @Length(min = 1, max = 15, message = "Failure: Please enter a valid postcode.")
@@ -33,6 +37,6 @@ public class RegisterDepartmentForm extends ConfirmationForm {
     private String email;
 
     @NotBlank(message = "Failure: Contact field cannot be empty!")
-    @Pattern(regexp = "^\\+{0,1}[\\s\\d]{6,30}+$", message="Failure: Incorrect contact number format.")
+    @Pattern(regexp = "[\\s\\d]{6,30}+$", message="Failure: Incorrect contact number format.")
     private String contact;
 }

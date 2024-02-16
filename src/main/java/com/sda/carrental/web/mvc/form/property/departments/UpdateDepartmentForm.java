@@ -17,9 +17,13 @@ public class UpdateDepartmentForm extends ConfirmationForm {
     @Length(min = 1, max = 50, message = "Failure: Please enter a valid city.")
     private String city;
 
-    @NotBlank(message = "Failure: Address field cannot be empty!")
-    @Length(min = 1, max = 50, message = "Failure: Please enter a valid address.")
-    private String address;
+    @NotBlank(message = "Failure: Street field cannot be empty!")
+    @Length(min = 1, max = 50, message = "Failure: Please enter a valid street.")
+    private String street;
+
+    @NotBlank(message = "Failure: Building number field cannot be empty!")
+    @Length(min = 1, max = 15, message = "Failure: Please enter a valid building number.")
+    private String building;
 
     @NotBlank(message = "Failure: Postcode field cannot be empty!")
     @Length(min = 1, max = 15, message = "Failure: Please enter a valid postcode.")
@@ -28,7 +32,8 @@ public class UpdateDepartmentForm extends ConfirmationForm {
 
     public UpdateDepartmentForm(Department department) {
         this.city = department.getCity();
-        this.address = department.getAddress();
+        this.street = department.getStreet();
+        this.building = department.getBuilding();
         this.postcode = department.getPostcode();
     }
 }

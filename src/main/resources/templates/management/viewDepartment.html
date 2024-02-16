@@ -55,7 +55,7 @@
                     <tr>
                         <td>
                             <div class="overflow-cell-hs"
-                                 th:text="${department.address}">
+                                 th:text="${department.street} + ' ' + ${department.building}">
                             </div>
                         </td>
                     </tr>
@@ -78,7 +78,7 @@
                     <tr>
                         <td>
                             <div class="overflow-cell-hs"
-                                 th:text="${department.contact}"></div>
+                                 th:text="${department.country.getContactCode()} + ' ' + ${department.contact}"></div>
                         </td>
                     </tr>
 
@@ -230,11 +230,20 @@
                                     </div>
 
                                     <div class="modal-row mt-2">
-                                        <label style="justify-self: start;" for="d_address"
-                                               class="form-label">Address: </label>
-                                        <input id="d_address" class="text-black bg-white modal-input"
-                                               placeholder="St. Street 000"
-                                               th:type="text" th:field="*{address}"
+                                        <label style="justify-self: start;" for="d_street"
+                                               class="form-label">Street: </label>
+                                        <input id="d_street" class="text-black bg-white modal-input"
+                                               placeholder="St. Street"
+                                               th:type="text" th:field="*{street}"
+                                               required/>
+                                    </div>
+
+                                    <div class="modal-row mt-2">
+                                        <label style="justify-self: start;" for="d_building"
+                                               class="form-label">Building: </label>
+                                        <input id="d_building" class="text-black bg-white modal-input"
+                                               placeholder="000"
+                                               th:type="text" th:field="*{building}"
                                                required/>
                                     </div>
 

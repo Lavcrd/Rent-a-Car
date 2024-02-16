@@ -36,7 +36,7 @@ public class DepartmentService {
     }
 
     public Department findAllWhereCountryAndHq(Country country) {
-        return repository.findDepartmentByCountryAndHq(country, true).orElse(new Department(Country.COUNTRY_NONE, "—", "—", "—", "—", "—", true));
+        return repository.findDepartmentByCountryAndHq(country, true).orElse(new Department(Country.COUNTRY_NONE, "—", "—", "", "—", "—", "—", true));
     }
 
     public Department findById(long id) throws ResourceNotFoundException {
@@ -47,7 +47,7 @@ public class DepartmentService {
         Country country = null;
         if (!form.getCountry().isBlank() && !form.getCountry().equals(Country.COUNTRY_NONE.name()))
             country = Country.valueOf(form.getCountry());
-        return repository.findAllByForm(form.getCity(), form.getAddress(), form.getPostcode(), form.isActive(), form.isHeadquarter(), country);
+        return repository.findAllByForm(form.getCity(), form.getStreet(), form.getBuilding() , form.getPostcode(), form.isActive(), form.isHeadquarter(), country);
 
     }
 
@@ -56,7 +56,7 @@ public class DepartmentService {
         Country country = Country.valueOf(form.getCountry());
         if (country.equals(Country.COUNTRY_NONE)) throw new IllegalActionException();
 
-        Department department = new Department(country, form.getCity(), form.getAddress(), form.getPostcode(), form.getEmail(), form.getContact(), false);
+        Department department = new Department(country, form.getCity(), form.getStreet(), form.getBuilding(), form.getPostcode(), form.getEmail(), form.getContact(), false);
 
         return repository.save(department);
     }
@@ -77,7 +77,8 @@ public class DepartmentService {
             Department department = findById(id);
 
             department.setCity(form.getCity());
-            department.setAddress(form.getAddress());
+            department.setStreet(form.getStreet());
+            department.setBuilding(form.getBuilding());
             department.setPostcode(form.getPostcode());
 
             repository.save(department);

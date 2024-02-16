@@ -14,10 +14,11 @@ import lombok.ToString;
 @ToString
 public class Department {
 
-    public Department(Country country, String city, String address, String postcode, String email, String contact, boolean hq) {
+    public Department(Country country, String city, String street, String building, String postcode, String email, String contact, boolean hq) {
         this.country = country;
         this.city = city;
-        this.address = address;
+        this.street = street;
+        this.building = building;
         this.postcode = postcode;
         this.email= email;
         this.contact = contact;
@@ -38,8 +39,12 @@ public class Department {
     private String city;
 
     @Setter
-    @Column(name = "address", nullable = false)
-    private String address;
+    @Column(name = "street", nullable = false)
+    private String street;
+
+    @Setter
+    @Column(name = "building", nullable = false)
+    private String building;
 
     @Setter
     @Column(name = "postcode", nullable = false)

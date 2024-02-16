@@ -105,7 +105,7 @@
                     <tr th:each="reservation: ${reservations}">
                         <td>
                             <div class="overflow-cell-hidden"
-                                 th:utext="${reservation.getDepartmentBack().getCity()} + ', <br>' + ${reservation.getDepartmentBack().getAddress()}"></div>
+                                 th:utext="${reservation.departmentBack.city} + ', <br>' + ${reservation.departmentBack.street} + ' ' + ${reservation.departmentBack.building}"></div>
                         </td>
                         <td>
                             <div class="overflow-cell-hidden"
@@ -156,11 +156,11 @@
                     <tr th:each="reservation: ${reservations_incoming}">
                         <td>
                             <div class="overflow-cell-hidden"
-                                 th:utext="${reservation.getDepartmentTake().getCity()} + ', <br>' + ${reservation.getDepartmentTake().getAddress()}"></div>
+                                 th:utext="${reservation.departmentTake.city} + ', <br>' + ${reservation.departmentTake.street} + ' ' + ${reservation.departmentTake.building}"></div>
                         </td>
                         <td>
                             <div class="overflow-cell-hidden"
-                                 th:utext="${reservation.getDateFrom()} + '<br> ⟶ ' + ${reservation.getDateTo()}"></div>
+                                 th:utext="${reservation.dateFrom} + '<br> ⟶ ' + ${reservation.dateTo}"></div>
                         </td>
                         <td>
                             <div class="overflow-cell-hidden" th:utext="${reservation.status.getText()}"></div>

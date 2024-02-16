@@ -75,8 +75,8 @@
                         <select type="text" th:field="*{department}" class="form-control">
                             <option th:value="null" th:text="Any"></option>
                             <div th:each="department:${departments}">
-                                <option th:text="${department.getCity()} + ', ' + ${department.getAddress()}"
-                                        th:value="${department.getId()}"></option>
+                                <option th:text="${department.city} + ', ' + ${department.street} + ' ' + ${department.building}"
+                                        th:value="${department.id}"></option>
                             </div>
                         </select>
                     </div>
@@ -129,18 +129,18 @@
                 <tr th:each="result: ${results}">
                     <td>
                         <div class="overflow-cell-hs"
-                             th:utext="${result.rent.reservation.customer.getName()} + '<br>' + ${result.rent.reservation.customer.getSurname()}"></div>
+                             th:utext="${result.rent.reservation.customer.name} + '<br>' + ${result.rent.reservation.customer.surname}"></div>
                     </td>
                     <td>
                         <div class="overflow-cell-hs"
-                             th:text="${result.rent.car.getPlate()}"></div>
+                             th:text="${result.rent.car.plate}"></div>
                     </td>
                     <td>
                         <div class="overflow-cell-hs" th:text="${result.dateTo}"></div>
                     </td>
                     <td>
                         <div class="overflow-cell-hs"
-                             th:utext="${result.department.getCity()} + ', <br>' + ${result.department.getAddress()}"></div>
+                             th:utext="${result.department.city} + ', <br>' + ${result.department.street} + ' ' + ${result.department.building}"></div>
                     </td>
                     <td style="position: relative;">
                         <a type="button" class="btn btn-dark list-button" th:text="View"

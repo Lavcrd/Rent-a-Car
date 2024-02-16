@@ -93,7 +93,7 @@
                                 <div class="overflow-cell-hs"
                                      th:utext="${car.department.country.countryName} +
                                      '<br>' + ${car.department.city} + ' ' + ${car.department.postcode} +
-                                     '<br>' + ${car.department.address}"></div>
+                                     '<br>' + ${car.department.street} + ' ' + ${car.department.building}"></div>
                             </td>
                         </tr>
                         <tr class="table-dark">
@@ -486,7 +486,7 @@
                                             <select id="s_department" class="form-select modal-input"
                                                     th:field="*{departmentId}" required>
                                                 <div th:each="department:${departments}">
-                                                    <option th:text="${department.country.code} + ' - ' + ${department.city} + ', ' + ${department.address}"
+                                                    <option th:text="${department.country.code} + ' - ' + ${department.city} + ', ' + ${department.street} + ' ' + ${department.building}"
                                                             th:value="${department.id}"
                                                             th:field="*{departmentId}"></option>
                                                 </div>

@@ -44,8 +44,8 @@
                         <img class="car-img" th:src="${reservation.carBase.image}" th:alt="${reservation.carBase.brand} + ' - ' + ${reservation.carBase.model}">
                     </td>
                     <td th:text="${reservation.dateCreated}"></td>
-                    <td th:utext="${reservation.departmentTake.city} + ', <br> ' + ${reservation.departmentTake.address}"></td>
-                    <td th:utext="${reservation.departmentBack.city} + ', <br>' + ${reservation.departmentBack.address}"></td>
+                    <td th:utext="${reservation.departmentTake.city} + ', <br> ' + ${reservation.departmentTake.street} + ' ' + ${reservation.departmentTake.building}"></td>
+                    <td th:utext="${reservation.departmentBack.city} + ', <br>' + ${reservation.departmentBack.street} + ' ' + ${reservation.departmentBack.building}"></td>
                     <td th:text="${reservation.dateFrom} + ' ⟶ ' + ${reservation.dateTo}"></td>
                     <td th:text="${reservation.status.getText()}"></td>
                     <td><button type="submit" class="btn btn-dark" th:text="Details" th:name="details_button"

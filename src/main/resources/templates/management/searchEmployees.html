@@ -28,7 +28,7 @@
                     <div class="col-sm-4 c-input">
                         <select type="text" th:field="*{department}" class="form-control">
                             <div th:each="department:${departments}">
-                                <option th:text="${department.country.getCode()} + ' — ' + ${department.city} + ', ' + ${department.address}"
+                                <option th:text="${department.country.getCode()} + ' — ' + ${department.city} + ', ' + ${department.street} + ' ' + ${department.building}"
                                         th:value="${department.getId()}"></option>
                             </div>
                         </select>
@@ -128,7 +128,7 @@
                     </td>
                     <td>
                         <div class="overflow-cell-hs"
-                             th:utext="${result.departments.size() > 1} ? 'Many' : ${result.departments[0].getCity()} + ', <br>' + ${result.departments[0].getAddress()}"></div>
+                             th:utext="${result.departments.size() > 1} ? 'Many' : ${result.departments[0].city} + ', <br>' + ${result.departments[0].street} + ' ' + ${result.departments[0].building}"></div>
                     </td>
                     <td style="position: relative;">
                         <a type="button" class="btn btn-dark list-button" th:text="Inspect"
@@ -228,7 +228,7 @@
                                        class="text-md">Department: </label>
                                 <select id="r_department" type="text" th:field="*{department}" class="form-control modal-input">
                                     <div th:each="department:${departments}">
-                                        <option th:text="${department.country.getCode()} + ' — ' + ${department.city} + ', ' + ${department.address}"
+                                        <option th:text="${department.country.getCode()} + ' — ' + ${department.city} + ', ' + ${department.street} + ' ' + ${department.building}"
                                                 th:value="${department.getId()}"></option>
                                     </div>
                                 </select>

@@ -124,13 +124,13 @@ public class PredefiniedData implements CommandLineRunner {
     }
 
     private void createDepartments() {
-        departmentRepository.save(new Department(Country.COUNTRY_PL, "Katowice", "ul. Fajna 1", "40-000", "car-rental-alpha@gmail.com", "500 500 501", false));
-        departmentRepository.save(new Department(Country.COUNTRY_PL, "Łódź", "ul. Niefajna 2", "90-000", "car-rental-beta@gmail.com", "500 500 502", false));
-        departmentRepository.save(new Department(Country.COUNTRY_PL, "Gdańsk", "ul. Średnia 3", "80-000", "car-rental-gamma@gmail.com", "500 500 503", false));
-        departmentRepository.save(new Department(Country.COUNTRY_PL, "Warszawa", "ul. Pusta 4", "00-001", "car-rental-delta@gmail.com", "500 500 504", true));
-        departmentRepository.save(new Department(Country.COUNTRY_PL, "Białystok", "ul. Pełna 5", "15-000", "car-rental-epsilon@gmail.com", "500 500 505", false));
-        departmentRepository.save(new Department(Country.COUNTRY_PL, "Poznań", "ul. Półpełna 6", "60-001", "car-rental-dzeta@gmail.com", "500 500 506", false));
-        departmentRepository.save(new Department(Country.COUNTRY_PL, "Wrocław", "ul. Półpusta 7", "50-001", "car-rental-eta@gmail.com", "500 500 507", false));
+        departmentRepository.save(new Department(Country.COUNTRY_PL, "Katowice", "ul. Fajna", "1", "40-000", "car-rental-alpha@gmail.com", "500 500 501", false));
+        departmentRepository.save(new Department(Country.COUNTRY_PL, "Łódź", "ul. Niefajna", "2", "90-000", "car-rental-beta@gmail.com", "500 500 502", false));
+        departmentRepository.save(new Department(Country.COUNTRY_PL, "Gdańsk", "ul. Średnia", "3", "80-000", "car-rental-gamma@gmail.com", "500 500 503", false));
+        departmentRepository.save(new Department(Country.COUNTRY_PL, "Warszawa", "ul. Pusta", "4", "00-001", "car-rental-delta@gmail.com", "500 500 504", true));
+        departmentRepository.save(new Department(Country.COUNTRY_PL, "Białystok", "ul. Pełna", "5", "15-000", "car-rental-epsilon@gmail.com", "500 500 505", false));
+        departmentRepository.save(new Department(Country.COUNTRY_PL, "Poznań", "ul. Półpełna", "6", "60-001", "car-rental-dzeta@gmail.com", "500 500 506", false));
+        departmentRepository.save(new Department(Country.COUNTRY_PL, "Wrocław", "ul. Półpusta", "7", "50-001", "car-rental-eta@gmail.com", "500 500 507", false));
     }
 
     private void createCarBases() {
