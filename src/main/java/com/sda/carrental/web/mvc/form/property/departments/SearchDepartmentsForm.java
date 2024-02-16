@@ -16,7 +16,9 @@ public class SearchDepartmentsForm {
 
     private String city;
 
-    private String address;
+    private String street;
+
+    private String building;
 
     @NotNull(message = "Failure: Active-Inactive field is invalid")
     private boolean isActive;

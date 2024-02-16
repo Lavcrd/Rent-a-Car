@@ -68,10 +68,13 @@
                                th:field="*{city}">
                     </div>
                     <div class="col-sm-3 c-input">
-                        <input type="text" class="form-control" placeholder="Address"
-                               th:field="*{address}">
+                        <input type="text" class="form-control" placeholder="Street"
+                               th:field="*{street}">
                     </div>
-                    <div class="col-sm-3 c-input"></div>
+                    <div class="col-sm-3 c-input">
+                        <input type="text" class="form-control" placeholder="Building number"
+                               th:field="*{building}">
+                    </div>
                     <div class="col-sm-3 c-input" style="width: fit-content;">
                         <input id="is_active1" name="is_active" type="radio" value="true" class="btn-check"
                                th:field="*{active}" checked>
@@ -133,7 +136,7 @@
                     </td>
                     <td>
                         <div class="overflow-cell-hs"
-                             th:text="${result.address}"></div>
+                             th:text="${result.street} + ' ' + ${result.building}"></div>
                     </td>
                     <td>
                         <div class="overflow-cell-hs"
@@ -201,11 +204,20 @@
                             </div>
 
                             <div class="modal-row mt-2">
-                                <label style="justify-self: start;" for="r_address"
+                                <label style="justify-self: start;" for="r_street"
                                        class="form-label">Address: </label>
-                                <input id="r_address" class="text-black bg-white modal-input"
-                                       placeholder="St. Street 000"
-                                       th:type="text" th:field="*{address}"
+                                <input id="r_street" class="text-black bg-white modal-input"
+                                       placeholder="St. Street"
+                                       th:type="text" th:field="*{street}"
+                                       required/>
+                            </div>
+
+                            <div class="modal-row mt-2">
+                                <label style="justify-self: start;" for="r_building"
+                                       class="form-label">Address: </label>
+                                <input id="r_building" class="text-black bg-white modal-input"
+                                       placeholder="000"
+                                       th:type="text" th:field="*{building}"
                                        required/>
                             </div>
 

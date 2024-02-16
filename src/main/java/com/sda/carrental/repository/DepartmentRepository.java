@@ -19,11 +19,12 @@ public interface DepartmentRepository extends CrudRepository<Department, Long> {
             "WHERE d.isActive = :active " +
             "AND (:country IS NULL OR d.country = :country) " +
             "AND (:city IS NULL OR LOWER(d.city) LIKE LOWER(CONCAT(:city, '%'))) " +
-            "AND (:address IS NULL OR LOWER(d.address) LIKE LOWER(CONCAT('%', :address, '%'))) " +
+            "AND (:street IS NULL OR LOWER(d.street) LIKE LOWER(CONCAT('%', :street, '%'))) " +
+            "AND (:building IS NULL OR LOWER(d.building) LIKE LOWER(CONCAT('%', :building, '%'))) " +
             "AND (:postcode IS NULL OR LOWER(d.postcode) LIKE LOWER(CONCAT(:postcode, '%'))) " +
             "AND (:hq = false OR d.hq = :hq) " +
-            "ORDER BY d.country, d.postcode, d.city, d.address")
-    List<Department> findAllByForm(@Param("city") String city, @Param("address") String address, @Param("postcode") String postcode,
+            "ORDER BY d.country, d.postcode, d.city, d.street, d.building")
+    List<Department> findAllByForm(@Param("city") String city, @Param("street") String street, @Param("building") String building, @Param("postcode") String postcode,
                                    @Param("active") boolean active, @Param("hq") boolean hq, @Param("country") Country country);
 
     @Query(nativeQuery = true,

@@ -77,8 +77,8 @@
                             <select id="department" type="text" th:field="*{department}" class="form-control">
                                 <option th:value="null" th:text="'Department: Any'"></option>
                                 <div th:each="department:${departments}">
-                                    <option th:text="${department.getCity()} + ', ' + ${department.getAddress()}"
-                                            th:value="${department.getId()}"></option>
+                                    <option th:text="${department.city} + ', ' + ${department.street} + ' ' + ${department.building}"
+                                            th:value="${department.id}"></option>
                                 </div>
                             </select>
                         </div>
@@ -248,7 +248,7 @@
                                 <li class="list-group-item" th:text="'Mileage: ' + ${result.mileage} + ' [km]'"></li>
                                 <li class="list-group-item" th:text="'Production date: ' + ${result.carBase.year}"></li>
                                 <li class="list-group-item" style="white-space: nowrap;"
-                                    th:text="'Status: ' + ${result.carStatus.name().substring(7)} + ' – ' + ${result.department.getCity()} + ', ' + ${result.department.getAddress()}"></li>
+                                    th:text="'Status: ' + ${result.carStatus.name().substring(7)} + ' – ' + ${result.department.city} + ', ' + ${result.department.street} + ' ' + ${result.department.building}"></li>
                                 <li class="list-group-item"
                                     th:text="'Price per day: ' + ${#numbers.formatDecimal((result.carBase.priceDay), 1, 2, 'POINT')} + ' PLN'"></li>
                             </ul>
@@ -300,7 +300,7 @@
                                     <select id="r_department" class="form-select modal-input"
                                             th:field="*{department}" required>
                                         <div th:each="department:${departments}">
-                                            <option th:text="${department.city} + ' - ' + ${department.address}"
+                                            <option th:text="${department.city} + ' - ' + ${department.street} + ' ' + ${department.building}"
                                                     th:value="${department.id}"
                                                     th:field="*{department}"></option>
                                         </div>

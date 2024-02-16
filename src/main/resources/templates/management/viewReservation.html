@@ -26,7 +26,7 @@
                         <dt style="font-weight: bold">Vehicle pick-up:</dt>
                         <dt style="font-weight: normal"
                             th:text="${reservation.departmentTake.city} + ' ' + ${reservation.departmentTake.postcode} + ', '"></dt>
-                        <dt style="font-weight: normal" th:text="${reservation.departmentTake.address}"></dt>
+                        <dt style="font-weight: normal" th:text="${reservation.departmentTake.street} + ' ' + ${reservation.departmentTake.building}"></dt>
                     </dl>
                     <ul style="text-align: left; list-style-type:none">
                         <li><strong>Date:</strong></li>
@@ -37,7 +37,7 @@
                         <dt style="font-weight: bold">Vehicle return:</dt>
                         <dt style="font-weight: normal"
                             th:text="${reservation.departmentBack.city} + ' ' + ${reservation.departmentBack.postcode} + ', '"></dt>
-                        <dt style="font-weight: normal" th:text="${reservation.departmentBack.address}"></dt>
+                        <dt style="font-weight: normal" th:text="${reservation.departmentBack.street} + ' ' + ${reservation.departmentBack.building}"></dt>
                     </dl>
                     <ul style="text-align: left; list-style-type:none">
                         <li><strong>Date:</strong></li>

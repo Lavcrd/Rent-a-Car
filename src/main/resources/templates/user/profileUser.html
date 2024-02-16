@@ -66,7 +66,7 @@
                 <th:block sec:authorize="hasAnyRole('ROLE_EMPLOYEE', 'ROLE_MANAGER')">
                     <tr class="profile-row">
                         <th scope="row">Department</th>
-                        <td th:text="${user.departments[0].country.getCode()} + ' — ' + ${user.departments[0].city} + ', ' + ${user.departments[0].address}"></td>
+                        <td th:text="${user.departments[0].country.getCode()} + ' — ' + ${user.departments[0].city} + ', ' + ${user.departments[0].street} + ' ' + ${user.departments[0].building}"></td>
                     </tr>
                 </th:block>
                 <th:block sec:authorize="hasAnyRole('ROLE_COORDINATOR', 'ROLE_DIRECTOR')">

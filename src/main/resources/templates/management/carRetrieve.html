@@ -65,7 +65,7 @@
                             <dt style="font-weight: bold">Vehicle pick-up:</dt>
                             <dt style="font-weight: normal"
                                 th:text="${reservation.departmentTake.city} + ' ' + ${reservation.departmentTake.postcode} + ', '"></dt>
-                            <dt style="font-weight: normal" th:text="${reservation.departmentTake.address}"></dt>
+                            <dt style="font-weight: normal" th:text="${reservation.departmentTake.street} + ' ' + ${reservation.departmentTake.building}"></dt>
                         </dl>
                         <ul style="text-align: left; list-style-type:none">
                             <li><strong>Date:</strong></li>
@@ -76,7 +76,7 @@
                             <dt style="font-weight: bold">Vehicle return:</dt>
                             <dt style="font-weight: normal"
                                 th:text="${reservation.departmentBack.city} + ' ' + ${reservation.departmentBack.postcode} + ', '"></dt>
-                            <dt style="font-weight: normal" th:text="${reservation.departmentBack.address}"></dt>
+                            <dt style="font-weight: normal" th:text="${reservation.departmentBack.street} + ' ' + ${reservation.departmentBack.building}"></dt>
                         </dl>
                         <ul style="text-align: left; list-style-type:none">
                             <li><strong>Date:</strong></li>
@@ -196,8 +196,8 @@
                                                                                    class="col-form-label">Department:</label>
                                                             <select id="department" type="text" th:field="*{departmentId}" class="form-control">
                                                                 <div th:each="department:${departments}">
-                                                                    <option th:text="${department.getCity()} + ', ' + ${department.getAddress()}"
-                                                                            th:value="${department.getId()}"></option>
+                                                                    <option th:text="${department.city} + ', ' + ${department.street} + ' ' + ${department.building}"
+                                                                            th:value="${department.id}"></option>
                                                                 </div>
                                                             </select></div>
                                                         <div class="column">

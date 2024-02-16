@@ -31,7 +31,7 @@
                             </div>
                             <div class="flip-box-back">
                                 <h2 class="contact"
-                                    th:text="${hq.getCountry().getContactCode() + ' ' + hq.getContact()}"></h2>
+                                    th:text="${hq.country.getContactCode() + ' ' + hq.contact}"></h2>
                             </div>
                         </div>
                     </div>
@@ -44,7 +44,7 @@
                                 <h1 class="contact">&#64</h1>
                             </div>
                             <div class="flip-box-back">
-                                <h2 class="contact" th:text="${hq.getEmail()}"></h2>
+                                <h2 class="contact" th:text="${hq.email}"></h2>
                             </div>
                         </div>
                     </div>
@@ -56,8 +56,8 @@
                             <h2 class="address" th:text="'Address for correspondence'"></h2>
                         </div>
                         <div class="flip-box-back-wider">
-                            <h2 class="address" th:text="${hq.getAddress()}"></h2>
-                            <h2 class="address" th:text="${hq.getPostcode() + ' ' + hq.getCity()}"></h2>
+                            <h2 class="address" th:text="${hq.street} + ' ' + ${hq.building}"></h2>
+                            <h2 class="address" th:text="${hq.postcode + ' ' + hq.city}"></h2>
                         </div>
                     </div>
                 </div>
@@ -69,13 +69,13 @@
                 <div class="flip-box-wider">
                     <div class="flip-box-inner-wider">
                         <div class="flip-box-front-wider">
-                            <h2 class="address" th:text="${dealer.getCity().toUpperCase()}"></h2>
-                            <h2 class="address" th:text="${dealer.getAddress() + ', ' + dealer.getPostcode()}"></h2>
+                            <h2 class="address" th:text="${dealer.city.toUpperCase()}"></h2>
+                            <h2 class="address" th:text="${dealer.street} + ' ' + ${dealer.building} + ', ' + ${dealer.postcode}"></h2>
                         </div>
                         <div class="flip-box-back-wider">
                             <h2 class="address"
-                                th:text="${dealer.getCountry().getContactCode() + ' ' + dealer.getContact()}"></h2>
-                            <h2 class="address" th:text="${dealer.getEmail()}"></h2>
+                                th:text="${dealer.country.getContactCode() + ' ' + dealer.contact}"></h2>
+                            <h2 class="address" th:text="${dealer.email}"></h2>
                         </div>
                     </div>
                 </div>

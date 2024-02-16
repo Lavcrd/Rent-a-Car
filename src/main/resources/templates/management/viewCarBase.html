@@ -245,7 +245,7 @@
                             <select id="r_department" class="form-select modal-input"
                                     th:field="*{department}" required>
                                 <div th:each="department:${departments}">
-                                    <option th:text="${department.city} + ' - ' + ${department.address}"
+                                    <option th:text="${department.city} + ' - ' + ${department.street} + ' ' + ${department.building}"
                                             th:value="${department.id}"
                                             th:field="*{department}"></option>
                                 </div>

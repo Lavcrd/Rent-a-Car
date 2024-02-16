@@ -232,7 +232,7 @@ public class ManageCarsController {
             Department department = departmentService.findById(form.getDepartmentId());
             HttpStatus status = carService.updateCarLocation(car, department);
             if (status.equals(HttpStatus.OK)) {
-                redAtt.addFlashAttribute(MSG_KEY, "Success: Car location successfully changed to - " + department.getCity() + ", " + department.getAddress());
+                redAtt.addFlashAttribute(MSG_KEY, "Success: Car location successfully changed to - " + department.getCity() + ", " + department.getStreet() + " " + department.getBuilding());
             }
         } catch (ResourceNotFoundException err) {
             redAtt.addFlashAttribute(MSG_KEY, MSG_NO_RESOURCE);

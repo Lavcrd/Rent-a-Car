@@ -30,8 +30,8 @@
                     <option selected value="">Open this select menu...
                     </option>
                     <option th:each="department: ${departments}"
-                            th:value="${department.getId()}"
-                            th:text="${department.getCity()+ ', '+ department.getAddress()}"></option>
+                            th:value="${department.id}"
+                            th:text="${department.city} + ', ' + ${department.street} + ' ' + ${department.building}"></option>
                 </select><br>
 
                 <div class="form-check form-switch">
@@ -51,7 +51,7 @@
                         <select name="lt" id="dpt2" class="form-select text-white bg-dark" th:field="*{departmentIdTo}">
                             <option th:each="department: ${departments}"
                                     th:value="${department.getId()}"
-                                    th:text="${department.getCity()+ ', '+ department.getAddress()}"></option>
+                                    th:text="${department.city} + ', ' + ${department.street} + ' ' + ${department.building}"></option>
                         </select><br>
                     </div>
                 </div>

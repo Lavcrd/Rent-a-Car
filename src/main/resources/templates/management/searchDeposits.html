@@ -65,8 +65,8 @@
                         <select type="text" th:field="*{department}" class="form-control">
                             <option th:value="null" th:text="Any"></option>
                             <div th:each="department:${departments}">
-                                <option th:text="${department.getCity()} + ', ' + ${department.getAddress()}"
-                                        th:value="${department.getId()}"></option>
+                                <option th:text="${department.city} + ', ' + ${department.street} + ' ' + ${department.building}"
+                                        th:value="${department.id}"></option>
                             </div>
                         </select>
                     </div>
@@ -122,7 +122,7 @@
                         </td>
                         <td>
                             <div class="overflow-cell-hs"
-                                 th:utext="${result.rent.reservation.departmentBack.getCity()} + ', <br>' + ${result.rent.reservation.departmentBack.getAddress()}"></div>
+                                 th:utext="${result.rent.reservation.departmentBack.city} + ', <br>' + ${result.rent.reservation.departmentBack.street} + ' ' + ${result.rent.reservation.departmentBack.building}"></div>
                         </td>
                         <td>
                             <div class="overflow-cell-hs" th:text="${result.dateTo}"></div>
