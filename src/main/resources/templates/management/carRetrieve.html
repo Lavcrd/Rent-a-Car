@@ -24,8 +24,8 @@
                 <div class="col-sm-3">
                     <select type="text" id="country" th:field="*{country}" class="form-control">
                         <div th:each="country:${countries}">
-                            <option th:text="${country.getCountryName()}"
-                                    th:value="${country}"></option>
+                            <option th:text="${country.name}"
+                                    th:value="${country.code}"></option>
                         </div>
                     </select>
                 </div>

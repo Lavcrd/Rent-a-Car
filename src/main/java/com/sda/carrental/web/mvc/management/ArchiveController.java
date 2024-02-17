@@ -1,7 +1,6 @@
 package com.sda.carrental.web.mvc.management;
 
 import com.sda.carrental.exceptions.ResourceNotFoundException;
-import com.sda.carrental.global.enums.Country;
 import com.sda.carrental.model.operational.Rent;
 import com.sda.carrental.model.operational.Retrieve;
 import com.sda.carrental.model.property.Department;
@@ -31,6 +30,7 @@ public class ArchiveController {
     private final RetrieveService retrieveService;
     private final RentService rentService;
     private final PaymentDetailsService paymentDetailsService;
+    private final CountryService countryService;
 
     private final String MSG_KEY = "message";
     private final String MSG_GENERIC_EXCEPTION = "Failure: An unexpected error occurred";
@@ -47,7 +47,7 @@ public class ArchiveController {
             map.addAttribute("results", map.getOrDefault("results", retrieveService.findByUserContextAndForm(cud, defaultForm)));
 
             List<Department> employeeDepartments = employeeService.getDepartmentsByUserContext(cud);
-            map.addAttribute("countries", Country.values());
+            map.addAttribute("countries", countryService.findAll());
             map.addAttribute("departments", employeeDepartments);
 
             map.addAttribute("searchArchiveForm", map.getOrDefault("searchArchiveForm", defaultForm));

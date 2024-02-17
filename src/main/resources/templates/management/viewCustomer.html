@@ -71,7 +71,7 @@
                     <tr>
                         <td>
                             <div class="overflow-cell-hs"
-                                 th:utext="${verification.getCountry().getCountryName()} + '<br>' + 'P-ID: ' + ${verification.getPersonalId()} + '<br>' + 'D-ID: ' + ${verification.getDriverId()}">
+                                 th:utext="${verification.getCountry().name} + '<br>' + 'P-ID: ' + ${verification.getPersonalId()} + '<br>' + 'D-ID: ' + ${verification.getDriverId()}">
                             </div>
                         </td>
                     </tr>
@@ -139,8 +139,8 @@
                                                             <select id="v_country" class="form-select" style="justify-self: end; width: 15em;"
                                                                     th:field="*{country}" required>
                                                                 <div th:each="country:${countries}">
-                                                                    <option th:text="${country.getCountryName()}"
-                                                                            th:value="${country}"
+                                                                    <option th:text="${country.name}"
+                                                                            th:value="${country.id}"
                                                                             th:field="*{country}"></option>
                                                                 </div>
                                                             </select>
@@ -316,8 +316,8 @@
                                                                 class="form-select" style="justify-self: end; width: 15em;"
                                                                 th:field="*{country}" required>
                                                             <div th:each="country:${countries}">
-                                                                <option th:text="${country.getCountryName()}"
-                                                                        th:value="${country}"
+                                                                <option th:text="${country.name}"
+                                                                        th:value="${country.id}"
                                                                         th:field="*{country}"></option>
                                                             </div>
                                                         </select>

@@ -34,7 +34,7 @@ public interface CarRepository extends CrudRepository<Car, Long> {
             "AND ((:status IS NULL AND c.carStatus <= 2) OR c.carStatus = :status) " +
             "AND (:mileageMin IS NULL OR c.mileage >= :mileageMin) " +
             "AND (:mileageMax IS NULL OR c.mileage <= :mileageMax) " +
-            "AND (:country IS NULL OR LOWER(c.plate) LIKE LOWER(CONCAT(:country, '-%'))) " +
+            "AND (:country IS NULL OR (:country = '' OR LOWER(c.plate) LIKE LOWER(CONCAT(:country, '-%')))) " +
             "AND (:plate IS NULL OR LOWER(c.plate) LIKE LOWER(CONCAT('%-%', :plate, '%'))) " +
             "ORDER BY c.id ASC")
     List<Car> findByCriteria(@Param("mileageMin") Long mileageMin, @Param("mileageMax") Long mileageMax,

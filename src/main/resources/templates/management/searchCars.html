@@ -88,8 +88,10 @@
                             <select id="country"
                                     class="form-select" style="width:fit-content;"
                                     th:field="*{country}">
+                                <option th:text="'Any'"
+                                        th:value="null"></option>
                                 <div th:each="country:${countries}">
-                                    <option th:text="${country.getCode()}" th:value="${country}"
+                                    <option th:text="${country.code}" th:value="${country.code}"
                                             th:field="*{country}"></option>
                                 </div>
                             </select>

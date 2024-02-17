@@ -1,9 +1,9 @@
 package com.sda.carrental.web.mvc.management;
 
 import com.sda.carrental.exceptions.ResourceNotFoundException;
-import com.sda.carrental.global.enums.Country;
 import com.sda.carrental.global.enums.Role;
 import com.sda.carrental.model.property.Department;
+import com.sda.carrental.service.CountryService;
 import com.sda.carrental.service.DepartmentService;
 import com.sda.carrental.service.EmployeeService;
 import com.sda.carrental.service.auth.CustomUserDetails;
@@ -33,6 +33,7 @@ import java.util.Collections;
 public class ManageDepartmentsController {
     private final DepartmentService departmentService;
     private final EmployeeService employeeService;
+    private final CountryService countryService;
 
     private final String MSG_KEY = "message";
     private final String MSG_ACCESS_REJECTED = "Failure: Access rejected";
@@ -44,7 +45,7 @@ public class ManageDepartmentsController {
     @RequestMapping(method = RequestMethod.GET)
     public String searchDepartmentsPage(ModelMap map, RedirectAttributes redAtt) {
         try {
-            map.addAttribute("countries", Country.values());
+            map.addAttribute("countries", countryService.findAll());
             map.addAttribute("searchDepartmentsForm", map.getOrDefault("searchDepartmentsForm", new SearchDepartmentsForm()));
             map.addAttribute("d_results", map.getOrDefault("d_results", Collections.emptyList()));
 

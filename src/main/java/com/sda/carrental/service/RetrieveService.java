@@ -3,7 +3,6 @@ package com.sda.carrental.service;
 import com.sda.carrental.exceptions.IllegalActionException;
 import com.sda.carrental.exceptions.ResourceNotFoundException;
 import com.sda.carrental.global.ConstantValues;
-import com.sda.carrental.global.enums.Country;
 import com.sda.carrental.model.operational.Reservation;
 import com.sda.carrental.model.operational.Retrieve;
 import com.sda.carrental.model.property.car.Car;
@@ -94,14 +93,6 @@ public class RetrieveService {
     }
 
     public List<Retrieve> findUnresolvedByUserContextAndForm(CustomUserDetails cud, SearchDepositsForm form) {
-        Country formCountry = Country.valueOf(form.getCountry());
-        String country;
-        if (formCountry.equals(Country.COUNTRY_NONE)) {
-            country = null;
-        } else {
-            country = formCountry.getCode();
-        }
-
         List<Department> departments;
         if (form.getDepartment() == null) {
             departments = employeeService.getDepartmentsByUserContext(cud);
@@ -113,7 +104,7 @@ public class RetrieveService {
 
         return repository.findUnresolved(
                 form.getName(), form.getSurname(),
-                country, form.getPlate(),
+                form.getCountry(), form.getPlate(),
                 departments
         );
     }
@@ -124,14 +115,6 @@ public class RetrieveService {
 
     public List<Retrieve> findByUserContextAndForm(CustomUserDetails cud, SearchArchiveForm form) {
         try {
-            Country formCountry = Country.valueOf(form.getCountry());
-            String country;
-            if (formCountry.equals(Country.COUNTRY_NONE)) {
-                country = null;
-            } else {
-                country = formCountry.getCode();
-            }
-
             List<Department> departments;
             if (form.getDepartment() == null) {
                 departments = employeeService.getDepartmentsByUserContext(cud);
@@ -143,7 +126,7 @@ public class RetrieveService {
 
             return repository.findRetrievedByCriteria(
                     form.getName(), form.getSurname(),
-                    country, form.getPlate(),
+                    form.getCountry(), form.getPlate(),
                     form.getDateFrom(), form.getDateTo(),
                     departments, form.isArrival()
             );

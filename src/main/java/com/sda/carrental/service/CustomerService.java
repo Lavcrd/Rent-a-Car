@@ -1,7 +1,7 @@
 package com.sda.carrental.service;
 
 import com.sda.carrental.exceptions.ResourceNotFoundException;
-import com.sda.carrental.global.enums.Country;
+import com.sda.carrental.model.operational.Country;
 import com.sda.carrental.model.operational.Reservation;
 import com.sda.carrental.model.users.Customer;
 import com.sda.carrental.model.users.auth.Verification;
@@ -10,6 +10,7 @@ import com.sda.carrental.service.auth.CustomUserDetails;
 import com.sda.carrental.service.mappers.CustomerMapper;
 import com.sda.carrental.web.mvc.form.operational.LocalReservationForm;
 import com.sda.carrental.web.mvc.form.operational.ReservationForm;
+import com.sda.carrental.web.mvc.form.users.customer.FindVerifiedForm;
 import com.sda.carrental.web.mvc.form.users.customer.RegisterCustomerForm;
 import com.sda.carrental.web.mvc.form.users.customer.SearchCustomersForm;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +30,7 @@ public class CustomerService {
     private final CustomerRepository repository;
     private final CredentialsService credentialsService;
     private final VerificationService verificationService;
+    private final CountryService countryService;
     private final ReservationService reservationService;
     private final EmployeeService employeeService;
 
@@ -94,8 +96,12 @@ public class CustomerService {
         return repository.save(customer);
     }
 
-    public Customer findCustomerByVerification(Country country, String personalId) throws ResourceNotFoundException {
-        return repository.findByVerification(country, personalId).orElseThrow(ResourceNotFoundException::new);
+    public Customer findCustomerByVerification(FindVerifiedForm form) throws ResourceNotFoundException {
+        return repository.findByVerification(form.getCountry(), form.getPersonalId()).orElseThrow(ResourceNotFoundException::new);
+    }
+
+    public Customer findCustomerByVerification(LocalReservationForm form) throws ResourceNotFoundException {
+        return repository.findByVerification(form.getCountry(), form.getPersonalId()).orElseThrow(ResourceNotFoundException::new);
     }
 
     @Transactional
@@ -115,7 +121,7 @@ public class CustomerService {
             HttpStatus hasAccess = employeeService.departmentAccess(cud, form.getReservationForm().getIndexData().getDepartmentIdFrom());
             if (hasAccess.equals(HttpStatus.FORBIDDEN)) return HttpStatus.FORBIDDEN;
 
-            Country country = Country.valueOf(form.getCountry());
+            Country country = countryService.findById(form.getCountry());
             Optional<Verification> verification = verificationService.getOptionalVerification(country, form.getPersonalId());
             if (verification.isEmpty()) {
                 Customer customer = createGuest(form);

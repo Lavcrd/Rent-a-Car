@@ -1,9 +1,7 @@
 package com.sda.carrental.service;
 
-
-import com.sda.carrental.exceptions.IllegalActionException;
-import com.sda.carrental.global.enums.Country;
 import com.sda.carrental.exceptions.ResourceNotFoundException;
+import com.sda.carrental.model.operational.Country;
 import com.sda.carrental.model.property.Department;
 import com.sda.carrental.repository.DepartmentRepository;
 import com.sda.carrental.web.mvc.form.property.departments.RegisterDepartmentForm;
@@ -25,9 +23,11 @@ import static java.util.stream.Collectors.toList;
 @RequiredArgsConstructor
 public class DepartmentService {
     private final DepartmentRepository repository;
+    private final CountryService countryService;
 
     public List<Department> findAll() {
-        return StreamSupport.stream(repository.findAll().spliterator(), false)
+        return StreamSupport
+                .stream(repository.findAll().spliterator(), false)
                 .collect(toList());
     }
 
@@ -36,7 +36,8 @@ public class DepartmentService {
     }
 
     public Department findAllWhereCountryAndHq(Country country) {
-        return repository.findDepartmentByCountryAndHq(country, true).orElse(new Department(Country.COUNTRY_NONE, "—", "—", "", "—", "—", "—", true));
+        return repository.findDepartmentByCountryAndHq(country, true)
+                .orElse(new Department(countryService.placeholder(), "—", "—", "", "—", "—", "—", true));
     }
 
     public Department findById(long id) throws ResourceNotFoundException {
@@ -44,18 +45,12 @@ public class DepartmentService {
     }
 
     public List<Department> findByForm(SearchDepartmentsForm form) {
-        Country country = null;
-        if (!form.getCountry().isBlank() && !form.getCountry().equals(Country.COUNTRY_NONE.name()))
-            country = Country.valueOf(form.getCountry());
-        return repository.findAllByForm(form.getCity(), form.getStreet(), form.getBuilding() , form.getPostcode(), form.isActive(), form.isHeadquarter(), country);
-
+        return repository.findAllByForm(form.getCity(), form.getStreet(), form.getBuilding() , form.getPostcode(), form.isActive(), form.isHeadquarter(), form.getCountry());
     }
 
     @Transactional
     public Department register(RegisterDepartmentForm form) throws RuntimeException {
-        Country country = Country.valueOf(form.getCountry());
-        if (country.equals(Country.COUNTRY_NONE)) throw new IllegalActionException();
-
+        Country country = countryService.findById(form.getCountry());
         Department department = new Department(country, form.getCity(), form.getStreet(), form.getBuilding(), form.getPostcode(), form.getEmail(), form.getContact(), false);
 
         return repository.save(department);

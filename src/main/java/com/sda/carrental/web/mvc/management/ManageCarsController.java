@@ -1,7 +1,6 @@
 package com.sda.carrental.web.mvc.management;
 
 import com.sda.carrental.exceptions.ResourceNotFoundException;
-import com.sda.carrental.global.enums.Country;
 import com.sda.carrental.model.operational.Rent;
 import com.sda.carrental.model.operational.Retrieve;
 import com.sda.carrental.model.property.car.Car;
@@ -33,6 +32,7 @@ public class ManageCarsController {
     private final RentService rentService;
     private final RetrieveService retrieveService;
     private final EmployeeService employeeService;
+    private final CountryService countryService;
 
     private final String MSG_KEY = "message";
     private final String MSG_ACCESS_REJECTED = "Failure: Access rejected";
@@ -54,7 +54,7 @@ public class ManageCarsController {
             map.addAttribute("types", carProperties.get("types"));
             map.addAttribute("seats", carProperties.get("seats"));
 
-            map.addAttribute("countries", Country.values());
+            map.addAttribute("countries", countryService.findAll());
             map.addAttribute("departments", departments);
             map.addAttribute("statuses", Car.CarStatus.values());
 

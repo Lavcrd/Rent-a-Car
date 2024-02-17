@@ -3,7 +3,6 @@ package com.sda.carrental.web.mvc.management;
 import com.sda.carrental.exceptions.IllegalActionException;
 import com.sda.carrental.exceptions.ResourceNotFoundException;
 import com.sda.carrental.global.ConstantValues;
-import com.sda.carrental.global.enums.Country;
 import com.sda.carrental.model.operational.Rent;
 import com.sda.carrental.model.operational.Reservation;
 import com.sda.carrental.model.property.PaymentDetails;
@@ -36,6 +35,7 @@ public class CarRetrieveController {
     private final RetrieveService retrieveService;
     private final PaymentDetailsService paymentDetailsService;
     private final EmployeeService employeeService;
+    private final CountryService countryService;
 
     private final String MSG_KEY = "message";
     private final String MSG_GENERIC_EXCEPTION = "Failure: An unexpected error occurred";
@@ -46,7 +46,7 @@ public class CarRetrieveController {
     public String showRetrievePage(ModelMap map, RedirectAttributes redAtt) {
         try {
             CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            map.addAttribute("countries", Country.values());
+            map.addAttribute("countries", countryService.findAll());
             map.addAttribute("searchCarForm", map.getOrDefault("searchCarForm", new SearchCarForm()));
 
             if (map.containsKey("reservation")) {
@@ -83,16 +83,16 @@ public class CarRetrieveController {
             redAtt.addFlashAttribute("searchCarForm", form);
 
             if (errors.hasErrors()) {
-                map.addAttribute("countries", Country.values());
+                map.addAttribute("countries", countryService.findAll());
                 return "management/carRetrieve";
             }
 
-            Rent rent = rentService.findActiveOperationByCarPlate(Country.valueOf(form.getCountry()).getCode() + "-" + form.getPlate());
+            Rent rent = rentService.findActiveOperationByCarPlate(form.getCountry() + "-" + form.getPlate());
             redAtt.addFlashAttribute("rent_details", rent);
             redAtt.addFlashAttribute("reservation", rent.getReservation());
             return "redirect:/c-ret";
         } catch (ResourceNotFoundException err) {
-            redAtt.addFlashAttribute(MSG_KEY, "Failed: No active rent found for: " + Country.valueOf(form.getCountry()).getCode() + '-' + form.getPlate());
+            redAtt.addFlashAttribute(MSG_KEY, "Failed: No active rent found for: " + form.getCountry() + '-' + form.getPlate());
             return "redirect:/c-ret";
         } catch (RuntimeException err) {
             redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
@@ -115,7 +115,7 @@ public class CarRetrieveController {
                 redAtt.addFlashAttribute("rent_details", r);
                 redAtt.addFlashAttribute("reservation", r.getReservation());
                 String[] plateValues = plate.split("-", 2);
-                redAtt.addFlashAttribute("searchCarForm", new SearchCarForm("COUNTRY_" + plateValues[0], plateValues[1]));
+                redAtt.addFlashAttribute("searchCarForm", new SearchCarForm(plateValues[0], plateValues[1]));
                 redAtt.addFlashAttribute(MSG_KEY, err.getAllErrors().get(0).getDefaultMessage());
                 redAtt.addFlashAttribute("confirm_claim_form", form);
                 return "redirect:/c-ret";

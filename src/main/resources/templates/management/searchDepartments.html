@@ -26,9 +26,11 @@
                 <div class="row" style="flex-wrap: nowrap; padding-right: 0;">
                     <div class="col-sm-3 c-input">
                         <select type="text" th:field="*{country}" class="form-control">
+                            <option th:text="'Any'"
+                                    th:value="null"></option>
                             <div th:each="country:${countries}">
-                                <option th:text="'Country: ' + ${country.getCountryName()}"
-                                        th:value="${country.name()}"></option>
+                                <option th:text="'Country: ' + ${country.name}"
+                                        th:value="${country.name}"></option>
                             </div>
                         </select>
                     </div>
@@ -179,8 +181,8 @@
                                        class="text-md">Country: </label>
                                 <select id="r_country" type="text" th:field="*{country}" class="form-control modal-input">
                                     <div th:each="country:${countries}">
-                                        <option th:text="'Country: ' + ${country.getCountryName()}"
-                                                th:value="${country.name()}"></option>
+                                        <option th:text="'Country: ' + ${country.name}"
+                                                th:value="${country.id}"></option>
                                     </div>
                                 </select>
                             </div>

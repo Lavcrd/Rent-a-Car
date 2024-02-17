@@ -1,7 +1,6 @@
 package com.sda.carrental.web.mvc.form.property.departments;
 
 import com.sda.carrental.web.mvc.form.common.ConfirmationForm;
-import com.sda.carrental.web.mvc.form.validation.constraint.ValidCountry;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -13,8 +12,8 @@ import javax.validation.constraints.*;
 @Setter
 @ToString
 public class RegisterDepartmentForm extends ConfirmationForm {
-    @ValidCountry(canBeUnselected = false)
-    private String country;
+    @NotNull
+    private Long country;
 
     @NotBlank(message = "Failure: City field cannot be empty!")
     @Length(min = 1, max = 50, message = "Failure: Please enter a valid city.")

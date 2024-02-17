@@ -33,7 +33,7 @@
                                 class="form-select"
                                 th:field="*{country}" required>
                             <div th:each="country:${countries}">
-                                <option th:text="${country.getCountryName()}" th:value="${country}" th:field="*{country}"></option>
+                                <option th:text="${country.name}" th:value="${country.id}" th:field="*{country}"></option>
                             </div>
                         </select>
                     </div>

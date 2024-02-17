@@ -2,7 +2,7 @@ package com.sda.carrental.service;
 
 import com.sda.carrental.exceptions.ResourceNotFoundException;
 import com.sda.carrental.global.ConstantValues;
-import com.sda.carrental.global.enums.Country;
+import com.sda.carrental.model.operational.Country;
 import com.sda.carrental.model.property.car.CarBase;
 import com.sda.carrental.repository.CarBaseRepository;
 import com.sda.carrental.web.mvc.form.property.cars.*;
