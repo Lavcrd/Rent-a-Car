@@ -1,7 +1,6 @@
 package com.sda.carrental.web.mvc.management;
 
 import com.sda.carrental.exceptions.ResourceNotFoundException;
-import com.sda.carrental.global.enums.Country;
 import com.sda.carrental.model.operational.Reservation;
 import com.sda.carrental.model.property.Department;
 import com.sda.carrental.model.users.Customer;
@@ -31,6 +30,7 @@ import java.util.Optional;
 @RequestMapping("/mg-cus")
 public class ManageCustomersController {
     private final DepartmentService departmentService;
+    private final CountryService countryService;
     private final UserService userService;
     private final CustomerService customerService;
     private final VerificationService verificationService;
@@ -79,8 +79,8 @@ public class ManageCustomersController {
                 map.addAttribute("verification", verificationService.maskVerification(verification.get()));
                 map.addAttribute("unverifyConfirmationForm", new ConfirmationForm());
             } else {
-                map.addAttribute("verification", new Verification(customerId, Country.COUNTRY_NONE, "N/D", "N/D"));
-                map.addAttribute("countries", Country.values());
+                map.addAttribute("verification", new Verification(customerId, countryService.placeholder(), "N/D", "N/D"));
+                map.addAttribute("countries", countryService.findAll());
                 map.addAttribute("findVerifiedForm", new FindVerifiedForm());
                 map.addAttribute("verification_form", new VerificationForm());
             }
@@ -111,7 +111,7 @@ public class ManageCustomersController {
             }
 
             map.addAttribute("unverified_customer", customerService.findById(customerId));
-            map.addAttribute("verified_customer", customerService.findCustomerByVerification(Country.valueOf(verificationData.getCountry()), verificationData.getPersonalId()));
+            map.addAttribute("verified_customer", customerService.findCustomerByVerification(verificationData));
             map.addAttribute("confirmation_form", new ConfirmationForm());
             return "management/mergeCustomer";
         } catch (ResourceNotFoundException err) {

@@ -4,8 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sda.carrental.exceptions.IllegalActionException;
 import com.sda.carrental.exceptions.ResourceNotFoundException;
-import com.sda.carrental.global.enums.Country;
 import com.sda.carrental.model.users.Customer;
+import com.sda.carrental.service.CountryService;
 import com.sda.carrental.service.CustomerService;
 import com.sda.carrental.service.EmployeeService;
 import com.sda.carrental.service.ReservationService;
@@ -35,6 +35,7 @@ public class LocalReservationController {
     private final CustomerService customerService;
     private final EmployeeService employeeService;
     private final ReservationService reservationService;
+    private final CountryService countryService;
 
     private final String MSG_KEY = "message";
     private final String MSG_ACCESS_REJECTED = "Failure: Access rejected";
@@ -66,7 +67,7 @@ public class LocalReservationController {
             ObjectMapper objectMapper = new CustomObjectMapper();
             map.addAttribute("reservationData", objectMapper.writeValueAsString(htmlForm));
             map.addAttribute("localReservation", new LocalReservationForm());
-            map.addAttribute("countries", Country.values());
+            map.addAttribute("countries", countryService.findAll());
 
             return "management/localReservation";
         } catch (IllegalActionException err) {
@@ -86,7 +87,7 @@ public class LocalReservationController {
             if (errors.hasErrors()) {
                 map.addAttribute("reservationData", reservationData);
                 map.addAttribute("localReservation", form);
-                map.addAttribute("countries", Country.values());
+                map.addAttribute("countries", countryService.findAll());
                 map.addAttribute("s1_time", LocalDateTime.parse(htmlTime1Raw));
                 map.addAttribute("s2_time", LocalDateTime.parse(htmlTime2Raw));
                 return "management/localReservation";
@@ -122,7 +123,7 @@ public class LocalReservationController {
                 redAtt.addFlashAttribute(MSG_KEY, "Success: Reservation applied to existing user");
             }
 
-            Customer customer = customerService.findCustomerByVerification(Country.valueOf(form.getCountry()), form.getPersonalId());
+            Customer customer = customerService.findCustomerByVerification(form);
             redAtt.addAttribute("department", reservation.getIndexData().getDepartmentIdFrom());
             redAtt.addAttribute("customer", customer.getId());
             return "redirect:/mg-res/{department}-{customer}";

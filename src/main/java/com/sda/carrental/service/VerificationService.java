@@ -1,7 +1,7 @@
 package com.sda.carrental.service;
 
 import com.sda.carrental.exceptions.IllegalActionException;
-import com.sda.carrental.global.enums.Country;
+import com.sda.carrental.model.operational.Country;
 import com.sda.carrental.model.users.auth.Verification;
 import com.sda.carrental.repository.VerificationRepository;
 import com.sda.carrental.web.mvc.form.users.customer.VerificationForm;
@@ -18,6 +18,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class VerificationService {
     private final VerificationRepository repository;
+    private final CountryService countryService;
 
     @Transactional
     public HttpStatus deleteVerification(Long customerId) {
@@ -42,7 +43,7 @@ public class VerificationService {
     public HttpStatus createVerification(Long customerId, VerificationForm form) {
         try {
             if (getOptionalVerificationByCustomer(customerId).isEmpty()) {
-                Country country = Country.valueOf(Country.class, form.getCountry());
+                Country country = countryService.findById(form.getCountry());
                 if (getOptionalVerification(country, form.getPersonalId()).isPresent())
                     return HttpStatus.CONFLICT;
                 repository.save(new Verification(customerId, country, form.getPersonalId(), form.getDriverId()));

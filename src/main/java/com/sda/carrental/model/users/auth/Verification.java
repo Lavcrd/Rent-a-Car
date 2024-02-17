@@ -1,6 +1,6 @@
 package com.sda.carrental.model.users.auth;
 
-import com.sda.carrental.global.enums.Country;
+import com.sda.carrental.model.operational.Country;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -30,6 +30,7 @@ public class Verification {
     @Column(name = "driver_id", nullable = false)
     private String driverId;
 
-    @Column(name = "country", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "country", referencedColumnName = "id")
     private Country country;
 }

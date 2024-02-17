@@ -2,7 +2,6 @@ package com.sda.carrental.service;
 
 import com.sda.carrental.exceptions.IllegalActionException;
 import com.sda.carrental.exceptions.ResourceNotFoundException;
-import com.sda.carrental.global.enums.Country;
 import com.sda.carrental.model.operational.Reservation;
 import com.sda.carrental.model.property.car.Car;
 import com.sda.carrental.model.property.Department;
@@ -44,15 +43,6 @@ public class CarService {
 
     public List<Car> findByCriteria(SearchCarsForm f) {
         CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        Country formCountry = Country.valueOf(f.getCountry());
-        String country;
-        if (formCountry.equals(Country.COUNTRY_NONE)) {
-            country = null;
-        } else {
-            country = formCountry.getCode();
-        }
-
         List<Department> departments;
         if (f.getDepartment() == null) {
             departments = employeeService.getDepartmentsByUserContext(cud);
@@ -71,7 +61,7 @@ public class CarService {
 
         List<Car> cars = repository.findByCriteria(
                 f.getMileageMin(), f.getMileageMax(),
-                country, f.getPlate(),
+                f.getCountry(), f.getPlate(),
                 departments, carStatus);
 
         return applyFilters(cars, f);

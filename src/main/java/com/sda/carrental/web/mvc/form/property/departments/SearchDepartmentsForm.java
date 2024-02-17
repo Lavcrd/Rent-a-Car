@@ -1,6 +1,5 @@
 package com.sda.carrental.web.mvc.form.property.departments;
 
-import com.sda.carrental.web.mvc.form.validation.constraint.ValidCountry;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,7 +8,6 @@ import javax.validation.constraints.NotNull;
 @Getter
 @Setter
 public class SearchDepartmentsForm {
-    @ValidCountry
     private String country;
 
     private String postcode;

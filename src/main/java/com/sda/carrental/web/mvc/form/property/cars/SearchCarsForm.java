@@ -1,7 +1,6 @@
 package com.sda.carrental.web.mvc.form.property.cars;
 
 import com.sda.carrental.web.mvc.form.validation.constraint.CarStatus;
-import com.sda.carrental.web.mvc.form.validation.constraint.ValidCountry;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -16,7 +15,6 @@ public class SearchCarsForm extends GenericCarForm {
 
     private Long department;
 
-    @ValidCountry
     private String country;
 
     private String plate;

@@ -1,6 +1,5 @@
 package com.sda.carrental.web.mvc.form.operational;
 
-import com.sda.carrental.web.mvc.form.validation.constraint.ValidCountry;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -18,7 +17,6 @@ public class SearchArchiveForm {
 
     private Long department;
 
-    @ValidCountry
     private String country;
 
     private String plate;

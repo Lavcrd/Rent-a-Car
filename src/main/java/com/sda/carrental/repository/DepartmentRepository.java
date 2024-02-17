@@ -1,6 +1,6 @@
 package com.sda.carrental.repository;
 
-import com.sda.carrental.global.enums.Country;
+import com.sda.carrental.model.operational.Country;
 import com.sda.carrental.model.property.Department;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -17,7 +17,7 @@ public interface DepartmentRepository extends CrudRepository<Department, Long> {
 
     @Query("SELECT d FROM department d " +
             "WHERE d.isActive = :active " +
-            "AND (:country IS NULL OR d.country = :country) " +
+            "AND (:country IS NULL OR LOWER(d.country.name) LIKE LOWER(CONCAT(:country, '%'))) " +
             "AND (:city IS NULL OR LOWER(d.city) LIKE LOWER(CONCAT(:city, '%'))) " +
             "AND (:street IS NULL OR LOWER(d.street) LIKE LOWER(CONCAT('%', :street, '%'))) " +
             "AND (:building IS NULL OR LOWER(d.building) LIKE LOWER(CONCAT('%', :building, '%'))) " +
@@ -25,7 +25,7 @@ public interface DepartmentRepository extends CrudRepository<Department, Long> {
             "AND (:hq = false OR d.hq = :hq) " +
             "ORDER BY d.country, d.postcode, d.city, d.street, d.building")
     List<Department> findAllByForm(@Param("city") String city, @Param("street") String street, @Param("building") String building, @Param("postcode") String postcode,
-                                   @Param("active") boolean active, @Param("hq") boolean hq, @Param("country") Country country);
+                                   @Param("active") boolean active, @Param("hq") boolean hq, @Param("country") String country);
 
     @Query(nativeQuery = true,
             value = "SELECT EXISTS (SELECT 1 FROM reservation r WHERE r.department_id = :id) UNION ALL " +

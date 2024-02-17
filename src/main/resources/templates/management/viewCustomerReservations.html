@@ -71,7 +71,7 @@
                 <tr>
                     <td>
                         <div class="overflow-cell-hs"
-                             th:utext="${verification.getCountry().getCountryName()} + '<br>' + 'P-ID: ' + ${verification.getPersonalId()} + '<br>' + 'D-ID: ' + ${verification.getDriverId()}">
+                             th:utext="${verification.country.name} + '<br>' + 'P-ID: ' + ${verification.getPersonalId()} + '<br>' + 'D-ID: ' + ${verification.getDriverId()}">
                         </div>
                     </td>
                 </tr>

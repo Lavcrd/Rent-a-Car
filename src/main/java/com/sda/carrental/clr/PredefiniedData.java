@@ -1,9 +1,9 @@
 package com.sda.carrental.clr;
 
 import com.sda.carrental.global.ConstantValues;
-import com.sda.carrental.global.enums.Country;
 import com.sda.carrental.global.enums.Role;
 import com.sda.carrental.model.Company;
+import com.sda.carrental.model.operational.Country;
 import com.sda.carrental.model.operational.Rent;
 import com.sda.carrental.model.operational.Reservation;
 import com.sda.carrental.model.operational.Retrieve;
@@ -31,8 +31,10 @@ public class PredefiniedData implements CommandLineRunner {
 
     //The purpose of this class is to generate artificial data for visualizing the app's user interface.
 
+    static List<Country> countries;
     private final BCryptPasswordEncoder encoder;
     private final UserRepository userRepository;
+    private final CountryRepository countryRepository;
     private final CompanyRepository companyRepository;
     private final DepartmentRepository departmentRepository;
     private final CarBaseRepository carBaseRepository;
@@ -45,8 +47,21 @@ public class PredefiniedData implements CommandLineRunner {
     private final RetrieveRepository retrieveRepository;
     private final ConstantValues cv;
 
+
+    static {
+        countries = List.of(
+                new Country("Poland", "PL", "+48", "PLN", 4.35),
+                new Country("Great Britain", "GB", "+44", "GBP", 0.86),
+                new Country("Netherlands", "NL", "+31", "EUR", 1.0),
+                new Country("Germany", "DE", "+49", "EUR", 1.0)
+        );
+    }
+
+
     @Override
     public void run(String... args) {
+        createCountries();
+
         createDepartments();
         createCompany();
 
@@ -64,6 +79,14 @@ public class PredefiniedData implements CommandLineRunner {
         createVerification();
     }
 
+    private void createCountries() {
+        for (Country country : countries) {
+            countryRepository.save(country);
+        }
+    }
+
+    ;
+
     private void createUsers() {
         userRepository.save(new Customer("Anna", "Nazwiskowa", Customer.Status.STATUS_REGISTERED, "123312891"));
         userRepository.save(new Customer("Jakub", "Kowalski", Customer.Status.STATUS_REGISTERED, "123312892"));
@@ -80,15 +103,15 @@ public class PredefiniedData implements CommandLineRunner {
                 new Employee("Anna", "Mniejfajna", "1231234444", List.of(departmentRepository.findById(1L).orElse(null)), LocalDate.ofYearDay(9999, 1), "111222888"),
                 new Employee("Magda", "Piąta", "1231235555", List.of(departmentRepository.findById(2L).orElse(null)), LocalDate.ofYearDay(9999, 1), "111222881"),
                 new Employee("Wioletta", "Fioletowa", "1231236666", List.of(departmentRepository.findById(3L).orElse(null)), LocalDate.ofYearDay(9999, 1), "111222882"),
-                new Employee("Jacek", "Gruby", "1231237777", departmentRepository.findDepartmentsByCountry(Country.COUNTRY_PL), LocalDate.ofYearDay(9999, 1), "111222883"),
-                new Employee("Tomasz", "Sążny", "1231237778", departmentRepository.findDepartmentsByCountry(Country.COUNTRY_PL), LocalDate.ofYearDay(9999, 1), "111222883")
+                new Employee("Jacek", "Gruby", "1231237777", departmentRepository.findDepartmentsByCountry(countries.get(0)), LocalDate.ofYearDay(9999, 1), "111222883"),
+                new Employee("Tomasz", "Sążny", "1231237778", departmentRepository.findDepartmentsByCountry(countries.get(0)), LocalDate.ofYearDay(9999, 1), "111222883")
         );
 
         for (int i = 0; i < list.size(); i++) {
             Employee e = list.get(i);
-            if (i<3) e.setRole(Role.ROLE_MANAGER);
-            if (i==list.size()-2) e.setRole(Role.ROLE_COORDINATOR);
-            if (i==list.size()-1) e.setRole(Role.ROLE_DIRECTOR);
+            if (i < 3) e.setRole(Role.ROLE_MANAGER);
+            if (i == list.size() - 2) e.setRole(Role.ROLE_COORDINATOR);
+            if (i == list.size() - 1) e.setRole(Role.ROLE_DIRECTOR);
 
             userRepository.save(e);
         }
@@ -124,13 +147,13 @@ public class PredefiniedData implements CommandLineRunner {
     }
 
     private void createDepartments() {
-        departmentRepository.save(new Department(Country.COUNTRY_PL, "Katowice", "ul. Fajna", "1", "40-000", "car-rental-alpha@gmail.com", "500 500 501", false));
-        departmentRepository.save(new Department(Country.COUNTRY_PL, "Łódź", "ul. Niefajna", "2", "90-000", "car-rental-beta@gmail.com", "500 500 502", false));
-        departmentRepository.save(new Department(Country.COUNTRY_PL, "Gdańsk", "ul. Średnia", "3", "80-000", "car-rental-gamma@gmail.com", "500 500 503", false));
-        departmentRepository.save(new Department(Country.COUNTRY_PL, "Warszawa", "ul. Pusta", "4", "00-001", "car-rental-delta@gmail.com", "500 500 504", true));
-        departmentRepository.save(new Department(Country.COUNTRY_PL, "Białystok", "ul. Pełna", "5", "15-000", "car-rental-epsilon@gmail.com", "500 500 505", false));
-        departmentRepository.save(new Department(Country.COUNTRY_PL, "Poznań", "ul. Półpełna", "6", "60-001", "car-rental-dzeta@gmail.com", "500 500 506", false));
-        departmentRepository.save(new Department(Country.COUNTRY_PL, "Wrocław", "ul. Półpusta", "7", "50-001", "car-rental-eta@gmail.com", "500 500 507", false));
+        departmentRepository.save(new Department(countries.get(0), "Katowice", "ul. Fajna", "1", "40-000", "car-rental-alpha@gmail.com", "500 500 501", false));
+        departmentRepository.save(new Department(countries.get(0), "Łódź", "ul. Niefajna", "2", "90-000", "car-rental-beta@gmail.com", "500 500 502", false));
+        departmentRepository.save(new Department(countries.get(0), "Gdańsk", "ul. Średnia", "3", "80-000", "car-rental-gamma@gmail.com", "500 500 503", false));
+        departmentRepository.save(new Department(countries.get(0), "Warszawa", "ul. Pusta", "4", "00-001", "car-rental-delta@gmail.com", "500 500 504", true));
+        departmentRepository.save(new Department(countries.get(0), "Białystok", "ul. Pełna", "5", "15-000", "car-rental-epsilon@gmail.com", "500 500 505", false));
+        departmentRepository.save(new Department(countries.get(0), "Poznań", "ul. Półpełna", "6", "60-001", "car-rental-dzeta@gmail.com", "500 500 506", false));
+        departmentRepository.save(new Department(countries.get(0), "Wrocław", "ul. Półpusta", "7", "50-001", "car-rental-eta@gmail.com", "500 500 507", false));
     }
 
     private void createCarBases() {
@@ -142,43 +165,43 @@ public class PredefiniedData implements CommandLineRunner {
     }
 
     private void createCars() {
-        carRepository.save(new Car(carBaseRepository.findById(1L).get(), departmentRepository.findById(1L).get(), Country.COUNTRY_NL.getCode() + "-ABC1234", 150000L, Car.CarStatus.STATUS_OPEN));
-        carRepository.save(new Car(carBaseRepository.findById(2L).get(), departmentRepository.findById(1L).get(), Country.COUNTRY_PL.getCode() + "-ABC4321", 140000L, Car.CarStatus.STATUS_OPEN));
-        carRepository.save(new Car(carBaseRepository.findById(3L).get(), departmentRepository.findById(1L).get(), Country.COUNTRY_PL.getCode() + "-ABC2314", 130000L, Car.CarStatus.STATUS_OPEN));
-        carRepository.save(new Car(carBaseRepository.findById(4L).get(), departmentRepository.findById(1L).get(), Country.COUNTRY_PL.getCode() + "-ABC3214", 120000L, Car.CarStatus.STATUS_UNAVAILABLE));
+        carRepository.save(new Car(carBaseRepository.findById(1L).get(), departmentRepository.findById(1L).get(), countries.get(2).getCode() + "-ABC1234", 150000L, Car.CarStatus.STATUS_OPEN));
+        carRepository.save(new Car(carBaseRepository.findById(2L).get(), departmentRepository.findById(1L).get(), countries.get(0).getCode() + "-ABC4321", 140000L, Car.CarStatus.STATUS_OPEN));
+        carRepository.save(new Car(carBaseRepository.findById(3L).get(), departmentRepository.findById(1L).get(), countries.get(0).getCode() + "-ABC2314", 130000L, Car.CarStatus.STATUS_OPEN));
+        carRepository.save(new Car(carBaseRepository.findById(4L).get(), departmentRepository.findById(1L).get(), countries.get(0).getCode() + "-ABC3214", 120000L, Car.CarStatus.STATUS_UNAVAILABLE));
 
-        carRepository.save(new Car(carBaseRepository.findById(1L).get(), departmentRepository.findById(2L).get(), Country.COUNTRY_GB.getCode() + "-XBC1234", 150000L, Car.CarStatus.STATUS_UNAVAILABLE));
-        carRepository.save(new Car(carBaseRepository.findById(2L).get(), departmentRepository.findById(2L).get(), Country.COUNTRY_GB.getCode() + "-AXX1234", 140000L, Car.CarStatus.STATUS_OPEN));
-        carRepository.save(new Car(carBaseRepository.findById(3L).get(), departmentRepository.findById(2L).get(), Country.COUNTRY_GB.getCode() + "-ABX1234", 130000L, Car.CarStatus.STATUS_RENTED));
-        carRepository.save(new Car(carBaseRepository.findById(4L).get(), departmentRepository.findById(2L).get(), Country.COUNTRY_GB.getCode() + "-AXC1234", 120000L, Car.CarStatus.STATUS_OPEN));
+        carRepository.save(new Car(carBaseRepository.findById(1L).get(), departmentRepository.findById(2L).get(), countries.get(1).getCode() + "-XBC1234", 150000L, Car.CarStatus.STATUS_UNAVAILABLE));
+        carRepository.save(new Car(carBaseRepository.findById(2L).get(), departmentRepository.findById(2L).get(), countries.get(1).getCode() + "-AXX1234", 140000L, Car.CarStatus.STATUS_OPEN));
+        carRepository.save(new Car(carBaseRepository.findById(3L).get(), departmentRepository.findById(2L).get(), countries.get(1).getCode() + "-ABX1234", 130000L, Car.CarStatus.STATUS_RENTED));
+        carRepository.save(new Car(carBaseRepository.findById(4L).get(), departmentRepository.findById(2L).get(), countries.get(1).getCode() + "-AXC1234", 120000L, Car.CarStatus.STATUS_OPEN));
 
-        carRepository.save(new Car(carBaseRepository.findById(1L).get(), departmentRepository.findById(3L).get(), Country.COUNTRY_PL.getCode() + "-AAC1234", 150000L, Car.CarStatus.STATUS_OPEN));
-        carRepository.save(new Car(carBaseRepository.findById(2L).get(), departmentRepository.findById(3L).get(), Country.COUNTRY_PL.getCode() + "-AVC1234", 140000L, Car.CarStatus.STATUS_RENTED));
-        carRepository.save(new Car(carBaseRepository.findById(3L).get(), departmentRepository.findById(3L).get(), Country.COUNTRY_PL.getCode() + "-AVV1234", 130000L, Car.CarStatus.STATUS_OPEN));
-        carRepository.save(new Car(carBaseRepository.findById(4L).get(), departmentRepository.findById(3L).get(), Country.COUNTRY_PL.getCode() + "-ACC1234", 120000L, Car.CarStatus.STATUS_UNAVAILABLE));
+        carRepository.save(new Car(carBaseRepository.findById(1L).get(), departmentRepository.findById(3L).get(), countries.get(0).getCode() + "-AAC1234", 150000L, Car.CarStatus.STATUS_OPEN));
+        carRepository.save(new Car(carBaseRepository.findById(2L).get(), departmentRepository.findById(3L).get(), countries.get(0).getCode() + "-AVC1234", 140000L, Car.CarStatus.STATUS_RENTED));
+        carRepository.save(new Car(carBaseRepository.findById(3L).get(), departmentRepository.findById(3L).get(), countries.get(0).getCode() + "-AVV1234", 130000L, Car.CarStatus.STATUS_OPEN));
+        carRepository.save(new Car(carBaseRepository.findById(4L).get(), departmentRepository.findById(3L).get(), countries.get(0).getCode() + "-ACC1234", 120000L, Car.CarStatus.STATUS_UNAVAILABLE));
 
-        carRepository.save(new Car(carBaseRepository.findById(1L).get(), departmentRepository.findById(4L).get(), Country.COUNTRY_PL.getCode() + "-BBC1234", 150000L, Car.CarStatus.STATUS_OPEN));
-        carRepository.save(new Car(carBaseRepository.findById(2L).get(), departmentRepository.findById(4L).get(), Country.COUNTRY_PL.getCode() + "-CCC1234", 140000L, Car.CarStatus.STATUS_OPEN));
-        carRepository.save(new Car(carBaseRepository.findById(2L).get(), departmentRepository.findById(4L).get(), Country.COUNTRY_PL.getCode() + "-XXX1234", 130000L, Car.CarStatus.STATUS_OPEN));
-        carRepository.save(new Car(carBaseRepository.findById(3L).get(), departmentRepository.findById(4L).get(), Country.COUNTRY_PL.getCode() + "-ZZZ1234", 120000L, Car.CarStatus.STATUS_UNAVAILABLE));
+        carRepository.save(new Car(carBaseRepository.findById(1L).get(), departmentRepository.findById(4L).get(), countries.get(0).getCode() + "-BBC1234", 150000L, Car.CarStatus.STATUS_OPEN));
+        carRepository.save(new Car(carBaseRepository.findById(2L).get(), departmentRepository.findById(4L).get(), countries.get(0).getCode() + "-CCC1234", 140000L, Car.CarStatus.STATUS_OPEN));
+        carRepository.save(new Car(carBaseRepository.findById(2L).get(), departmentRepository.findById(4L).get(), countries.get(0).getCode() + "-XXX1234", 130000L, Car.CarStatus.STATUS_OPEN));
+        carRepository.save(new Car(carBaseRepository.findById(3L).get(), departmentRepository.findById(4L).get(), countries.get(0).getCode() + "-ZZZ1234", 120000L, Car.CarStatus.STATUS_UNAVAILABLE));
 
-        carRepository.save(new Car(carBaseRepository.findById(4L).get(), departmentRepository.findById(5L).get(), Country.COUNTRY_PL.getCode() + "-BBB1234", 150000L, Car.CarStatus.STATUS_OPEN));
-        carRepository.save(new Car(carBaseRepository.findById(3L).get(), departmentRepository.findById(5L).get(), Country.COUNTRY_PL.getCode() + "-MMM1234", 140000L, Car.CarStatus.STATUS_OPEN));
-        carRepository.save(new Car(carBaseRepository.findById(2L).get(), departmentRepository.findById(5L).get(), Country.COUNTRY_PL.getCode() + "-NNN1234", 130000L, Car.CarStatus.STATUS_RENTED));
-        carRepository.save(new Car(carBaseRepository.findById(1L).get(), departmentRepository.findById(5L).get(), Country.COUNTRY_PL.getCode() + "-VVV1234", 120000L, Car.CarStatus.STATUS_UNAVAILABLE));
+        carRepository.save(new Car(carBaseRepository.findById(4L).get(), departmentRepository.findById(5L).get(), countries.get(0).getCode() + "-BBB1234", 150000L, Car.CarStatus.STATUS_OPEN));
+        carRepository.save(new Car(carBaseRepository.findById(3L).get(), departmentRepository.findById(5L).get(), countries.get(0).getCode() + "-MMM1234", 140000L, Car.CarStatus.STATUS_OPEN));
+        carRepository.save(new Car(carBaseRepository.findById(2L).get(), departmentRepository.findById(5L).get(), countries.get(0).getCode() + "-NNN1234", 130000L, Car.CarStatus.STATUS_RENTED));
+        carRepository.save(new Car(carBaseRepository.findById(1L).get(), departmentRepository.findById(5L).get(), countries.get(0).getCode() + "-VVV1234", 120000L, Car.CarStatus.STATUS_UNAVAILABLE));
 
-        carRepository.save(new Car(carBaseRepository.findById(1L).get(), departmentRepository.findById(6L).get(), Country.COUNTRY_PL.getCode() + "-ABC123X", 150000L, Car.CarStatus.STATUS_OPEN));
-        carRepository.save(new Car(carBaseRepository.findById(2L).get(), departmentRepository.findById(6L).get(), Country.COUNTRY_PL.getCode() + "-ABC12X4", 120000L, Car.CarStatus.STATUS_UNAVAILABLE));
-        carRepository.save(new Car(carBaseRepository.findById(2L).get(), departmentRepository.findById(6L).get(), Country.COUNTRY_PL.getCode() + "-ABC1Z34", 140000L, Car.CarStatus.STATUS_RENTED));
-        carRepository.save(new Car(carBaseRepository.findById(3L).get(), departmentRepository.findById(6L).get(), Country.COUNTRY_PL.getCode() + "-ABC1X34", 130000L, Car.CarStatus.STATUS_OPEN));
+        carRepository.save(new Car(carBaseRepository.findById(1L).get(), departmentRepository.findById(6L).get(), countries.get(0).getCode() + "-ABC123X", 150000L, Car.CarStatus.STATUS_OPEN));
+        carRepository.save(new Car(carBaseRepository.findById(2L).get(), departmentRepository.findById(6L).get(), countries.get(0).getCode() + "-ABC12X4", 120000L, Car.CarStatus.STATUS_UNAVAILABLE));
+        carRepository.save(new Car(carBaseRepository.findById(2L).get(), departmentRepository.findById(6L).get(), countries.get(0).getCode() + "-ABC1Z34", 140000L, Car.CarStatus.STATUS_RENTED));
+        carRepository.save(new Car(carBaseRepository.findById(3L).get(), departmentRepository.findById(6L).get(), countries.get(0).getCode() + "-ABC1X34", 130000L, Car.CarStatus.STATUS_OPEN));
 
-        carRepository.save(new Car(carBaseRepository.findById(3L).get(), departmentRepository.findById(7L).get(), Country.COUNTRY_PL.getCode() + "-ABC1A34", 150000L, Car.CarStatus.STATUS_OPEN));
-        carRepository.save(new Car(carBaseRepository.findById(4L).get(), departmentRepository.findById(7L).get(), Country.COUNTRY_PL.getCode() + "-ABC1D34", 120000L, Car.CarStatus.STATUS_UNAVAILABLE));
-        carRepository.save(new Car(carBaseRepository.findById(1L).get(), departmentRepository.findById(7L).get(), Country.COUNTRY_PL.getCode() + "-ABC1DD4", 140000L, Car.CarStatus.STATUS_OPEN));
-        carRepository.save(new Car(carBaseRepository.findById(1L).get(), departmentRepository.findById(7L).get(), Country.COUNTRY_PL.getCode() + "-ABC12S4", 130000L, Car.CarStatus.STATUS_RENTED));
+        carRepository.save(new Car(carBaseRepository.findById(3L).get(), departmentRepository.findById(7L).get(), countries.get(0).getCode() + "-ABC1A34", 150000L, Car.CarStatus.STATUS_OPEN));
+        carRepository.save(new Car(carBaseRepository.findById(4L).get(), departmentRepository.findById(7L).get(), countries.get(0).getCode() + "-ABC1D34", 120000L, Car.CarStatus.STATUS_UNAVAILABLE));
+        carRepository.save(new Car(carBaseRepository.findById(1L).get(), departmentRepository.findById(7L).get(), countries.get(0).getCode() + "-ABC1DD4", 140000L, Car.CarStatus.STATUS_OPEN));
+        carRepository.save(new Car(carBaseRepository.findById(1L).get(), departmentRepository.findById(7L).get(), countries.get(0).getCode() + "-ABC12S4", 130000L, Car.CarStatus.STATUS_RENTED));
 
-        carRepository.save(new Car(carBaseRepository.findById(1L).get(), departmentRepository.findById(1L).get(), Country.COUNTRY_PL.getCode() + "-AFC4322", 130000L, Car.CarStatus.STATUS_OPEN));
-        carRepository.save(new Car(carBaseRepository.findById(4L).get(), departmentRepository.findById(1L).get(), Country.COUNTRY_PL.getCode() + "-ABF4323", 120000L, Car.CarStatus.STATUS_OPEN));
+        carRepository.save(new Car(carBaseRepository.findById(1L).get(), departmentRepository.findById(1L).get(), countries.get(0).getCode() + "-AFC4322", 130000L, Car.CarStatus.STATUS_OPEN));
+        carRepository.save(new Car(carBaseRepository.findById(4L).get(), departmentRepository.findById(1L).get(), countries.get(0).getCode() + "-ABF4323", 120000L, Car.CarStatus.STATUS_OPEN));
     }
 
     private void createReservation() {
@@ -197,6 +220,7 @@ public class PredefiniedData implements CommandLineRunner {
 
         for (Reservation r : reservationList) {
             r.setStatus(Reservation.ReservationStatus.STATUS_RESERVED);
+            if(r.getId() == 5 || r.getId() == 10) r.setStatus(Reservation.ReservationStatus.STATUS_PROGRESS);
             reservationRepository.save(r);
         }
     }
@@ -254,6 +278,6 @@ public class PredefiniedData implements CommandLineRunner {
     }
 
     private void createVerification() {
-        verificationRepository.save(new Verification(1L, Country.COUNTRY_PL, "123123123", "678678"));
+        verificationRepository.save(new Verification(1L, countries.get(0), "123123123", "678678"));
     }
 }

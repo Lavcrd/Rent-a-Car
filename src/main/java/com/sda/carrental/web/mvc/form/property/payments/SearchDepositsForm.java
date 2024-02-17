@@ -1,6 +1,5 @@
 package com.sda.carrental.web.mvc.form.property.payments;
 
-import com.sda.carrental.web.mvc.form.validation.constraint.ValidCountry;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -15,7 +14,6 @@ public class SearchDepositsForm {
 
     private Long department;
 
-    @ValidCountry
     private String country;
 
     private String plate;

@@ -2,14 +2,10 @@ package com.sda.carrental.web.mvc.management;
 
 import com.sda.carrental.exceptions.ResourceNotFoundException;
 import com.sda.carrental.global.Utility;
-import com.sda.carrental.global.enums.Country;
 import com.sda.carrental.model.operational.Retrieve;
 import com.sda.carrental.model.property.Department;
 import com.sda.carrental.model.property.PaymentDetails;
-import com.sda.carrental.service.EmployeeService;
-import com.sda.carrental.service.PaymentDetailsService;
-import com.sda.carrental.service.RetrieveService;
-import com.sda.carrental.service.UserService;
+import com.sda.carrental.service.*;
 import com.sda.carrental.service.auth.CustomUserDetails;
 import com.sda.carrental.web.mvc.form.property.payments.DepositForm;
 import com.sda.carrental.web.mvc.form.property.payments.SearchDepositsForm;
@@ -35,6 +31,7 @@ public class ManageDepositController {
     private final UserService userService;
     private final PaymentDetailsService paymentDetailsService;
     private final EmployeeService employeeService;
+    private final CountryService countryService;
 
     private final String MSG_KEY = "message";
     private final String MSG_ACCESS_REJECTED = "Failure: Access rejected";
@@ -50,7 +47,7 @@ public class ManageDepositController {
             map.addAttribute("results", map.getOrDefault("results", retrieveService.replaceDatesWithDeadlines(retrieveService.findAllUnresolvedByUserContext(cud))));
 
             List<Department> employeeDepartments = employeeService.getDepartmentsByUserContext(cud);
-            map.addAttribute("countries", Country.values());
+            map.addAttribute("countries", countryService.findAll());
             map.addAttribute("departments", employeeDepartments);
 
             map.addAttribute("searchDepositsForm", map.getOrDefault("searchDepositsForm", new SearchDepositsForm()));

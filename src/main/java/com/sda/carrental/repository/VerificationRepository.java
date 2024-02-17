@@ -1,6 +1,6 @@
 package com.sda.carrental.repository;
 
-import com.sda.carrental.global.enums.Country;
+import com.sda.carrental.model.operational.Country;
 import com.sda.carrental.model.users.auth.Verification;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;

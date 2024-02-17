@@ -26,7 +26,7 @@ public interface RetrieveRepository extends CrudRepository<Retrieve, Long> {
             "WHERE r.rent.reservation.departmentBack IN (:departments) " +
             "AND (:name IS NULL OR LOWER(u.name) LIKE LOWER(CONCAT(:name, '%'))) " +
             "AND (:surname IS NULL OR LOWER(u.surname) LIKE LOWER(CONCAT(:surname, '%'))) " +
-            "AND (:country IS NULL OR LOWER(c.plate) LIKE LOWER(CONCAT(:country, '-%'))) " +
+            "AND (:country IS NULL OR (:country = '' OR LOWER(c.plate) LIKE LOWER(CONCAT(:country, '-%')))) " +
             "AND (:plate IS NULL OR LOWER(c.plate) LIKE LOWER(CONCAT('%-%', :plate, '%'))) " +
             "AND r.rent.reservation.id IN " +
             "(SELECT p.reservation.id FROM payment_details p WHERE p.deposit <> 0) " +
@@ -47,7 +47,7 @@ public interface RetrieveRepository extends CrudRepository<Retrieve, Long> {
             "WHERE ((:isArrival = true AND r.department IN (:departments)) OR (:isArrival = false AND r.rent.reservation.departmentTake IN (:departments))) " +
             "AND (:name IS NULL OR LOWER(u.name) LIKE LOWER(CONCAT(:name, '%'))) " +
             "AND (:surname IS NULL OR LOWER(u.surname) LIKE LOWER(CONCAT(:surname, '%'))) " +
-            "AND (:country IS NULL OR LOWER(c.plate) LIKE LOWER(CONCAT(:country, '-%'))) " +
+            "AND (:country IS NULL OR (:country = '' OR LOWER(c.plate) LIKE LOWER(CONCAT(:country, '-%')))) " +
             "AND (:plate IS NULL OR LOWER(c.plate) LIKE LOWER(CONCAT('%-%', :plate, '%'))) " +
             "AND (:dateFrom IS NULL OR :dateFrom <= r.dateTo) " +
             "AND (:dateTo IS NULL OR :dateTo >= r.dateTo) " +
