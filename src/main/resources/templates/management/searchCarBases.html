@@ -222,7 +222,7 @@
                                     th:text="'Type: ' + ${result.carType.getName()} + ' (' + ${result.seats} + ' seats)'"></li>
                                 <li class="list-group-item" th:text="'Production date: ' + ${result.year}"></li>
                                 <li class="list-group-item"
-                                    th:text="'Price per day: ' + ${#numbers.formatDecimal((result.priceDay), 1, 2, 'POINT')} + ' PLN'"></li>
+                                    th:text="'Price per day: ' + ${#numbers.formatDecimal((result.priceDay), 1, 2, 'POINT')} + ' ' + ${placeholder_country.currency}"></li>
                             </ul>
                             <br>
                         </div>
@@ -233,7 +233,7 @@
                                      style="text-align: center; margin-bottom: 10px;">
                                     <p style="margin-bottom: 0;" th:text="'Deposit:'"></p>
                                     <p style="margin-bottom: 0;"
-                                       th:text="${#numbers.formatDecimal((result.depositValue), 1, 2, 'POINT')} + ' PLN'"></p>
+                                       th:text="${#numbers.formatDecimal((result.depositValue), 1, 2, 'POINT')} + ' ' + ${placeholder_country.currency}"></p>
                                 </div>
                                 <a type="button" class="btn btn-dark" th:text="Inspect"
                                          th:href="'/mg-car/car-bases/' + ${result.getId()}"></a>
@@ -301,14 +301,14 @@
                                            required/>
                                 </div>
                                 <div class="modal-row mt-2">
-                                    <label style="justify-self: start;" for="r_price" class="form-label">Initial price: </label>
+                                    <label style="justify-self: start;" for="r_price" class="form-label" th:text="'Initial price [' + ${placeholder_country.currency} + ']:'"></label>
                                     <input id="r_price" class="text-black bg-white modal-input"
                                            th:placeholder="'Provide initial price per day'"
                                            th:type="number" th:field="*{price}"
                                            required/>
                                 </div>
                                 <div class="modal-row mt-2">
-                                    <label style="justify-self: start;" for="r_deposit" class="form-label">Initial deposit: </label>
+                                    <label style="justify-self: start;" for="r_deposit" class="form-label" th:text="'Initial deposit [' + ${placeholder_country.currency} + ']:'"></label>
                                     <input id="r_deposit" class="text-black bg-white modal-input"
                                            th:placeholder="'Provide initial deposit value'"
                                            th:type="number" th:field="*{deposit}"

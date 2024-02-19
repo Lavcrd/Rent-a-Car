@@ -57,6 +57,7 @@ public class ManageCarsController {
             map.addAttribute("countries", countryService.findAll());
             map.addAttribute("departments", departments);
             map.addAttribute("statuses", Car.CarStatus.values());
+            map.addAttribute("cud_country", departments.get(0).getCountry());
 
             map.addAttribute("patterns", carBaseService.findAllSorted());
 

@@ -26,12 +26,14 @@ public class PaymentDetailsService {
     @Transactional
     public void createReservationPayment(Reservation reservation) {
         long days = reservation.getDateFrom().until(reservation.getDateTo(), ChronoUnit.DAYS) + 1;
+        Double exchange = reservation.getDepartmentTake().getCountry().getExchange();
+        double returnPrice = (double) Math.round((cv.getDeptReturnPriceDiff() * exchange) * 100)/100;
 
-        double rawValue = days * reservation.getCarBase().getPriceDay();
-        double depositValue = reservation.getCarBase().getDepositValue();
+        double rawValue = (double) Math.round((days * reservation.getCarBase().getPriceDay() * exchange) * 100)/100;
+        double depositValue = (double) Math.round((reservation.getCarBase().getDepositValue() * exchange) * 100)/100;
         if (!reservation.getDepartmentBack().equals(reservation.getDepartmentTake())) {
-            double payment = rawValue + cv.getDeptReturnPriceDiff();
-            repository.save(new PaymentDetails(rawValue, cv.getDeptReturnPriceDiff(), depositValue, payment, depositValue, reservation));
+            double payment = rawValue + returnPrice;
+            repository.save(new PaymentDetails(rawValue, returnPrice, depositValue, payment, depositValue, reservation));
         } else {
             repository.save(new PaymentDetails(rawValue, 0.0, depositValue, rawValue, depositValue, reservation));
         }

@@ -2,7 +2,9 @@ package com.sda.carrental.web.mvc.user;
 
 import com.sda.carrental.global.ConstantValues;
 import com.sda.carrental.exceptions.ResourceNotFoundException;
+import com.sda.carrental.model.operational.Country;
 import com.sda.carrental.model.operational.Reservation;
+import com.sda.carrental.model.property.Department;
 import com.sda.carrental.model.property.PaymentDetails;
 import com.sda.carrental.service.PaymentDetailsService;
 import com.sda.carrental.service.ReservationService;
@@ -46,6 +48,8 @@ public class CustomerReservationsController {
         try {
             CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             Reservation reservation = reservationService.findCustomerReservation(cud.getId(), detailsButton);
+            Department department = reservation.getDepartmentTake();
+            Country country = department.getCountry();
             Optional<PaymentDetails> receipt = paymentDetailsService.getOptionalPaymentDetails(reservation.getId());
 
             if (receipt.isPresent()) {
@@ -56,14 +60,14 @@ public class CustomerReservationsController {
             } else {
                 long days = reservation.getDateFrom().until(reservation.getDateTo(), ChronoUnit.DAYS) + 1;
                 if (!reservation.getDepartmentTake().equals(reservation.getDepartmentBack())) {
-                    map.addAttribute("diff_return_price", cv.getDeptReturnPriceDiff());
-                    map.addAttribute("total_price", cv.getDeptReturnPriceDiff() + (days * reservation.getCarBase().getPriceDay()));
+                    map.addAttribute("diff_return_price", cv.getDeptReturnPriceDiff() * country.getExchange());
+                    map.addAttribute("total_price", (cv.getDeptReturnPriceDiff() + (days * reservation.getCarBase().getPriceDay())) * country.getExchange());
                 } else {
                     map.addAttribute("diff_return_price", 0.0);
-                    map.addAttribute("total_price", days * reservation.getCarBase().getPriceDay());
+                    map.addAttribute("total_price", days * reservation.getCarBase().getPriceDay() * country.getExchange());
                 }
-                map.addAttribute("raw_price", days * reservation.getCarBase().getPriceDay());
-                map.addAttribute("deposit_value", reservation.getCarBase().getDepositValue());
+                map.addAttribute("raw_price", days * reservation.getCarBase().getPriceDay() * country.getExchange());
+                map.addAttribute("deposit_value", reservation.getCarBase().getDepositValue() * country.getExchange());
             }
 
             map.addAttribute("reservation", reservation);
