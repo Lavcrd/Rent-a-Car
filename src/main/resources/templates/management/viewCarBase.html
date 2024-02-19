@@ -73,7 +73,7 @@
                             </td>
                         </tr>
                         <tr class="table-dark">
-                            <td>Pricing:</td>
+                            <td th:text="'Pricing [' + ${placeholder_country.currency} + ']:'"></td>
                         </tr>
                         <tr>
                             <td>
@@ -306,14 +306,14 @@
                     <div class="modal-body">
                         <p>Change and confirm <u>car base prices</u> with password.</p>
                         <div class="modal-row mt-2">
-                            <label style="justify-self: start;" for="r_price" class="form-label">Price/Day: </label>
+                            <label style="justify-self: start;" for="r_price" class="form-label" th:text="'Price/Day [' + ${placeholder_country.currency} + ']:'"></label>
                             <input id="r_price" class="text-black bg-white modal-input"
                                    th:placeholder="'Provide initial price per day'"
                                    th:type="number" th:field="*{price}"
                                    required/>
                         </div>
                         <div class="modal-row mt-2">
-                            <label style="justify-self: start;" for="r_deposit" class="form-label">Deposit: </label>
+                            <label style="justify-self: start;" for="r_deposit" class="form-label" th:text="'Deposit [' + ${placeholder_country.currency} + ']:'"></label>
                             <input id="r_deposit" class="text-black bg-white modal-input"
                                    th:placeholder="'Provide initial deposit value'"
                                    th:type="number" th:field="*{deposit}"

@@ -157,11 +157,11 @@ public class PredefiniedData implements CommandLineRunner {
     }
 
     private void createCarBases() {
-        carBaseRepository.save(new CarBase("https://cdn2.rcstatic.com/images/car_images/web/fiat/500_lrg.jpg", "Fiat", "Fiat 500", 2007, CarBase.CarType.TYPE_HATCHBACK, 2, 85.0, 750.0));
-        carBaseRepository.save(new CarBase("/cars/bmw3.jpg", "BMW", "F34", 2013, CarBase.CarType.TYPE_HATCHBACK, 5, 100.0, 1500.0));
-        carBaseRepository.save(new CarBase("/cars/yaris.png", "Toyota", "Yaris", 1999, CarBase.CarType.TYPE_HATCHBACK, 4, 90.0, 1000.0));
-        carBaseRepository.save(new CarBase("/cars/hyundai-elantra.jpg", "Hyundai", "Lantra", 1991, CarBase.CarType.TYPE_COMPACT, 5, 95.0, 1400.0));
-        carBaseRepository.save(new CarBase("/cars/x5.jpg", "BMW", "X5 I", 1999, CarBase.CarType.TYPE_SUV, 5, 95.0, 1350.0));
+        carBaseRepository.save(new CarBase("https://cdn2.rcstatic.com/images/car_images/web/fiat/500_lrg.jpg", "Fiat", "Fiat 500", 2007, CarBase.CarType.TYPE_HATCHBACK, 2, 20.0, 190.0));
+        carBaseRepository.save(new CarBase("/cars/bmw3.jpg", "BMW", "F34", 2013, CarBase.CarType.TYPE_HATCHBACK, 5, 25.0, 350.0));
+        carBaseRepository.save(new CarBase("/cars/yaris.png", "Toyota", "Yaris", 1999, CarBase.CarType.TYPE_HATCHBACK, 4, 22.0, 250.0));
+        carBaseRepository.save(new CarBase("/cars/hyundai-elantra.jpg", "Hyundai", "Lantra", 1991, CarBase.CarType.TYPE_COMPACT, 5, 23.0, 325.0));
+        carBaseRepository.save(new CarBase("/cars/x5.jpg", "BMW", "X5 I", 1999, CarBase.CarType.TYPE_SUV, 5, 23.0, 300.0));
     }
 
     private void createCars() {
@@ -218,10 +218,12 @@ public class PredefiniedData implements CommandLineRunner {
         reservationList.add(new Reservation((Customer) userRepository.findById(3L).orElse(null), carRepository.findById(1L).orElse(null).getCarBase(), departmentRepository.findById(1L).orElse(null), departmentRepository.findById(2L).orElse(null), LocalDate.now().minusMonths(1), LocalDate.now().minusDays(15), LocalDate.of(2022, 10, 7)));
         reservationList.add(new Reservation((Customer) userRepository.findById(3L).orElse(null), carRepository.findById(1L).orElse(null).getCarBase(), departmentRepository.findById(1L).orElse(null), departmentRepository.findById(2L).orElse(null), LocalDate.now().minusDays(1), LocalDate.now().plusDays(15), LocalDate.of(2022, 10, 7)));
 
+        byte i = 0;
         for (Reservation r : reservationList) {
             r.setStatus(Reservation.ReservationStatus.STATUS_RESERVED);
-            if(r.getId() == 5 || r.getId() == 10) r.setStatus(Reservation.ReservationStatus.STATUS_PROGRESS);
+            if (i == 4 || i == 9) r.setStatus(Reservation.ReservationStatus.STATUS_PROGRESS);
             reservationRepository.save(r);
+            i++;
         }
     }
 

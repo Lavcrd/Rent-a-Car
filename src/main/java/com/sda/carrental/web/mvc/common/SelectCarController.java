@@ -2,6 +2,7 @@ package com.sda.carrental.web.mvc.common;
 
 import com.sda.carrental.exceptions.IllegalActionException;
 import com.sda.carrental.exceptions.ResourceNotFoundException;
+import com.sda.carrental.model.property.Department;
 import com.sda.carrental.model.property.car.CarBase;
 import com.sda.carrental.service.CarBaseService;
 import com.sda.carrental.service.DepartmentService;
@@ -41,10 +42,13 @@ public class SelectCarController {
             LocalDateTime dateTime = (LocalDateTime) httpSession.getAttribute("process_step1_time");
             if (indexForm == null || dateTime == null) throw new IllegalActionException();
 
+            Department department = departmentService.findById(indexForm.getDepartmentIdFrom());
+            map.addAttribute("department", department);
+
             List<CarBase> carBaseList = carBaseService.findAvailableCarBasesInCountry(
                     indexForm.getDateFrom(),
                     indexForm.getDateTo(),
-                    departmentService.findById(indexForm.getDepartmentIdFrom()).getCountry());
+                    department.getCountry());
             if (carBaseList.isEmpty()) throw new ResourceNotFoundException();
 
             LocalDateTime htmlTime1 = (LocalDateTime) map.getOrDefault("s1_time", dateTime);

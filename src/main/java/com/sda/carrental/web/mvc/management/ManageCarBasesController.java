@@ -34,6 +34,7 @@ public class ManageCarBasesController {
     private final CarService carService;
     private final CarBaseService carBaseService;
     private final EmployeeService employeeService;
+    private final CountryService countryService;
 
     private final String MSG_KEY = "message";
     private final String MSG_GENERIC_EXCEPTION = "Failure: An unexpected error occurred";
@@ -47,6 +48,7 @@ public class ManageCarBasesController {
             utility.retrieveSessionMessage(map, res);
 
             map.addAttribute("results", map.getOrDefault("results", carBases));
+            map.addAttribute("placeholder_country", countryService.placeholder());
 
             Map<String, Object> carProperties = carBaseService.getFilterProperties(carBases, true);
             map.addAttribute("brands", carProperties.get("brands"));
@@ -72,6 +74,7 @@ public class ManageCarBasesController {
             CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             List<Department> departments = employeeService.getDepartmentsByUserContext(cud);
             map.addAttribute("departments", departments);
+            map.addAttribute("placeholder_country", countryService.placeholder());
 
             utility.retrieveSessionMessage(map, req);
 
@@ -82,7 +85,6 @@ public class ManageCarBasesController {
             map.addAttribute("split_form", map.getOrDefault("split_form", new SplitCarBaseForm()));
             map.addAttribute("update_price_form", map.getOrDefault("update_price_form", new UpdateCarBasePricesForm(carBase.getPriceDay(), carBase.getDepositValue())));
             map.addAttribute("register_form", map.getOrDefault("register_form", new RegisterCarForm(carBase.getId())));
-
 
             map.addAttribute("result", carBase);
             map.addAttribute("carList", carService.findCarsByDepartmentsAndCarBase(departments, carBase));

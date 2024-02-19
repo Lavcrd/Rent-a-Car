@@ -3,7 +3,9 @@ package com.sda.carrental.web.mvc.management;
 import com.sda.carrental.exceptions.IllegalActionException;
 import com.sda.carrental.global.ConstantValues;
 import com.sda.carrental.exceptions.ResourceNotFoundException;
+import com.sda.carrental.model.operational.Country;
 import com.sda.carrental.model.operational.Reservation;
+import com.sda.carrental.model.property.Department;
 import com.sda.carrental.model.property.PaymentDetails;
 import com.sda.carrental.model.property.car.CarBase;
 import com.sda.carrental.model.users.Customer;
@@ -101,7 +103,9 @@ public class ManageReservationsController {
             }
 
             Reservation reservation = reservationService.findCustomerReservation(customerId, reservationId);
-            if (!(reservation.getDepartmentTake().getId().equals(departmentId) || reservation.getDepartmentBack().getId().equals(departmentId)))
+            Department dptF = reservation.getDepartmentTake();
+            Country country = dptF.getCountry();
+            if (!(dptF.getId().equals(departmentId) || reservation.getDepartmentBack().getId().equals(departmentId)))
                 throw new IllegalActionException();
 
             Optional<PaymentDetails> receipt = paymentDetailsService.getOptionalPaymentDetails(reservation.getId());
@@ -113,18 +117,19 @@ public class ManageReservationsController {
                 map.addAttribute("deposit_value", receipt.get().getInitialDeposit());
             } else {
                 long days = reservation.getDateFrom().until(reservation.getDateTo(), ChronoUnit.DAYS) + 1;
-                if (!reservation.getDepartmentTake().equals(reservation.getDepartmentBack())) {
-                    map.addAttribute("diff_return_price", cv.getDeptReturnPriceDiff());
-                    map.addAttribute("total_price", cv.getDeptReturnPriceDiff() + (days * reservation.getCarBase().getPriceDay()));
+                if (!dptF.equals(reservation.getDepartmentBack())) {
+                    map.addAttribute("diff_return_price", cv.getDeptReturnPriceDiff() * country.getExchange());
+                    map.addAttribute("total_price", (cv.getDeptReturnPriceDiff() + (days * reservation.getCarBase().getPriceDay())) * country.getExchange());
                 } else {
                     map.addAttribute("diff_return_price", 0.0);
-                    map.addAttribute("total_price", days * reservation.getCarBase().getPriceDay());
+                    map.addAttribute("total_price", days * reservation.getCarBase().getPriceDay() * country.getExchange());
                 }
-                map.addAttribute("raw_price", days * reservation.getCarBase().getPriceDay());
-                map.addAttribute("deposit_value", reservation.getCarBase().getDepositValue());
+                map.addAttribute("raw_price", days * reservation.getCarBase().getPriceDay() * country.getExchange());
+                map.addAttribute("deposit_value", reservation.getCarBase().getDepositValue() * country.getExchange());
             }
 
             map.addAttribute("reservation", reservation);
+            map.addAttribute("country", country);
             map.addAttribute("fee_percentage", cv.getCancellationFeePercentage() * 100);
             map.addAttribute("refund_fee_days", cv.getRefundSubtractDaysDuration());
             map.addAttribute("deposit_deadline", cv.getRefundDepositDeadlineDays());
@@ -158,21 +163,23 @@ public class ManageReservationsController {
             CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
             Reservation reservation = reservationService.findCustomerReservation(customerId, reservationId);
-            if (!reservation.getDepartmentTake().getId().equals(departmentId)) throw new IllegalActionException();
-            if (employeeService.departmentAccess(cud, reservation.getDepartmentTake().getId()).equals(HttpStatus.FORBIDDEN)) {
+            Department department = reservation.getDepartmentTake();
+            if (!department.getId().equals(departmentId)) throw new IllegalActionException();
+            if (employeeService.departmentAccess(cud, department.getId()).equals(HttpStatus.FORBIDDEN)) {
                 redAtt.addFlashAttribute(MSG_KEY, MSG_ACCESS_REJECTED);
                 return "redirect:/mg-cus";
             }
 
 
             if (!(reservation.getStatus().equals(Reservation.ReservationStatus.STATUS_RESERVED) || reservation.getStatus().equals(Reservation.ReservationStatus.STATUS_PENDING))
-                    && !reservation.getDepartmentTake().getId().equals(departmentId)) {
+                    && !department.getId().equals(departmentId)) {
                 throw new RuntimeException();
             }
 
-            List<CarBase> carList = carBaseService.findAvailableCarBasesInDepartment(reservation.getDepartmentTake().getId());
+            List<CarBase> carList = carBaseService.findAvailableCarBasesInDepartment(department.getId());
             if (carList.isEmpty()) throw new IllegalActionException();
 
+            map.addAttribute("country", department.getCountry());
             map.addAttribute("carBases", map.getOrDefault("filteredCarBases", carList));
 
             Map<String, Object> carProperties = carBaseService.getFilterProperties(carList, false);
@@ -184,7 +191,7 @@ public class ManageReservationsController {
             map.addAttribute("days", (reservation.getDateFrom().until(reservation.getDateTo(), ChronoUnit.DAYS) + 1));
 
             map.addAttribute("confirmation_form", new ConfirmationForm());
-            map.addAttribute("carFilterForm", map.getOrDefault("carFilterForm", new SubstituteCarBaseFilterForm(reservation.getDepartmentTake().getId())));
+            map.addAttribute("carFilterForm", map.getOrDefault("carFilterForm", new SubstituteCarBaseFilterForm(department.getId())));
             return "management/substituteCar";
         } catch (ResourceNotFoundException err) {
             redAtt.addFlashAttribute(MSG_KEY, MSG_NO_RESOURCE);
