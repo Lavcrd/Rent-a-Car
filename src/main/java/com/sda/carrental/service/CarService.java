@@ -64,16 +64,23 @@ public class CarService {
                 f.getCountry(), f.getPlate(),
                 departments, carStatus);
 
-        return applyFilters(cars, f);
+        return applyFilters(cars, f, departments.get(0));
     }
 
-    private List<Car> applyFilters(List<Car> cl, GenericCarForm form) {
+    private List<Car> applyFilters(List<Car> cl, GenericCarForm form, Department department) {
+        Double multiplier;
+        if (department != null) {
+            multiplier = department.getCountry().getExchange();
+        } else {
+            multiplier = 1D;
+        }
+
         if (form.getPriceMin() != null) {
-            cl.removeIf(car -> car.getCarBase().getPriceDay() < form.getPriceMin());
+            cl.removeIf(car -> (car.getCarBase().getPriceDay() * multiplier) < form.getPriceMin());
         }
 
         if (form.getPriceMax() != null) {
-            cl.removeIf(car -> car.getCarBase().getPriceDay() > form.getPriceMax());
+            cl.removeIf(car -> (car.getCarBase().getPriceDay() * multiplier) > form.getPriceMax());
         }
 
         if (!form.getBrands().isEmpty()) {

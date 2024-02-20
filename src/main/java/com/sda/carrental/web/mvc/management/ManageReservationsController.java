@@ -110,6 +110,8 @@ public class ManageReservationsController {
 
             Optional<PaymentDetails> receipt = paymentDetailsService.getOptionalPaymentDetails(reservation.getId());
 
+            double multiplier = country.getExchange() * dptF.getMultiplier();
+
             if (receipt.isPresent()) {
                 map.addAttribute("diff_return_price", receipt.get().getInitialDivergenceFee());
                 map.addAttribute("raw_price", receipt.get().getInitialCarFee());
@@ -118,13 +120,13 @@ public class ManageReservationsController {
             } else {
                 long days = reservation.getDateFrom().until(reservation.getDateTo(), ChronoUnit.DAYS) + 1;
                 if (!dptF.equals(reservation.getDepartmentBack())) {
-                    map.addAttribute("diff_return_price", cv.getDeptReturnPriceDiff() * country.getExchange());
-                    map.addAttribute("total_price", (cv.getDeptReturnPriceDiff() + (days * reservation.getCarBase().getPriceDay())) * country.getExchange());
+                    map.addAttribute("diff_return_price", cv.getDeptReturnPriceDiff() * multiplier);
+                    map.addAttribute("total_price", (cv.getDeptReturnPriceDiff() + (days * reservation.getCarBase().getPriceDay())) * multiplier);
                 } else {
                     map.addAttribute("diff_return_price", 0.0);
-                    map.addAttribute("total_price", days * reservation.getCarBase().getPriceDay() * country.getExchange());
+                    map.addAttribute("total_price", days * reservation.getCarBase().getPriceDay() * multiplier);
                 }
-                map.addAttribute("raw_price", days * reservation.getCarBase().getPriceDay() * country.getExchange());
+                map.addAttribute("raw_price", days * reservation.getCarBase().getPriceDay() * multiplier);
                 map.addAttribute("deposit_value", reservation.getCarBase().getDepositValue() * country.getExchange());
             }
 
@@ -179,7 +181,9 @@ public class ManageReservationsController {
             List<CarBase> carList = carBaseService.findAvailableCarBasesInDepartment(department.getId());
             if (carList.isEmpty()) throw new IllegalActionException();
 
-            map.addAttribute("country", department.getCountry());
+            map.addAttribute("currency", department.getCountry().getCurrency());
+            map.addAttribute("exchange", department.getCountry().getExchange());
+            map.addAttribute("multiplier", department.getCountry().getExchange() * department.getMultiplier());
             map.addAttribute("carBases", map.getOrDefault("filteredCarBases", carList));
 
             Map<String, Object> carProperties = carBaseService.getFilterProperties(carList, false);

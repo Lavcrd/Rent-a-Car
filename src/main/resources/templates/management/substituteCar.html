@@ -164,7 +164,7 @@
                                 <li class="list-group-item" th:text="'Production date: ' + ${carBase.year}"></li>
                                 <li class="list-group-item" th:text="'Seats: ' + ${carBase.seats}"></li>
                                 <li class="list-group-item"
-                                    th:text="'Price per day: ' + ${#numbers.formatDecimal((carBase.priceDay * country.exchange), 1, 2, 'POINT')} + ' ' + ${country.currency}"></li>
+                                    th:text="'Price per day: ' + ${#numbers.formatDecimal((carBase.priceDay * multiplier), 1, 2, 'POINT')} + ' ' + ${currency}"></li>
                             </ul>
                             <br>
                         </div>
@@ -175,13 +175,13 @@
                                      style="text-align: center; margin-bottom: 10px;">
                                     <p style="margin-bottom: 0;" th:text="'Rental:'"></p>
                                     <p style="margin-bottom: 0;"
-                                       th:text="${#numbers.formatDecimal((days * carBase.priceDay * country.exchange), 1, 2, 'POINT')} + ' ' + ${country.currency}"></p>
+                                       th:text="${#numbers.formatDecimal((days * carBase.priceDay * multiplier), 1, 2, 'POINT')} + ' ' + ${currency}"></p>
                                 </div>
                                 <div class="border border-dark rounded"
                                      style="text-align: center; margin-bottom: 10px;">
                                     <p style="margin-bottom: 0;" th:text="'Deposit:'"></p>
                                     <p style="margin-bottom: 0;"
-                                       th:text="${#numbers.formatDecimal((carBase.depositValue * country.exchange), 1, 2, 'POINT')} + ' ' + ${country.currency}"></p>
+                                       th:text="${#numbers.formatDecimal((carBase.depositValue * exchange), 1, 2, 'POINT')} + ' ' + ${currency}"></p>
                                 </div>
                                 <button type="submit" class="btn btn-dark" th:text="Select" name="select"
                                         th:value="${carBase.getId()}"></button>

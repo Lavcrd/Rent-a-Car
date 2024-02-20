@@ -59,14 +59,16 @@ public class CustomerReservationsController {
                 map.addAttribute("deposit_value", receipt.get().getInitialDeposit());
             } else {
                 long days = reservation.getDateFrom().until(reservation.getDateTo(), ChronoUnit.DAYS) + 1;
+                double multiplier = country.getExchange() * department.getMultiplier();
+
                 if (!reservation.getDepartmentTake().equals(reservation.getDepartmentBack())) {
-                    map.addAttribute("diff_return_price", cv.getDeptReturnPriceDiff() * country.getExchange());
-                    map.addAttribute("total_price", (cv.getDeptReturnPriceDiff() + (days * reservation.getCarBase().getPriceDay())) * country.getExchange());
+                    map.addAttribute("diff_return_price", cv.getDeptReturnPriceDiff() * multiplier);
+                    map.addAttribute("total_price", (cv.getDeptReturnPriceDiff() + (days * reservation.getCarBase().getPriceDay())) * multiplier);
                 } else {
                     map.addAttribute("diff_return_price", 0.0);
-                    map.addAttribute("total_price", days * reservation.getCarBase().getPriceDay() * country.getExchange());
+                    map.addAttribute("total_price", days * reservation.getCarBase().getPriceDay() * multiplier);
                 }
-                map.addAttribute("raw_price", days * reservation.getCarBase().getPriceDay() * country.getExchange());
+                map.addAttribute("raw_price", days * reservation.getCarBase().getPriceDay() * multiplier);
                 map.addAttribute("deposit_value", reservation.getCarBase().getDepositValue() * country.getExchange());
             }
 

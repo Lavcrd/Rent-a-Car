@@ -115,11 +115,13 @@
                     <th scope="row">Address</th>
                     <th scope="row">Active</th>
                     <th scope="row">HQ</th>
+                    <th scope="row">Prices</th>
                     <th scope="row"></th>
                 </tr>
                 </thead>
                 <tbody>
                 <th:block th:if="${#lists.isEmpty(d_results)}">
+                    <td th:text="'—'"></td>
                     <td th:text="'—'"></td>
                     <td th:text="'—'"></td>
                     <td th:text="'—'"></td>
@@ -151,6 +153,10 @@
                              th:utext="${result.hq} ? '&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; width=&quot;16&quot; height=&quot;16&quot; fill=&quot;currentColor&quot; class=&quot;bi bi-check2&quot; viewBox=&quot;0 0 16 16&quot;&gt;
   &lt;path d=&quot;M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0&quot;/&gt;
 &lt;/svg&gt;' : ' '"></div>
+                    </td>
+                    <td>
+                        <div class="overflow-cell-hs"
+                             th:utext="${result.multiplier} + 'x'"></div>
                     </td>
                     <td style="position: relative;">
                         <a type="button" class="btn btn-dark list-button" th:text="Inspect"

@@ -24,6 +24,7 @@ public class Department {
         this.contact = contact;
         this.hq = hq;
         this.isActive = true;
+        this.multiplier = 1D;
     }
 
     @Id
@@ -58,6 +59,10 @@ public class Department {
     @Setter
     @Column(name = "contact", nullable = false)
     private String contact;
+
+    @Setter
+    @Column(name = "multiplier", nullable = false)
+    private Double multiplier;
 
     @Setter
     @Column(name = "is_active", nullable = false)

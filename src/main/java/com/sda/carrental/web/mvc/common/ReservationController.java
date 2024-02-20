@@ -62,14 +62,17 @@ public class ReservationController {
             CarBase carBase = carBaseService.findById(carBaseId);
             Department depFrom = depService.findById(indexForm.getDepartmentIdFrom());
             Department depTo = depService.findById(indexForm.getDepartmentIdTo());
+
             long days = indexForm.getDateFrom().until(indexForm.getDateTo(), ChronoUnit.DAYS) + 1;
+            double exchange = depFrom.getCountry().getExchange();
+            double multiplier = depFrom.getMultiplier() * exchange;
 
             if (indexForm.isDifferentDepartment()) {
-                map.addAttribute("diff_return_price", cv.getDeptReturnPriceDiff() * depFrom.getCountry().getExchange());
-                map.addAttribute("total_price", (cv.getDeptReturnPriceDiff() + (days * carBase.getPriceDay())) * depFrom.getCountry().getExchange());
+                map.addAttribute("diff_return_price", cv.getDeptReturnPriceDiff() * multiplier);
+                map.addAttribute("total_price", (cv.getDeptReturnPriceDiff() + (days * carBase.getPriceDay())) * multiplier);
             } else {
                 map.addAttribute("diff_return_price", 0.0);
-                map.addAttribute("total_price", days * carBase.getPriceDay() * depFrom.getCountry().getExchange());
+                map.addAttribute("total_price", days * carBase.getPriceDay() * multiplier);
             }
 
             map.addAttribute("days", (indexForm.getDateFrom().until(indexForm.getDateTo(), ChronoUnit.DAYS) + 1));
@@ -77,7 +80,8 @@ public class ReservationController {
             map.addAttribute("dptT", depTo);
             map.addAttribute("reservationData", new ReservationForm(carBaseId, indexForm));
             map.addAttribute("carBase", carBase);
-            map.addAttribute("raw_price", days * carBase.getPriceDay() * depFrom.getCountry().getExchange());
+            map.addAttribute("raw_price", days * carBase.getPriceDay() * multiplier);
+            map.addAttribute("deposit", carBase.getDepositValue() * exchange);
             map.addAttribute("fee_percentage", cv.getCancellationFeePercentage() * 100);
             map.addAttribute("refund_fee_days", cv.getRefundSubtractDaysDuration());
             map.addAttribute("deposit_deadline", cv.getRefundDepositDeadlineDays());

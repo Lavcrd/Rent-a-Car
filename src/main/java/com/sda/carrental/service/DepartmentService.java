@@ -4,10 +4,7 @@ import com.sda.carrental.exceptions.ResourceNotFoundException;
 import com.sda.carrental.model.operational.Country;
 import com.sda.carrental.model.property.Department;
 import com.sda.carrental.repository.DepartmentRepository;
-import com.sda.carrental.web.mvc.form.property.departments.RegisterDepartmentForm;
-import com.sda.carrental.web.mvc.form.property.departments.SearchDepartmentsForm;
-import com.sda.carrental.web.mvc.form.property.departments.UpdateContactsForm;
-import com.sda.carrental.web.mvc.form.property.departments.UpdateDepartmentForm;
+import com.sda.carrental.web.mvc.form.property.departments.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -131,6 +128,19 @@ public class DepartmentService {
                 return HttpStatus.PRECONDITION_FAILED;
             }
             repository.deleteById(id);
+            return HttpStatus.ACCEPTED;
+        } catch (RuntimeException e) {
+            return HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+    }
+
+    public HttpStatus updateMultiplier(Long id, UpdateMultiplierForm form) {
+        try {
+            Department department = findById(id);
+
+            department.setMultiplier(form.getMultiplier());
+
+            repository.save(department);
             return HttpStatus.ACCEPTED;
         } catch (RuntimeException e) {
             return HttpStatus.INTERNAL_SERVER_ERROR;
