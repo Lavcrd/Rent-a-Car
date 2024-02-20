@@ -8,10 +8,7 @@ import com.sda.carrental.service.DepartmentService;
 import com.sda.carrental.service.EmployeeService;
 import com.sda.carrental.service.auth.CustomUserDetails;
 import com.sda.carrental.web.mvc.form.common.ConfirmationForm;
-import com.sda.carrental.web.mvc.form.property.departments.RegisterDepartmentForm;
-import com.sda.carrental.web.mvc.form.property.departments.SearchDepartmentsForm;
-import com.sda.carrental.web.mvc.form.property.departments.UpdateContactsForm;
-import com.sda.carrental.web.mvc.form.property.departments.UpdateDepartmentForm;
+import com.sda.carrental.web.mvc.form.property.departments.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -68,6 +65,8 @@ public class ManageDepartmentsController {
 
             map.addAttribute("details_form", map.getOrDefault("details_form", new UpdateDepartmentForm(department)));
             map.addAttribute("contacts_form", map.getOrDefault("contacts_form", new UpdateContactsForm(department)));
+            map.addAttribute("multiplier_form", map.getOrDefault("multiplier_form", new UpdateMultiplierForm(department)));
+
             map.addAttribute("confirm_form", map.getOrDefault("confirm_form", new ConfirmationForm()));
 
             return "management/viewDepartment";
@@ -182,6 +181,39 @@ public class ManageDepartmentsController {
             }
 
             HttpStatus status = departmentService.updateContacts(departmentId, form);
+
+            if (status.equals(HttpStatus.ACCEPTED)) {
+                redAtt.addFlashAttribute(MSG_KEY, MSG_DPT_UPDATED);
+            } else {
+                redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
+            }
+            return "redirect:/mg-dpt/{department}";
+        } catch (ResourceNotFoundException e) {
+            redAtt.addFlashAttribute(MSG_KEY, MSG_NO_RESOURCE);
+        } catch (RuntimeException e) {
+            redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
+        }
+        return "redirect:/mg-dpt";
+    }
+
+    @RequestMapping(value = "/{department}/update-multiplier", method = RequestMethod.POST)
+    public String departmentMultiplierButton(@ModelAttribute("multiplier_form") @Valid UpdateMultiplierForm form, Errors err, @PathVariable(value = "department") Long departmentId, RedirectAttributes redAtt) {
+        try {
+            CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+            if (!employeeService.hasMinimumAuthority(cud, Role.ROLE_COORDINATOR) ||
+                    employeeService.departmentAccess(cud, departmentId).equals(HttpStatus.FORBIDDEN)) {
+                redAtt.addFlashAttribute(MSG_KEY, MSG_ACCESS_REJECTED);
+                return "redirect:/mg-dpt/{department}";
+            }
+
+            if (err.hasErrors()) {
+                redAtt.addFlashAttribute("multiplier_form", form);
+                redAtt.addFlashAttribute(MSG_KEY, err.getAllErrors().get(0).getDefaultMessage());
+                return "redirect:/mg-dpt/{department}";
+            }
+
+            HttpStatus status = departmentService.updateMultiplier(departmentId, form);
 
             if (status.equals(HttpStatus.ACCEPTED)) {
                 redAtt.addFlashAttribute(MSG_KEY, MSG_DPT_UPDATED);

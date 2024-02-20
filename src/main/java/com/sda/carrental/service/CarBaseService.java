@@ -3,6 +3,7 @@ package com.sda.carrental.service;
 import com.sda.carrental.exceptions.ResourceNotFoundException;
 import com.sda.carrental.global.ConstantValues;
 import com.sda.carrental.model.operational.Country;
+import com.sda.carrental.model.property.Department;
 import com.sda.carrental.model.property.car.CarBase;
 import com.sda.carrental.repository.CarBaseRepository;
 import com.sda.carrental.web.mvc.form.property.cars.*;
@@ -72,31 +73,41 @@ public class CarBaseService {
         return carProperties;
     }
 
-    public List<CarBase> findCarBasesByForm(GenericCarForm form) {
+    public List<CarBase> findCarBasesByForm(GenericCarForm form) throws ResourceNotFoundException {
         List<CarBase> carBases;
+        Department department = null;
         if (form instanceof SelectCarBaseFilterForm f) {
+            department = departmentService.findById(f.getIndexData().getDepartmentIdFrom());
             carBases = findAvailableCarBasesInCountry(
                     f.getIndexData().getDateFrom(),
                     f.getIndexData().getDateTo(),
-                    departmentService.findById(f.getIndexData().getDepartmentIdFrom()).getCountry());
+                    department.getCountry());
         } else if (form instanceof SubstituteCarBaseFilterForm f) {
-            carBases = findAvailableCarBasesInDepartment(f.getDepartmentId());
+            department = departmentService.findById(f.getDepartmentId());
+            carBases = findAvailableCarBasesInDepartment(department.getId());
         } else if (form instanceof SearchCarBasesFilterForm f) {
             carBases = findCarBasesByExpandedCriteria(f.getDepositMin(), f.getDepositMax(), f.getYears());
         } else {
             return Collections.emptyList();
         }
 
-        return applyFilters(carBases, form);
+        return applyFilters(carBases, form, department);
     }
 
-    private List<CarBase> applyFilters(List<CarBase> cbl, GenericCarForm form) {
+    private List<CarBase> applyFilters(List<CarBase> cbl, GenericCarForm form, Department department) {
+        Double multiplier;
+        if (department != null) {
+            multiplier = department.getCountry().getExchange() * department.getMultiplier();
+        } else {
+            multiplier = 1D;
+        }
+
         if (form.getPriceMin() != null) {
-            cbl.removeIf(carBase -> carBase.getPriceDay() < form.getPriceMin());
+            cbl.removeIf(carBase -> (carBase.getPriceDay() * multiplier) < form.getPriceMin());
         }
 
         if (form.getPriceMax() != null) {
-            cbl.removeIf(carBase -> carBase.getPriceDay() > form.getPriceMax());
+            cbl.removeIf(carBase -> (carBase.getPriceDay() * multiplier) > form.getPriceMax());
         }
 
         if (!form.getBrands().isEmpty()) {
