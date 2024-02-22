@@ -79,7 +79,7 @@ public class ArchiveController {
             map.addAttribute("previousPage", map.getOrDefault("previousPage", "/archive"));
 
             PaymentDetails paymentDetails = paymentDetailsService.getOptionalPaymentDetails(operationId).orElseThrow(ResourceNotFoundException::new);
-            map.addAttribute("charged_deposit", paymentDetailsService.calculateChargedDeposit(paymentDetails));
+            map.addAttribute("charged_deposit", paymentDetailsService.calculateOvercharge(paymentDetails));
 
             map.addAttribute("rent", rent);
             map.addAttribute("isComplete", retrieveOptional.isPresent());

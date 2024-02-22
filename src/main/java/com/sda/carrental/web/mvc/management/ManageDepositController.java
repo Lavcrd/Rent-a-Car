@@ -1,7 +1,6 @@
 package com.sda.carrental.web.mvc.management;
 
 import com.sda.carrental.exceptions.ResourceNotFoundException;
-import com.sda.carrental.global.Utility;
 import com.sda.carrental.model.operational.Retrieve;
 import com.sda.carrental.model.property.Department;
 import com.sda.carrental.model.property.PaymentDetails;
@@ -25,8 +24,6 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/mg-depo")
 public class ManageDepositController {
-
-    private final Utility utility;
     private final RetrieveService retrieveService;
     private final UserService userService;
     private final PaymentDetailsService paymentDetailsService;
@@ -73,7 +70,7 @@ public class ManageDepositController {
             map.addAttribute("retrieve", retrieve);
             map.addAttribute("deadline", retrieveService.replaceDatesWithDeadlines(List.of(retrieve)).get(0).getDateTo());
             map.addAttribute("payment_details", paymentDetails);
-            map.addAttribute("charged_deposit", paymentDetailsService.calculateChargedDeposit(paymentDetails));
+            map.addAttribute("charged_deposit", paymentDetailsService.calculateOvercharge(paymentDetails));
             map.addAttribute("rent_employee", userService.findById(retrieve.getRent().getEmployeeId()));
             map.addAttribute("retrieve_employee", userService.findById(retrieve.getEmployeeId()));
 
@@ -125,8 +122,7 @@ public class ManageDepositController {
             return "redirect:/mg-depo/{retrieve}";
         }
 
-        HttpStatus status = paymentDetailsService.transferDeposit(retrieveId, utility.valueToDouble(form.getValue()), false);
-
+        HttpStatus status = paymentDetailsService.transferDeposit(retrieveId, form.getValue(), false);
         if (status.equals(HttpStatus.OK)) {
             redAtt.addFlashAttribute(MSG_KEY, "Success: Value successfully released from deposit");
         } else if (status.equals(HttpStatus.NOT_ACCEPTABLE)) {
@@ -153,8 +149,7 @@ public class ManageDepositController {
             redAtt.addFlashAttribute(MSG_KEY, err.getAllErrors().get(0).getDefaultMessage());
             return "redirect:/mg-depo/{retrieve}";
         }
-
-        HttpStatus status = paymentDetailsService.transferDeposit(retrieveId, utility.valueToDouble(form.getValue()), true);
+        HttpStatus status = paymentDetailsService.transferDeposit(retrieveId, form.getValue(), true);
 
         if (status.equals(HttpStatus.OK)) {
             redAtt.addFlashAttribute(MSG_KEY, "Success: Value successfully charged from deposit");

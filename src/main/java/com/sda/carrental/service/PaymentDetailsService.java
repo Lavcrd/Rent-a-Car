@@ -3,6 +3,7 @@ package com.sda.carrental.service;
 import com.sda.carrental.exceptions.IllegalActionException;
 import com.sda.carrental.exceptions.ResourceNotFoundException;
 import com.sda.carrental.global.ConstantValues;
+import com.sda.carrental.global.Utility;
 import com.sda.carrental.model.operational.Reservation;
 import com.sda.carrental.model.property.PaymentDetails;
 import com.sda.carrental.repository.PaymentDetailsRepository;
@@ -22,18 +23,22 @@ import java.util.Optional;
 public class PaymentDetailsService {
     private final PaymentDetailsRepository repository;
     private final ConstantValues cv;
+    private final Utility u;
 
     @Transactional
     public void createReservationPayment(Reservation reservation) {
         long days = reservation.getDateFrom().until(reservation.getDateTo(), ChronoUnit.DAYS) + 1;
+
         Double exchange = reservation.getDepartmentTake().getCountry().getExchange();
         Double multiplier = exchange * reservation.getDepartmentTake().getMultiplier();
-        double returnPrice = (double) Math.round((cv.getDeptReturnPriceDiff() * multiplier) * 100)/100;
 
-        double rawValue = (double) Math.round((days * reservation.getCarBase().getPriceDay() * multiplier) * 100)/100;
-        double depositValue = (double) Math.round((reservation.getCarBase().getDepositValue() * exchange) * 100)/100;
+        double rawValue = u.roundCurrency(days * reservation.getCarBase().getPriceDay() * multiplier);
+        double depositValue = u.roundCurrency(reservation.getCarBase().getDepositValue() * exchange);
+
         if (!reservation.getDepartmentBack().equals(reservation.getDepartmentTake())) {
+            double returnPrice = u.roundCurrency(cv.getDeptReturnPriceDiff() * multiplier);
             double payment = rawValue + returnPrice;
+
             repository.save(new PaymentDetails(rawValue, returnPrice, depositValue, payment, depositValue, reservation));
         } else {
             repository.save(new PaymentDetails(rawValue, 0.0, depositValue, rawValue, depositValue, reservation));
@@ -62,28 +67,41 @@ public class PaymentDetailsService {
         return repository.findByOperationId(operationId);
     }
 
-    public double calculateChargedDeposit(PaymentDetails paymentDetails) {
-        return paymentDetails.getInitialDeposit() - paymentDetails.getReleasedDeposit() - paymentDetails.getDeposit();
+    public double calculateOvercharge(PaymentDetails paymentDetails) {
+        double payment = paymentDetails.getInitialCarFee() + paymentDetails.getInitialDivergenceFee();
+        return paymentDetails.getSecured() - payment;
     }
 
     @Transactional
-    public void securePayment(PaymentDetails paymentDetails) {
-        paymentDetails.setSecured(paymentDetails.getPayment());
-        paymentDetails.setPayment(0);
-        repository.save(paymentDetails);
+    public void processPayment(PaymentDetails pd) {
+        // Would require method to actually send money back to customer account
+        pd.setSecured(pd.getPayment());
+        pd.setPayment(0);
+
+        double excessDeposit = pd.getDeposit() - pd.getInitialDeposit();
+
+        if (excessDeposit > 0) {
+            pd.setDeposit(pd.getInitialDeposit());
+            pd.setReleasedDeposit(u.roundCurrency(pd.getReleasedDeposit() + excessDeposit));
+        }
+
+        repository.save(pd);
     }
 
     @Transactional
     public void adjustRequiredDeposit(Reservation r, Double depositValue) {
-        Optional<PaymentDetails> pd = repository.findByOperationId(r.getId());
-        if (pd.isEmpty()) return;
-        pd.get().setInitialDeposit(depositValue);
-        repository.save(pd.get());
+        Optional<PaymentDetails> opd = repository.findByOperationId(r.getId());
+        if (opd.isEmpty()) return;
+
+        PaymentDetails pd = opd.get();
+        pd.setInitialDeposit(u.roundCurrency(depositValue));
+        repository.save(pd);
     }
 
     @Transactional
-    public HttpStatus transferDeposit(Long operationId, Double value, boolean isCharge) {
+    public HttpStatus transferDeposit(Long operationId, String deposit, boolean isCharge) {
         try {
+            double value = u.roundCurrency(Double.parseDouble(deposit));
             Optional<PaymentDetails> opd = repository.findByOperationId(operationId);
             if (opd.isEmpty()) throw new ResourceNotFoundException();
 
@@ -91,11 +109,11 @@ public class PaymentDetailsService {
             if (pd.getDeposit() < value || value < 0) throw new IllegalActionException();
 
             if (isCharge) {
-                pd.setDeposit(Math.round((pd.getDeposit() - value) * 100.0) / 100.0);
-                pd.setSecured(Math.round((pd.getSecured() + value) * 100.0) / 100.0);
+                pd.setDeposit(u.roundCurrency(pd.getDeposit() - value));
+                pd.setSecured(u.roundCurrency(pd.getSecured() + value));
             } else {
-                pd.setDeposit(Math.round((pd.getDeposit() - value) * 100.0) / 100.0);
-                pd.setReleasedDeposit(Math.round((pd.getReleasedDeposit() + value) * 100.0) / 100.0);
+                pd.setDeposit(u.roundCurrency(pd.getDeposit() - value));
+                pd.setReleasedDeposit(u.roundCurrency(pd.getReleasedDeposit() + value));
             }
 
             repository.save(pd);
@@ -107,6 +125,9 @@ public class PaymentDetailsService {
         } catch (IllegalActionException err) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return HttpStatus.NOT_ACCEPTABLE;
+        } catch (IllegalArgumentException e) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            return HttpStatus.BAD_REQUEST;
         } catch (RuntimeException err) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return HttpStatus.INTERNAL_SERVER_ERROR;

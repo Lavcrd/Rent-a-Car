@@ -159,7 +159,7 @@ public class ReservationService {
 
     @Transactional
     private void processProgressReservation(Reservation r, Reservation.ReservationStatus status, PaymentDetails payment) {
-        paymentDetailsService.securePayment(payment);
+        paymentDetailsService.processPayment(payment);
         updateReservationStatus(r, status);
     }
 
@@ -207,10 +207,13 @@ public class ReservationService {
     public HttpStatus substituteCarBase(Reservation r, Long carBaseId) {
         try {
             if (!r.getStatus().equals(Reservation.ReservationStatus.STATUS_RESERVED)) throw new IllegalArgumentException();
-            CarBase cb = carBaseService.findAvailableCarBaseInDepartment(carBaseId, r.getDepartmentTake().getId());
+            Department department = r.getDepartmentTake();
+            CarBase cb = carBaseService.findAvailableCarBaseInDepartment(carBaseId, department.getId());
+            Double deposit = cb.getDepositValue() * department.getMultiplier() * department.getCountry().getExchange();
+
             r.setCarBase(cb);
             repository.save(r);
-            paymentDetailsService.adjustRequiredDeposit(r, cb.getDepositValue());
+            paymentDetailsService.adjustRequiredDeposit(r, deposit);
             return HttpStatus.ACCEPTED;
         } catch (IllegalActionException err) {
             return HttpStatus.CONFLICT;

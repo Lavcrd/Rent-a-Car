@@ -11,10 +11,10 @@ import javax.persistence.*;
 @Getter
 @NoArgsConstructor
 public class PaymentDetails {
-    public PaymentDetails(Double carFee, Double divergenceFee, Double initialDeposit, Double payment, Double deposit, Reservation reservation) {
+    public PaymentDetails(Double carFee, Double divergenceFee, Double requiredDeposit, Double payment, Double deposit, Reservation reservation) {
         this.initialCarFee = carFee;
         this.initialDivergenceFee = divergenceFee;
-        this.initialDeposit = initialDeposit;
+        this.initialDeposit = requiredDeposit;
         this.payment = payment;
         this.deposit = deposit;
         this.secured = 0.0;
