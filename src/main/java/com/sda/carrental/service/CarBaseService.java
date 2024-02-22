@@ -178,8 +178,8 @@ public class CarBaseService {
     @Transactional
     public HttpStatus handleCarBasePricesUpdate(CarBase cb, UpdateCarBasePricesForm form) {
         try {
-            cb.setPriceDay(form.getPrice());
-            cb.setDepositValue(form.getDeposit());
+            cb.setPriceDay(Double.parseDouble(form.getPrice()));
+            cb.setDepositValue(Double.parseDouble(form.getDeposit()));
             repository.save(cb);
             return HttpStatus.ACCEPTED;
         } catch (RuntimeException err) {

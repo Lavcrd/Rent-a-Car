@@ -254,7 +254,7 @@ public class PredefiniedData implements CommandLineRunner {
         PaymentDetails pd9 = new PaymentDetails(800D, 0D, 1500D, 0D, 1500D, reservationRepository.findById(9L).get());
         PaymentDetails pd10 = new PaymentDetails(800D, 0D, 1500D, 0D, 1500D, reservationRepository.findById(10L).get());
 
-        pd1.setSecured(600D);
+        pd1.setSecured(720D);
         pd2.setSecured(700D);
         pd3.setSecured(920D);
         pd4.setSecured(900D);

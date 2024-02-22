@@ -83,7 +83,7 @@ public class ManageCarBasesController {
             map.addAttribute("confirmation_form", new ConfirmationForm());
             map.addAttribute("update_image_form", new UpdateCarBaseImageForm());
             map.addAttribute("split_form", map.getOrDefault("split_form", new SplitCarBaseForm()));
-            map.addAttribute("update_price_form", map.getOrDefault("update_price_form", new UpdateCarBasePricesForm(carBase.getPriceDay(), carBase.getDepositValue())));
+            map.addAttribute("update_price_form", map.getOrDefault("update_price_form", new UpdateCarBasePricesForm(carBase.getPriceDay().toString(), carBase.getDepositValue().toString())));
             map.addAttribute("register_form", map.getOrDefault("register_form", new RegisterCarForm(carBase.getId())));
 
             map.addAttribute("result", carBase);

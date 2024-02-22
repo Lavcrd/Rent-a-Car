@@ -127,14 +127,14 @@
                     </div>
 
                     <div style="margin-top: 20%;"
-                         th:utext="'<strong>Deposit:</strong>'">
+                         th:utext="'<strong>Reservation<br>deposit:</strong>'">
                     </div>
                     <div style="margin-top: 2%;"
                          th:text="${payment_details.initialDeposit}">
                     </div>
 
                     <div th:if="${payment_details.deposit > 0}" style="margin-top: 20%;"
-                         th:utext="'<strong>Balance:</strong>'">
+                         th:utext="'<strong>Remaining<br>balance:</strong>'">
                     </div>
                     <div th:if="${payment_details.deposit > 0}" style="margin-top: 2%;"
                          th:text="${payment_details.deposit}">
