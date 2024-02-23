@@ -26,7 +26,8 @@
                         <dt style="font-weight: bold">Vehicle pick-up:</dt>
                         <dt style="font-weight: normal"
                             th:text="${reservation.departmentTake.city} + ' ' + ${reservation.departmentTake.postcode} + ', '"></dt>
-                        <dt style="font-weight: normal" th:text="${reservation.departmentTake.street} + ' ' + ${reservation.departmentTake.building}"></dt>
+                        <dt style="font-weight: normal"
+                            th:text="${reservation.departmentTake.street} + ' ' + ${reservation.departmentTake.building}"></dt>
                     </dl>
                     <ul style="text-align: left; list-style-type:none">
                         <li><strong>Date:</strong></li>
@@ -37,7 +38,8 @@
                         <dt style="font-weight: bold">Vehicle return:</dt>
                         <dt style="font-weight: normal"
                             th:text="${reservation.departmentBack.city} + ' ' + ${reservation.departmentBack.postcode} + ', '"></dt>
-                        <dt style="font-weight: normal" th:text="${reservation.departmentBack.street} + ' ' + ${reservation.departmentBack.building}"></dt>
+                        <dt style="font-weight: normal"
+                            th:text="${reservation.departmentBack.street} + ' ' + ${reservation.departmentBack.building}"></dt>
                     </dl>
                     <ul style="text-align: left; list-style-type:none">
                         <li><strong>Date:</strong></li>
@@ -48,7 +50,8 @@
                 <div class="col-5 mb-5">
                     <h5><strong>Vehicle</strong></h5>
                     <ul class="list-group list-group-flush">
-                        <li class="list-group-item" th:if="${rent_details != null}" th:text="'Plate: ' + ${rent_details.car.plate}"></li>
+                        <li class="list-group-item" th:if="${rent_details != null}"
+                            th:text="'Plate: ' + ${rent_details.car.plate}"></li>
                         <li class="list-group-item" th:text="'Model: ' + ${reservation.carBase.model}"></li>
                         <li class="list-group-item"
                             th:text="'Car type: ' + ${reservation.carBase.carType.getName()}"></li>
@@ -63,33 +66,36 @@
             </div>
             <div class="row">
                 <div class="col">
-                        <div class="d-flex flex-column">
+                    <div class="d-flex flex-column">
+                        <a class="btn btn-dark mt-2 def-button-text"
+                           type="button" th:href="'/mg-res/' + ${department} + '-' + ${reservation.customer.id}">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                 class="bi bi-arrow-left-circle" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd"
+                                      d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-4.5-.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5z"/>
+                            </svg>
+                            Back
+                        </a>
+                        <th:block
+                                th:if="${(reservation.status.name() == 'STATUS_RESERVED' || reservation.status.name() == 'STATUS_PENDING') && (department == reservation.departmentTake.id)}">
                             <a class="btn btn-dark mt-2 def-button-text"
-                                    type="button" th:href="'/mg-res/' + ${department} + '-' + ${reservation.customer.id}">
+                               type="button"
+                               th:href="'/mg-res/' + ${department} + '-' + ${customer} + '/' + ${reservation.id} + '/change-car'">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                     class="bi bi-arrow-left-circle" viewBox="0 0 16 16">
-                                    <path fill-rule="evenodd"
-                                          d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-4.5-.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5z"/>
+                                     class="bi bi-gear" viewBox="0 0 16 16">
+                                    <path d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492zM5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0z"/>
+                                    <path d="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52l-.094-.319zm-2.633.283c.246-.835 1.428-.835 1.674 0l.094.319a1.873 1.873 0 0 0 2.693 1.115l.291-.16c.764-.415 1.6.42 1.184 1.185l-.159.292a1.873 1.873 0 0 0 1.116 2.692l.318.094c.835.246.835 1.428 0 1.674l-.319.094a1.873 1.873 0 0 0-1.115 2.693l.16.291c.415.764-.42 1.6-1.185 1.184l-.291-.159a1.873 1.873 0 0 0-2.693 1.116l-.094.318c-.246.835-1.428.835-1.674 0l-.094-.319a1.873 1.873 0 0 0-2.692-1.115l-.292.16c-.764.415-1.6-.42-1.184-1.185l.159-.291A1.873 1.873 0 0 0 1.945 8.93l-.319-.094c-.835-.246-.835-1.428 0-1.674l.319-.094A1.873 1.873 0 0 0 3.06 4.377l-.16-.292c-.415-.764.42-1.6 1.185-1.184l.292.159a1.873 1.873 0 0 0 2.692-1.115l.094-.319z"/>
                                 </svg>
-                                Back
+                                Substitute car
                             </a>
-                            <th:block
-                                    th:if="${(reservation.status.name() == 'STATUS_RESERVED' || reservation.status.name() == 'STATUS_PENDING') && (department == reservation.departmentTake.id)}">
-                                <a class="btn btn-dark mt-2 def-button-text"
-                                        type="button" th:href="'/mg-res/' + ${department} + '-' + ${customer} + '/' + ${reservation.id} + '/change-car'">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                         class="bi bi-gear" viewBox="0 0 16 16">
-                                        <path d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492zM5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0z"/>
-                                        <path d="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52l-.094-.319zm-2.633.283c.246-.835 1.428-.835 1.674 0l.094.319a1.873 1.873 0 0 0 2.693 1.115l.291-.16c.764-.415 1.6.42 1.184 1.185l-.159.292a1.873 1.873 0 0 0 1.116 2.692l.318.094c.835.246.835 1.428 0 1.674l-.319.094a1.873 1.873 0 0 0-1.115 2.693l.16.291c.415.764-.42 1.6-1.185 1.184l-.291-.159a1.873 1.873 0 0 0-2.693 1.116l-.094.318c-.246.835-1.428.835-1.674 0l-.094-.319a1.873 1.873 0 0 0-2.692-1.115l-.292.16c-.764.415-1.6-.42-1.184-1.185l.159-.291A1.873 1.873 0 0 0 1.945 8.93l-.319-.094c-.835-.246-.835-1.428 0-1.674l.319-.094A1.873 1.873 0 0 0 3.06 4.377l-.16-.292c-.415-.764.42-1.6 1.185-1.184l.292.159a1.873 1.873 0 0 0 2.692-1.115l.094-.319z"/>
-                                    </svg>
-                                    Substitute car
-                                </a>
 
-                                <form th:action="@{'/mg-res/' + ${department} + '-' + ${reservation.customer.id} + '/' + ${reservation.id} + '/cancel'}" th:object="${confirmation_form}"
-                                      th:method="POST">
+                            <form th:action="@{'/mg-res/' + ${department} + '-' + ${reservation.customer.id} + '/' + ${reservation.id} + '/cancel'}"
+                                  th:object="${confirmation_form}"
+                                  th:method="POST">
 
                                 <!--Trigger for cancel modal-->
-                                <button type="button" class="btn btn-dark mt-2 def-button-text w-100" data-bs-toggle="modal"
+                                <button type="button" class="btn btn-dark mt-2 def-button-text w-100"
+                                        data-bs-toggle="modal"
                                         data-bs-target="#w_confirmation_modal">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                                          class="bi bi-trash" viewBox="0 0 16 16">
@@ -128,9 +134,9 @@
                                         </div>
                                     </div>
                                 </div>
-                                </form>
-                            </th:block>
-                        </div>
+                            </form>
+                        </th:block>
+                    </div>
                 </div>
                 <div class="col-5">
                     <ul style="list-style-type:none">
@@ -151,7 +157,8 @@
                     <div class="d-flex flex-column">
                         <th:block
                                 th:if="${reservation.status.name() == 'STATUS_RESERVED' && department == reservation.departmentTake.id}">
-                            <form th:action="@{'/mg-res/' + ${department} + '-' + ${reservation.customer.id} + '/' + ${reservation.id} + '/rent'}" th:object="${rental_confirmation_form}"
+                            <form th:action="@{'/mg-res/' + ${department} + '-' + ${reservation.customer.id} + '/' + ${reservation.id} + '/rent'}"
+                                  th:object="${rental_confirmation_form}"
                                   th:method="POST">
 
                                 <!--Trigger for rent modal-->
@@ -166,7 +173,7 @@
                                     Rent
                                 </button>
 
-                                <!--Modal-->
+                                <!--Rent Modal-->
                                 <div class="modal fade" id="rent_confirmation_modal" tabindex="-1" role="dialog"
                                      aria-hidden="true">
                                     <div class="modal-dialog modal-dialog-centered" role="document">
@@ -180,26 +187,34 @@
                                             </div>
                                             <div class="modal-body">
                                                 <input type="hidden" th:field="*{reservationId}">
+                                                <p th:text="${payment_status}"></p>
                                                 <div class="form-group">
-                                                    <label for="car_select"></label>
-                                                    <select type="text" id="car_select" th:field="*{carId}" class="form-control" th:disabled="${#lists.isEmpty(carOptions)}">
-                                                        <option selected th:if="${#lists.isEmpty(carOptions)}" value="">No required car available</option>
-                                                        <div th:each="car:${carOptions}">
-                                                            <option th:text="${car.plate}"
-                                                                    th:value="${car.id}"></option>
-                                                        </div>
-                                                    </select>
+                                                    <div class="column">
+                                                        <label for="car_select"></label>
+                                                        <select type="text" id="car_select" th:field="*{carId}"
+                                                                class="form-control"
+                                                                th:disabled="${#lists.isEmpty(carOptions)}">
+                                                            <option selected th:if="${#lists.isEmpty(carOptions)}"
+                                                                    value="">No required car available
+                                                            </option>
+                                                            <div th:each="car:${carOptions}">
+                                                                <option th:text="${car.plate}"
+                                                                        th:value="${car.id}"></option>
+                                                            </div>
+                                                        </select>
+                                                    </div>
                                                 </div>
+
                                                 <div class="form-group"
                                                      style="flex-direction:row;justify-content:space-between;">
-                                                    <div class="column">
+                                                    <div class="col-sm-5">
                                                         <label for="date_from"
                                                                class="col-form-label">Date:</label>
                                                         <input id="date_from" class="form-control text-black bg-white"
                                                                type="date" name="date_from" th:field="*{dateFrom}"
                                                                required/>
                                                     </div>
-                                                    <div class="column">
+                                                    <div class="col-sm-5">
                                                         <label for="mileage_rent"
                                                                class="col-form-label">Mileage:</label>
                                                         <input id="mileage_rent" type="number" th:field="*{mileage}"
@@ -235,6 +250,84 @@
                                 </div>
                             </form>
 
+                            <form th:action="@{'/mg-res/' + ${department} + '-' + ${reservation.customer.id} + '/' + ${reservation.id} + '/payment'}"
+                                  th:object="${payment_form}"
+                                  th:method="POST">
+
+                                <!--Trigger for payment modal-->
+                                <button type="button" class="btn btn-dark mt-2 w-100 def-button-text"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#payment_modal">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                         class="bi bi-check-circle" viewBox="0 0 16 16">
+                                        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                                        <path d="M10.97 4.97a.235.235 0 0 0-.02.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05z"/>
+                                    </svg>
+                                    Payment
+                                </button>
+
+                                <!--Payment Modal-->
+                                <div class="modal fade" id="payment_modal" tabindex="-1" role="dialog"
+                                     aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">Payment</h5>
+                                                <button type="button" class="close" data-bs-dismiss="modal"
+                                                        aria-label="Close">
+                                                    <span aria-hidden="true">×</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <input type="hidden" th:field="*{reservationId}">
+                                                <p>Add payment to the rental.</p>
+                                                <p th:text="${payment_status}"></p>
+                                                <div class="form-group"
+                                                     style="flex-direction:row;justify-content:space-between;">
+                                                    <div class="col-sm-5">
+                                                        <label for="add_payment_rent"
+                                                               class="col-form-label" th:utext="'<svg xmlns=&quot;http://www.w3.org/2000/svg&quot; width=&quot;16&quot; height=&quot;16&quot; fill=&quot;currentColor&quot; class=&quot;bi bi-info-circle&quot; viewBox=&quot;0 0 16 16&quot; data-toggle=&quot;tooltip&quot; data-placement=&quot;top&quot; title=&quot;Use this field to add extra value to the payment, such as unexpected purchases in the rental department. Enter a positive amount for additional costs and a negative amount for discounts.&quot;><path d=&quot;M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z&quot;/>
+<path d=&quot;m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z&quot;/></svg> ' + 'Add payment:'"></label>
+
+                                                        <input id="add_payment_rent" type="number" step="0.01"
+                                                               th:field="*{payment}"
+                                                               class="form-control" required>
+                                                    </div>
+                                                    <div class="col-sm-5">
+                                                        <label for="add_deposit_rent"
+                                                               class="col-form-label"
+                                                               th:utext="'<svg xmlns=&quot;http://www.w3.org/2000/svg&quot; width=&quot;16&quot; height=&quot;16&quot; fill=&quot;currentColor&quot; class=&quot;bi bi-info-circle&quot; viewBox=&quot;0 0 16 16&quot; data-toggle=&quot;tooltip&quot; data-placement=&quot;top&quot; title=&quot;This field allows you to specify any additional deposit amount in case of a car substitution. Any amount over the required deposit will be automatically returned to the customer upon rental submission.&quot;><path d=&quot;M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z&quot;/>
+<path d=&quot;m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z&quot;/></svg> ' + 'Add deposit:'"></label>
+                                                        </label>
+                                                        <input id="add_deposit_rent" type="number" step="0.01"
+                                                               th:field="*{deposit}"
+                                                               class="form-control" required>
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <label for="p_confirm_password" class="col-form-label">Confirm
+                                                        action with a password</label>
+                                                    <input name="confirmPassword" id="p_confirm_password"
+                                                           class="text-black bg-white"
+                                                           th:placeholder="'Confirm with password'"
+                                                           th:type="password" th:field="*{currentPassword}"
+                                                           autocomplete="new-password"/>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-dark" data-bs-dismiss="modal">
+                                                    Close
+                                                </button>
+                                                <button type="submit"
+                                                        class="btn btn-dark">Confirm
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+
                             <form th:action="@{'/mg-res/' + ${department} + '-' + ${reservation.customer.id} + '/' + ${reservation.id} + '/refund'}"
                                   th:object="${confirmation_form}"
                                   th:method="POST">
@@ -250,7 +343,7 @@
                                     Refund
                                 </button>
 
-                                <!--Modal-->
+                                <!--Refund Modal-->
                                 <div class="modal fade" id="e1_confirmation_modal" tabindex="-1" role="dialog"
                                      aria-hidden="true">
                                     <div class="modal-dialog modal-dialog-centered" role="document">
@@ -282,7 +375,8 @@
                         </th:block>
                         <th:block
                                 th:if="${reservation.status.name() == 'STATUS_PROGRESS' && department == reservation.departmentBack.id}">
-                            <form th:action="@{'/mg-res/' + ${department} + '-' + ${reservation.customer.id} + '/' + ${reservation.id} + '/retrieve'}" th:object="${retrieve_confirmation_form}"
+                            <form th:action="@{'/mg-res/' + ${department} + '-' + ${reservation.customer.id} + '/' + ${reservation.id} + '/retrieve'}"
+                                  th:object="${retrieve_confirmation_form}"
                                   th:method="POST">
 
                                 <!--Trigger for retrieve modal-->
@@ -297,7 +391,7 @@
                                     Retrieve
                                 </button>
 
-                                <!--Modal-->
+                                <!--Retrieve Modal-->
                                 <div class="modal fade" id="retrieve_confirmation_modal" tabindex="-1" role="dialog"
                                      aria-hidden="true">
                                     <div class="modal-dialog modal-dialog-centered" role="document">
@@ -367,7 +461,7 @@
                                 Status
                             </button>
 
-                            <!--Modal-->
+                            <!--Status Modal-->
                             <div class="modal fade" id="rent_details" tabindex="-1" role="dialog"
                                  aria-hidden="true">
                                 <div class="modal-dialog modal-dialog-centered" role="document">

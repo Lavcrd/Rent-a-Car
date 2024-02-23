@@ -13,6 +13,6 @@ import javax.validation.constraints.*;
 @NoArgsConstructor
 public class DepositForm extends ConfirmationForm {
     @NotEmpty(message = "Failure: Field must contain a value.")
-    @DoubleValue
+    @DoubleValue(allowedPositive = true)
     private String value;
 }

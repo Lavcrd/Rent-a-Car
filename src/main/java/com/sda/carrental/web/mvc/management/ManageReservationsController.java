@@ -12,6 +12,7 @@ import com.sda.carrental.model.users.Customer;
 import com.sda.carrental.model.users.auth.Verification;
 import com.sda.carrental.service.*;
 import com.sda.carrental.service.auth.CustomUserDetails;
+import com.sda.carrental.web.mvc.form.operational.PaymentForm;
 import com.sda.carrental.web.mvc.form.property.cars.SubstituteCarBaseFilterForm;
 import com.sda.carrental.web.mvc.form.common.ConfirmationForm;
 import com.sda.carrental.web.mvc.form.operational.ConfirmClaimForm;
@@ -140,6 +141,8 @@ public class ManageReservationsController {
             if (reservation.getStatus().equals(Reservation.ReservationStatus.STATUS_RESERVED)) {
                 map.addAttribute("carOptions", carService.findAvailableCarsInDepartment(reservation));
                 map.addAttribute("rental_confirmation_form", new ConfirmRentalForm(reservationId, LocalDate.now()));
+                map.addAttribute("payment_form", new PaymentForm(reservationId));
+                map.addAttribute("payment_status", paymentDetailsService.getPaymentStatus(reservationId));
             } else if (reservation.getStatus().equals(Reservation.ReservationStatus.STATUS_PROGRESS)) {
                 map.addAttribute("rent_details", rentService.findById(reservation.getId()));
                 if (departmentId.equals(reservation.getDepartmentBack().getId())) {
@@ -317,13 +320,55 @@ public class ManageReservationsController {
             HttpStatus response = rentService.createRent(customerId, form);
 
             if (response.equals(HttpStatus.ACCEPTED)) {
-                redAtt.addFlashAttribute(MSG_KEY, "Success: Rent completed successfully");
+                redAtt.addFlashAttribute(MSG_KEY, "Success: Rent completed successfully.");
             } else if (response.equals(HttpStatus.PAYMENT_REQUIRED)) {
-                redAtt.addFlashAttribute(MSG_KEY, "Failure: Payment not registered");
+                redAtt.addFlashAttribute(MSG_KEY, "Failure: Payment not registered.");
+            } else if (response.equals(HttpStatus.FORBIDDEN)) {
+                redAtt.addFlashAttribute(MSG_KEY, "Failure: Insufficient payment - requires Manager.");
             } else if (response.equals(HttpStatus.PRECONDITION_REQUIRED)) {
-                redAtt.addFlashAttribute(MSG_KEY, "Failure: Verification not registered");
+                redAtt.addFlashAttribute(MSG_KEY, "Failure: Verification not registered.");
             } else if (response.equals(HttpStatus.CONFLICT)) {
-                redAtt.addFlashAttribute(MSG_KEY, "Failure: Status unavailable");
+                redAtt.addFlashAttribute(MSG_KEY, "Failure: Status unavailable.");
+            } else {
+                redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
+            }
+            return "redirect:/mg-res/{department}-{customer}/{reservation}";
+        } catch (ResourceNotFoundException e) {
+            redAtt.addFlashAttribute(MSG_KEY, MSG_NO_RESOURCE);
+            return "redirect:/mg-cus";
+        } catch (RuntimeException e) {
+            redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
+            return "redirect:/mg-cus";
+        }
+    }
+
+    @RequestMapping(method = RequestMethod.POST, value = "/{department}-{customer}/{reservation}/payment")
+    public String reservationPaymentButton(@ModelAttribute("payment_form") @Valid PaymentForm form, Errors err, RedirectAttributes redAtt, @PathVariable("reservation") Long reservationId, @PathVariable("customer") Long customerId, @PathVariable("department") Long departmentId) {
+        try {
+            CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            Reservation r = reservationService.findCustomerReservation(customerId, reservationId);
+
+            if (!r.getDepartmentTake().getId().equals(departmentId) ||
+                    employeeService.departmentAccess(cud, r.getDepartmentTake().getId()).equals(HttpStatus.FORBIDDEN)) {
+                redAtt.addFlashAttribute(MSG_KEY, MSG_ACCESS_REJECTED);
+                return "redirect:/mg-cus";
+            }
+
+            redAtt.addAttribute("reservation", reservationId);
+            redAtt.addAttribute("customer", customerId);
+            redAtt.addAttribute("department", departmentId);
+
+            if (err.hasErrors()) {
+                redAtt.addFlashAttribute(MSG_KEY, err.getAllErrors().get(0).getDefaultMessage());
+                return "redirect:/mg-res/{department}-{customer}/{reservation}";
+            }
+
+            HttpStatus response = paymentDetailsService.handleCashPayment(r, form);
+
+            if (response.equals(HttpStatus.CREATED)) {
+                redAtt.addFlashAttribute(MSG_KEY, "Success: Payment registered.");
+            } else if (response.equals(HttpStatus.ACCEPTED)) {
+                redAtt.addFlashAttribute(MSG_KEY, "Failure: Payment values registered.");
             } else {
                 redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
             }

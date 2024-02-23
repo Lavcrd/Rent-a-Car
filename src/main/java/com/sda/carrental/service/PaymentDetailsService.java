@@ -4,11 +4,15 @@ import com.sda.carrental.exceptions.IllegalActionException;
 import com.sda.carrental.exceptions.ResourceNotFoundException;
 import com.sda.carrental.global.ConstantValues;
 import com.sda.carrental.global.Utility;
+import com.sda.carrental.global.enums.Role;
 import com.sda.carrental.model.operational.Reservation;
 import com.sda.carrental.model.property.PaymentDetails;
 import com.sda.carrental.repository.PaymentDetailsRepository;
+import com.sda.carrental.service.auth.CustomUserDetails;
+import com.sda.carrental.web.mvc.form.operational.PaymentForm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
@@ -26,7 +30,7 @@ public class PaymentDetailsService {
     private final Utility u;
 
     @Transactional
-    public void createReservationPayment(Reservation reservation) {
+    public void createReservationPayment(Reservation reservation, double payment, double deposit) {
         long days = reservation.getDateFrom().until(reservation.getDateTo(), ChronoUnit.DAYS) + 1;
 
         Double exchange = reservation.getDepartmentTake().getCountry().getExchange();
@@ -35,13 +39,14 @@ public class PaymentDetailsService {
         double rawValue = u.roundCurrency(days * reservation.getCarBase().getPriceDay() * multiplier);
         double depositValue = u.roundCurrency(reservation.getCarBase().getDepositValue() * exchange);
 
+        payment = u.roundCurrency(payment);
+        deposit = u.roundCurrency(deposit);
+
         if (!reservation.getDepartmentBack().equals(reservation.getDepartmentTake())) {
             double returnPrice = u.roundCurrency(cv.getDeptReturnPriceDiff() * multiplier);
-            double payment = rawValue + returnPrice;
-
-            repository.save(new PaymentDetails(rawValue, returnPrice, depositValue, payment, depositValue, reservation));
+            repository.save(new PaymentDetails(rawValue, returnPrice, depositValue, payment, deposit, reservation));
         } else {
-            repository.save(new PaymentDetails(rawValue, 0.0, depositValue, rawValue, depositValue, reservation));
+            repository.save(new PaymentDetails(rawValue, 0.0, depositValue, payment, deposit, reservation));
         }
     }
 
@@ -132,5 +137,53 @@ public class PaymentDetailsService {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return HttpStatus.INTERNAL_SERVER_ERROR;
         }
+    }
+
+    @Transactional
+    public HttpStatus handleCashPayment(Reservation reservation, PaymentForm form) {
+        try {
+            double payment = u.roundCurrency(Double.parseDouble(form.getPayment()));
+            double deposit = u.roundCurrency(Double.parseDouble(form.getDeposit()));
+
+            Optional<PaymentDetails> opd = getOptionalPaymentDetails(reservation.getId());
+            if (opd.isEmpty()) {
+                createReservationPayment(reservation, payment, deposit);
+                return HttpStatus.CREATED;
+            }
+
+            PaymentDetails pd = opd.get();
+            pd.setPayment(pd.getPayment() + payment);
+            pd.setDeposit(pd.getDeposit() + deposit);
+            return HttpStatus.ACCEPTED;
+        } catch (NumberFormatException e) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            return HttpStatus.BAD_REQUEST;
+        } catch (RuntimeException e) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            return HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+    }
+
+    public String getPaymentStatus(Long operationId) {
+        Optional<PaymentDetails> opd = getOptionalPaymentDetails(operationId);
+        if (opd.isEmpty()) return "Status: Payment not found.";
+
+        PaymentDetails pd = opd.get();
+        boolean isPaid = pd.getPayment() >= (pd.getInitialCarFee() + pd.getInitialDivergenceFee()) && pd.getDeposit() >= pd.getDeposit();
+        if (isPaid) {
+            return "Status: Paid (Payment: " + pd.getPayment() + "/" + (pd.getInitialCarFee() + pd.getInitialDivergenceFee()) + ") (Deposit: " + pd.getDeposit() + "/" + pd.getInitialDeposit() + ")";
+        }
+
+        return "Status: Insufficient (Payment: " + pd.getPayment() + "/" + (pd.getInitialCarFee() + pd.getInitialDivergenceFee()) + ") (Deposit: " + pd.getDeposit() + "/" + pd.getInitialDeposit() + ")";
+    }
+
+    public boolean isDenied(PaymentDetails p) {
+        CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        boolean hasAuthority = Role.valueOf(cud.getAuthorities().toArray()[0].toString()).ordinal() >= Role.ROLE_MANAGER.ordinal();
+        boolean isPaid = p.getPayment() >= (p.getInitialCarFee() + p.getInitialDivergenceFee()) && p.getDeposit() >= p.getDeposit();
+        if (!isPaid) {
+            return !hasAuthority;
+        }
+        return false;
     }
 }
