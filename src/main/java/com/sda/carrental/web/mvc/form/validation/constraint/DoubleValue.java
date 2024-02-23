@@ -13,7 +13,11 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = {DoubleValueValidator.class})
 public @interface DoubleValue {
-    String message() default "Failure: Incorrect value format.";
+    boolean allowedPositive() default false;
+    boolean allowedZero() default false;
+    boolean allowedNegative() default false;
+
+    String message() default "Failure: Value is not valid.";
 
     Class<?>[] groups() default {};
 

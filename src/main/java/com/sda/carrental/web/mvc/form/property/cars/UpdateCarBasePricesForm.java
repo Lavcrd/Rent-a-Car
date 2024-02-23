@@ -15,10 +15,10 @@ import javax.validation.constraints.Positive;
 @AllArgsConstructor
 public class UpdateCarBasePricesForm extends ConfirmationForm {
     @Positive(message = "Failure: Price value must be positive.")
-    @DoubleValue
+    @DoubleValue(allowedPositive = true)
     private String price;
 
     @Positive(message = "Failure: Deposit value must be positive.")
-    @DoubleValue
+    @DoubleValue(allowedPositive = true)
     private String deposit;
 }

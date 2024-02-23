@@ -20,6 +20,7 @@ import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 
@@ -59,7 +60,16 @@ public class ReservationService {
             repository.save(reservation);
             // ^^^
 
-            paymentDetailsService.createReservationPayment(reservation);
+            //Placeholder payment values
+            long days = reservation.getDateFrom().until(reservation.getDateTo(), ChronoUnit.DAYS) + 1;
+
+            Double exchange = reservation.getDepartmentTake().getCountry().getExchange();
+            Double multiplier = exchange * reservation.getDepartmentTake().getMultiplier();
+
+            double payment = days * reservation.getCarBase().getPriceDay() * multiplier;
+            double deposit = reservation.getCarBase().getDepositValue() * exchange;
+            //^^^
+            paymentDetailsService.createReservationPayment(reservation, payment, deposit);
 
             return HttpStatus.CREATED;
         } catch (ResourceNotFoundException err) {
@@ -119,7 +129,10 @@ public class ReservationService {
                             return HttpStatus.PAYMENT_REQUIRED;
                         }
 
-                        processProgressReservation(r, status, payment.get());
+                        PaymentDetails p = payment.get();
+                        if (paymentDetailsService.isDenied(p)) return HttpStatus.FORBIDDEN;
+
+                        processProgressReservation(r, status, p);
                         return HttpStatus.ACCEPTED;
                     }
                     break;

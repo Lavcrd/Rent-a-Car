@@ -10,8 +10,8 @@ import org.springframework.stereotype.Component;
 @Setter
 @NoArgsConstructor
 public class ConstantValues {
-    // Cost value of returning to different department than lending one
-    private double deptReturnPriceDiff = 120;
+    // Cost value of returning to different department than lending one (EUR)
+    private double deptReturnPriceDiff = 30;
 
     // Timeframe in days before the lending date when customers will have to pay a fee if the reservation is cancelled
     private long refundSubtractDaysDuration = 4;
