@@ -9,7 +9,7 @@ import com.sda.carrental.model.operational.Reservation;
 import com.sda.carrental.model.property.PaymentDetails;
 import com.sda.carrental.repository.PaymentDetailsRepository;
 import com.sda.carrental.service.auth.CustomUserDetails;
-import com.sda.carrental.web.mvc.form.operational.PaymentForm;
+import com.sda.carrental.web.mvc.form.property.payments.PaymentForm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -78,19 +78,25 @@ public class PaymentDetailsService {
     }
 
     @Transactional
-    public void processPayment(PaymentDetails pd) {
-        // Would require method to actually send money back to customer account
-        pd.setSecured(pd.getPayment());
-        pd.setPayment(0);
+    public HttpStatus processPayment(PaymentDetails pd) {
+        try {
+            // Would require method to actually send money back to customer account
+            pd.setSecured(pd.getPayment());
+            pd.setPayment(0);
 
-        double excessDeposit = pd.getDeposit() - pd.getInitialDeposit();
+            double excessDeposit = pd.getDeposit() - pd.getInitialDeposit();
 
-        if (excessDeposit > 0) {
-            pd.setDeposit(pd.getInitialDeposit());
-            pd.setReleasedDeposit(u.roundCurrency(pd.getReleasedDeposit() + excessDeposit));
+            if (excessDeposit > 0) {
+                pd.setDeposit(pd.getInitialDeposit());
+                pd.setReleasedDeposit(u.roundCurrency(pd.getReleasedDeposit() + excessDeposit));
+            }
+
+            repository.save(pd);
+            return HttpStatus.ACCEPTED;
+        } catch (RuntimeException e) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            return HttpStatus.INTERNAL_SERVER_ERROR;
         }
-
-        repository.save(pd);
     }
 
     @Transactional
@@ -140,7 +146,15 @@ public class PaymentDetailsService {
     }
 
     @Transactional
-    public HttpStatus handleCashPayment(Reservation reservation, PaymentForm form) {
+    public HttpStatus handlePayment(Reservation reservation, PaymentForm form) {
+        if (form.isCard()) {
+            return cardPayment(reservation, form);
+        }
+        return cashPayment(reservation, form);
+    }
+
+    @Transactional
+    public HttpStatus cashPayment(Reservation reservation, PaymentForm form) {
         try {
             double payment = u.roundCurrency(Double.parseDouble(form.getPayment()));
             double deposit = u.roundCurrency(Double.parseDouble(form.getDeposit()));
@@ -154,36 +168,87 @@ public class PaymentDetailsService {
             PaymentDetails pd = opd.get();
             pd.setPayment(pd.getPayment() + payment);
             pd.setDeposit(pd.getDeposit() + deposit);
+            if (pd.getDeposit() < 0 || pd.getPayment() < 0) throw new IllegalActionException();
+
             return HttpStatus.ACCEPTED;
         } catch (NumberFormatException e) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return HttpStatus.BAD_REQUEST;
+        } catch (IllegalActionException e) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            return HttpStatus.NOT_ACCEPTABLE;
         } catch (RuntimeException e) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return HttpStatus.INTERNAL_SERVER_ERROR;
         }
     }
 
-    public String getPaymentStatus(Long operationId) {
-        Optional<PaymentDetails> opd = getOptionalPaymentDetails(operationId);
-        if (opd.isEmpty()) return "Status: Payment not found.";
+    @Transactional
+    public HttpStatus cardPayment(Reservation reservation, PaymentForm form) {
+        try {
+            //an actual copy, but let's say this method invokes another process related to requesting response from card
+            double payment = u.roundCurrency(Double.parseDouble(form.getPayment()));
+            double deposit = u.roundCurrency(Double.parseDouble(form.getDeposit()));
 
-        PaymentDetails pd = opd.get();
-        boolean isPaid = pd.getPayment() >= (pd.getInitialCarFee() + pd.getInitialDivergenceFee()) && pd.getDeposit() >= pd.getDeposit();
-        if (isPaid) {
-            return "Status: Paid (Payment: " + pd.getPayment() + "/" + (pd.getInitialCarFee() + pd.getInitialDivergenceFee()) + ") (Deposit: " + pd.getDeposit() + "/" + pd.getInitialDeposit() + ")";
+            Optional<PaymentDetails> opd = getOptionalPaymentDetails(reservation.getId());
+            if (opd.isEmpty()) {
+                createReservationPayment(reservation, payment, deposit);
+                return HttpStatus.CREATED;
+            }
+
+            PaymentDetails pd = opd.get();
+            pd.setPayment(pd.getPayment() + payment);
+            pd.setDeposit(pd.getDeposit() + deposit);
+            if (pd.getDeposit() < 0 || pd.getPayment() < 0) throw new IllegalActionException();
+
+            return HttpStatus.ACCEPTED;
+        } catch (NumberFormatException e) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            return HttpStatus.BAD_REQUEST;
+        } catch (IllegalActionException e) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            return HttpStatus.NOT_ACCEPTABLE;
+        } catch (RuntimeException e) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            return HttpStatus.INTERNAL_SERVER_ERROR;
         }
-
-        return "Status: Insufficient (Payment: " + pd.getPayment() + "/" + (pd.getInitialCarFee() + pd.getInitialDivergenceFee()) + ") (Deposit: " + pd.getDeposit() + "/" + pd.getInitialDeposit() + ")";
     }
 
-    public boolean isDenied(PaymentDetails p) {
+    public String[] getPaymentStatus(Long operationId) {
+        Optional<PaymentDetails> opd = getOptionalPaymentDetails(operationId);
+        if (opd.isEmpty()) {
+            return new String[]{"Payment not found", "N/A", "N/A"};
+        }
+
+        PaymentDetails pd = opd.get();
+        boolean isPaid = pd.getPayment() >= (pd.getInitialCarFee() + pd.getInitialDivergenceFee()) && pd.getDeposit() >= pd.getInitialDeposit();
+        String payment = pd.getPayment() + " / " + (pd.getInitialCarFee() + pd.getInitialDivergenceFee());
+        String deposit = pd.getDeposit() + " / " + pd.getInitialDeposit();
+        if (isPaid) {
+            return new String[]{"Paid", payment, deposit};
+        }
+        return new String[]{"Insufficient", payment, deposit};
+    }
+
+    public boolean isDenied(PaymentDetails p, boolean isBypassed) {
         CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         boolean hasAuthority = Role.valueOf(cud.getAuthorities().toArray()[0].toString()).ordinal() >= Role.ROLE_MANAGER.ordinal();
-        boolean isPaid = p.getPayment() >= (p.getInitialCarFee() + p.getInitialDivergenceFee()) && p.getDeposit() >= p.getDeposit();
+        boolean isPaid = p.getPayment() >= (p.getInitialCarFee() + p.getInitialDivergenceFee()) && p.getDeposit() >= p.getInitialDeposit();
         if (!isPaid) {
-            return !hasAuthority;
+            return !isBypassed || !hasAuthority;
         }
         return false;
+    }
+
+    public HttpStatus securePayment(Reservation r, boolean isBypassed) {
+        Optional<PaymentDetails> opd = getOptionalPaymentDetails(r.getId());
+        if (opd.isEmpty()) {
+            return HttpStatus.PAYMENT_REQUIRED;
+        }
+
+        PaymentDetails p = opd.get();
+        if (isDenied(p, isBypassed)) return HttpStatus.FORBIDDEN;
+
+        return processPayment(p);
     }
 }

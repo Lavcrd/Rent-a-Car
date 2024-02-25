@@ -16,23 +16,27 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @ConsistentMileage(message = "Failure: Inconsistent mileage")
 public class ConfirmRentalForm extends ConfirmationForm {
+    @NotNull(message = "Failure: Missing form value.")
+    private boolean isIgnoredStatus;
+
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate dateFrom;
 
-    @NotNull(message = "Failure: Missing operation value")
+    @NotNull(message = "Failure: Missing operation value.")
     private Long reservationId;
 
-    @NotNull(message = "Failure: Car field must contain value")
+    @NotNull(message = "Failure: Car field must contain value.")
     private Long carId;
 
-    @NotNull(message = "Failure: Mileage field must contain value")
+    @NotNull(message = "Failure: Mileage field must contain value.")
     private Long mileage;
 
-    @NotEmpty(message = "Failure: Remarks field must contain a statement or description")
+    @NotEmpty(message = "Failure: Remarks field must contain a statement or description.")
     private String remarks;
 
     public ConfirmRentalForm(Long reservationId, LocalDate dateFrom) {
         this.reservationId = reservationId;
         this.dateFrom = dateFrom;
+        this.isIgnoredStatus = false;
     }
 }
