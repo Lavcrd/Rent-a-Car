@@ -326,6 +326,18 @@ h2.address {
     background: none;
 }
 
+.start-txt-lg {
+    color: black;
+    text-align: start;
+    font-size: large;
+}
+.start-subtxt-sm {
+    color: black;
+    text-align: start;
+    font-size: small;
+    font-style: italic;
+}
+
 /*Table helpers*/
 
 .table-fixed {

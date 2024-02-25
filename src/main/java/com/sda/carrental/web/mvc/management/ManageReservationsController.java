@@ -3,6 +3,7 @@ package com.sda.carrental.web.mvc.management;
 import com.sda.carrental.exceptions.IllegalActionException;
 import com.sda.carrental.global.ConstantValues;
 import com.sda.carrental.exceptions.ResourceNotFoundException;
+import com.sda.carrental.global.enums.Role;
 import com.sda.carrental.model.operational.Country;
 import com.sda.carrental.model.operational.Reservation;
 import com.sda.carrental.model.property.Department;
@@ -12,7 +13,7 @@ import com.sda.carrental.model.users.Customer;
 import com.sda.carrental.model.users.auth.Verification;
 import com.sda.carrental.service.*;
 import com.sda.carrental.service.auth.CustomUserDetails;
-import com.sda.carrental.web.mvc.form.operational.PaymentForm;
+import com.sda.carrental.web.mvc.form.property.payments.PaymentForm;
 import com.sda.carrental.web.mvc.form.property.cars.SubstituteCarBaseFilterForm;
 import com.sda.carrental.web.mvc.form.common.ConfirmationForm;
 import com.sda.carrental.web.mvc.form.operational.ConfirmClaimForm;
@@ -143,6 +144,7 @@ public class ManageReservationsController {
                 map.addAttribute("rental_confirmation_form", new ConfirmRentalForm(reservationId, LocalDate.now()));
                 map.addAttribute("payment_form", new PaymentForm(reservationId));
                 map.addAttribute("payment_status", paymentDetailsService.getPaymentStatus(reservationId));
+                map.addAttribute("authority", employeeService.hasMinimumAuthority(cud, Role.ROLE_MANAGER));
             } else if (reservation.getStatus().equals(Reservation.ReservationStatus.STATUS_PROGRESS)) {
                 map.addAttribute("rent_details", rentService.findById(reservation.getId()));
                 if (departmentId.equals(reservation.getDepartmentBack().getId())) {
@@ -324,7 +326,7 @@ public class ManageReservationsController {
             } else if (response.equals(HttpStatus.PAYMENT_REQUIRED)) {
                 redAtt.addFlashAttribute(MSG_KEY, "Failure: Payment not registered.");
             } else if (response.equals(HttpStatus.FORBIDDEN)) {
-                redAtt.addFlashAttribute(MSG_KEY, "Failure: Insufficient payment - requires Manager.");
+                redAtt.addFlashAttribute(MSG_KEY, "Failure: Insufficient payment - Permission required.");
             } else if (response.equals(HttpStatus.PRECONDITION_REQUIRED)) {
                 redAtt.addFlashAttribute(MSG_KEY, "Failure: Verification not registered.");
             } else if (response.equals(HttpStatus.CONFLICT)) {
@@ -363,12 +365,14 @@ public class ManageReservationsController {
                 return "redirect:/mg-res/{department}-{customer}/{reservation}";
             }
 
-            HttpStatus response = paymentDetailsService.handleCashPayment(r, form);
+            HttpStatus response = paymentDetailsService.handlePayment(r, form);
 
             if (response.equals(HttpStatus.CREATED)) {
                 redAtt.addFlashAttribute(MSG_KEY, "Success: Payment registered.");
             } else if (response.equals(HttpStatus.ACCEPTED)) {
-                redAtt.addFlashAttribute(MSG_KEY, "Failure: Payment values registered.");
+                redAtt.addFlashAttribute(MSG_KEY, "Success: Payment received.");
+            } else if (response.equals(HttpStatus.NOT_ACCEPTABLE)) {
+                redAtt.addFlashAttribute(MSG_KEY, "Failure: Action rejected - Insufficient resources.");
             } else {
                 redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
             }

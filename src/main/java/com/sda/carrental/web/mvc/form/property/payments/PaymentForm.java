@@ -1,4 +1,4 @@
-package com.sda.carrental.web.mvc.form.operational;
+package com.sda.carrental.web.mvc.form.property.payments;
 
 import com.sda.carrental.web.mvc.form.common.ConfirmationForm;
 import com.sda.carrental.web.mvc.form.validation.constraint.DoubleValue;
@@ -12,18 +12,22 @@ import javax.validation.constraints.NotNull;
 @Setter
 @NoArgsConstructor
 public class PaymentForm extends ConfirmationForm {
-    @NotNull(message = "Failure: Missing operation value")
+    @NotNull(message = "Failure: Missing operation value.")
     private Long reservationId;
 
-    @DoubleValue(message = "Failure: Incorrect deposit value", allowedPositive = true, allowedZero = true, allowedNegative = true)
+    @DoubleValue(message = "Failure: Incorrect deposit value.", allowedPositive = true, allowedZero = true, allowedNegative = true)
     private String deposit;
 
-    @DoubleValue(message = "Failure: Incorrect payment value", allowedPositive = true, allowedZero = true, allowedNegative = true)
+    @DoubleValue(message = "Failure: Incorrect payment value.", allowedPositive = true, allowedZero = true, allowedNegative = true)
     private String payment;
+
+    @NotNull(message = "Failure: Missing payment type.")
+    private boolean isCard;
 
     public PaymentForm(Long reservationId) {
         this.reservationId = reservationId;
         this.deposit = String.valueOf(0.0);
         this.payment = String.valueOf(0.0);
+        this.isCard = false;
     }
 }

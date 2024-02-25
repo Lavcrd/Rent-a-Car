@@ -187,7 +187,12 @@
                                             </div>
                                             <div class="modal-body">
                                                 <input type="hidden" th:field="*{reservationId}">
-                                                <p th:text="${payment_status}"></p>
+                                                <div>
+                                                    <div th:text="'Status: ' + ${payment_status[0]}" class="start-txt-lg"></div>
+                                                    <div th:text="'Payment: ' + ${payment_status[1]}" class="start-subtxt-sm"></div>
+                                                    <div th:text="'Deposit: ' + ${payment_status[2]}" class="start-subtxt-sm"></div>
+                                                </div>
+
                                                 <div class="form-group">
                                                     <div class="column">
                                                         <label for="car_select"></label>
@@ -227,6 +232,17 @@
                                                     <textarea name="remarks" th:field="*{remarks}"
                                                               class="form-control" id="message-text"></textarea>
                                                 </div>
+                                                <div class="form-switch d-flex mt-3">
+                                                    <div class="col-sm-1 d-flex" style="justify-content:start;">
+                                                        <input class="form-check-input btn btn-sm btn-dark bg-white index-switch"
+                                                            type="checkbox" role="switch" name="ignoredStatus"
+                                                            id="switch-ignore-status"
+                                                            th:checked="*{ignoredStatus}" th:disabled="${!authority}"
+                                                    /></div>
+                                                    <div class="col-sm-11 d-flex" style="justify-content:start;font-size:small;">
+                                                        <label for="switch-ignore-status" th:style="${!authority} ? 'color:gray;' : 'color:black;'">Ignore payment status</label>
+                                                    </div>
+                                                </div>
                                                 <div class="form-group">
                                                     <label for="r_confirm_password" class="col-form-label">Confirm
                                                         action with a password</label>
@@ -259,9 +275,8 @@
                                         data-bs-toggle="modal"
                                         data-bs-target="#payment_modal">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                         class="bi bi-check-circle" viewBox="0 0 16 16">
-                                        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
-                                        <path d="M10.97 4.97a.235.235 0 0 0-.02.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05z"/>
+                                         class="bi bi-wallet2" viewBox="0 0 16 16">
+                                        <path d="M12.136.326A1.5 1.5 0 0 1 14 1.78V3h.5A1.5 1.5 0 0 1 16 4.5v9a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 0 13.5v-9a1.5 1.5 0 0 1 1.432-1.499zM5.562 3H13V1.78a.5.5 0 0 0-.621-.484zM1.5 4a.5.5 0 0 0-.5.5v9a.5.5 0 0 0 .5.5h13a.5.5 0 0 0 .5-.5v-9a.5.5 0 0 0-.5-.5z"/>
                                     </svg>
                                     Payment
                                 </button>
@@ -280,14 +295,36 @@
                                             </div>
                                             <div class="modal-body">
                                                 <input type="hidden" th:field="*{reservationId}">
-                                                <p>Add payment to the rental.</p>
-                                                <p th:text="${payment_status}"></p>
+                                                <div class="form-group"
+                                                     style="flex-direction: row;justify-content:space-evenly;">
+                                                    <div class="col-sm-6">
+                                                        <div th:text="'Status: ' + ${payment_status[0]}" class="start-txt-lg"></div>
+                                                        <div th:text="'Payment: ' + ${payment_status[1]}" class="start-subtxt-sm"></div>
+                                                        <div th:text="'Deposit: ' + ${payment_status[2]}" class="start-subtxt-sm"></div>
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <input id="is_card1" name="is_card" type="radio" value="true"
+                                                               class="btn-check"
+                                                               th:field="*{card}">
+                                                        <label for="is_card1" class="btn btn-outline-dark btn-sm w-100">Card</label>
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <input id="is_card2" name="is_card" type="radio" value="false"
+                                                               class="btn-check"
+                                                               th:field="*{card}" checked>
+                                                        <label for="is_card2" class="btn btn-outline-dark btn-sm w-100"
+                                                               style="margin-left: 0.5em;">Cash</label>
+                                                    </div>
+                                                </div>
+
                                                 <div class="form-group"
                                                      style="flex-direction:row;justify-content:space-between;">
                                                     <div class="col-sm-5">
                                                         <label for="add_payment_rent"
-                                                               class="col-form-label" th:utext="'<svg xmlns=&quot;http://www.w3.org/2000/svg&quot; width=&quot;16&quot; height=&quot;16&quot; fill=&quot;currentColor&quot; class=&quot;bi bi-info-circle&quot; viewBox=&quot;0 0 16 16&quot; data-toggle=&quot;tooltip&quot; data-placement=&quot;top&quot; title=&quot;Use this field to add extra value to the payment, such as unexpected purchases in the rental department. Enter a positive amount for additional costs and a negative amount for discounts.&quot;><path d=&quot;M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z&quot;/>
-<path d=&quot;m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z&quot;/></svg> ' + 'Add payment:'"></label>
+                                                               class="col-form-label"
+                                                               th:utext="'<svg xmlns=&quot;http://www.w3.org/2000/svg&quot; width=&quot;16&quot; height=&quot;16&quot; fill=&quot;currentColor&quot; class=&quot;bi bi-info-circle&quot; viewBox=&quot;0 0 16 16&quot; data-toggle=&quot;tooltip&quot; data-placement=&quot;top&quot; title=&quot;Use this field to add extra value to the payment, such as unexpected purchases in the rental department. Enter a positive amount for additional costs and a negative amount for discounts.&quot;><path d=&quot;M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z&quot;/>
+<path d=&quot;m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z&quot;/></svg> ' + 'Add payment:'">
+                                                        </label>
 
                                                         <input id="add_payment_rent" type="number" step="0.01"
                                                                th:field="*{payment}"
@@ -297,13 +334,14 @@
                                                         <label for="add_deposit_rent"
                                                                class="col-form-label"
                                                                th:utext="'<svg xmlns=&quot;http://www.w3.org/2000/svg&quot; width=&quot;16&quot; height=&quot;16&quot; fill=&quot;currentColor&quot; class=&quot;bi bi-info-circle&quot; viewBox=&quot;0 0 16 16&quot; data-toggle=&quot;tooltip&quot; data-placement=&quot;top&quot; title=&quot;This field allows you to specify any additional deposit amount in case of a car substitution. Any amount over the required deposit will be automatically returned to the customer upon rental submission.&quot;><path d=&quot;M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z&quot;/>
-<path d=&quot;m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z&quot;/></svg> ' + 'Add deposit:'"></label>
+<path d=&quot;m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z&quot;/></svg> ' + 'Add deposit:'">
                                                         </label>
                                                         <input id="add_deposit_rent" type="number" step="0.01"
                                                                th:field="*{deposit}"
                                                                class="form-control" required>
                                                     </div>
                                                 </div>
+
 
                                                 <div class="form-group">
                                                     <label for="p_confirm_password" class="col-form-label">Confirm

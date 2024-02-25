@@ -23,6 +23,7 @@ import java.util.Optional;
 public class RentService {
     private final RentRepository repository;
     private final ReservationService reservationService;
+    private final PaymentDetailsService paymentDetailsService;
     private final CarService carService;
 
     public Rent findById(Long id) throws ResourceNotFoundException {
@@ -33,17 +34,21 @@ public class RentService {
     public HttpStatus createRent(Long customerId, ConfirmRentalForm form) {
         try {
             CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            HttpStatus status = reservationService.handleReservationStatus(customerId, form.getReservationId(), Reservation.ReservationStatus.STATUS_PROGRESS);
-            if (status.equals(HttpStatus.ACCEPTED)) {
-                Reservation r = reservationService.findById(form.getReservationId());
+            Reservation r = reservationService.findById(form.getReservationId());
+
+            HttpStatus response = paymentDetailsService.securePayment(r, form.isIgnoredStatus());
+
+            if (response.equals(HttpStatus.ACCEPTED)) {
+                HttpStatus status = reservationService.handleReservationStatus(customerId, form.getReservationId(), Reservation.ReservationStatus.STATUS_PROGRESS);
                 Car c = carService.findAvailableCar(form.getCarId(), r.getDepartmentTake().getId());
 
                 if (carService.isCarUnavailable(c)) throw new IllegalActionException();
                 carService.updateCarStatus(c, Car.CarStatus.STATUS_RENTED);
 
                 repository.save(new Rent(form.getReservationId(), r, c, cud.getId(), form.getRemarks(), form.getDateFrom(), form.getMileage()));
+                return status;
             }
-            return status;
+            return response;
         } catch (DataAccessException err) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return HttpStatus.INTERNAL_SERVER_ERROR;

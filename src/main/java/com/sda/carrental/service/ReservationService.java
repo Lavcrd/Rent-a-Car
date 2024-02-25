@@ -5,7 +5,6 @@ import com.sda.carrental.exceptions.IllegalActionException;
 import com.sda.carrental.exceptions.ResourceNotFoundException;
 import com.sda.carrental.model.operational.Reservation;
 import com.sda.carrental.model.property.Department;
-import com.sda.carrental.model.property.PaymentDetails;
 import com.sda.carrental.model.property.car.CarBase;
 import com.sda.carrental.model.users.Customer;
 import com.sda.carrental.repository.ReservationRepository;
@@ -22,7 +21,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -124,15 +122,7 @@ public class ReservationService {
                             return HttpStatus.PRECONDITION_REQUIRED;
                         }
 
-                        Optional<PaymentDetails> payment = paymentDetailsService.getOptionalPaymentDetails(r.getId());
-                        if (payment.isEmpty()) {
-                            return HttpStatus.PAYMENT_REQUIRED;
-                        }
-
-                        PaymentDetails p = payment.get();
-                        if (paymentDetailsService.isDenied(p)) return HttpStatus.FORBIDDEN;
-
-                        processProgressReservation(r, status, p);
+                        processProgressReservation(r, status);
                         return HttpStatus.ACCEPTED;
                     }
                     break;
@@ -171,8 +161,7 @@ public class ReservationService {
     }
 
     @Transactional
-    private void processProgressReservation(Reservation r, Reservation.ReservationStatus status, PaymentDetails payment) {
-        paymentDetailsService.processPayment(payment);
+    private void processProgressReservation(Reservation r, Reservation.ReservationStatus status) {
         updateReservationStatus(r, status);
     }
 
