@@ -1,20 +1,20 @@
 package com.sda.carrental.model;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity(name = "company")
 @Getter
 @NoArgsConstructor
-@AllArgsConstructor
 public class Company {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false)
+    Long id;
+
     @Column(name = "name", nullable = false)
     String name;
 
@@ -26,5 +26,12 @@ public class Company {
 
     @Column(name = "logotype", nullable = false)
     String logotype;
+
+    public Company(String name, String website, String owner, String logotype) {
+        this.name = name;
+        this.website = website;
+        this.owner = owner;
+        this.logotype = logotype;
+    }
 }
 
