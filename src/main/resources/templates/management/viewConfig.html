@@ -42,8 +42,9 @@
                 </tr>
                 <tr>
                     <td>
-                        <div class="overflow-cell-hs car-img"
-                             th:src="${company.logotype}" alt="logotype image">
+                        <div class="overflow-cell-hs w-100"
+                             th:src="${company.logotype}"
+                             style="min-height: 3em;background-color: whitesmoke;max-height: 3em;">
                         </div>
                     </td>
                 </tr>
@@ -66,6 +67,17 @@
                     <td>
                         <div class="overflow-cell-hs"
                              th:text="${company.owner}">
+                        </div>
+                    </td>
+                </tr>
+
+                <tr class="table-dark">
+                    <td>Website:</td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="overflow-cell-hs"
+                             th:utext="'<a href=&quot;' + ${company.website} + '&quot;>' + ${company.website} + '</a>'">
                         </div>
                     </td>
                 </tr>
@@ -99,44 +111,91 @@
 
                 <tr>
                     <td class="button-cell">
-                        <button type="button" class="btn btn-dark bg-dark mt-1 list-button w-100"
-                                data-bs-toggle="modal"
-                                data-bs-target="#exampleModal">
+                        <button type="button" class="btn btn-dark bg-dark mt-1 list-button w-100">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                                  fill="currentColor"
                                  class="bi bi-circle cb-svg" viewBox="0 0 16 16">
                                 <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
                             </svg>
-                            <div class="list-button-text">Example</div>
+                            <div class="list-button-text">Admins</div>
                         </button>
                     </td>
-                    <td class="short-description-cell">Example description.</td>
+                    <td class="short-description-cell">Manage admins.</td>
+                </tr>
+
+                <tr>
+                    <td class="button-cell">
+                        <button type="button" class="btn btn-dark bg-dark mt-1 list-button w-100"
+                                data-bs-toggle="modal"
+                                data-bs-target="#logotypeModal">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                 fill="currentColor"
+                                 class="bi bi-circle cb-svg" viewBox="0 0 16 16">
+                                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                            </svg>
+                            <div class="list-button-text">Logotype</div>
+                        </button>
+                    </td>
+                    <td class="short-description-cell">Change logotype.</td>
+                </tr>
+
+                <tr>
+                    <td class="button-cell">
+                        <button type="button" class="btn btn-dark bg-dark mt-1 list-button w-100"
+                                data-bs-toggle="modal"
+                                data-bs-target="#detailsModal">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                 fill="currentColor"
+                                 class="bi bi-circle cb-svg" viewBox="0 0 16 16">
+                                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                            </svg>
+                            <div class="list-button-text">Details</div>
+                        </button>
+                    </td>
+                    <td class="short-description-cell">Change company details.</td>
                 </tr>
                 </tbody>
             </table>
 
             <!--&lt;!&ndash;Details modal&ndash;&gt;
-            <form th:method="POST" th:object="${example_form}"
-                  th:action="@{'/mg-dpt/' + ${example.id} + '/update-example'}">
-                <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog"
+            <form th:method="POST" th:object="${details_form}"
+                  th:action="@{'/mg-cfg/update-details'}">
+                <div class="modal fade" id="detailsModal" tabindex="-1" role="dialog"
                      aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered" role="document">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title">Example</h5>
+                                <h5 class="modal-title">Details</h5>
                                 <button type="button" class="close" data-bs-dismiss="modal"
                                         aria-label="Close">
                                     <span aria-hidden="true">×</span>
                                 </button>
                             </div>
                             <div class="modal-body">
-                                <p>Example</p>
                                 <div class="modal-row mt-2">
-                                    <label style="justify-self: start;" for="c_example"
-                                           class="form-label">Example: </label>
-                                    <input id="c_example" class="text-black bg-white modal-input"
-                                           placeholder="Example"
-                                           th:type="text" th:field="*{example}"
+                                    <label style="justify-self: start;" for="c_name"
+                                           class="form-label">Name: </label>
+                                    <input id="c_name" class="text-black bg-white modal-input"
+                                           placeholder="Company name"
+                                           th:type="text" th:field="*{name}"
+                                           required/>
+                                </div>
+
+                                <div class="modal-row mt-2">
+                                    <label style="justify-self: start;" for="c_owner"
+                                           class="form-label">Owner: </label>
+                                    <input id="c_owner" class="text-black bg-white modal-input"
+                                           placeholder="Company owner"
+                                           th:type="text" th:field="*{owner}"
+                                           required/>
+                                </div>
+
+                                <div class="modal-row mt-2">
+                                    <label style="justify-self: start;" for="c_website"
+                                           class="form-label">Website: </label>
+                                    <input id="c_website" class="text-black bg-white modal-input"
+                                           placeholder="www.website.xyz"
+                                           th:type="text" th:field="*{website}"
                                            required/>
                                 </div>
 
@@ -145,10 +204,50 @@
                                 </div>
 
                                 <div class="modal-row mt-2">
-                                    <label style="justify-self: start;" for="c_confirmation"
+                                    <label style="justify-self: start;" for="c_details_confirm"
                                            class="text-md">Password: </label>
-                                    <input id="c_confirmation" class="text-black bg-white modal-input"
+                                    <input id="c_details_confirm" class="text-black bg-white modal-input"
                                            placeholder="Confirmation password"
+                                           th:type="password" th:field="*{currentPassword}"
+                                           autocomplete="new-password"
+                                           required/>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-dark" data-bs-dismiss="modal">
+                                    Close
+                                </button>
+                                <button type="submit" class="btn btn-dark">Confirm</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>-->
+
+            <!--&lt;!&ndash;Logotype Modal&ndash;&gt;
+            <form th:method="POST" th:object="${update_logotype}"
+                  th:action="@{'/mg-cfg/update-logotype'}" enctype="multipart/form-data">
+                <div class="modal fade" id="logotypeModal" tabindex="-1" role="dialog"
+                     aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Update logotype</h5>
+                                <button type="button" class="close" data-bs-dismiss="modal"
+                                        aria-label="Close">
+                                    <span aria-hidden="true">×</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="input-group my-3">
+                                    <input id="c_logotype" class="text-black bg-white form-control"
+                                           th:type="file" th:field="*{logotype}" required/>
+                                </div>
+                                <div class="modal-row mt-2">
+                                    <label style="justify-self: start;" for="c_logotype_confirm"
+                                           class="text-md">Password: </label>
+                                    <input id="c_logotype_confirm" class="text-black bg-white modal-input"
+                                           th:placeholder="'Confirm with password'"
                                            th:type="password" th:field="*{currentPassword}"
                                            autocomplete="new-password"
                                            required/>
