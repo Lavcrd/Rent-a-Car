@@ -8,6 +8,7 @@ import com.sda.carrental.model.property.car.CarBase;
 import com.sda.carrental.service.*;
 import com.sda.carrental.service.auth.CustomUserDetails;
 import com.sda.carrental.web.mvc.form.common.ConfirmationForm;
+import com.sda.carrental.web.mvc.form.common.UpdateImageForm;
 import com.sda.carrental.web.mvc.form.property.cars.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -81,7 +82,7 @@ public class ManageCarBasesController {
             CarBase carBase = carBaseService.findById(carBaseId);
 
             map.addAttribute("confirmation_form", new ConfirmationForm());
-            map.addAttribute("update_image_form", new UpdateCarBaseImageForm());
+            map.addAttribute("update_image_form", new UpdateImageForm());
             map.addAttribute("split_form", map.getOrDefault("split_form", new SplitCarBaseForm()));
             map.addAttribute("update_price_form", map.getOrDefault("update_price_form", new UpdateCarBasePricesForm(carBase.getPriceDay().toString(), carBase.getDepositValue().toString())));
             map.addAttribute("register_form", map.getOrDefault("register_form", new RegisterCarForm(carBase.getId())));
@@ -192,7 +193,7 @@ public class ManageCarBasesController {
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/{carBaseId}/update-image")
-    public String updateCarBaseImageButton(@ModelAttribute("update_image_form") @Valid UpdateCarBaseImageForm form, Errors errors, RedirectAttributes redAtt, @PathVariable("carBaseId") Long carBaseId) {
+    public String updateCarBaseImageButton(@ModelAttribute("update_image_form") @Valid UpdateImageForm form, Errors errors, RedirectAttributes redAtt, @PathVariable("carBaseId") Long carBaseId) {
         try {
             if (errors.hasErrors()) {
                 redAtt.addFlashAttribute(MSG_KEY, errors.getAllErrors().get(0).getDefaultMessage());
@@ -203,7 +204,6 @@ public class ManageCarBasesController {
             HttpStatus status = carBaseService.handleCarBaseImageUpdate(cb, form.getImage());
             if (status.equals(HttpStatus.ACCEPTED)) {
                 redAtt.addFlashAttribute(MSG_KEY, "Success: Image file of '" + cb.getBrand() + ' ' + cb.getModel() + "' successfully updated");
-                return "redirect:/mg-car/car-bases/{carBaseId}";
             } else {
                 redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
             }

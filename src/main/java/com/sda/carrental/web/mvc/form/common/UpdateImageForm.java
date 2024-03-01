@@ -1,6 +1,5 @@
-package com.sda.carrental.web.mvc.form.property.cars;
+package com.sda.carrental.web.mvc.form.common;
 
-import com.sda.carrental.web.mvc.form.common.ConfirmationForm;
 import com.sda.carrental.web.mvc.form.validation.constraint.ImageFile;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,7 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Setter
 @RequiredArgsConstructor
 @AllArgsConstructor
-public class UpdateCarBaseImageForm extends ConfirmationForm {
+public class UpdateImageForm extends ConfirmationForm {
 
     @ImageFile
     private MultipartFile image;

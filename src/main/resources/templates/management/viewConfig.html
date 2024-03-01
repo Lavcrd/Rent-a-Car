@@ -97,30 +97,18 @@
                 <tbody>
                 <tr>
                     <td class="button-cell">
-                        <button type="button" class="btn btn-dark bg-dark mt-1 list-button w-100">
+                        <button type="button" class="btn btn-dark bg-dark mt-1 list-button w-100"
+                                data-bs-toggle="modal"
+                                data-bs-target="#detailsModal">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                                  fill="currentColor"
                                  class="bi bi-circle cb-svg" viewBox="0 0 16 16">
                                 <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
                             </svg>
-                            <div class="list-button-text">Countries</div>
+                            <div class="list-button-text">Details</div>
                         </button>
                     </td>
-                    <td class="short-description-cell">Manage countries.</td>
-                </tr>
-
-                <tr>
-                    <td class="button-cell">
-                        <button type="button" class="btn btn-dark bg-dark mt-1 list-button w-100">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                 fill="currentColor"
-                                 class="bi bi-circle cb-svg" viewBox="0 0 16 16">
-                                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
-                            </svg>
-                            <div class="list-button-text">Admins</div>
-                        </button>
-                    </td>
-                    <td class="short-description-cell">Manage admins.</td>
+                    <td class="short-description-cell">Change company details.</td>
                 </tr>
 
                 <tr>
@@ -141,23 +129,36 @@
 
                 <tr>
                     <td class="button-cell">
-                        <button type="button" class="btn btn-dark bg-dark mt-1 list-button w-100"
-                                data-bs-toggle="modal"
-                                data-bs-target="#detailsModal">
+                        <button type="button" class="btn btn-dark bg-dark mt-1 list-button w-100">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                                  fill="currentColor"
                                  class="bi bi-circle cb-svg" viewBox="0 0 16 16">
                                 <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
                             </svg>
-                            <div class="list-button-text">Details</div>
+                            <div class="list-button-text">Admins</div>
                         </button>
                     </td>
-                    <td class="short-description-cell">Change company details.</td>
+                    <td class="short-description-cell">Manage admins.</td>
                 </tr>
+
+                <tr>
+                    <td class="button-cell">
+                        <button type="button" class="btn btn-dark bg-dark mt-1 list-button w-100">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                 fill="currentColor"
+                                 class="bi bi-circle cb-svg" viewBox="0 0 16 16">
+                                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                            </svg>
+                            <div class="list-button-text">Countries</div>
+                        </button>
+                    </td>
+                    <td class="short-description-cell">Manage countries.</td>
+                </tr>
+
                 </tbody>
             </table>
 
-            <!--&lt;!&ndash;Details modal&ndash;&gt;
+            <!--Details modal-->
             <form th:method="POST" th:object="${details_form}"
                   th:action="@{'/mg-cfg/update-details'}">
                 <div class="modal fade" id="detailsModal" tabindex="-1" role="dialog"
@@ -222,10 +223,10 @@
                         </div>
                     </div>
                 </div>
-            </form>-->
+            </form>
 
-            <!--&lt;!&ndash;Logotype Modal&ndash;&gt;
-            <form th:method="POST" th:object="${update_logotype}"
+            <!--Logotype Modal-->
+            <form th:method="POST" th:object="${logotype_form}"
                   th:action="@{'/mg-cfg/update-logotype'}" enctype="multipart/form-data">
                 <div class="modal fade" id="logotypeModal" tabindex="-1" role="dialog"
                      aria-hidden="true">
@@ -241,7 +242,7 @@
                             <div class="modal-body">
                                 <div class="input-group my-3">
                                     <input id="c_logotype" class="text-black bg-white form-control"
-                                           th:type="file" th:field="*{logotype}" required/>
+                                           th:type="file" th:field="*{image}" required/>
                                 </div>
                                 <div class="modal-row mt-2">
                                     <label style="justify-self: start;" for="c_logotype_confirm"
@@ -262,7 +263,7 @@
                         </div>
                     </div>
                 </div>
-            </form>-->
+            </form>
         </div>
         <div th:insert="fragments/bottom::message-handler"></div>
     </div>
