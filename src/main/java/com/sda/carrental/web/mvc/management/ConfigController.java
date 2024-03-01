@@ -1,10 +1,11 @@
 package com.sda.carrental.web.mvc.management;
 
+import com.sda.carrental.model.Company;
 import com.sda.carrental.service.*;
-import com.sda.carrental.service.auth.CustomUserDetails;
-import com.sda.carrental.web.mvc.form.common.ConfirmationForm;
+import com.sda.carrental.web.mvc.form.common.UpdateImageForm;
+import com.sda.carrental.web.mvc.form.property.company.UpdateDetailsForm;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.Errors;
@@ -30,7 +31,10 @@ public class ConfigController {
     @RequestMapping(method = RequestMethod.GET)
     public String viewCompanyPage(ModelMap map, RedirectAttributes redAtt) {
         try {
-            map.addAttribute("company", companyService.get());
+            Company company = companyService.get();
+            map.addAttribute("company", company);
+            map.addAttribute("logotype_form", new UpdateImageForm());
+            map.addAttribute("details_form", new UpdateDetailsForm(company));
 
             return "management/viewConfig";
         } catch (RuntimeException e) {
@@ -40,13 +44,45 @@ public class ConfigController {
     }
 
     //Company page buttons
-    @RequestMapping(method = RequestMethod.POST, value = "/example")
-    public String exampleButton(@ModelAttribute("example") @Valid ConfirmationForm form, Errors err, RedirectAttributes redAtt) {
-        if (err.hasErrors()) {
-            return "redirect:/mg-cfg";
-        }
+    @RequestMapping(method = RequestMethod.POST, value = "/update-logotype")
+    public String updateLogotypeButton(@ModelAttribute("logotype_form") @Valid UpdateImageForm form, Errors errors, RedirectAttributes redAtt) {
+        try {
+            if (errors.hasErrors()) {
+                redAtt.addFlashAttribute(MSG_KEY, errors.getAllErrors().get(0).getDefaultMessage());
+                return "redirect:/mg-cfg";
+            }
 
-        redAtt.addFlashAttribute("results", null);
-        return "redirect:/mg-cfg";
+            HttpStatus status = companyService.updateLogotype(form.getImage());
+            if (status.equals(HttpStatus.ACCEPTED)) {
+                redAtt.addFlashAttribute(MSG_KEY, "Success: Logotype successfully updated");
+            } else {
+                redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
+            }
+            return "redirect:/mg-cfg";
+        } catch (RuntimeException err) {
+            redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
+        }
+        return "redirect:/";
+    }
+
+    @RequestMapping(method = RequestMethod.POST, value = "/update-details")
+    public String updateDetailsButton(@ModelAttribute("details_form") @Valid UpdateDetailsForm form, Errors errors, RedirectAttributes redAtt) {
+        try {
+            if (errors.hasErrors()) {
+                redAtt.addFlashAttribute(MSG_KEY, errors.getAllErrors().get(0).getDefaultMessage());
+                return "redirect:/mg-cfg";
+            }
+
+            HttpStatus status = companyService.updateDetails(form);
+            if (status.equals(HttpStatus.ACCEPTED)) {
+                redAtt.addFlashAttribute(MSG_KEY, "Success: Details successfully updated");
+            } else {
+                redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
+            }
+            return "redirect:/mg-cfg";
+        } catch (RuntimeException err) {
+            redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
+        }
+        return "redirect:/";
     }
 }
