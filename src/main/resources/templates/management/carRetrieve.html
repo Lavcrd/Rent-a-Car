@@ -130,7 +130,7 @@
                                     Status
                                 </button>
 
-                                <!--Modal-->
+                                <!--Details Modal-->
                                 <div class="modal fade" id="rent_details" tabindex="-1" role="dialog"
                                      aria-hidden="true">
                                     <div class="modal-dialog modal-dialog-centered" role="document">
@@ -167,7 +167,7 @@
                                     <input type="hidden" th:name="customer" th:value="${reservation.customer.id}">
                                     <input type="hidden" th:name="plate" th:value="${rent_details.car.plate}">
 
-                                    <!--Trigger for return modal-->
+                                    <!--Trigger for claim modal-->
                                     <button type="button" class="btn btn-dark bg-dark mt-2 w-100 def-button-text" data-bs-toggle="modal"
                                             data-bs-target="#retrieve_confirmation_modal">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
@@ -178,7 +178,7 @@
                                         Claim
                                     </button>
 
-                                    <!--Modal-->
+                                    <!--Claim Modal-->
                                     <div class="modal fade" id="retrieve_confirmation_modal" tabindex="-1" role="dialog"
                                          aria-hidden="true">
                                         <div class="modal-dialog modal-dialog-centered" role="document">
