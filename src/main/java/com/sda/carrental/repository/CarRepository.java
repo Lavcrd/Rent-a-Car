@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import com.sda.carrental.model.property.car.Car;
-import com.sda.carrental.model.property.Department;
+import com.sda.carrental.model.property.department.Department;
 import com.sda.carrental.model.property.car.CarBase;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

@@ -1,6 +1,6 @@
 package com.sda.carrental.repository;
 
-import com.sda.carrental.model.operational.Country;
+import com.sda.carrental.model.property.department.Country;
 import com.sda.carrental.model.property.car.CarBase;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;

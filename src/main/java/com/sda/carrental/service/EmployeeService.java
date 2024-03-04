@@ -3,7 +3,7 @@ package com.sda.carrental.service;
 import com.sda.carrental.exceptions.ResourceNotFoundException;
 import com.sda.carrental.global.enums.Role;
 import com.sda.carrental.model.operational.Reservation;
-import com.sda.carrental.model.property.Department;
+import com.sda.carrental.model.property.department.Department;
 import com.sda.carrental.model.property.car.Car;
 import com.sda.carrental.model.users.Employee;
 import com.sda.carrental.model.users.User;
@@ -28,6 +28,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class EmployeeService {
     private final EmployeeRepository repository;
+    private final AdminService adminService;
     private final DepartmentService departmentService;
     private final ReservationService reservationService;
     private final CredentialsService credentialsService;
@@ -162,6 +163,8 @@ public class EmployeeService {
 
     public boolean hasMinimumAuthority(CustomUserDetails cud, Role role) {
         try {
+            if (adminService.hasAdminAuthority(cud)) return true;
+
             return findById(cud.getId()).getRole().ordinal() >= role.ordinal();
         } catch (Exception e) {
             return false;

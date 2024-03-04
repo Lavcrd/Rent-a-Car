@@ -10,6 +10,8 @@ import org.springframework.stereotype.Component;
 @Setter
 @NoArgsConstructor
 public class ConstantValues {
+    // At app run these could be set from db (using service). Will be modified from mg-cfg - TODO
+
     // Cost value of returning to different department than lending one (EUR)
     private double deptReturnPriceDiff = 30;
 
@@ -27,5 +29,4 @@ public class ConstantValues {
 
     // Maximum permitted file size in bytes
     private long maxFileSize = 1024*1024;
-    
 }

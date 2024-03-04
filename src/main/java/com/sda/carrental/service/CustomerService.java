@@ -1,7 +1,7 @@
 package com.sda.carrental.service;
 
 import com.sda.carrental.exceptions.ResourceNotFoundException;
-import com.sda.carrental.model.operational.Country;
+import com.sda.carrental.model.property.department.Country;
 import com.sda.carrental.model.operational.Reservation;
 import com.sda.carrental.model.users.Customer;
 import com.sda.carrental.model.users.auth.Verification;

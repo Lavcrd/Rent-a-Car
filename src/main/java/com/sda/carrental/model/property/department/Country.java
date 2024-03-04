@@ -1,4 +1,4 @@
-package com.sda.carrental.model.operational;
+package com.sda.carrental.model.property.department;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,6 +17,7 @@ public class Country {
         this.contact = contact;
         this.currency = currency;
         this.exchange = exchange;
+        this.isActive = false;
     }
 
     @Id
@@ -24,18 +25,21 @@ public class Country {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @Column(name = "name", unique = true)
+    @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "code", unique = true)
+    @Column(name = "code", nullable = false)
     private String code;
 
-    @Column(name = "contact", unique = true)
+    @Column(name = "contact", nullable = false)
     private String contact;
 
-    @Column(name = "currency_used")
+    @Column(name = "currency_used", nullable = false)
     private String currency;
 
-    @Column(name = "exchange_rate")
+    @Column(name = "exchange_rate", nullable = false)
     private Double exchange;
+
+    @Column(name = "is_active", nullable = false)
+    private boolean isActive;
 }

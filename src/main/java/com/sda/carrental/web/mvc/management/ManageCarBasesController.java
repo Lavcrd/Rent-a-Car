@@ -3,7 +3,7 @@ package com.sda.carrental.web.mvc.management;
 import com.sda.carrental.exceptions.IllegalActionException;
 import com.sda.carrental.exceptions.ResourceNotFoundException;
 import com.sda.carrental.global.Utility;
-import com.sda.carrental.model.property.Department;
+import com.sda.carrental.model.property.department.Department;
 import com.sda.carrental.model.property.car.CarBase;
 import com.sda.carrental.service.*;
 import com.sda.carrental.service.auth.CustomUserDetails;

@@ -1,7 +1,7 @@
 package com.sda.carrental.service;
 
 import com.sda.carrental.exceptions.IllegalActionException;
-import com.sda.carrental.model.operational.Country;
+import com.sda.carrental.model.property.department.Country;
 import com.sda.carrental.model.users.auth.Verification;
 import com.sda.carrental.repository.VerificationRepository;
 import com.sda.carrental.web.mvc.form.users.customer.VerificationForm;

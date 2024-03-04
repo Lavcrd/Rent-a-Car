@@ -2,7 +2,7 @@ package com.sda.carrental.repository;
 
 import com.sda.carrental.model.operational.Retrieve;
 import com.sda.carrental.model.property.car.Car;
-import com.sda.carrental.model.property.Department;
+import com.sda.carrental.model.property.department.Department;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;

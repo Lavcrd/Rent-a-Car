@@ -2,7 +2,7 @@ package com.sda.carrental.model.operational;
 
 import java.time.LocalDate;
 
-import com.sda.carrental.model.property.Department;
+import com.sda.carrental.model.property.department.Department;
 import com.sda.carrental.model.property.car.CarBase;
 import com.sda.carrental.model.users.Customer;
 import lombok.Getter;
