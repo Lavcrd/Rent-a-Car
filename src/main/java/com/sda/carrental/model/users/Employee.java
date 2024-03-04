@@ -1,7 +1,7 @@
 package com.sda.carrental.model.users;
 
 import com.sda.carrental.global.enums.Role;
-import com.sda.carrental.model.property.Department;
+import com.sda.carrental.model.property.department.Department;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

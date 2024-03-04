@@ -2,9 +2,9 @@ package com.sda.carrental.web.mvc.user;
 
 import com.sda.carrental.global.ConstantValues;
 import com.sda.carrental.exceptions.ResourceNotFoundException;
-import com.sda.carrental.model.operational.Country;
+import com.sda.carrental.model.property.department.Country;
 import com.sda.carrental.model.operational.Reservation;
-import com.sda.carrental.model.property.Department;
+import com.sda.carrental.model.property.department.Department;
 import com.sda.carrental.model.property.PaymentDetails;
 import com.sda.carrental.service.PaymentDetailsService;
 import com.sda.carrental.service.ReservationService;

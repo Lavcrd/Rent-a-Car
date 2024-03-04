@@ -3,12 +3,12 @@ package com.sda.carrental.clr;
 import com.sda.carrental.global.ConstantValues;
 import com.sda.carrental.global.enums.Role;
 import com.sda.carrental.model.Company;
-import com.sda.carrental.model.operational.Country;
+import com.sda.carrental.model.property.department.Country;
 import com.sda.carrental.model.operational.Rent;
 import com.sda.carrental.model.operational.Reservation;
 import com.sda.carrental.model.operational.Retrieve;
 import com.sda.carrental.model.property.car.Car;
-import com.sda.carrental.model.property.Department;
+import com.sda.carrental.model.property.department.Department;
 import com.sda.carrental.model.property.PaymentDetails;
 import com.sda.carrental.model.property.car.CarBase;
 import com.sda.carrental.model.users.*;
@@ -81,11 +81,10 @@ public class PredefiniedData implements CommandLineRunner {
 
     private void createCountries() {
         for (Country country : countries) {
+            country.setActive(true);
             countryRepository.save(country);
         }
-    }
-
-    ;
+    };
 
     private void createUsers() {
         userRepository.save(new Customer("Anna", "Nazwiskowa", Customer.Status.STATUS_REGISTERED, "123312891"));

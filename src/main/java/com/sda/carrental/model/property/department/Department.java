@@ -1,8 +1,7 @@
-package com.sda.carrental.model.property;
+package com.sda.carrental.model.property.department;
 
 import javax.persistence.*;
 
-import com.sda.carrental.model.operational.Country;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

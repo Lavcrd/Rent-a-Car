@@ -4,7 +4,7 @@ import com.sda.carrental.exceptions.IllegalActionException;
 import com.sda.carrental.exceptions.ResourceNotFoundException;
 import com.sda.carrental.model.operational.Reservation;
 import com.sda.carrental.model.property.car.Car;
-import com.sda.carrental.model.property.Department;
+import com.sda.carrental.model.property.department.Department;
 import com.sda.carrental.model.property.car.CarBase;
 import com.sda.carrental.repository.CarRepository;
 import com.sda.carrental.service.auth.CustomUserDetails;

@@ -1,6 +1,6 @@
 package com.sda.carrental.web.mvc.form.users.employee;
 
-import com.sda.carrental.model.property.Department;
+import com.sda.carrental.model.property.department.Department;
 import com.sda.carrental.web.mvc.form.common.ConfirmationForm;
 import lombok.Getter;
 import lombok.Setter;

@@ -1,6 +1,6 @@
 package com.sda.carrental.model.operational;
 
-import com.sda.carrental.model.property.Department;
+import com.sda.carrental.model.property.department.Department;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

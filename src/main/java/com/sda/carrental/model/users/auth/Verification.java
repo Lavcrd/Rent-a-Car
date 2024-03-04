@@ -1,6 +1,6 @@
 package com.sda.carrental.model.users.auth;
 
-import com.sda.carrental.model.operational.Country;
+import com.sda.carrental.model.property.department.Country;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

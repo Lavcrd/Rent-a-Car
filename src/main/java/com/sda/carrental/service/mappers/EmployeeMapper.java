@@ -2,7 +2,7 @@ package com.sda.carrental.service.mappers;
 
 
 import com.sda.carrental.exceptions.ResourceNotFoundException;
-import com.sda.carrental.model.property.Department;
+import com.sda.carrental.model.property.department.Department;
 import com.sda.carrental.model.users.Employee;
 import com.sda.carrental.web.mvc.form.users.employee.RegisterEmployeeForm;
 
