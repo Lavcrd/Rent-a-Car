@@ -43,9 +43,9 @@ public class SelectCarController {
             if (indexForm == null || dateTime == null) throw new IllegalActionException();
 
             Department department = departmentService.findById(indexForm.getDepartmentIdFrom());
-            map.addAttribute("currency", department.getCountry().getCurrency());
-            map.addAttribute("exchange", department.getCountry().getExchange());
-            map.addAttribute("multiplier", department.getMultiplier() * department.getCountry().getExchange());
+            map.addAttribute("currency", department.getCountry().getCurrency().getCode());
+            map.addAttribute("exchange", department.getCountry().getCurrency().getExchange());
+            map.addAttribute("multiplier", department.getMultiplier() * department.getCountry().getCurrency().getExchange());
 
             List<CarBase> carBaseList = carBaseService.findAvailableCarBasesInCountry(
                     indexForm.getDateFrom(),

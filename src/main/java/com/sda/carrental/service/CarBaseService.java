@@ -1,7 +1,7 @@
 package com.sda.carrental.service;
 
 import com.sda.carrental.exceptions.ResourceNotFoundException;
-import com.sda.carrental.global.ConstantValues;
+import com.sda.carrental.global.CompanySettings;
 import com.sda.carrental.model.property.department.Country;
 import com.sda.carrental.model.property.department.Department;
 import com.sda.carrental.model.property.car.CarBase;
@@ -20,7 +20,7 @@ import java.util.*;
 @Service
 @RequiredArgsConstructor
 public class CarBaseService {
-    private final ConstantValues cv;
+    private final CompanySettings cs;
     private final CarBaseRepository repository;
     private final DepartmentService departmentService;
 
@@ -34,7 +34,7 @@ public class CarBaseService {
 
     public List<CarBase> findAvailableCarBasesInCountry(LocalDate dateFrom, LocalDate dateTo, Country country) {
         //Currently queries list of cars for customer to receive - assuming overbooking is not allowed
-        return repository.findAvailableCarBasesInCountry(dateFrom.minusDays(cv.getReservationGap()), dateTo.plusDays(cv.getReservationGap()), country);
+        return repository.findAvailableCarBasesInCountry(dateFrom.minusDays(cs.getReservationGap()), dateTo.plusDays(cs.getReservationGap()), country);
     }
 
     public Map<String, Object> getFilterProperties(List<CarBase> carBaseList, boolean isExpanded) {
@@ -97,7 +97,7 @@ public class CarBaseService {
     private List<CarBase> applyFilters(List<CarBase> cbl, GenericCarForm form, Department department) {
         Double multiplier;
         if (department != null) {
-            multiplier = department.getCountry().getExchange() * department.getMultiplier();
+            multiplier = department.getCountry().getCurrency().getExchange() * department.getMultiplier();
         } else {
             multiplier = 1D;
         }

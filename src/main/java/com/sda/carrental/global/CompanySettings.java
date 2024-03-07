@@ -9,11 +9,8 @@ import org.springframework.stereotype.Component;
 @Getter
 @Setter
 @NoArgsConstructor
-public class ConstantValues {
+public class CompanySettings {
     // At app run these could be set from db (using service). Will be modified from mg-cfg - TODO
-
-    // Cost value of returning to different department than lending one (EUR)
-    private double deptReturnPriceDiff = 30;
 
     // Timeframe in days before the lending date when customers will have to pay a fee if the reservation is cancelled
     private long refundSubtractDaysDuration = 4;

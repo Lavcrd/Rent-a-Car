@@ -2,11 +2,12 @@ package com.sda.carrental.service;
 
 import com.sda.carrental.exceptions.IllegalActionException;
 import com.sda.carrental.exceptions.ResourceNotFoundException;
-import com.sda.carrental.global.ConstantValues;
+import com.sda.carrental.global.CompanySettings;
 import com.sda.carrental.global.Utility;
 import com.sda.carrental.global.enums.Role;
 import com.sda.carrental.model.operational.Reservation;
-import com.sda.carrental.model.property.PaymentDetails;
+import com.sda.carrental.model.property.department.Country;
+import com.sda.carrental.model.property.payments.PaymentDetails;
 import com.sda.carrental.repository.PaymentDetailsRepository;
 import com.sda.carrental.service.auth.CustomUserDetails;
 import com.sda.carrental.web.mvc.form.property.payments.PaymentForm;
@@ -26,14 +27,16 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class PaymentDetailsService {
     private final PaymentDetailsRepository repository;
-    private final ConstantValues cv;
+    private final CompanySettings cs;
     private final Utility u;
 
     @Transactional
     public void createReservationPayment(Reservation reservation, double payment, double deposit) {
         long days = reservation.getDateFrom().until(reservation.getDateTo(), ChronoUnit.DAYS) + 1;
 
-        Double exchange = reservation.getDepartmentTake().getCountry().getExchange();
+        Country country = reservation.getDepartmentTake().getCountry();
+
+        Double exchange = country.getCurrency().getExchange();
         Double multiplier = exchange * reservation.getDepartmentTake().getMultiplier();
 
         double rawValue = u.roundCurrency(days * reservation.getCarBase().getPriceDay() * multiplier);
@@ -43,7 +46,7 @@ public class PaymentDetailsService {
         deposit = u.roundCurrency(deposit);
 
         if (!reservation.getDepartmentBack().equals(reservation.getDepartmentTake())) {
-            double returnPrice = u.roundCurrency(cv.getDeptReturnPriceDiff() * multiplier);
+            double returnPrice = u.roundCurrency(country.getRelocateCarPrice() * multiplier);
             repository.save(new PaymentDetails(rawValue, returnPrice, depositValue, payment, deposit, reservation));
         } else {
             repository.save(new PaymentDetails(rawValue, 0.0, depositValue, payment, deposit, reservation));
@@ -57,8 +60,8 @@ public class PaymentDetailsService {
             return;
         }
         PaymentDetails paymentDetails = paymentDetailsOptional.get();
-        if (LocalDate.now().isAfter(reservation.getDateFrom().minusDays(cv.getRefundSubtractDaysDuration())) && requestType.equals(Reservation.ReservationStatus.STATUS_REFUNDED)) {
-            paymentDetails.setSecured(paymentDetails.getPayment() * cv.getCancellationFeePercentage());
+        if (LocalDate.now().isAfter(reservation.getDateFrom().minusDays(cs.getRefundSubtractDaysDuration())) && requestType.equals(Reservation.ReservationStatus.STATUS_REFUNDED)) {
+            paymentDetails.setSecured(paymentDetails.getPayment() * cs.getCancellationFeePercentage());
         }
 
         //some method here that would return money to the customer

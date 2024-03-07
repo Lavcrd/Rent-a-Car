@@ -40,6 +40,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/mg-dpt/**").hasAnyAuthority(Role.ROLE_COORDINATOR.name(), Role.ROLE_DIRECTOR.name(), Role.ROLE_ADMIN.name())
                 .antMatchers("/mg-cfg/**").hasAnyAuthority(Role.ROLE_ADMIN.name())
                 .antMatchers("/mg-ctr/**").hasAnyAuthority(Role.ROLE_ADMIN.name())
+                .antMatchers("/mg-cur/**").hasAnyAuthority(Role.ROLE_ADMIN.name())
                 .anyRequest().permitAll()
                 .and()
                 .formLogin()

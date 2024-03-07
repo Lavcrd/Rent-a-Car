@@ -1,12 +1,12 @@
 package com.sda.carrental.web.mvc.form.property.departments.country;
 
 import com.sda.carrental.web.mvc.form.common.ConfirmationForm;
-import com.sda.carrental.web.mvc.form.validation.constraint.DoubleValue;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
 @Getter
@@ -24,9 +24,6 @@ public class RegisterCountryForm extends ConfirmationForm {
     @Pattern(regexp = "^[+]\\d{1,3}$", message = "Failure: Invalid contact pattern.")
     private String contact;
 
-    @NotBlank(message = "Failure: Currency field cannot be blank.")
-    private String currency;
-
-    @DoubleValue(allowedPositive = true)
-    private String exchange;
+    @NotNull(message = "Failure: Currency field cannot be blank.")
+    private Long currency;
 }

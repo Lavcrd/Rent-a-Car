@@ -70,7 +70,7 @@ public class CarService {
     private List<Car> applyFilters(List<Car> cl, GenericCarForm form, Department department) {
         Double multiplier;
         if (department != null) {
-            multiplier = department.getCountry().getExchange();
+            multiplier = department.getCountry().getCurrency().getExchange();
         } else {
             multiplier = 1D;
         }

@@ -2,6 +2,7 @@ package com.sda.carrental.web.mvc.management;
 
 import com.sda.carrental.global.enums.Role;
 import com.sda.carrental.service.CountryService;
+import com.sda.carrental.service.CurrencyService;
 import com.sda.carrental.service.EmployeeService;
 import com.sda.carrental.service.auth.CustomUserDetails;
 import com.sda.carrental.web.mvc.form.property.departments.country.RegisterCountryForm;
@@ -26,6 +27,7 @@ import java.util.Collections;
 public class ManageCountriesController {
     private final EmployeeService employeeService;
     private final CountryService countryService;
+    private final CurrencyService currencyService;
 
     private final String MSG_KEY = "message";
     private final String MSG_ACCESS_REJECTED = "Failure: Access rejected";
@@ -41,6 +43,7 @@ public class ManageCountriesController {
             map.addAttribute("c_results", map.getOrDefault("c_results", Collections.emptyList()));
 
             map.addAttribute("register_form", map.getOrDefault("register_form", new RegisterCountryForm()));
+            map.addAttribute("currencies", currencyService.findAll());
 
             return "management/searchCountries";
         } catch (RuntimeException err) {
@@ -62,7 +65,6 @@ public class ManageCountriesController {
 
             redAtt.addFlashAttribute("c_results", countryService.findByForm(form));
         } catch (RuntimeException e) {
-            e.printStackTrace();
             redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
         }
         return "redirect:/mg-ctr";
