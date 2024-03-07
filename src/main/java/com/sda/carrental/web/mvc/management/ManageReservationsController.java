@@ -1,13 +1,13 @@
 package com.sda.carrental.web.mvc.management;
 
 import com.sda.carrental.exceptions.IllegalActionException;
-import com.sda.carrental.global.ConstantValues;
+import com.sda.carrental.global.CompanySettings;
 import com.sda.carrental.exceptions.ResourceNotFoundException;
 import com.sda.carrental.global.enums.Role;
 import com.sda.carrental.model.property.department.Country;
 import com.sda.carrental.model.operational.Reservation;
 import com.sda.carrental.model.property.department.Department;
-import com.sda.carrental.model.property.PaymentDetails;
+import com.sda.carrental.model.property.payments.PaymentDetails;
 import com.sda.carrental.model.property.car.CarBase;
 import com.sda.carrental.model.users.Customer;
 import com.sda.carrental.model.users.auth.Verification;
@@ -50,7 +50,7 @@ public class ManageReservationsController {
     private final RentService rentService;
     private final RetrieveService retrieveService;
     private final EmployeeService employeeService;
-    private final ConstantValues cv;
+    private final CompanySettings cs;
 
     private final String MSG_KEY = "message";
     private final String MSG_ACCESS_REJECTED = "Failure: Access rejected";
@@ -112,7 +112,7 @@ public class ManageReservationsController {
 
             Optional<PaymentDetails> receipt = paymentDetailsService.getOptionalPaymentDetails(reservation.getId());
 
-            double multiplier = country.getExchange() * dptF.getMultiplier();
+            double multiplier = country.getCurrency().getExchange() * dptF.getMultiplier();
 
             if (receipt.isPresent()) {
                 map.addAttribute("diff_return_price", receipt.get().getInitialDivergenceFee());
@@ -122,21 +122,21 @@ public class ManageReservationsController {
             } else {
                 long days = reservation.getDateFrom().until(reservation.getDateTo(), ChronoUnit.DAYS) + 1;
                 if (!dptF.equals(reservation.getDepartmentBack())) {
-                    map.addAttribute("diff_return_price", cv.getDeptReturnPriceDiff() * multiplier);
-                    map.addAttribute("total_price", (cv.getDeptReturnPriceDiff() + (days * reservation.getCarBase().getPriceDay())) * multiplier);
+                    map.addAttribute("diff_return_price", country.getRelocateCarPrice() * multiplier);
+                    map.addAttribute("total_price", (country.getRelocateCarPrice() + (days * reservation.getCarBase().getPriceDay())) * multiplier);
                 } else {
                     map.addAttribute("diff_return_price", 0.0);
                     map.addAttribute("total_price", days * reservation.getCarBase().getPriceDay() * multiplier);
                 }
                 map.addAttribute("raw_price", days * reservation.getCarBase().getPriceDay() * multiplier);
-                map.addAttribute("deposit_value", reservation.getCarBase().getDepositValue() * country.getExchange());
+                map.addAttribute("deposit_value", reservation.getCarBase().getDepositValue() * country.getCurrency().getExchange());
             }
 
             map.addAttribute("reservation", reservation);
             map.addAttribute("country", country);
-            map.addAttribute("fee_percentage", cv.getCancellationFeePercentage() * 100);
-            map.addAttribute("refund_fee_days", cv.getRefundSubtractDaysDuration());
-            map.addAttribute("deposit_deadline", cv.getRefundDepositDeadlineDays());
+            map.addAttribute("fee_percentage", cs.getCancellationFeePercentage() * 100);
+            map.addAttribute("refund_fee_days", cs.getRefundSubtractDaysDuration());
+            map.addAttribute("deposit_deadline", cs.getRefundDepositDeadlineDays());
 
             map.addAttribute("confirmation_form", new ConfirmationForm());
             if (reservation.getStatus().equals(Reservation.ReservationStatus.STATUS_RESERVED)) {
@@ -186,9 +186,9 @@ public class ManageReservationsController {
             List<CarBase> carList = carBaseService.findAvailableCarBasesInDepartment(department.getId());
             if (carList.isEmpty()) throw new IllegalActionException();
 
-            map.addAttribute("currency", department.getCountry().getCurrency());
-            map.addAttribute("exchange", department.getCountry().getExchange());
-            map.addAttribute("multiplier", department.getCountry().getExchange() * department.getMultiplier());
+            map.addAttribute("currency", department.getCountry().getCurrency().getCode());
+            map.addAttribute("exchange", department.getCountry().getCurrency().getExchange());
+            map.addAttribute("multiplier", department.getCountry().getCurrency().getExchange() * department.getMultiplier());
             map.addAttribute("carBases", map.getOrDefault("filteredCarBases", carList));
 
             Map<String, Object> carProperties = carBaseService.getFilterProperties(carList, false);

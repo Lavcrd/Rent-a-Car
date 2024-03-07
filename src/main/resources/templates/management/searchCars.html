@@ -252,7 +252,7 @@
                                 <li class="list-group-item" style="white-space: nowrap;"
                                     th:text="'Status: ' + ${result.carStatus.name().substring(7)} + ' – ' + ${result.department.city} + ', ' + ${result.department.street} + ' ' + ${result.department.building}"></li>
                                 <li class="list-group-item"
-                                    th:text="'Price per day: ' + ${#numbers.formatDecimal((result.carBase.priceDay * cud_country.exchange), 1, 2, 'POINT')} + ' ' + ${cud_country.currency}"></li>
+                                    th:text="'Price per day: ' + ${#numbers.formatDecimal((result.carBase.priceDay * cud_country.currency.exchange), 1, 2, 'POINT')} + ' ' + ${cud_country.currency.code}"></li>
                             </ul>
                             <br>
                         </div>
@@ -263,7 +263,7 @@
                                      style="text-align: center; margin-bottom: 10px;">
                                     <p style="margin-bottom: 0;" th:text="'Deposit:'"></p>
                                     <p style="margin-bottom: 0;"
-                                       th:text="${#numbers.formatDecimal((result.carBase.depositValue * cud_country.exchange), 1, 2, 'POINT')} + ' ' + ${cud_country.currency}"></p>
+                                       th:text="${#numbers.formatDecimal((result.carBase.depositValue * cud_country.currency.exchange), 1, 2, 'POINT')} + ' ' + ${cud_country.currency.code}"></p>
                                 </div>
                                 <a type="button" class="btn btn-dark" th:text="Inspect" th:href="'/mg-car/'+ ${result.getId()}"></a>
                             </div>

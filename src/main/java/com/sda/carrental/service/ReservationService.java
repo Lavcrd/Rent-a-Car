@@ -61,7 +61,7 @@ public class ReservationService {
             //Placeholder payment values
             long days = reservation.getDateFrom().until(reservation.getDateTo(), ChronoUnit.DAYS) + 1;
 
-            Double exchange = reservation.getDepartmentTake().getCountry().getExchange();
+            Double exchange = reservation.getDepartmentTake().getCountry().getCurrency().getExchange();
             Double multiplier = exchange * reservation.getDepartmentTake().getMultiplier();
 
             double payment = days * reservation.getCarBase().getPriceDay() * multiplier;
@@ -211,7 +211,7 @@ public class ReservationService {
             if (!r.getStatus().equals(Reservation.ReservationStatus.STATUS_RESERVED)) throw new IllegalArgumentException();
             Department department = r.getDepartmentTake();
             CarBase cb = carBaseService.findAvailableCarBaseInDepartment(carBaseId, department.getId());
-            Double deposit = cb.getDepositValue() * department.getMultiplier() * department.getCountry().getExchange();
+            Double deposit = cb.getDepositValue() * department.getMultiplier() * department.getCountry().getCurrency().getExchange();
 
             r.setCarBase(cb);
             repository.save(r);

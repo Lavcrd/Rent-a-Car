@@ -2,6 +2,7 @@ package com.sda.carrental.service;
 
 import com.sda.carrental.exceptions.ResourceNotFoundException;
 import com.sda.carrental.model.property.department.Country;
+import com.sda.carrental.model.property.payments.Currency;
 import com.sda.carrental.repository.CountryRepository;
 import com.sda.carrental.web.mvc.form.property.departments.country.RegisterCountryForm;
 import com.sda.carrental.web.mvc.form.property.departments.country.SearchCountriesForm;
@@ -20,6 +21,7 @@ import static java.util.stream.Collectors.toList;
 @RequiredArgsConstructor
 public class CountryService {
     private final CountryRepository repository;
+    private final CurrencyService currencyService;
 
     public Country findById(Long id) throws ResourceNotFoundException {
         return repository.findById(id).orElseThrow(ResourceNotFoundException::new);
@@ -32,23 +34,24 @@ public class CountryService {
     }
 
     public Country placeholder() {
-        return new Country("N/D", "N/D", "N/D", "EUR", 1.0);
+        return new Country("N/D", "N/D", "N/D", new Currency("Euro", "EUR", 1.0));
     }
 
     public List<Country> findByForm(SearchCountriesForm form) {
         return repository.findAllByForm(form.getName(), form.getCode(), form.getCurrency(), form.isActive());
     }
 
-    public List<Country> findByForm(RegisterCountryForm form) {
-        return repository.findAllByForm(form.getName(), form.getCode(), form.getCurrency(), true);
+    public List<Country> findByForm(RegisterCountryForm form, String currency) {
+        return repository.findAllByForm(form.getName(), form.getCode(), currency, true);
     }
 
     @Transactional
     public HttpStatus register(RegisterCountryForm form) {
         try {
-            if (!findByForm(form).isEmpty()) return HttpStatus.CONFLICT;
+            Currency currency = currencyService.findById(form.getCurrency());
+            if (!findByForm(form, currency.getCode()).isEmpty()) return HttpStatus.CONFLICT;
 
-            Country country = new Country(form.getName(), form.getCode().toUpperCase(), form.getContact(), form.getCurrency().toUpperCase(), Double.parseDouble(form.getExchange()));
+            Country country = new Country(form.getName(), form.getCode().toUpperCase(), form.getContact(), currency);
             repository.save(country);
             return HttpStatus.CREATED;
         } catch (RuntimeException e) {

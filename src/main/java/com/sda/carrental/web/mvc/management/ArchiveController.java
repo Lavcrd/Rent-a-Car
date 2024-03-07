@@ -4,7 +4,7 @@ import com.sda.carrental.exceptions.ResourceNotFoundException;
 import com.sda.carrental.model.operational.Rent;
 import com.sda.carrental.model.operational.Retrieve;
 import com.sda.carrental.model.property.department.Department;
-import com.sda.carrental.model.property.PaymentDetails;
+import com.sda.carrental.model.property.payments.PaymentDetails;
 import com.sda.carrental.service.*;
 import com.sda.carrental.service.auth.CustomUserDetails;
 import com.sda.carrental.web.mvc.form.operational.SearchArchiveForm;

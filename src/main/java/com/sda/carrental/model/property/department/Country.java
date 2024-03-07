@@ -1,5 +1,6 @@
 package com.sda.carrental.model.property.department;
 
+import com.sda.carrental.model.property.payments.Currency;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -11,13 +12,13 @@ import javax.persistence.*;
 @Setter
 @NoArgsConstructor
 public class Country {
-    public Country(String name, String code, String contact, String currency, Double exchange) {
+    public Country(String name, String code, String contact, Currency currency) {
         this.name = name;
         this.code = code;
         this.contact = contact;
         this.currency = currency;
-        this.exchange = exchange;
         this.isActive = false;
+        this.relocateCarPrice = 30.0;
     }
 
     @Id
@@ -34,11 +35,12 @@ public class Country {
     @Column(name = "contact", nullable = false)
     private String contact;
 
-    @Column(name = "currency_used", nullable = false)
-    private String currency;
+    @ManyToOne
+    @JoinColumn(name = "currency", referencedColumnName = "id")
+    private Currency currency;
 
-    @Column(name = "exchange_rate", nullable = false)
-    private Double exchange;
+    @Column(name = "relocate_car_eur", nullable = false)
+    private Double relocateCarPrice;
 
     @Column(name = "is_active", nullable = false)
     private boolean isActive;

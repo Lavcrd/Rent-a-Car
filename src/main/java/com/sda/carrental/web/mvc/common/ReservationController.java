@@ -1,7 +1,7 @@
 package com.sda.carrental.web.mvc.common;
 
 import com.sda.carrental.exceptions.IllegalActionException;
-import com.sda.carrental.global.ConstantValues;
+import com.sda.carrental.global.CompanySettings;
 import com.sda.carrental.exceptions.ResourceNotFoundException;
 import com.sda.carrental.global.enums.Role;
 import com.sda.carrental.model.property.department.Department;
@@ -36,7 +36,7 @@ public class ReservationController {
     private final DepartmentService depService;
     private final CustomerService customerService;
     private final ReservationService reservationService;
-    private final ConstantValues cv;
+    private final CompanySettings cs;
 
     private final String MSG_KEY = "message";
     private final String MSG_SESSION_EXPIRED = "The session request might be invalid or could have expired";
@@ -64,12 +64,12 @@ public class ReservationController {
             Department depTo = depService.findById(indexForm.getDepartmentIdTo());
 
             long days = indexForm.getDateFrom().until(indexForm.getDateTo(), ChronoUnit.DAYS) + 1;
-            double exchange = depFrom.getCountry().getExchange();
+            double exchange = depFrom.getCountry().getCurrency().getExchange();
             double multiplier = depFrom.getMultiplier() * exchange;
 
             if (indexForm.isDifferentDepartment()) {
-                map.addAttribute("diff_return_price", cv.getDeptReturnPriceDiff() * multiplier);
-                map.addAttribute("total_price", (cv.getDeptReturnPriceDiff() + (days * carBase.getPriceDay())) * multiplier);
+                map.addAttribute("diff_return_price", depFrom.getCountry().getRelocateCarPrice() * multiplier);
+                map.addAttribute("total_price", (depFrom.getCountry().getRelocateCarPrice() + (days * carBase.getPriceDay())) * multiplier);
             } else {
                 map.addAttribute("diff_return_price", 0.0);
                 map.addAttribute("total_price", days * carBase.getPriceDay() * multiplier);
@@ -82,9 +82,9 @@ public class ReservationController {
             map.addAttribute("carBase", carBase);
             map.addAttribute("raw_price", days * carBase.getPriceDay() * multiplier);
             map.addAttribute("deposit", carBase.getDepositValue() * exchange);
-            map.addAttribute("fee_percentage", cv.getCancellationFeePercentage() * 100);
-            map.addAttribute("refund_fee_days", cv.getRefundSubtractDaysDuration());
-            map.addAttribute("deposit_deadline", cv.getRefundDepositDeadlineDays());
+            map.addAttribute("fee_percentage", cs.getCancellationFeePercentage() * 100);
+            map.addAttribute("refund_fee_days", cs.getRefundSubtractDaysDuration());
+            map.addAttribute("deposit_deadline", cs.getRefundDepositDeadlineDays());
 
             return "common/reservationRecap";
         } catch (IllegalActionException err) {

@@ -2,10 +2,10 @@ package com.sda.carrental.web.mvc.management;
 
 import com.sda.carrental.exceptions.IllegalActionException;
 import com.sda.carrental.exceptions.ResourceNotFoundException;
-import com.sda.carrental.global.ConstantValues;
+import com.sda.carrental.global.CompanySettings;
 import com.sda.carrental.model.operational.Rent;
 import com.sda.carrental.model.operational.Reservation;
-import com.sda.carrental.model.property.PaymentDetails;
+import com.sda.carrental.model.property.payments.PaymentDetails;
 import com.sda.carrental.service.*;
 import com.sda.carrental.service.auth.CustomUserDetails;
 import com.sda.carrental.web.mvc.form.operational.ConfirmClaimForm;
@@ -30,7 +30,7 @@ import java.time.LocalDate;
 @RequestMapping("/c-ret")
 public class CarRetrieveController {
 
-    private final ConstantValues cv;
+    private final CompanySettings cs;
     private final RentService rentService;
     private final RetrieveService retrieveService;
     private final PaymentDetailsService paymentDetailsService;
@@ -63,8 +63,8 @@ public class CarRetrieveController {
                 map.addAttribute("deposit_value", receipt.getInitialDeposit());
 
                 map.addAttribute("reservation", reservation);
-                map.addAttribute("fee_percentage", cv.getCancellationFeePercentage() * 100);
-                map.addAttribute("refund_fee_days", cv.getRefundSubtractDaysDuration());
+                map.addAttribute("fee_percentage", cs.getCancellationFeePercentage() * 100);
+                map.addAttribute("refund_fee_days", cs.getRefundSubtractDaysDuration());
             }
             return "management/carRetrieve";
         } catch (ResourceNotFoundException err) {

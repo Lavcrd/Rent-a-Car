@@ -1,6 +1,6 @@
 package com.sda.carrental.clr;
 
-import com.sda.carrental.global.ConstantValues;
+import com.sda.carrental.global.CompanySettings;
 import com.sda.carrental.global.enums.Role;
 import com.sda.carrental.model.Company;
 import com.sda.carrental.model.property.department.Country;
@@ -9,7 +9,8 @@ import com.sda.carrental.model.operational.Reservation;
 import com.sda.carrental.model.operational.Retrieve;
 import com.sda.carrental.model.property.car.Car;
 import com.sda.carrental.model.property.department.Department;
-import com.sda.carrental.model.property.PaymentDetails;
+import com.sda.carrental.model.property.payments.Currency;
+import com.sda.carrental.model.property.payments.PaymentDetails;
 import com.sda.carrental.model.property.car.CarBase;
 import com.sda.carrental.model.users.*;
 import com.sda.carrental.model.users.auth.Credentials;
@@ -31,9 +32,11 @@ public class PredefiniedData implements CommandLineRunner {
 
     //The purpose of this class is to generate artificial data for visualizing the app's user interface.
 
+    static List<Currency> currencies;
     static List<Country> countries;
     private final BCryptPasswordEncoder encoder;
     private final UserRepository userRepository;
+    private final CurrencyRepository currencyRepository;
     private final CountryRepository countryRepository;
     private final CompanyRepository companyRepository;
     private final DepartmentRepository departmentRepository;
@@ -45,21 +48,28 @@ public class PredefiniedData implements CommandLineRunner {
     private final VerificationRepository verificationRepository;
     private final CredentialsRepository credentialsRepository;
     private final RetrieveRepository retrieveRepository;
-    private final ConstantValues cv;
+    private final CompanySettings cs;
 
 
     static {
+        currencies = List.of(
+                new Currency("Polish Zloty", "PLN", 4.35),
+                new Currency("British Pound Sterling", "GBP", 0.86),
+                new Currency("Euro", "EUR", 1.0)
+        );
+
         countries = List.of(
-                new Country("Poland", "PL", "+48", "PLN", 4.35),
-                new Country("Great Britain", "GB", "+44", "GBP", 0.86),
-                new Country("Netherlands", "NL", "+31", "EUR", 1.0),
-                new Country("Germany", "DE", "+49", "EUR", 1.0)
+                new Country("Poland", "PL", "+48", currencies.get(0)),
+                new Country("Great Britain", "GB", "+44", currencies.get(1)),
+                new Country("Netherlands", "NL", "+31", currencies.get(2)),
+                new Country("Germany", "DE", "+49", currencies.get(2))
         );
     }
 
 
     @Override
     public void run(String... args) {
+        createCurrencies();
         createCountries();
 
         createDepartments();
@@ -79,12 +89,18 @@ public class PredefiniedData implements CommandLineRunner {
         createVerification();
     }
 
+    private void createCurrencies() {
+        currencyRepository.saveAll(currencies);
+    }
+
     private void createCountries() {
         for (Country country : countries) {
             country.setActive(true);
             countryRepository.save(country);
         }
-    };
+    }
+
+    ;
 
     private void createUsers() {
         userRepository.save(new Customer("Anna", "Nazwiskowa", Customer.Status.STATUS_REGISTERED, "123312891"));

@@ -1,4 +1,4 @@
-package com.sda.carrental.model.property;
+package com.sda.carrental.model.property.payments;
 
 import com.sda.carrental.model.operational.Reservation;
 import lombok.Getter;
