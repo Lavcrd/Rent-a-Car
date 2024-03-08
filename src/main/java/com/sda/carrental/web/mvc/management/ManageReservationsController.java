@@ -1,7 +1,7 @@
 package com.sda.carrental.web.mvc.management;
 
 import com.sda.carrental.exceptions.IllegalActionException;
-import com.sda.carrental.global.CompanySettings;
+import com.sda.carrental.model.company.CompanySettings;
 import com.sda.carrental.exceptions.ResourceNotFoundException;
 import com.sda.carrental.global.enums.Role;
 import com.sda.carrental.model.property.department.Country;
@@ -50,7 +50,7 @@ public class ManageReservationsController {
     private final RentService rentService;
     private final RetrieveService retrieveService;
     private final EmployeeService employeeService;
-    private final CompanySettings cs;
+    private final SettingsService settingsService;
 
     private final String MSG_KEY = "message";
     private final String MSG_ACCESS_REJECTED = "Failure: Access rejected";
@@ -131,6 +131,8 @@ public class ManageReservationsController {
                 map.addAttribute("raw_price", days * reservation.getCarBase().getPriceDay() * multiplier);
                 map.addAttribute("deposit_value", reservation.getCarBase().getDepositValue() * country.getCurrency().getExchange());
             }
+
+            CompanySettings cs = settingsService.getInstance();
 
             map.addAttribute("reservation", reservation);
             map.addAttribute("country", country);

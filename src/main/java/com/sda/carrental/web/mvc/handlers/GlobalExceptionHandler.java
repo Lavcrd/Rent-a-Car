@@ -1,7 +1,7 @@
 package com.sda.carrental.web.mvc.handlers;
 
-import com.sda.carrental.global.CompanySettings;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -14,17 +14,18 @@ import java.io.IOException;
 @ControllerAdvice
 @RequiredArgsConstructor
 public class GlobalExceptionHandler {
-    private final CompanySettings cs;
     private final String MSG_KEY = "message";
     private final String CB_URI_PREFIX = "/mg-car/car-bases";
     private final String VIEW_CB_URI_SUFFIX = "/update-image";
+    @Value("${spring.servlet.multipart.max-file-size}")
+    private final String maximumFileSize;
 
     @ExceptionHandler(MaxUploadSizeExceededException.class)
     @ResponseStatus
     public void handleMaxUploadSizeExceededException(MaxUploadSizeExceededException ex, HttpServletRequest req, HttpServletResponse res) {
         try {
             String uri = req.getRequestURI();
-            final String SIZE_MESSAGE = "Failure: File size exceeds permitted maximum of " + cs.getMaxFileSize() / (1024 * 1024) + "Mb";
+            final String SIZE_MESSAGE = "Failure: File size exceeds permitted maximum of " + maximumFileSize;
 
             if (uri.equals(CB_URI_PREFIX + "/register")) {
                 req.getSession().setAttribute(MSG_KEY, SIZE_MESSAGE);

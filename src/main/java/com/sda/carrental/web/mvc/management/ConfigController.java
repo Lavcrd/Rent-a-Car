@@ -1,6 +1,6 @@
 package com.sda.carrental.web.mvc.management;
 
-import com.sda.carrental.model.Company;
+import com.sda.carrental.model.company.Company;
 import com.sda.carrental.service.*;
 import com.sda.carrental.web.mvc.form.common.UpdateImageForm;
 import com.sda.carrental.web.mvc.form.property.company.UpdateDetailsForm;
@@ -20,7 +20,6 @@ import javax.validation.Valid;
 @RequiredArgsConstructor
 @RequestMapping("/mg-cfg")
 public class ConfigController {
-    private final CountryService countryService;
     private final CompanyService companyService;
 
     private final String MSG_KEY = "message";

@@ -1,6 +1,6 @@
 package com.sda.carrental.web.mvc.user;
 
-import com.sda.carrental.global.CompanySettings;
+import com.sda.carrental.model.company.CompanySettings;
 import com.sda.carrental.exceptions.ResourceNotFoundException;
 import com.sda.carrental.model.property.department.Country;
 import com.sda.carrental.model.operational.Reservation;
@@ -8,6 +8,7 @@ import com.sda.carrental.model.property.department.Department;
 import com.sda.carrental.model.property.payments.PaymentDetails;
 import com.sda.carrental.service.PaymentDetailsService;
 import com.sda.carrental.service.ReservationService;
+import com.sda.carrental.service.SettingsService;
 import com.sda.carrental.service.auth.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -29,7 +30,7 @@ import java.util.Optional;
 public class CustomerReservationsController {
     private final ReservationService reservationService;
     private final PaymentDetailsService paymentDetailsService;
-    private final CompanySettings cs;
+    private final SettingsService settingsService;
 
     private final String MSG_KEY = "message";
     private final String MSG_CUSTOMER_GENERIC_EXCEPTION = "An unexpected error occurred. Please try again later or contact customer service.";
@@ -71,6 +72,8 @@ public class CustomerReservationsController {
                 map.addAttribute("raw_price", days * reservation.getCarBase().getPriceDay() * multiplier);
                 map.addAttribute("deposit_value", reservation.getCarBase().getDepositValue() * country.getCurrency().getExchange());
             }
+
+            CompanySettings cs = settingsService.getInstance();
 
             map.addAttribute("reservation", reservation);
             map.addAttribute("fee_percentage", cs.getCancellationFeePercentage() * 100);

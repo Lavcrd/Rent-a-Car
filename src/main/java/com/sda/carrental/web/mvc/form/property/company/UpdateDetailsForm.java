@@ -1,6 +1,6 @@
 package com.sda.carrental.web.mvc.form.property.company;
 
-import com.sda.carrental.model.Company;
+import com.sda.carrental.model.company.Company;
 import com.sda.carrental.web.mvc.form.common.ConfirmationForm;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

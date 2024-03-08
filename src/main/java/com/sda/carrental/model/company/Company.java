@@ -1,4 +1,4 @@
-package com.sda.carrental.model;
+package com.sda.carrental.model.company;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
