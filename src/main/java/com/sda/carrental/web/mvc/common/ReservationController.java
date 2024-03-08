@@ -1,7 +1,7 @@
 package com.sda.carrental.web.mvc.common;
 
 import com.sda.carrental.exceptions.IllegalActionException;
-import com.sda.carrental.global.CompanySettings;
+import com.sda.carrental.model.company.CompanySettings;
 import com.sda.carrental.exceptions.ResourceNotFoundException;
 import com.sda.carrental.global.enums.Role;
 import com.sda.carrental.model.property.department.Department;
@@ -36,7 +36,7 @@ public class ReservationController {
     private final DepartmentService depService;
     private final CustomerService customerService;
     private final ReservationService reservationService;
-    private final CompanySettings cs;
+    private final SettingsService settingsService;
 
     private final String MSG_KEY = "message";
     private final String MSG_SESSION_EXPIRED = "The session request might be invalid or could have expired";
@@ -66,6 +66,7 @@ public class ReservationController {
             long days = indexForm.getDateFrom().until(indexForm.getDateTo(), ChronoUnit.DAYS) + 1;
             double exchange = depFrom.getCountry().getCurrency().getExchange();
             double multiplier = depFrom.getMultiplier() * exchange;
+            CompanySettings cs = settingsService.getInstance();
 
             if (indexForm.isDifferentDepartment()) {
                 map.addAttribute("diff_return_price", depFrom.getCountry().getRelocateCarPrice() * multiplier);

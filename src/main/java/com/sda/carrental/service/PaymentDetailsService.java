@@ -2,7 +2,7 @@ package com.sda.carrental.service;
 
 import com.sda.carrental.exceptions.IllegalActionException;
 import com.sda.carrental.exceptions.ResourceNotFoundException;
-import com.sda.carrental.global.CompanySettings;
+import com.sda.carrental.model.company.CompanySettings;
 import com.sda.carrental.global.Utility;
 import com.sda.carrental.global.enums.Role;
 import com.sda.carrental.model.operational.Reservation;
@@ -27,7 +27,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class PaymentDetailsService {
     private final PaymentDetailsRepository repository;
-    private final CompanySettings cs;
+    private final SettingsService settingsService;
     private final Utility u;
 
     @Transactional
@@ -56,6 +56,8 @@ public class PaymentDetailsService {
     @Transactional
     public void retractReservationPayment(Reservation reservation, Reservation.ReservationStatus requestType) {
         Optional<PaymentDetails> paymentDetailsOptional = getOptionalPaymentDetails(reservation.getId());
+        CompanySettings cs = settingsService.getInstance();
+
         if (paymentDetailsOptional.isEmpty()) {
             return;
         }

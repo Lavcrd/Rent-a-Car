@@ -2,7 +2,7 @@ package com.sda.carrental.web.mvc.management;
 
 import com.sda.carrental.exceptions.IllegalActionException;
 import com.sda.carrental.exceptions.ResourceNotFoundException;
-import com.sda.carrental.global.CompanySettings;
+import com.sda.carrental.model.company.CompanySettings;
 import com.sda.carrental.model.operational.Rent;
 import com.sda.carrental.model.operational.Reservation;
 import com.sda.carrental.model.property.payments.PaymentDetails;
@@ -30,7 +30,7 @@ import java.time.LocalDate;
 @RequestMapping("/c-ret")
 public class CarRetrieveController {
 
-    private final CompanySettings cs;
+    private final SettingsService settingsService;
     private final RentService rentService;
     private final RetrieveService retrieveService;
     private final PaymentDetailsService paymentDetailsService;
@@ -56,6 +56,7 @@ public class CarRetrieveController {
                 map.addAttribute("departments", employeeService.getDepartmentsByUserContext(cud));
 
                 PaymentDetails receipt = paymentDetailsService.getOptionalPaymentDetails(reservation.getId()).orElseThrow(ResourceNotFoundException::new);
+                CompanySettings cs = settingsService.getInstance();
 
                 map.addAttribute("diff_return_price", receipt.getInitialDivergenceFee());
                 map.addAttribute("raw_price", receipt.getInitialCarFee());

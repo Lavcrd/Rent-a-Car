@@ -12,7 +12,7 @@ import javax.validation.ConstraintValidatorContext;
 public class ConsistentMileageValidator implements ConstraintValidator<ConsistentMileage, Object> {
 
     @Autowired
-    private CarService cs;
+    private CarService carService;
 
     @Override
     public void initialize(ConsistentMileage constraint) {
@@ -21,9 +21,9 @@ public class ConsistentMileageValidator implements ConstraintValidator<Consisten
     @Override
     public boolean isValid(Object form, ConstraintValidatorContext cvc) {
         if (form instanceof ConfirmClaimForm ccf) {
-            return cs.findByOperationId(ccf.getReservationId()).getMileage() <= ccf.getMileage();
+            return carService.findByOperationId(ccf.getReservationId()).getMileage() <= ccf.getMileage();
         } else if (form instanceof ConfirmRentalForm crf) {
-            return cs.findCarById(crf.getCarId()).getMileage() <= crf.getMileage();
+            return carService.findCarById(crf.getCarId()).getMileage() <= crf.getMileage();
         } else {
             return false;
         }

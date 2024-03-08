@@ -2,7 +2,6 @@ package com.sda.carrental.service;
 
 import com.sda.carrental.exceptions.IllegalActionException;
 import com.sda.carrental.exceptions.ResourceNotFoundException;
-import com.sda.carrental.global.CompanySettings;
 import com.sda.carrental.model.operational.Reservation;
 import com.sda.carrental.model.operational.Retrieve;
 import com.sda.carrental.model.property.car.Car;
@@ -28,7 +27,7 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class RetrieveService {
-    private final CompanySettings cs;
+    private final SettingsService settingsService;
     private final RetrieveRepository repository;
     private final ReservationService reservationService;
     private final RentService rentService;
@@ -85,7 +84,8 @@ public class RetrieveService {
     }
 
     public List<Retrieve> replaceDatesWithDeadlines(List<Retrieve> retrieves) {
-        long days = (long) (Math.floor(cs.getRefundDepositDeadlineDays() / 5D) * 7 + (cs.getRefundDepositDeadlineDays() % 5));
+        long deadlineTimeframe = settingsService.getInstance().getRefundDepositDeadlineDays();
+        long days = (long) (Math.floor(deadlineTimeframe / 5D) * 7 + (deadlineTimeframe % 5));
         for (Retrieve r : retrieves) {
             r.setDateTo(r.getDateTo().plusDays(days));
         }

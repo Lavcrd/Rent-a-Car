@@ -1,8 +1,7 @@
 package com.sda.carrental.clr;
 
-import com.sda.carrental.global.CompanySettings;
 import com.sda.carrental.global.enums.Role;
-import com.sda.carrental.model.Company;
+import com.sda.carrental.model.company.Company;
 import com.sda.carrental.model.property.department.Country;
 import com.sda.carrental.model.operational.Rent;
 import com.sda.carrental.model.operational.Reservation;
@@ -48,7 +47,6 @@ public class PredefiniedData implements CommandLineRunner {
     private final VerificationRepository verificationRepository;
     private final CredentialsRepository credentialsRepository;
     private final RetrieveRepository retrieveRepository;
-    private final CompanySettings cs;
 
 
     static {

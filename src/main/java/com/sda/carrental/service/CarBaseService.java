@@ -1,7 +1,6 @@
 package com.sda.carrental.service;
 
 import com.sda.carrental.exceptions.ResourceNotFoundException;
-import com.sda.carrental.global.CompanySettings;
 import com.sda.carrental.model.property.department.Country;
 import com.sda.carrental.model.property.department.Department;
 import com.sda.carrental.model.property.car.CarBase;
@@ -20,7 +19,7 @@ import java.util.*;
 @Service
 @RequiredArgsConstructor
 public class CarBaseService {
-    private final CompanySettings cs;
+    private final SettingsService settingsService;
     private final CarBaseRepository repository;
     private final DepartmentService departmentService;
 
@@ -33,8 +32,10 @@ public class CarBaseService {
     }
 
     public List<CarBase> findAvailableCarBasesInCountry(LocalDate dateFrom, LocalDate dateTo, Country country) {
+        int reservationGap = settingsService.getInstance().getReservationGap();
+
         //Currently queries list of cars for customer to receive - assuming overbooking is not allowed
-        return repository.findAvailableCarBasesInCountry(dateFrom.minusDays(cs.getReservationGap()), dateTo.plusDays(cs.getReservationGap()), country);
+        return repository.findAvailableCarBasesInCountry(dateFrom.minusDays(reservationGap), dateTo.plusDays(reservationGap), country);
     }
 
     public Map<String, Object> getFilterProperties(List<CarBase> carBaseList, boolean isExpanded) {
