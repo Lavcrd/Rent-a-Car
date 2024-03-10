@@ -1,7 +1,7 @@
 package com.sda.carrental.web.mvc.common;
 
 import com.sda.carrental.exceptions.IllegalActionException;
-import com.sda.carrental.model.company.CompanySettings;
+import com.sda.carrental.model.property.company.Settings;
 import com.sda.carrental.exceptions.ResourceNotFoundException;
 import com.sda.carrental.global.enums.Role;
 import com.sda.carrental.model.property.department.Department;
@@ -66,7 +66,7 @@ public class ReservationController {
             long days = indexForm.getDateFrom().until(indexForm.getDateTo(), ChronoUnit.DAYS) + 1;
             double exchange = depFrom.getCountry().getCurrency().getExchange();
             double multiplier = depFrom.getMultiplier() * exchange;
-            CompanySettings cs = settingsService.getInstance();
+            Settings cs = settingsService.getInstance();
 
             if (indexForm.isDifferentDepartment()) {
                 map.addAttribute("diff_return_price", depFrom.getCountry().getRelocateCarPrice() * multiplier);

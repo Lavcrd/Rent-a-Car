@@ -1,6 +1,6 @@
 package com.sda.carrental.service;
 
-import com.sda.carrental.model.company.Company;
+import com.sda.carrental.model.property.company.Company;
 import com.sda.carrental.repository.CompanyRepository;
 import com.sda.carrental.web.mvc.form.property.company.UpdateDetailsForm;
 import lombok.RequiredArgsConstructor;

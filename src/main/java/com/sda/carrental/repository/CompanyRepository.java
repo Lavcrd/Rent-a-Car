@@ -1,6 +1,6 @@
 package com.sda.carrental.repository;
 
-import com.sda.carrental.model.company.Company;
+import com.sda.carrental.model.property.company.Company;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;

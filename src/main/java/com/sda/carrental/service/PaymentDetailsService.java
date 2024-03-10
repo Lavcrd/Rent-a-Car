@@ -2,7 +2,7 @@ package com.sda.carrental.service;
 
 import com.sda.carrental.exceptions.IllegalActionException;
 import com.sda.carrental.exceptions.ResourceNotFoundException;
-import com.sda.carrental.model.company.CompanySettings;
+import com.sda.carrental.model.property.company.Settings;
 import com.sda.carrental.global.Utility;
 import com.sda.carrental.global.enums.Role;
 import com.sda.carrental.model.operational.Reservation;
@@ -56,7 +56,7 @@ public class PaymentDetailsService {
     @Transactional
     public void retractReservationPayment(Reservation reservation, Reservation.ReservationStatus requestType) {
         Optional<PaymentDetails> paymentDetailsOptional = getOptionalPaymentDetails(reservation.getId());
-        CompanySettings cs = settingsService.getInstance();
+        Settings cs = settingsService.getInstance();
 
         if (paymentDetailsOptional.isEmpty()) {
             return;

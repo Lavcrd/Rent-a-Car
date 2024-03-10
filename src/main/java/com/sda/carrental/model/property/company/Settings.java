@@ -1,4 +1,4 @@
-package com.sda.carrental.model.company;
+package com.sda.carrental.model.property.company;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,8 +10,8 @@ import javax.persistence.*;
 @Getter
 @Setter
 @NoArgsConstructor
-public class CompanySettings {
-    public CompanySettings(long refundSubtractDaysDuration, long refundDepositDeadlineDays, double cancellationFeePercentage, int reservationGap) {
+public class Settings {
+    public Settings(long refundSubtractDaysDuration, long refundDepositDeadlineDays, double cancellationFeePercentage, int reservationGap) {
         this.refundSubtractDaysDuration = refundSubtractDaysDuration;
         this.refundDepositDeadlineDays = refundDepositDeadlineDays;
         this.cancellationFeePercentage = cancellationFeePercentage;
@@ -27,7 +27,7 @@ public class CompanySettings {
     @Column(name = "refund_penalty_timeframe", nullable = false)
     private long refundSubtractDaysDuration = 4;
 
-    // Timeframe in working days before deposit refund deadline
+    // Timeframe in working days before deposit must be refunded to customer
     @Column(name = "refund_management_timeframe", nullable = false)
     private long refundDepositDeadlineDays = 5;
 
