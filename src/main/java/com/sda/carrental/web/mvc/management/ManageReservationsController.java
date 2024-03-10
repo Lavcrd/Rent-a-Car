@@ -1,7 +1,7 @@
 package com.sda.carrental.web.mvc.management;
 
 import com.sda.carrental.exceptions.IllegalActionException;
-import com.sda.carrental.model.company.CompanySettings;
+import com.sda.carrental.model.property.company.Settings;
 import com.sda.carrental.exceptions.ResourceNotFoundException;
 import com.sda.carrental.global.enums.Role;
 import com.sda.carrental.model.property.department.Country;
@@ -132,7 +132,7 @@ public class ManageReservationsController {
                 map.addAttribute("deposit_value", reservation.getCarBase().getDepositValue() * country.getCurrency().getExchange());
             }
 
-            CompanySettings cs = settingsService.getInstance();
+            Settings cs = settingsService.getInstance();
 
             map.addAttribute("reservation", reservation);
             map.addAttribute("country", country);

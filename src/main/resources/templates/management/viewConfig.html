@@ -171,7 +171,9 @@
 
                 <tr>
                     <td class="button-cell">
-                        <button type="button" class="btn btn-dark bg-dark mt-1 list-button w-100">
+                        <button type="button" class="btn btn-dark bg-dark mt-1 list-button w-100"
+                                data-bs-toggle="modal"
+                                data-bs-target="#settingsModal">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                                  fill="currentColor"
                                  class="bi bi-circle cb-svg" viewBox="0 0 16 16">
@@ -276,6 +278,99 @@
                                     <label style="justify-self: start;" for="c_logotype_confirm"
                                            class="text-md">Password: </label>
                                     <input id="c_logotype_confirm" class="text-black bg-white modal-input"
+                                           th:placeholder="'Confirm with password'"
+                                           th:type="password" th:field="*{currentPassword}"
+                                           autocomplete="new-password"
+                                           required/>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-dark" data-bs-dismiss="modal">
+                                    Close
+                                </button>
+                                <button type="submit" class="btn btn-dark">Confirm</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+            <!--Settings Modal-->
+            <form th:method="POST" th:object="${settings_form}"
+                  th:action="@{'/mg-cfg/update-settings'}">
+                <div class="modal fade" id="settingsModal" tabindex="-1" role="dialog"
+                     aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Settings</h5>
+                                <button type="button" class="close" data-bs-dismiss="modal"
+                                        aria-label="Close">
+                                    <span aria-hidden="true">×</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="scroll-70">
+                                    <p th:text="'Synchronization: ' + ${refreshFrequency/(60*1000)} + ' minutes.'"></p>
+
+                                    <div class="modal-row-only mt-2">
+                                        <div class="modal-row">
+                                            <label style="justify-self: start;" for="s_refund_penalty"
+                                                   class="text-md">Cancellation penalty timeframe:</label>
+                                            <input id="s_refund_penalty" class="text-black bg-white modal-input"
+                                                   type="number" th:field="*{refundSubtractDaysDuration}"
+                                                   required/>
+                                        </div>
+                                        <label style="justify-self: center; font-size:xx-small;" for="s_refund_penalty"
+                                               class="text-md">Timeframe in days before the lending date when customers will have to pay a fee if the reservation is cancelled.</label>
+                                    </div>
+
+                                    <div class="modal-row-only mt-3">
+                                        <div class="modal-row">
+                                            <label style="justify-self: start;" for="s_cancellation_fee"
+                                                   class="text-md">Cancellation fee percentage:</label>
+                                            <input id="s_cancellation_fee" class="text-black bg-white modal-input"
+                                                   type="number" step="0.01" th:field="*{cancellationFeePercentage}"
+                                                   required/>
+                                        </div>
+                                        <label style="justify-self: center;font-size:xx-small;" for="s_cancellation_fee"
+                                               class="text-md">Decimal percentage subtracted from main payment value of the cancelled reservation.</label>
+                                    </div>
+
+                                    <div class="modal-row-only mt-3">
+                                        <div class="modal-row">
+                                            <label style="justify-self: start;" for="s_refund_deadline"
+                                                   class="text-md">Refund deadline timeframe:</label>
+                                            <input id="s_refund_deadline" class="text-black bg-white modal-input"
+                                                   type="number" th:field="*{refundDepositDeadlineDays}"
+                                                   required/>
+                                        </div>
+                                        <label style="justify-self: center;font-size:xx-small;" for="s_refund_deadline"
+                                               class="text-md">Timeframe in working days before deposit must be refunded to customer.</label>
+                                    </div>
+
+                                    <div class="modal-row-only mt-3">
+                                        <div class="modal-row">
+                                            <label style="justify-self: start;" for="s_reservation_gap"
+                                                   class="text-md">Car cooldown:</label>
+                                            <input id="s_reservation_gap" class="text-black bg-white modal-input"
+                                                   type="number" th:field="*{reservationGap}"
+                                                   required/>
+                                        </div>
+                                        <label style="justify-self: center;font-size:xx-small;" for="s_reservation_gap"
+                                               class="text-md">Duration of the gap in days required between the return of a reserved car and making another reservation.</label>
+                                    </div>
+                                </div>
+
+                                <div class="my-3 d-flex"
+                                     style="justify-content: center; align-content: center;">
+                                    <span class="border w-100"></span>
+                                </div>
+
+                                <div class="modal-row mt-2">
+                                    <label style="justify-self: start;" for="s_confirm"
+                                           class="text-md">Password: </label>
+                                    <input id="s_confirm" class="text-black bg-white modal-input"
                                            th:placeholder="'Confirm with password'"
                                            th:type="password" th:field="*{currentPassword}"
                                            autocomplete="new-password"

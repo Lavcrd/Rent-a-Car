@@ -20,7 +20,6 @@ public class DoubleValueValidator implements ConstraintValidator<DoubleValue, St
     @Override
     public boolean isValid(String input, ConstraintValidatorContext cvc) {
         try {
-            if (input == null) return false;
             double value = Double.parseDouble(input);
 
             if (value > 0 && allowedPositive) return true;

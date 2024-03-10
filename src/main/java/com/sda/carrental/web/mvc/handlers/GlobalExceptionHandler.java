@@ -18,14 +18,14 @@ public class GlobalExceptionHandler {
     private final String CB_URI_PREFIX = "/mg-car/car-bases";
     private final String VIEW_CB_URI_SUFFIX = "/update-image";
     @Value("${spring.servlet.multipart.max-file-size}")
-    private final String maximumFileSize;
+    private String maxFileSize;
 
     @ExceptionHandler(MaxUploadSizeExceededException.class)
     @ResponseStatus
     public void handleMaxUploadSizeExceededException(MaxUploadSizeExceededException ex, HttpServletRequest req, HttpServletResponse res) {
         try {
             String uri = req.getRequestURI();
-            final String SIZE_MESSAGE = "Failure: File size exceeds permitted maximum of " + maximumFileSize;
+            final String SIZE_MESSAGE = "Failure: File size exceeds permitted maximum of " + maxFileSize;
 
             if (uri.equals(CB_URI_PREFIX + "/register")) {
                 req.getSession().setAttribute(MSG_KEY, SIZE_MESSAGE);

@@ -1,7 +1,8 @@
 package com.sda.carrental.service;
 
-import com.sda.carrental.model.company.CompanySettings;
+import com.sda.carrental.model.property.company.Settings;
 import com.sda.carrental.repository.SettingsRepository;
+import com.sda.carrental.service.mappers.SettingsMapper;
 import com.sda.carrental.web.mvc.form.property.company.UpdateSettingsForm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -15,35 +16,50 @@ import javax.annotation.PostConstruct;
 @Service
 @RequiredArgsConstructor
 public class SettingsService {
-    private CompanySettings settings;
+    private Settings settings;
     private final SettingsRepository repository;
-
-    @Scheduled(fixedRate = 3 * 60 * 1000)
-    public void refreshSettings() {
-        settings = get();
-    }
+    private static final long refreshFrequency = 15 * 60 * 1000;
 
     @PostConstruct
     public void init() {
         settings = get();
     }
 
-    public CompanySettings getInstance() {
+    @Scheduled(fixedRate = refreshFrequency)
+    public void refreshSettings() {
+        settings = get();
+    }
+
+    public Settings getInstance() {
         if (settings == null) {
             settings = get();
         }
         return settings;
     }
 
-    public CompanySettings get() {
-        return repository.get().orElse(new CompanySettings(4, 5, 0.2, 4));
+    public Settings get() {
+        return repository.get().orElse(new Settings(4, 5, 0.2, 4));
+    }
+
+    public long getRefreshFrequency() {
+        return refreshFrequency;
     }
 
     @Transactional
-    public HttpStatus updateDetails(UpdateSettingsForm form) {
+    public HttpStatus update(UpdateSettingsForm form) {
         try {
-            repository.updateSettings(form.getRefundDepositDeadlineDays(), form.getRefundDepositDeadlineDays(),
-                    form.getCancellationFeePercentage(), form.getReservationGap());
+            Settings entity = SettingsMapper.toEntity(form);
+            if (repository.existsById(1L)) {
+                repository.update(
+                        Long.parseLong(form.getRefundDepositDeadlineDays()),
+                        Long.parseLong(form.getRefundDepositDeadlineDays()),
+                        Double.parseDouble(form.getCancellationFeePercentage()),
+                        Integer.parseInt(form.getReservationGap()));
+            } else {
+                repository.save(entity);
+            }
+
+            settings = entity;
             return HttpStatus.ACCEPTED;
         } catch (RuntimeException err) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
