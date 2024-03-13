@@ -2,7 +2,7 @@ package com.sda.carrental.web.mvc.form.property.company;
 
 import com.sda.carrental.model.property.company.Settings;
 import com.sda.carrental.web.mvc.form.common.ConfirmationForm;
-import com.sda.carrental.web.mvc.form.validation.constraint.NumberValue;
+import com.sda.carrental.web.mvc.form.validation.constraint.NumericString;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -14,19 +14,19 @@ import javax.validation.constraints.NotNull;
 @Setter
 @NoArgsConstructor
 public class UpdateSettingsForm extends ConfirmationForm {
-    @NumberValue(message = "Failure: Cancellation timeframe value is not valid.", allowedZero = true, allowedPositive = true)
+    @NumericString(message = "Failure: Cancellation timeframe value is not valid.", allowedDouble = false, allowedNegative = false)
     @NotNull(message = "Failure: Cancellation timeframe field cannot be empty.")
     private String refundSubtractDaysDuration;
 
     @NotNull(message = "Failure: Deadline field cannot be empty.")
-    @NumberValue(message = "Failure: Refund deadline must be positive number value.", allowedPositive = true)
+    @NumericString(message = "Failure: Refund deadline must be positive number value.", allowedDouble = false, allowedNegative = false, allowedZero = false)
     private String refundDepositDeadlineDays;
 
-    @NumberValue(message = "Failure: Cancellation fee incorrect format.", allowedDouble = true, allowedZero = true, allowedPositive = true,  max = 1D)
+    @NumericString(message = "Failure: Cancellation fee incorrect format.", allowedNegative = false, max = 1D)
     @NotBlank(message = "Failure: Cancellation fee field cannot be empty.")
     private String cancellationFeePercentage;
 
-    @NumberValue(message = "Failure: Car cooldown cannot be negative.", allowedZero = true, allowedPositive = true)
+    @NumericString(message = "Failure: Car cooldown cannot be negative.", allowedDouble = false, allowedNegative = false)
     @NotNull(message = "Failure: Car cooldown field cannot be empty.")
     private String reservationGap;
 

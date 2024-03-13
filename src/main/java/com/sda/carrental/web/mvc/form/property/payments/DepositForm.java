@@ -1,7 +1,7 @@
 package com.sda.carrental.web.mvc.form.property.payments;
 
 import com.sda.carrental.web.mvc.form.common.ConfirmationForm;
-import com.sda.carrental.web.mvc.form.validation.constraint.DoubleValue;
+import com.sda.carrental.web.mvc.form.validation.constraint.NumericString;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -13,6 +13,6 @@ import javax.validation.constraints.*;
 @NoArgsConstructor
 public class DepositForm extends ConfirmationForm {
     @NotEmpty(message = "Failure: Field must contain a value.")
-    @DoubleValue(allowedPositive = true)
+    @NumericString(allowedNegative = false, allowedZero = false)
     private String value;
 }

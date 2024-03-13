@@ -1,11 +1,11 @@
 package com.sda.carrental.web.mvc.form.validation.validator;
 
-import com.sda.carrental.web.mvc.form.validation.constraint.NumberValue;
+import com.sda.carrental.web.mvc.form.validation.constraint.NumericString;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
-public class NumberValueValidator implements ConstraintValidator<NumberValue, String> {
+public class NumericStringValidator implements ConstraintValidator<NumericString, String> {
     private boolean allowedPositive;
     private boolean allowedZero;
     private boolean allowedNegative;
@@ -14,7 +14,7 @@ public class NumberValueValidator implements ConstraintValidator<NumberValue, St
     private double max;
 
     @Override
-    public void initialize(NumberValue constraint) {
+    public void initialize(NumericString constraint) {
         this.allowedPositive = constraint.allowedPositive();
         this.allowedZero = constraint.allowedZero();
         this.allowedNegative = constraint.allowedNegative();
