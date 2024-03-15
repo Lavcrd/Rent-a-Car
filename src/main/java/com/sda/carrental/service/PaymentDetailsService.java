@@ -7,6 +7,7 @@ import com.sda.carrental.global.Utility;
 import com.sda.carrental.global.enums.Role;
 import com.sda.carrental.model.operational.Reservation;
 import com.sda.carrental.model.property.department.Country;
+import com.sda.carrental.model.property.payments.Currency;
 import com.sda.carrental.model.property.payments.PaymentDetails;
 import com.sda.carrental.repository.PaymentDetailsRepository;
 import com.sda.carrental.service.auth.CustomUserDetails;
@@ -35,6 +36,7 @@ public class PaymentDetailsService {
         long days = reservation.getDateFrom().until(reservation.getDateTo(), ChronoUnit.DAYS) + 1;
 
         Country country = reservation.getDepartmentTake().getCountry();
+        Currency currency = country.getCurrency();
 
         Double exchange = country.getCurrency().getExchange();
         Double multiplier = exchange * reservation.getDepartmentTake().getMultiplier();
@@ -47,9 +49,9 @@ public class PaymentDetailsService {
 
         if (!reservation.getDepartmentBack().equals(reservation.getDepartmentTake())) {
             double returnPrice = u.roundCurrency(country.getRelocateCarPrice() * multiplier);
-            repository.save(new PaymentDetails(rawValue, returnPrice, depositValue, payment, deposit, reservation));
+            repository.save(new PaymentDetails(rawValue, returnPrice, depositValue, payment, deposit, reservation.getId(), currency));
         } else {
-            repository.save(new PaymentDetails(rawValue, 0.0, depositValue, payment, deposit, reservation));
+            repository.save(new PaymentDetails(rawValue, 0.0, depositValue, payment, deposit, reservation.getId(), currency));
         }
     }
 

@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
+import java.math.BigInteger;
 import java.util.List;
 import java.util.stream.StreamSupport;
 
@@ -34,7 +35,7 @@ public class CountryService {
     }
 
     public Country placeholder() {
-        return new Country("N/D", "N/D", "N/D", new Currency("Euro", "EUR", 1.0));
+        return new Country("N/D", "N/D", "N/D", currencyService.placeholder());
     }
 
     public List<Country> findByForm(SearchCountriesForm form) {
@@ -58,5 +59,15 @@ public class CountryService {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return HttpStatus.INTERNAL_SERVER_ERROR;
         }
+    }
+
+    public boolean hasPresence(Long id) {
+        List<BigInteger> results = repository.hasPresence(id);
+        for (BigInteger result : results) {
+            if (result.intValue() == 1) {
+                return true;
+            }
+        }
+        return false;
     }
 }

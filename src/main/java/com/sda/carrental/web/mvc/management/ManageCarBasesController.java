@@ -35,7 +35,7 @@ public class ManageCarBasesController {
     private final CarService carService;
     private final CarBaseService carBaseService;
     private final EmployeeService employeeService;
-    private final CountryService countryService;
+    private final CurrencyService currencyService;
 
     private final String MSG_KEY = "message";
     private final String MSG_GENERIC_EXCEPTION = "Failure: An unexpected error occurred";
@@ -49,7 +49,7 @@ public class ManageCarBasesController {
             utility.retrieveSessionMessage(map, res);
 
             map.addAttribute("results", map.getOrDefault("results", carBases));
-            map.addAttribute("placeholder_country", countryService.placeholder());
+            map.addAttribute("currency", currencyService.placeholder().getCode());
 
             Map<String, Object> carProperties = carBaseService.getFilterProperties(carBases, true);
             map.addAttribute("brands", carProperties.get("brands"));
@@ -75,7 +75,7 @@ public class ManageCarBasesController {
             CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             List<Department> departments = employeeService.getDepartmentsByUserContext(cud);
             map.addAttribute("departments", departments);
-            map.addAttribute("placeholder_country", countryService.placeholder());
+            map.addAttribute("currency", currencyService.placeholder());
 
             utility.retrieveSessionMessage(map, req);
 

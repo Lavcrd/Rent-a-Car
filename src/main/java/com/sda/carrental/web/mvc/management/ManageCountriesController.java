@@ -1,10 +1,13 @@
 package com.sda.carrental.web.mvc.management;
 
+import com.sda.carrental.global.Utility;
 import com.sda.carrental.global.enums.Role;
+import com.sda.carrental.model.property.department.Country;
 import com.sda.carrental.service.CountryService;
 import com.sda.carrental.service.CurrencyService;
 import com.sda.carrental.service.EmployeeService;
 import com.sda.carrental.service.auth.CustomUserDetails;
+import com.sda.carrental.web.mvc.form.common.ConfirmationForm;
 import com.sda.carrental.web.mvc.form.property.departments.country.RegisterCountryForm;
 import com.sda.carrental.web.mvc.form.property.departments.country.SearchCountriesForm;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +17,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -28,6 +32,7 @@ public class ManageCountriesController {
     private final EmployeeService employeeService;
     private final CountryService countryService;
     private final CurrencyService currencyService;
+    private final Utility u;
 
     private final String MSG_KEY = "message";
     private final String MSG_ACCESS_REJECTED = "Failure: Access rejected";
@@ -46,6 +51,27 @@ public class ManageCountriesController {
             map.addAttribute("currencies", currencyService.findAll());
 
             return "management/searchCountries";
+        } catch (RuntimeException err) {
+            redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
+            return "redirect:/";
+        }
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/{country}")
+    public String viewCountryPage(ModelMap map, RedirectAttributes redAtt, @PathVariable(value = "country") Long countryId) {
+        try {
+            Country country = countryService.findById(countryId);
+
+            map.addAttribute("country", country);
+            map.addAttribute("default_currency", currencyService.placeholder().getCode());
+            map.addAttribute("hasPresence", countryService.hasPresence(country.getId()));
+
+            map.addAttribute("currencies", currencyService.findAll());
+            map.addAttribute("relocation_price", u.roundCurrency(country.getRelocateCarPrice() * country.getCurrency().getExchange()));
+
+            map.addAttribute("confirm_form", map.getOrDefault("confirm_form", new ConfirmationForm()));
+
+            return "management/viewCountry";
         } catch (RuntimeException err) {
             redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
             return "redirect:/";

@@ -5,6 +5,7 @@ import com.sda.carrental.exceptions.ResourceNotFoundException;
 import com.sda.carrental.model.property.department.Country;
 import com.sda.carrental.model.operational.Reservation;
 import com.sda.carrental.model.property.department.Department;
+import com.sda.carrental.model.property.payments.Currency;
 import com.sda.carrental.model.property.payments.PaymentDetails;
 import com.sda.carrental.service.PaymentDetailsService;
 import com.sda.carrental.service.ReservationService;
@@ -51,16 +52,20 @@ public class CustomerReservationsController {
             Reservation reservation = reservationService.findCustomerReservation(cud.getId(), detailsButton);
             Department department = reservation.getDepartmentTake();
             Country country = department.getCountry();
-            Optional<PaymentDetails> receipt = paymentDetailsService.getOptionalPaymentDetails(reservation.getId());
+            Optional<PaymentDetails> opd = paymentDetailsService.getOptionalPaymentDetails(reservation.getId());
 
-            if (receipt.isPresent()) {
-                map.addAttribute("diff_return_price", receipt.get().getInitialDivergenceFee());
-                map.addAttribute("raw_price", receipt.get().getInitialCarFee());
-                map.addAttribute("total_price", receipt.get().getInitialCarFee() + receipt.get().getInitialDivergenceFee());
-                map.addAttribute("deposit_value", receipt.get().getInitialDeposit());
+            if (opd.isPresent()) {
+                PaymentDetails pd = opd.get();
+                map.addAttribute("diff_return_price", pd.getInitialDivergenceFee());
+                map.addAttribute("raw_price", pd.getInitialCarFee());
+                map.addAttribute("total_price", pd.getInitialCarFee() + pd.getInitialDivergenceFee());
+                map.addAttribute("deposit_value", pd.getInitialDeposit());
+                map.addAttribute("currency", pd.getCurrency().getCode());
             } else {
+                Currency currency = country.getCurrency();
                 long days = reservation.getDateFrom().until(reservation.getDateTo(), ChronoUnit.DAYS) + 1;
-                double multiplier = country.getCurrency().getExchange() * department.getMultiplier();
+                double multiplier = currency.getExchange() * department.getMultiplier();
+                map.addAttribute("currency", currency.getCode());
 
                 if (!reservation.getDepartmentTake().equals(reservation.getDepartmentBack())) {
                     map.addAttribute("diff_return_price", country.getRelocateCarPrice() * multiplier);
@@ -70,7 +75,7 @@ public class CustomerReservationsController {
                     map.addAttribute("total_price", days * reservation.getCarBase().getPriceDay() * multiplier);
                 }
                 map.addAttribute("raw_price", days * reservation.getCarBase().getPriceDay() * multiplier);
-                map.addAttribute("deposit_value", reservation.getCarBase().getDepositValue() * country.getCurrency().getExchange());
+                map.addAttribute("deposit_value", reservation.getCarBase().getDepositValue() * currency.getExchange());
             }
 
             Settings cs = settingsService.getInstance();

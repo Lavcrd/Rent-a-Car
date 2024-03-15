@@ -81,6 +81,7 @@ public class ReservationController {
             map.addAttribute("dptT", depTo);
             map.addAttribute("reservationData", new ReservationForm(carBaseId, indexForm));
             map.addAttribute("carBase", carBase);
+            map.addAttribute("currency", depFrom.getCountry().getCurrency().getCode());
             map.addAttribute("raw_price", days * carBase.getPriceDay() * multiplier);
             map.addAttribute("deposit", carBase.getDepositValue() * exchange);
             map.addAttribute("fee_percentage", cs.getCancellationFeePercentage() * 100);

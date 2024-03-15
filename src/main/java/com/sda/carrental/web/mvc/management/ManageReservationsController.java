@@ -110,15 +110,17 @@ public class ManageReservationsController {
             if (!(dptF.getId().equals(departmentId) || reservation.getDepartmentBack().getId().equals(departmentId)))
                 throw new IllegalActionException();
 
-            Optional<PaymentDetails> receipt = paymentDetailsService.getOptionalPaymentDetails(reservation.getId());
+            Optional<PaymentDetails> opd = paymentDetailsService.getOptionalPaymentDetails(reservation.getId());
 
             double multiplier = country.getCurrency().getExchange() * dptF.getMultiplier();
 
-            if (receipt.isPresent()) {
-                map.addAttribute("diff_return_price", receipt.get().getInitialDivergenceFee());
-                map.addAttribute("raw_price", receipt.get().getInitialCarFee());
-                map.addAttribute("total_price", receipt.get().getInitialCarFee() + receipt.get().getInitialDivergenceFee());
-                map.addAttribute("deposit_value", receipt.get().getInitialDeposit());
+            if (opd.isPresent()) {
+                PaymentDetails pd = opd.get();
+                map.addAttribute("diff_return_price", pd.getInitialDivergenceFee());
+                map.addAttribute("raw_price", pd.getInitialCarFee());
+                map.addAttribute("total_price", pd.getInitialCarFee() + pd.getInitialDivergenceFee());
+                map.addAttribute("deposit_value", pd.getInitialDeposit());
+                map.addAttribute("currency", pd.getCurrency().getCode());
             } else {
                 long days = reservation.getDateFrom().until(reservation.getDateTo(), ChronoUnit.DAYS) + 1;
                 if (!dptF.equals(reservation.getDepartmentBack())) {
@@ -130,6 +132,7 @@ public class ManageReservationsController {
                 }
                 map.addAttribute("raw_price", days * reservation.getCarBase().getPriceDay() * multiplier);
                 map.addAttribute("deposit_value", reservation.getCarBase().getDepositValue() * country.getCurrency().getExchange());
+                map.addAttribute("currency", dptF.getCountry().getCurrency().getCode());
             }
 
             Settings cs = settingsService.getInstance();
