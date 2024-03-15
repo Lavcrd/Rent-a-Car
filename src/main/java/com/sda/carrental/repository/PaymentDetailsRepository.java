@@ -9,6 +9,6 @@ import java.util.Optional;
 
 public interface PaymentDetailsRepository extends CrudRepository<PaymentDetails, Long> {
 
-    @Query(value = "SELECT p FROM payment_details p WHERE p.reservation.id = :operationId")
+    @Query(value = "SELECT p FROM payment_details p WHERE p.reservationId = :operationId")
     Optional<PaymentDetails> findByOperationId(@Param("operationId") Long operationId);
 }

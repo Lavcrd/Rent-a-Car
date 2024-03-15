@@ -257,13 +257,13 @@ public class PredefiniedData implements CommandLineRunner {
     }
 
     private void createPayments() {
-        PaymentDetails pd1 = new PaymentDetails(600D, 120D, 1500D, 0D, 750D, reservationRepository.findById(1L).get());
-        PaymentDetails pd2 = new PaymentDetails(500D, 0D, 1500D, 0D, 800D, reservationRepository.findById(2L).get());
-        PaymentDetails pd3 = new PaymentDetails(700D, 120D, 1500D, 0D, 800D, reservationRepository.findById(3L).get());
-        PaymentDetails pd4 = new PaymentDetails(800D, 0D, 1500D, 0D, 750D, reservationRepository.findById(4L).get());
-        PaymentDetails pd5 = new PaymentDetails(800D, 0D, 1500D, 0D, 1500D, reservationRepository.findById(5L).get());
-        PaymentDetails pd9 = new PaymentDetails(800D, 0D, 1500D, 0D, 1500D, reservationRepository.findById(9L).get());
-        PaymentDetails pd10 = new PaymentDetails(800D, 0D, 1500D, 0D, 1500D, reservationRepository.findById(10L).get());
+        PaymentDetails pd1 = new PaymentDetails(600D, 120D, 1500D, 0D, 750D, 1L, currencies.get(0));
+        PaymentDetails pd2 = new PaymentDetails(500D, 0D, 1500D, 0D, 800D, 2L, currencies.get(0));
+        PaymentDetails pd3 = new PaymentDetails(700D, 120D, 1500D, 0D, 800D, 3L, currencies.get(0));
+        PaymentDetails pd4 = new PaymentDetails(800D, 0D, 1500D, 0D, 750D, 4L, currencies.get(0));
+        PaymentDetails pd5 = new PaymentDetails(800D, 0D, 1500D, 0D, 1500D, 5L, currencies.get(0));
+        PaymentDetails pd9 = new PaymentDetails(800D, 0D, 1500D, 0D, 1500D, 9L, currencies.get(0));
+        PaymentDetails pd10 = new PaymentDetails(800D, 0D, 1500D, 0D, 1500D, 10L, currencies.get(0));
 
         pd1.setSecured(720D);
         pd2.setSecured(700D);

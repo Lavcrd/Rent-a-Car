@@ -62,6 +62,7 @@ public class CarRetrieveController {
                 map.addAttribute("raw_price", receipt.getInitialCarFee());
                 map.addAttribute("total_price", receipt.getInitialCarFee() + receipt.getInitialDivergenceFee());
                 map.addAttribute("deposit_value", receipt.getInitialDeposit());
+                map.addAttribute("currency", receipt.getCurrency().getCode());
 
                 map.addAttribute("reservation", reservation);
                 map.addAttribute("fee_percentage", cs.getCancellationFeePercentage() * 100);

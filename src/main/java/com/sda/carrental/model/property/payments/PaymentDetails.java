@@ -1,6 +1,5 @@
 package com.sda.carrental.model.property.payments;
 
-import com.sda.carrental.model.operational.Reservation;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -11,7 +10,7 @@ import javax.persistence.*;
 @Getter
 @NoArgsConstructor
 public class PaymentDetails {
-    public PaymentDetails(Double carFee, Double divergenceFee, Double requiredDeposit, Double payment, Double deposit, Reservation reservation) {
+    public PaymentDetails(Double carFee, Double divergenceFee, Double requiredDeposit, Double payment, Double deposit, Long reservationId, Currency currency) {
         this.initialCarFee = carFee;
         this.initialDivergenceFee = divergenceFee;
         this.initialDeposit = requiredDeposit;
@@ -19,17 +18,14 @@ public class PaymentDetails {
         this.deposit = deposit;
         this.secured = 0.0;
         this.releasedDeposit = 0.0;
-        this.reservation = reservation;
+        this.currency = currency;
+        this.reservationId= reservationId;
     }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
-
-    @OneToOne
-    @JoinColumn(name = "reservation", referencedColumnName = "id")
-    private Reservation reservation;
 
     @Column(name = "initial_car_fee", nullable = false)
     private double initialCarFee;
@@ -56,4 +52,11 @@ public class PaymentDetails {
     @Setter
     @Column(name = "secured", nullable = false)
     private double secured;
+
+    @JoinColumn(name = "reservation_id", referencedColumnName = "id")
+    private Long reservationId;
+
+    @ManyToOne
+    @JoinColumn(name = "currency", referencedColumnName = "id")
+    private Currency currency;
 }

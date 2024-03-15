@@ -16,7 +16,7 @@ public interface RetrieveRepository extends CrudRepository<Retrieve, Long> {
     @Query("SELECT r FROM retrieve r " +
             "WHERE r.rent.reservation.departmentBack IN (:departments) " +
             "AND r.rent.reservation.id IN " +
-            "(SELECT p.reservation.id FROM payment_details p WHERE p.deposit <> 0) " +
+            "(SELECT p.reservationId FROM payment_details p WHERE p.deposit <> 0) " +
             "ORDER BY r.dateTo ASC")
     List<Retrieve> findAllUnresolvedByDepartments(@Param("departments") List<Department> departments);
 
@@ -29,7 +29,7 @@ public interface RetrieveRepository extends CrudRepository<Retrieve, Long> {
             "AND (:country IS NULL OR (:country = '' OR LOWER(c.plate) LIKE LOWER(CONCAT(:country, '-%')))) " +
             "AND (:plate IS NULL OR LOWER(c.plate) LIKE LOWER(CONCAT('%-%', :plate, '%'))) " +
             "AND r.rent.reservation.id IN " +
-            "(SELECT p.reservation.id FROM payment_details p WHERE p.deposit <> 0) " +
+            "(SELECT p.reservationId FROM payment_details p WHERE p.deposit <> 0) " +
             "ORDER BY r.dateTo ASC"
     )
     List<Retrieve> findUnresolved(@Param("name") String name, @Param("surname") String surname,

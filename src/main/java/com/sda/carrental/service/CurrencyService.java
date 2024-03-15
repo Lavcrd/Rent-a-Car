@@ -20,4 +20,9 @@ public class CurrencyService {
     public Currency findById(Long id) throws ResourceNotFoundException {
         return repository.findById(id).orElseThrow(ResourceNotFoundException::new);
     }
+
+    // Default currency
+    public Currency placeholder() {
+        return new Currency("Euro", "EUR", 1.0);
+    }
 }
