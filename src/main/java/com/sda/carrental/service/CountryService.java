@@ -1,11 +1,11 @@
 package com.sda.carrental.service;
 
 import com.sda.carrental.exceptions.ResourceNotFoundException;
+import com.sda.carrental.global.Utility;
 import com.sda.carrental.model.property.department.Country;
 import com.sda.carrental.model.property.payments.Currency;
 import com.sda.carrental.repository.CountryRepository;
-import com.sda.carrental.web.mvc.form.property.departments.country.RegisterCountryForm;
-import com.sda.carrental.web.mvc.form.property.departments.country.SearchCountriesForm;
+import com.sda.carrental.web.mvc.form.property.departments.country.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -23,6 +23,7 @@ import static java.util.stream.Collectors.toList;
 public class CountryService {
     private final CountryRepository repository;
     private final CurrencyService currencyService;
+    private final Utility u;
 
     public Country findById(Long id) throws ResourceNotFoundException {
         return repository.findById(id).orElseThrow(ResourceNotFoundException::new);
@@ -69,5 +70,77 @@ public class CountryService {
             }
         }
         return false;
+    }
+
+    @Transactional
+    public HttpStatus updateDetails(Long id, UpdateCountryDetailsForm form) {
+        try {
+            Country country = findById(id);
+
+            country.setName(form.getName());
+            country.setCode(form.getCode());
+            country.setContact(form.getContact());
+
+            repository.save(country);
+            return HttpStatus.ACCEPTED;
+        } catch (RuntimeException e) {
+            return HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+    }
+
+    @Transactional
+    public HttpStatus updateCurrency(Long id, UpdateCountryCurrencyForm form) {
+        try {
+            Country country = findById(id);
+            Currency currency = currencyService.findById(form.getCurrency());
+
+            country.setCurrency(currency);
+
+            repository.save(country);
+            return HttpStatus.ACCEPTED;
+        } catch (RuntimeException e) {
+            return HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+    }
+
+    @Transactional
+    public HttpStatus updateRelocationFee(Long id, UpdateRelocationFeeForm form) {
+        try {
+            Country country = findById(id);
+            Double value = u.roundCurrency(Double.parseDouble(form.getFee()));
+
+            country.setRelocateCarPrice(value);
+
+            repository.save(country);
+            return HttpStatus.ACCEPTED;
+        } catch (RuntimeException e) {
+            return HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+    }
+
+    @Transactional
+    public HttpStatus updateActivity(Long id) {
+        try {
+            Country country = findById(id);
+            country.setActive(!country.isActive());
+
+            repository.save(country);
+            return HttpStatus.ACCEPTED;
+        } catch (RuntimeException e) {
+            return HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+    }
+
+    @Transactional
+    public HttpStatus delete(Long id) {
+        try {
+            if (hasPresence(id)) {
+                return HttpStatus.PRECONDITION_FAILED;
+            }
+            repository.deleteById(id);
+            return HttpStatus.ACCEPTED;
+        } catch (RuntimeException e) {
+            return HttpStatus.INTERNAL_SERVER_ERROR;
+        }
     }
 }

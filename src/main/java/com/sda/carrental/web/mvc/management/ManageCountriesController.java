@@ -1,5 +1,6 @@
 package com.sda.carrental.web.mvc.management;
 
+import com.sda.carrental.exceptions.ResourceNotFoundException;
 import com.sda.carrental.global.Utility;
 import com.sda.carrental.global.enums.Role;
 import com.sda.carrental.model.property.department.Country;
@@ -8,8 +9,7 @@ import com.sda.carrental.service.CurrencyService;
 import com.sda.carrental.service.EmployeeService;
 import com.sda.carrental.service.auth.CustomUserDetails;
 import com.sda.carrental.web.mvc.form.common.ConfirmationForm;
-import com.sda.carrental.web.mvc.form.property.departments.country.RegisterCountryForm;
-import com.sda.carrental.web.mvc.form.property.departments.country.SearchCountriesForm;
+import com.sda.carrental.web.mvc.form.property.departments.country.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -38,6 +38,7 @@ public class ManageCountriesController {
     private final String MSG_ACCESS_REJECTED = "Failure: Access rejected";
     private final String MSG_GENERIC_EXCEPTION = "Failure: An unexpected error occurred";
     private final String MSG_NO_RESOURCE = "Failure: Resource not found";
+    private final String MSG_CTR_UPDATED = "Success: Country has been updated.";
 
     //Pages
     @RequestMapping(method = RequestMethod.GET)
@@ -69,6 +70,9 @@ public class ManageCountriesController {
             map.addAttribute("currencies", currencyService.findAll());
             map.addAttribute("relocation_price", u.roundCurrency(country.getRelocateCarPrice() * country.getCurrency().getExchange()));
 
+            map.addAttribute("details_form", map.getOrDefault("details_form", new UpdateCountryDetailsForm(country)));
+            map.addAttribute("currency_form", map.getOrDefault("currency_form", new UpdateCountryCurrencyForm(country)));
+            map.addAttribute("relocation_fee_form", map.getOrDefault("relocation_fee_form", new UpdateRelocationFeeForm(country)));
             map.addAttribute("confirm_form", map.getOrDefault("confirm_form", new ConfirmationForm()));
 
             return "management/viewCountry";
@@ -78,7 +82,7 @@ public class ManageCountriesController {
         }
     }
 
-    //Search page buttons
+    // Search page buttons
     @RequestMapping(value = "/search", method = RequestMethod.POST)
     public String searchCountriesButton(@ModelAttribute("searchCountriesForm") @Valid SearchCountriesForm form, Errors err, RedirectAttributes redAtt) {
         try {
@@ -126,4 +130,167 @@ public class ManageCountriesController {
         }
         return "redirect:/mg-ctr";
     }
+
+    // View page buttons
+    @RequestMapping(value = "/{country}/update-details", method = RequestMethod.POST)
+    public String countryDetailsButton(@ModelAttribute("details_form") @Valid UpdateCountryDetailsForm form, Errors err, @PathVariable(value = "country") Long countryId, RedirectAttributes redAtt) {
+        try {
+            CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+            if (!employeeService.hasMinimumAuthority(cud, Role.ROLE_ADMIN)) {
+                redAtt.addFlashAttribute(MSG_KEY, MSG_ACCESS_REJECTED);
+                return "redirect:/mg-ctr/{country}";
+            }
+
+            if (err.hasErrors()) {
+                redAtt.addFlashAttribute("details_form", form);
+                redAtt.addFlashAttribute(MSG_KEY, err.getAllErrors().get(0).getDefaultMessage());
+                return "redirect:/mg-ctr/{country}";
+            }
+
+            HttpStatus status = countryService.updateDetails(countryId, form);
+
+            if (status.equals(HttpStatus.ACCEPTED)) {
+                redAtt.addFlashAttribute(MSG_KEY, MSG_CTR_UPDATED);
+            } else {
+                redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
+            }
+            return "redirect:/mg-ctr/{country}";
+        } catch (ResourceNotFoundException e) {
+            redAtt.addFlashAttribute(MSG_KEY, MSG_NO_RESOURCE);
+        } catch (RuntimeException e) {
+            redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
+        }
+        return "redirect:/mg-ctr";
+    }
+
+    @RequestMapping(value = "/{country}/update-currency", method = RequestMethod.POST)
+    public String countryCurrencyButton(@ModelAttribute("currency_form") @Valid UpdateCountryCurrencyForm form, Errors err, @PathVariable(value = "country") Long countryId, RedirectAttributes redAtt) {
+        try {
+            CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+            if (!employeeService.hasMinimumAuthority(cud, Role.ROLE_ADMIN)) {
+                redAtt.addFlashAttribute(MSG_KEY, MSG_ACCESS_REJECTED);
+                return "redirect:/mg-ctr/{country}";
+            }
+
+            if (err.hasErrors()) {
+                redAtt.addFlashAttribute("currency_form", form);
+                redAtt.addFlashAttribute(MSG_KEY, err.getAllErrors().get(0).getDefaultMessage());
+                return "redirect:/mg-ctr/{country}";
+            }
+
+            HttpStatus status = countryService.updateCurrency(countryId, form);
+
+            if (status.equals(HttpStatus.ACCEPTED)) {
+                redAtt.addFlashAttribute(MSG_KEY, MSG_CTR_UPDATED);
+            } else {
+                redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
+            }
+            return "redirect:/mg-ctr/{country}";
+        } catch (ResourceNotFoundException e) {
+            redAtt.addFlashAttribute(MSG_KEY, MSG_NO_RESOURCE);
+        } catch (RuntimeException e) {
+            redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
+        }
+        return "redirect:/mg-ctr";
+    }
+
+    @RequestMapping(value = "/{country}/update-fee", method = RequestMethod.POST)
+    public String countryFeeButton(@ModelAttribute("relocation_fee_form") @Valid UpdateRelocationFeeForm form, Errors err, @PathVariable(value = "country") Long countryId, RedirectAttributes redAtt) {
+        try {
+            CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+            if (!employeeService.hasMinimumAuthority(cud, Role.ROLE_ADMIN)) {
+                redAtt.addFlashAttribute(MSG_KEY, MSG_ACCESS_REJECTED);
+                return "redirect:/mg-ctr/{country}";
+            }
+
+            if (err.hasErrors()) {
+                redAtt.addFlashAttribute("relocation_fee_form", form);
+                redAtt.addFlashAttribute(MSG_KEY, err.getAllErrors().get(0).getDefaultMessage());
+                return "redirect:/mg-ctr/{country}";
+            }
+
+            HttpStatus status = countryService.updateRelocationFee(countryId, form);
+
+            if (status.equals(HttpStatus.ACCEPTED)) {
+                redAtt.addFlashAttribute(MSG_KEY, MSG_CTR_UPDATED);
+            } else {
+                redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
+            }
+            return "redirect:/mg-ctr/{country}";
+        } catch (ResourceNotFoundException e) {
+            redAtt.addFlashAttribute(MSG_KEY, MSG_NO_RESOURCE);
+        } catch (RuntimeException e) {
+            redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
+        }
+        return "redirect:/mg-ctr";
+    }
+
+    @RequestMapping(value = "/{country}/update-activity", method = RequestMethod.POST)
+    public String countryActivityButton(@ModelAttribute("confirm_form") @Valid ConfirmationForm form, Errors err, @PathVariable(value = "country") Long countryId, RedirectAttributes redAtt) {
+        try {
+            CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+            if (!employeeService.hasMinimumAuthority(cud, Role.ROLE_ADMIN)) {
+                redAtt.addFlashAttribute(MSG_KEY, MSG_ACCESS_REJECTED);
+                return "redirect:/mg-ctr/{country}";
+            }
+
+            if (err.hasErrors()) {
+                redAtt.addFlashAttribute(MSG_KEY, err.getAllErrors().get(0).getDefaultMessage());
+                return "redirect:/mg-ctr/{country}";
+            }
+
+            HttpStatus status = countryService.updateActivity(countryId);
+
+            if (status.equals(HttpStatus.ACCEPTED)) {
+                redAtt.addFlashAttribute(MSG_KEY, MSG_CTR_UPDATED);
+            } else {
+                redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
+            }
+            return "redirect:/mg-ctr/{country}";
+        } catch (ResourceNotFoundException e) {
+            redAtt.addFlashAttribute(MSG_KEY, MSG_NO_RESOURCE);
+        } catch (RuntimeException e) {
+            redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
+        }
+        return "redirect:/mg-ctr";
+    }
+
+    @RequestMapping(value = "/{country}/delete", method = RequestMethod.POST)
+    public String countryDeleteButton(@ModelAttribute("confirm_form") @Valid ConfirmationForm form, Errors err, @PathVariable(value = "country") Long countryId, RedirectAttributes redAtt) {
+        try {
+            CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+            if (!employeeService.hasMinimumAuthority(cud, Role.ROLE_ADMIN)) {
+                redAtt.addFlashAttribute(MSG_KEY, MSG_ACCESS_REJECTED);
+                return "redirect:/mg-ctr/{country}";
+            }
+
+            if (err.hasErrors()) {
+                redAtt.addFlashAttribute(MSG_KEY, err.getAllErrors().get(0).getDefaultMessage());
+                return "redirect:/mg-ctr/{country}";
+            }
+
+            HttpStatus status = countryService.delete(countryId);
+
+            if (status.equals(HttpStatus.ACCEPTED)) {
+                redAtt.addFlashAttribute(MSG_KEY, "Success: Country has been successfully removed.");
+                return "redirect:/mg-ctr";
+            } else if (status.equals(HttpStatus.PRECONDITION_FAILED)) {
+                redAtt.addFlashAttribute(MSG_KEY, "Failure: Country cannot be removed.");
+            } else {
+                redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
+            }
+            return "redirect:/mg-ctr/{country}";
+        } catch (ResourceNotFoundException e) {
+            redAtt.addFlashAttribute(MSG_KEY, MSG_NO_RESOURCE);
+        } catch (RuntimeException e) {
+            redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
+        }
+        return "redirect:/mg-ctr";
+    }
+
 }
