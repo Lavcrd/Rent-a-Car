@@ -50,17 +50,6 @@
                     </tr>
 
                     <tr class="table-dark">
-                        <td>Country call code:</td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <div class="overflow-cell-hs"
-                                 th:text="${country.contact}">
-                            </div>
-                        </td>
-                    </tr>
-
-                    <tr class="table-dark">
                         <td>Currency:</td>
                     </tr>
                     <tr>
@@ -73,11 +62,7 @@
                         <td>
                             <div class="overflow-cell-hs"
                                  th:text="'Rate: ' + ${country.currency.exchange} + ' [' + ${country.currency.code} + ']:[' + ${default_currency} + ']'"></div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <div class="overflow-cell-hs d-flex" style="font-size:xx-small;justify-content:end;"
+                            <div class="overflow-cell-hs" style="font-size:xx-small;"
                                  th:text="'Refreshed: ' + ${country.currency.updated}"></div>
                         </td>
                     </tr>
@@ -95,6 +80,17 @@
                         <td>
                             <div class="overflow-cell-hs"
                                  th:text="'Local: ' + ${relocation_price} + ' [' + ${country.currency.code} + ']'"></div>
+                        </td>
+                    </tr>
+
+                    <tr class="table-dark">
+                        <td>Country call code:</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="overflow-cell-hs"
+                                 th:text="${country.contact}">
+                            </div>
                         </td>
                     </tr>
 
@@ -159,7 +155,7 @@
                         <td class="button-cell">
                             <button type="button" class="btn btn-dark bg-dark mt-1 list-button w-100"
                                     data-bs-toggle="modal"
-                                    data-bs-target="#relocationModal">
+                                    data-bs-target="#feeModal">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                                      fill="currentColor"
                                      class="bi bi-circle cb-svg" viewBox="0 0 16 16">
@@ -207,29 +203,45 @@
                     </tbody>
                 </table>
 
-<!--
-                &lt;!&ndash;Example modal&ndash;&gt;
+                <!--Details modal-->
                 <form th:method="POST" th:object="${details_form}"
-                      th:action="@{'/mg-ctr/' + ${country.id} + '/example'}">
-                    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog"
+                      th:action="@{'/mg-ctr/' + ${country.id} + '/update-details'}">
+                    <div class="modal fade" id="detailsModal" tabindex="-1" role="dialog"
                          aria-hidden="true">
                         <div class="modal-dialog modal-dialog-centered" role="document">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h5 class="modal-title">Example</h5>
+                                    <h5 class="modal-title">Details</h5>
                                     <button type="button" class="close" data-bs-dismiss="modal"
                                             aria-label="Close">
                                         <span aria-hidden="true">×</span>
                                     </button>
                                 </div>
                                 <div class="modal-body">
-                                    <p>Example.</p>
                                     <div class="modal-row mt-2">
-                                        <label style="justify-self: start;" for="e_example"
-                                               class="form-label">City: </label>
-                                        <input id="e_example" class="text-black bg-white modal-input"
-                                               placeholder="City"
-                                               th:type="text" th:field="*{example}"
+                                        <label style="justify-self: start;" for="u_name"
+                                               class="form-label">Name: </label>
+                                        <input id="u_name" class="text-black bg-white modal-input"
+                                               placeholder="ex. Germany"
+                                               th:type="text" th:field="*{name}"
+                                               required/>
+                                    </div>
+
+                                    <div class="modal-row mt-2">
+                                        <label style="justify-self: start;" for="u_iso"
+                                               class="form-label">ISO Code: </label>
+                                        <input id="u_iso" class="text-black bg-white modal-input"
+                                               placeholder="ex. DE"
+                                               th:type="text" th:field="*{code}"
+                                               required/>
+                                    </div>
+
+                                    <div class="modal-row mt-2">
+                                        <label style="justify-self: start;" for="u_call_code"
+                                               class="form-label">Contact: </label>
+                                        <input id="u_call_code" class="text-black bg-white modal-input"
+                                               placeholder="ex. +00"
+                                               th:type="text" th:field="*{contact}"
                                                required/>
                                     </div>
 
@@ -238,9 +250,9 @@
                                     </div>
 
                                     <div class="modal-row mt-2">
-                                        <label style="justify-self: start;" for="d_confirmation"
+                                        <label style="justify-self: start;" for="details_confirmation"
                                                class="text-md">Password: </label>
-                                        <input id="d_confirmation" class="text-black bg-white modal-input"
+                                        <input id="details_confirmation" class="text-black bg-white modal-input"
                                                placeholder="Confirmation password"
                                                th:type="password" th:field="*{currentPassword}"
                                                autocomplete="new-password"
@@ -256,7 +268,110 @@
                             </div>
                         </div>
                     </div>
-                </form>-->
+                </form>
+
+                <!--Currency modal-->
+                <form th:method="POST" th:object="${currency_form}"
+                      th:action="@{'/mg-ctr/' + ${country.id} + '/update-currency'}">
+                    <div class="modal fade" id="currencyModal" tabindex="-1" role="dialog"
+                         aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Currency</h5>
+                                    <button type="button" class="close" data-bs-dismiss="modal"
+                                            aria-label="Close">
+                                        <span aria-hidden="true">×</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <p>Select a currency that will be used for this country.</p>
+                                    <div class="modal-row mt-2">
+                                        <label style="justify-self: start;" for="u_currency" class="form-label">Currency: </label>
+                                        <select id="u_currency" class="form-select modal-input"
+                                                th:field="*{currency}" required>
+                                            <div th:each="currency:${currencies}">
+                                                <option th:text="${currency.code} + ' - ' + ${currency.name}"
+                                                        th:value="${currency.id}"
+                                                        th:field="*{currency}"></option>
+                                            </div>
+                                        </select>
+                                    </div>
+
+                                    <div class="my-3 d-flex" style="justify-content: center; align-content: center;">
+                                        <span class="border w-100"></span>
+                                    </div>
+
+                                    <div class="modal-row mt-2">
+                                        <label style="justify-self: start;" for="currency_confirmation"
+                                               class="text-md">Password: </label>
+                                        <input id="currency_confirmation" class="text-black bg-white modal-input"
+                                               placeholder="Confirmation password"
+                                               th:type="password" th:field="*{currentPassword}"
+                                               autocomplete="new-password"
+                                               required/>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-dark" data-bs-dismiss="modal">
+                                        Close
+                                    </button>
+                                    <button type="submit" class="btn btn-dark">Confirm</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+                <!--Fee modal-->
+                <form th:method="POST" th:object="${relocation_fee_form}"
+                      th:action="@{'/mg-ctr/' + ${country.id} + '/update-fee'}">
+                    <div class="modal fade" id="feeModal" tabindex="-1" role="dialog"
+                         aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Relocation fee</h5>
+                                    <button type="button" class="close" data-bs-dismiss="modal"
+                                            aria-label="Close">
+                                        <span aria-hidden="true">×</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <p th:text="'Provide new [' + ${default_currency} + '] value of car relocation fee within the country.'"></p>
+                                    <div class="modal-row mt-2">
+                                        <label style="justify-self: start;" for="u_fee"
+                                               class="form-label" th:text="${default_currency} + ' Value: '"></label>
+                                        <input id="u_fee" class="text-black bg-white modal-input"
+                                               placeholder="0"
+                                               th:type="number" step="0.01" th:field="*{fee}"
+                                               required/>
+                                    </div>
+
+                                    <div class="my-3 d-flex" style="justify-content: center; align-content: center;">
+                                        <span class="border w-100"></span>
+                                    </div>
+
+                                    <div class="modal-row mt-2">
+                                        <label style="justify-self: start;" for="fee_confirmation"
+                                               class="text-md">Password: </label>
+                                        <input id="fee_confirmation" class="text-black bg-white modal-input"
+                                               placeholder="Confirmation password"
+                                               th:type="password" th:field="*{currentPassword}"
+                                               autocomplete="new-password"
+                                               required/>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-dark" data-bs-dismiss="modal">
+                                        Close
+                                    </button>
+                                    <button type="submit" class="btn btn-dark">Confirm</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
 
                 <!--Activity modal-->
                 <form th:method="POST" th:object="${confirm_form}"

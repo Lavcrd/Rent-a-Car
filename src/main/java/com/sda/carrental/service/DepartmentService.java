@@ -134,6 +134,7 @@ public class DepartmentService {
         }
     }
 
+    @Transactional
     public HttpStatus updateMultiplier(Long id, UpdateMultiplierForm form) {
         try {
             Department department = findById(id);
