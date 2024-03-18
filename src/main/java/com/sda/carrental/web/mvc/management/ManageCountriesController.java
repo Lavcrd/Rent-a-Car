@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
-import java.util.Collections;
+import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
@@ -44,9 +44,11 @@ public class ManageCountriesController {
     @RequestMapping(method = RequestMethod.GET)
     public String searchCountriesPage(ModelMap map, RedirectAttributes redAtt) {
         try {
-            map.addAttribute("countries", countryService.findAll());
+            List<Country> countries = countryService.findAll();
+
+            map.addAttribute("countries", countries);
             map.addAttribute("searchCountriesForm", map.getOrDefault("searchCountriesForm", new SearchCountriesForm()));
-            map.addAttribute("c_results", map.getOrDefault("c_results", Collections.emptyList()));
+            map.addAttribute("c_results", map.getOrDefault("c_results", countries));
 
             map.addAttribute("register_form", map.getOrDefault("register_form", new RegisterCountryForm()));
             map.addAttribute("currencies", currencyService.findAll());
