@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="Content-Type" content="text/html"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    <title>Rent-a-Car</title>
+
+    <link rel="stylesheet" type="text/css" href="/css/styles.css"/>
+    <link rel="stylesheet" href="/webjars/bootstrap/5.2.3/css/bootstrap.min.css">
+</head>
+
+<body>
+<div id="container">
+    <div th:include="fragments/top::top-menu"></div>
+    <div th:include="fragments/top::reg-options"></div>
+
+    <div class="row">
+        <th:block th:if="${currency} != null">
+            <div class="col-sm-3">
+                <a class="btn btn-dark bg-dark mb-2 w-100 def-button-text"
+                   type="button" th:href="'/mg-cur'">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                         class="bi bi-arrow-left-circle" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd"
+                              d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-4.5-.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5z"/>
+                    </svg>
+                    Search
+                </a>
+
+                <table class="table table-borderless table-fixed">
+                    <thead class="table-dark">
+                    <tr class="table-dark">
+                        <th scope="row">Currency data:</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+
+
+                    <tr class="table-dark">
+                        <td>Name:</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="overflow-cell-hs"
+                                 th:text="${currency.name}">
+                            </div>
+                        </td>
+                    </tr>
+
+                    <tr class="table-dark">
+                        <td>ISO Code:</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="overflow-cell-hs"
+                                 th:text="${currency.code}"></div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="overflow-cell-hs"
+                                 th:text="'Rate: ' + ${currency.exchange} + ' [' + ${currency.code} + ']:[' + ${default_currency.code} + ']'"></div>
+                            <div class="overflow-cell-hs" style="font-size:xx-small;"
+                                 th:text="'Refreshed: ' + ${currency.updated}"></div>
+                        </td>
+                    </tr>
+
+                    <tr class="table-dark">
+                        <td>Usage:</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="overflow-cell-hs"
+                                 th:text="'Countries: ' + ${currency_usage[0]}"></div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="overflow-cell-hs"
+                                 th:text="'Payments: ' + ${currency_usage[1]}"></div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </th:block>
+
+        <th:block th:if="${currency} != null">
+            <div class="col-sm-9">
+                <table class="table table-borderless"
+                       style="text-align: center; vertical-align: middle;">
+                    <thead class="table-dark">
+                    <tr>
+                        <th scope="row" class="button-cell">Option</th>
+                        <th scope="row" class="short-description-cell">Description</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td class="button-cell">
+                            <button type="button" class="btn btn-dark bg-dark mt-1 list-button w-100"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#detailsModal">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                     fill="currentColor"
+                                     class="bi bi-circle cb-svg" viewBox="0 0 16 16">
+                                    <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                                </svg>
+                                <div class="list-button-text">Details</div>
+                            </button>
+                        </td>
+                        <td class="short-description-cell">Change currency details.</td>
+                    </tr>
+
+                    <tr>
+                        <td class="button-cell">
+                            <button type="button" class="btn btn-dark bg-dark mt-1 list-button w-100"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#exchangeModal">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                     fill="currentColor"
+                                     class="bi bi-circle cb-svg" viewBox="0 0 16 16">
+                                    <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                                </svg>
+                                <div class="list-button-text">Refresh</div>
+                            </button>
+                        </td>
+                        <td class="short-description-cell">Refreshes this currency exchange rate.</td>
+                    </tr>
+
+                    <tr th:if="${!hasPresence}">
+                        <td class="button-cell">
+                            <button type="button" class="btn btn-dark bg-dark mt-1 list-button w-100"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#deleteModal">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                     fill="currentColor"
+                                     class="bi bi-circle cb-svg" viewBox="0 0 16 16">
+                                    <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                                </svg>
+                                <div class="list-button-text">Delete</div>
+                            </button>
+                        </td>
+                        <td class="short-description-cell">Allows to prematurely remove country.</td>
+                    </tr>
+                    </tbody>
+                </table>
+
+                <!--Details modal-->
+                <form th:method="POST" th:object="${details_form}"
+                      th:action="@{'/mg-cur/' + ${currency.id} + '/update-details'}">
+                    <div class="modal fade" id="detailsModal" tabindex="-1" role="dialog"
+                         aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Details</h5>
+                                    <button type="button" class="close" data-bs-dismiss="modal"
+                                            aria-label="Close">
+                                        <span aria-hidden="true">×</span>
+                                    </button>
+                                </div>
+
+                                <div class="modal-body">
+                                    <strong>
+                                        <p>Warning: </p>
+                                        <p>Changing the ISO Code may affect the automatic update of the exchange rate.</p>
+                                    </strong>
+
+                                    <div class="modal-row mt-2">
+                                        <label style="justify-self: start;" for="u_name"
+                                               class="form-label">Name: </label>
+                                        <input id="u_name" class="text-black bg-white modal-input"
+                                               th:placeholder="'ex. ' + ${default_currency.name}"
+                                               th:type="text" th:field="*{name}"
+                                               required/>
+                                    </div>
+
+                                    <div class="modal-row mt-2">
+                                        <label style="justify-self: start;" for="u_iso"
+                                               class="form-label">ISO Code: </label>
+                                        <input id="u_iso" class="text-black bg-white modal-input"
+                                               th:placeholder="'ex. ' + ${default_currency.code}"
+                                               th:type="text" th:field="*{code}"
+                                               required/>
+                                    </div>
+
+                                    <div class="my-3 d-flex" style="justify-content: center; align-content: center;">
+                                        <span class="border w-100"></span>
+                                    </div>
+
+                                    <div class="modal-row mt-2">
+                                        <label style="justify-self: start;" for="details_confirmation"
+                                               class="text-md">Password: </label>
+                                        <input id="details_confirmation" class="text-black bg-white modal-input"
+                                               placeholder="Confirmation password"
+                                               th:type="password" th:field="*{currentPassword}"
+                                               autocomplete="new-password"
+                                               required/>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-dark" data-bs-dismiss="modal">
+                                        Close
+                                    </button>
+                                    <button type="submit" class="btn btn-danger">Confirm</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+                <!--Exchange modal-->
+                <form th:method="POST" th:object="${confirm_form}"
+                      th:action="@{'/mg-cur/' + ${currency.id} + '/update-exchange'}">
+                    <div class="modal fade" id="exchangeModal" tabindex="-1" role="dialog"
+                         aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Exchange</h5>
+                                    <button type="button" class="close" data-bs-dismiss="modal"
+                                            aria-label="Close">
+                                        <span aria-hidden="true">×</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <p>Refreshes the currency exchange rate with the most recent fetch result.</p>
+
+                                    <div class="modal-row mt-2">
+                                        <label style="justify-self: start;" for="confirm_exchange_update"
+                                               class="text-md">Confirm change: </label>
+                                        <input id="confirm_exchange_update" class="text-black bg-white modal-input"
+                                               placeholder="Confirmation password"
+                                               th:type="password" th:field="*{currentPassword}"
+                                               autocomplete="new-password"
+                                               required/>
+                                    </div>
+
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-dark" data-bs-dismiss="modal">
+                                        Close
+                                    </button>
+                                    <button type="submit" class="btn btn-dark">
+                                        Confirm
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+                <!--Delete modal-->
+                <form th:method="POST" th:object="${confirm_form}"
+                      th:if="${!hasPresence}"
+                      th:action="@{'/mg-cur/' + ${currency.id} + '/delete'}">
+                    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog"
+                         aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Delete</h5>
+                                    <button type="button" class="close" data-bs-dismiss="modal"
+                                            aria-label="Close">
+                                        <span aria-hidden="true">×</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <p>Completely removes currently viewed currency.</p>
+                                    <p>Requires no country or payments usage.</p>
+
+                                    <div class="modal-row mt-2">
+                                        <label style="justify-self: start;" for="confirm_delete"
+                                               class="text-md">Confirm change: </label>
+                                        <input id="confirm_delete" class="text-black bg-white modal-input"
+                                               placeholder="Confirmation password"
+                                               th:type="password" th:field="*{currentPassword}"
+                                               autocomplete="new-password"
+                                               required/>
+                                    </div>
+
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-dark" data-bs-dismiss="modal">
+                                        Close
+                                    </button>
+                                    <button type="submit" class="btn btn-danger">
+                                        Confirm
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </th:block>
+        <div th:insert="fragments/bottom::message-handler"></div>
+    </div>
+    <div th:include="fragments/bottom::bottom-footer"></div>
+</div>
+<div th:include="fragments/bottom::common-scripts"></div>
+</body>
+</html>

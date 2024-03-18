@@ -40,11 +40,11 @@ public class CountryService {
     }
 
     public List<Country> findByForm(SearchCountriesForm form) {
-        return repository.findAllByForm(form.getName(), form.getCode(), form.getCurrency(), form.isActive());
+        return repository.findAllByForm(form.getName(), form.getCode().toUpperCase(), form.getCurrency(), form.isActive());
     }
 
     public List<Country> findByForm(RegisterCountryForm form, String currency) {
-        return repository.findAllByForm(form.getName(), form.getCode(), currency, true);
+        return repository.findAllByForm(form.getName(), form.getCode().toUpperCase(), currency, true);
     }
 
     @Transactional
@@ -78,7 +78,7 @@ public class CountryService {
             Country country = findById(id);
 
             country.setName(form.getName());
-            country.setCode(form.getCode());
+            country.setCode(form.getCode().toUpperCase());
             country.setContact(form.getContact());
 
             repository.save(country);
