@@ -13,7 +13,7 @@ import java.io.IOException;
 
 @ControllerAdvice
 @RequiredArgsConstructor
-public class GlobalExceptionHandler {
+public class FileSizeExceptionHandler {
     private final String MSG_KEY = "message";
     private final String CB_URI_PREFIX = "/mg-car/car-bases";
     private final String VIEW_CB_URI_SUFFIX = "/update-image";
