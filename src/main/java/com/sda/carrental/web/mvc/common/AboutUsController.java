@@ -6,12 +6,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 
 @Controller
-@RequestMapping("/aboutUs")
+@RequestMapping("/about")
 public class AboutUsController
 {
     @RequestMapping(method = RequestMethod.GET)
     public String welcomePage()
     {
-        return "common/aboutUs";
+        return "common/about";
     }
 }
