@@ -52,10 +52,10 @@ public class RetrieveService {
                         departmentService.findById(form.getDepartmentId()), form.getMileage()));
             }
             return status;
-        } catch (DataAccessException err) {
+        } catch (DataAccessException e) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return HttpStatus.INTERNAL_SERVER_ERROR;
-        } catch (ResourceNotFoundException err) {
+        } catch (ResourceNotFoundException e) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return HttpStatus.NOT_FOUND;
         }
@@ -70,10 +70,10 @@ public class RetrieveService {
             }
             carService.retrieveCar(rentService.findById(form.getReservationId()).getCar(), departmentService.findById(form.getDepartmentId()), form.getMileage());
             return createRetrieve(customerId, form);
-        } catch (IllegalActionException err) {
+        } catch (IllegalActionException e) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return HttpStatus.BAD_REQUEST;
-        } catch (ResourceNotFoundException err) {
+        } catch (ResourceNotFoundException e) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return HttpStatus.NOT_FOUND;
         }
@@ -130,7 +130,7 @@ public class RetrieveService {
                     form.getDateFrom(), form.getDateTo(),
                     departments, form.isArrival()
             );
-        } catch (RuntimeException err) {
+        } catch (RuntimeException e) {
             return Collections.emptyList();
         }
     }

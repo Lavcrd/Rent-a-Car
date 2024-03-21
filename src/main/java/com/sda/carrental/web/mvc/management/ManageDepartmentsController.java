@@ -49,7 +49,7 @@ public class ManageDepartmentsController {
             map.addAttribute("register_form", map.getOrDefault("register_form", new RegisterDepartmentForm()));
 
             return "management/searchDepartments";
-        } catch (RuntimeException err) {
+        } catch (RuntimeException e) {
             redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
             return "redirect:/";
         }
@@ -70,9 +70,9 @@ public class ManageDepartmentsController {
             map.addAttribute("confirm_form", map.getOrDefault("confirm_form", new ConfirmationForm()));
 
             return "management/viewDepartment";
-        } catch (ResourceNotFoundException err) {
+        } catch (ResourceNotFoundException e) {
             redAtt.addFlashAttribute(MSG_KEY, MSG_NO_RESOURCE);
-        } catch (RuntimeException err) {
+        } catch (RuntimeException e) {
             redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
         }
         return "redirect:/mg-dpt";

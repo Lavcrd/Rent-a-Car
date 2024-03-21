@@ -18,7 +18,7 @@ public class CarTypeValidator implements ConstraintValidator<CarType, String> {
         try {
             CarBase.CarType.valueOf(CarBase.CarType.class, input);
             return true;
-        } catch (RuntimeException err) {
+        } catch (RuntimeException e) {
             return false;
         }
     }

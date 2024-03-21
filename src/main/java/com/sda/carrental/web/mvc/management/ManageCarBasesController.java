@@ -63,7 +63,7 @@ public class ManageCarBasesController {
             map.addAttribute("register_form", map.getOrDefault("register_form", new RegisterCarBaseForm()));
 
             return "management/searchCarBases";
-        } catch (RuntimeException err) {
+        } catch (RuntimeException e) {
             redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
             return "redirect:/";
         }
@@ -93,10 +93,10 @@ public class ManageCarBasesController {
             map.addAttribute("resultSize", carService.getCarSizeByCarBase(carBase.getId()));
 
             return "management/viewCarBase";
-        } catch (ResourceNotFoundException err) {
+        } catch (ResourceNotFoundException e) {
             redAtt.addFlashAttribute(MSG_KEY, MSG_NO_RESOURCE);
             return "redirect:/mg-car/car-bases";
-        } catch (RuntimeException err) {
+        } catch (RuntimeException e) {
             redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
             return "redirect:/mg-car/car-bases";
         }
@@ -154,12 +154,12 @@ public class ManageCarBasesController {
                 redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
             }
             return "redirect:/mg-car/car-bases/{carBaseId}";
-        } catch (ResourceNotFoundException err) {
+        } catch (ResourceNotFoundException e) {
             redAtt.addFlashAttribute(MSG_KEY, MSG_NO_RESOURCE);
-        } catch (IllegalActionException err) {
+        } catch (IllegalActionException e) {
             redAtt.addFlashAttribute(MSG_KEY, "Failure: Target pattern is equal to current pattern");
             return "redirect:/mg-car/car-bases/{carBaseId}";
-        } catch (RuntimeException err) {
+        } catch (RuntimeException e) {
             redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
         }
         return "redirect:/mg-car/car-bases";
@@ -184,9 +184,9 @@ public class ManageCarBasesController {
                 redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
             }
             return "redirect:/mg-car/car-bases/{carBaseId}";
-        } catch (ResourceNotFoundException err) {
+        } catch (ResourceNotFoundException e) {
             redAtt.addFlashAttribute(MSG_KEY, MSG_NO_RESOURCE);
-        } catch (RuntimeException err) {
+        } catch (RuntimeException e) {
             redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
         }
         return "redirect:/mg-car/car-bases";
@@ -208,9 +208,9 @@ public class ManageCarBasesController {
                 redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
             }
             return "redirect:/mg-car/car-bases/{carBaseId}";
-        } catch (ResourceNotFoundException err) {
+        } catch (ResourceNotFoundException e) {
             redAtt.addFlashAttribute(MSG_KEY, MSG_NO_RESOURCE);
-        } catch (RuntimeException err) {
+        } catch (RuntimeException e) {
             redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
         }
         return "redirect:/mg-car/car-bases";
@@ -234,9 +234,9 @@ public class ManageCarBasesController {
                 redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
             }
             return "redirect:/mg-car/car-bases/{carBaseId}";
-        } catch (ResourceNotFoundException err) {
+        } catch (ResourceNotFoundException e) {
             redAtt.addFlashAttribute(MSG_KEY, MSG_NO_RESOURCE);
-        } catch (RuntimeException err) {
+        } catch (RuntimeException e) {
             redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
         }
         return "redirect:/mg-car/car-bases";
@@ -261,9 +261,9 @@ public class ManageCarBasesController {
                 redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
             }
             return "redirect:/mg-car/car-bases/{carBaseId}";
-        } catch (ResourceNotFoundException err) {
+        } catch (ResourceNotFoundException e) {
             redAtt.addFlashAttribute(MSG_KEY, MSG_NO_RESOURCE);
-        } catch (RuntimeException err) {
+        } catch (RuntimeException e) {
             redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
         }
         return "redirect:/mg-car/car-bases";

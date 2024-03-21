@@ -22,6 +22,7 @@ public class Employee extends User {
         this.departments = departments;
     }
 
+    @Setter
     @Column(name = "personal_id")
     private String personalId;
 

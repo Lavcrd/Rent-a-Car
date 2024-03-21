@@ -1,6 +1,7 @@
 package com.sda.carrental.service;
 
 import com.sda.carrental.exceptions.ResourceNotFoundException;
+import com.sda.carrental.global.Encryption;
 import com.sda.carrental.global.enums.Role;
 import com.sda.carrental.model.operational.Reservation;
 import com.sda.carrental.model.property.department.Department;
@@ -32,9 +33,11 @@ public class EmployeeService {
     private final DepartmentService departmentService;
     private final ReservationService reservationService;
     private final CredentialsService credentialsService;
+    private final Encryption e;
 
-    public Employee findById(Long id) throws ResourceNotFoundException {
-        return repository.findEmployeeById(id).orElseThrow(ResourceNotFoundException::new);
+    public Employee findById(Long id) throws RuntimeException {
+        Employee employee = repository.findEmployeeById(id).orElseThrow(ResourceNotFoundException::new);
+        return decrypt(employee);
     }
 
     public List<Employee> findByForm(SearchEmployeesForm form) {
@@ -55,7 +58,7 @@ public class EmployeeService {
             employee.setRole(Role.valueOf(form.getRole()));
             employee.setContactNumber(form.getContactNumber());
 
-            repository.save(employee);
+            save(employee);
             return HttpStatus.OK;
         } catch (RuntimeException e) {
             return HttpStatus.BAD_GATEWAY;
@@ -70,7 +73,7 @@ public class EmployeeService {
         return findById(cud.getId()).getDepartments();
     }
 
-    public HttpStatus departmentAccess(CustomUserDetails cud, Long departmentId) throws ResourceNotFoundException {
+    public HttpStatus departmentAccess(CustomUserDetails cud, Long departmentId) throws RuntimeException {
         Department department = departmentService.findById(departmentId);
         if (getDepartmentsByUserContext(cud).contains(department)) {
             return HttpStatus.ACCEPTED;
@@ -98,7 +101,7 @@ public class EmployeeService {
                 return hasNoReservationsDepTake && hasNoReservationsDepBack;
             }
             return true;
-        } catch (ResourceNotFoundException err) {
+        } catch (RuntimeException e) {
             return true;
         }
     }
@@ -111,7 +114,7 @@ public class EmployeeService {
             HttpStatus accessDepTo = departmentAccess(cud, r.getDepartmentBack().getId());
 
             return accessDepFrom == HttpStatus.FORBIDDEN && accessDepTo == HttpStatus.FORBIDDEN;
-        } catch (ResourceNotFoundException err) {
+        } catch (RuntimeException e) {
             return true;
         }
     }
@@ -127,18 +130,18 @@ public class EmployeeService {
             } else {
                 return true;
             }
-        } catch (ResourceNotFoundException err) {
+        } catch (RuntimeException e) {
             return true;
         }
     }
 
-    public HttpStatus setLock(Long employeeId, LocalDate date) throws ResourceNotFoundException {
+    public HttpStatus setLock(Long employeeId, LocalDate date) throws RuntimeException {
         Employee employee = findById(employeeId);
         if (date.isBefore(LocalDate.now())) {
             return HttpStatus.BAD_REQUEST;
         }
         employee.setTerminationDate(date);
-        repository.save(employee);
+        save(employee);
         return HttpStatus.ACCEPTED;
     }
 
@@ -154,7 +157,7 @@ public class EmployeeService {
             }
 
             employee.setDepartments(departments);
-            repository.save(employee);
+            save(employee);
             return HttpStatus.ACCEPTED;
         } catch (RuntimeException e) {
             return HttpStatus.BAD_GATEWAY;
@@ -166,7 +169,7 @@ public class EmployeeService {
             if (adminService.hasAdminAuthority(cud)) return true;
 
             return findById(cud.getId()).getRole().ordinal() >= role.ordinal();
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             return false;
         }
     }
@@ -175,10 +178,10 @@ public class EmployeeService {
     public HttpStatus register(RegisterEmployeeForm form) {
         try {
             Employee employee = EmployeeMapper.toRegisteredEntity(form, departmentService.findById(form.getDepartment()));
-            repository.save(employee);
+            save(employee);
             credentialsService.createCredentials(employee.getId(), form.getUsername(), form.getEmployeePassword());
             return HttpStatus.CREATED;
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return HttpStatus.INTERNAL_SERVER_ERROR;
         }
@@ -195,7 +198,7 @@ public class EmployeeService {
             repository.delete(employee);
             credentialsService.deleteCredentials(id);
             return HttpStatus.OK;
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return HttpStatus.INTERNAL_SERVER_ERROR;
         }
@@ -215,10 +218,27 @@ public class EmployeeService {
             departments.add(department);
             employee.setDepartments(departments);
 
-            repository.save(employee);
+            save(employee);
             return HttpStatus.ACCEPTED;
         } catch (RuntimeException e) {
             return HttpStatus.INTERNAL_SERVER_ERROR;
         }
+    }
+
+    @Transactional
+    private void save(Employee employee) throws RuntimeException {
+        repository.save(encrypt(employee));
+    }
+
+    private Employee encrypt(Employee employee) throws RuntimeException {
+        employee.setPersonalId(e.encrypt(employee.getPersonalId()));
+        employee.setContactNumber(e.encrypt(employee.getContactNumber()));
+        return employee;
+    }
+
+    private Employee decrypt(Employee employee) throws RuntimeException {
+        employee.setPersonalId(e.decrypt(employee.getPersonalId()));
+        employee.setContactNumber(e.decrypt(employee.getContactNumber()));
+        return employee;
     }
 }

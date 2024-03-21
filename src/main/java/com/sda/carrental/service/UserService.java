@@ -1,6 +1,8 @@
 package com.sda.carrental.service;
 
 import com.sda.carrental.exceptions.ResourceNotFoundException;
+import com.sda.carrental.global.Encryption;
+import com.sda.carrental.global.Utility;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -21,18 +23,19 @@ public class UserService {
     private final CustomerService customerService;
     private final ReservationService reservationService;
     private final CredentialsService credentialsService;
+    private final Encryption e;
+    private final Utility u;
 
-    public User findById(Long id) throws ResourceNotFoundException {
-        return repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User", "ID", id));
-    }
+    public User findById(Long id) throws RuntimeException {
+        User user = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User", "ID", id));
+        return decrypt(user);
 
-    public void save(User user) {
-        repository.save(user);
     }
 
     private User redactUser(User user) {
         user.setName("—");
         user.setSurname("—");
+        user.setContactNumber(u.generateRandomString(10));
         return user;
     }
 
@@ -52,13 +55,13 @@ public class UserService {
             } else {
                 user.setTerminationDate(LocalDate.now());
                 credentialsService.scramblePassword(userId);
-                repository.save(redactUser(user));
+                save(redactUser(user));
                 return HttpStatus.OK;
             }
-        } catch (ResourceNotFoundException err) {
+        } catch (ResourceNotFoundException e) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return HttpStatus.NOT_FOUND;
-        } catch (RuntimeException err) {
+        } catch (RuntimeException e) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return HttpStatus.INTERNAL_SERVER_ERROR;
         }
@@ -69,12 +72,28 @@ public class UserService {
         try {
             User user = findById(userId);
             user.setContactNumber(inputContact);
-            repository.save(user);
+            save(user);
             return HttpStatus.ACCEPTED;
-        } catch (ResourceNotFoundException err) {
+        } catch (ResourceNotFoundException e) {
             return HttpStatus.NOT_FOUND;
-        } catch (Error err) {
+        } catch (RuntimeException e) {
             return HttpStatus.INTERNAL_SERVER_ERROR;
         }
     }
+
+    private void save(User user) throws RuntimeException {
+        repository.save(encrypt(user));
+    }
+
+    private User encrypt(User user) throws RuntimeException {
+        user.setContactNumber(e.encrypt(user.getContactNumber()));
+        return user;
+    }
+
+    private User decrypt(User user) throws RuntimeException {
+        user.setContactNumber(e.decrypt(user.getContactNumber()));
+        return user;
+    }
+
+
 }

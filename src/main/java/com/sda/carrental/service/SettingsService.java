@@ -61,7 +61,7 @@ public class SettingsService {
 
             settings = entity;
             return HttpStatus.ACCEPTED;
-        } catch (RuntimeException err) {
+        } catch (RuntimeException e) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return HttpStatus.INTERNAL_SERVER_ERROR;
         }

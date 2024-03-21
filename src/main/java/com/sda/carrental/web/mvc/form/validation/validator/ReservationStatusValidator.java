@@ -21,7 +21,7 @@ public class ReservationStatusValidator implements ConstraintValidator<Reservati
             if (canBeEmpty && input.isEmpty()) return true;
             Reservation.ReservationStatus.valueOf(Reservation.ReservationStatus.class, input);
             return true;
-        } catch (RuntimeException err) {
+        } catch (RuntimeException e) {
             return false;
         }
     }

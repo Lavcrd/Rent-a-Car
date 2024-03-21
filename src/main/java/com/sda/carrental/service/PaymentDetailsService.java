@@ -137,16 +137,16 @@ public class PaymentDetailsService {
             repository.save(pd);
 
             return HttpStatus.OK;
-        } catch (ResourceNotFoundException err) {
+        } catch (ResourceNotFoundException e) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return HttpStatus.NOT_FOUND;
-        } catch (IllegalActionException err) {
+        } catch (IllegalActionException e) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return HttpStatus.NOT_ACCEPTABLE;
         } catch (IllegalArgumentException e) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return HttpStatus.BAD_REQUEST;
-        } catch (RuntimeException err) {
+        } catch (RuntimeException e) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return HttpStatus.INTERNAL_SERVER_ERROR;
         }

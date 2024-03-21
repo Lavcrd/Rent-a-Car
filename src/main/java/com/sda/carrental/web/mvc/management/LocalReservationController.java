@@ -70,11 +70,11 @@ public class LocalReservationController {
             map.addAttribute("countries", countryService.findAll());
 
             return "management/localReservation";
-        } catch (IllegalActionException err) {
+        } catch (IllegalActionException e) {
             redAtt.addFlashAttribute(MSG_KEY, MSG_SESSION_EXPIRED);
             clearSessionValues(httpSession);
             return "redirect:/";
-        } catch (JsonProcessingException | RuntimeException err) {
+        } catch (JsonProcessingException | RuntimeException e) {
             redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
             clearSessionValues(httpSession);
             return "redirect:/";
@@ -127,11 +127,11 @@ public class LocalReservationController {
             redAtt.addAttribute("department", reservation.getIndexData().getDepartmentIdFrom());
             redAtt.addAttribute("customer", customer.getId());
             return "redirect:/mg-res/{department}-{customer}";
-        } catch (IllegalActionException err) {
+        } catch (IllegalActionException e) {
             redAtt.addFlashAttribute(MSG_KEY, MSG_SESSION_EXPIRED);
             clearSessionValues(httpSession);
             return "redirect:/";
-        } catch (JsonProcessingException | RuntimeException err) {
+        } catch (JsonProcessingException | RuntimeException e) {
             redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
             clearSessionValues(httpSession);
             return "redirect:/";
@@ -150,11 +150,11 @@ public class LocalReservationController {
             redAtt.addFlashAttribute("s1_time", LocalDateTime.parse(htmlTime1Raw));
             redAtt.addFlashAttribute("s2_time", LocalDateTime.parse(htmlTime2Raw));
 
-        } catch (JsonProcessingException err) {
+        } catch (JsonProcessingException e) {
             redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
             clearSessionValues(httpSession);
             return "redirect:/";
-        } catch (RuntimeException err) {
+        } catch (RuntimeException e) {
             redAtt.addFlashAttribute(MSG_KEY, MSG_SESSION_EXPIRED);
             clearSessionValues(httpSession);
             return "redirect:/";
@@ -183,7 +183,7 @@ public class LocalReservationController {
                 && htmlForm.getIndexData().isDifferentDepartment() == sessionIndex.isDifferentDepartment();
     }
 
-    private void checkValidity(HttpSession httpSession, String htmlTime1Raw, String htmlTime2Raw, ReservationForm htmlForm) throws IllegalActionException, ResourceNotFoundException, RuntimeException{
+    private void checkValidity(HttpSession httpSession, String htmlTime1Raw, String htmlTime2Raw, ReservationForm htmlForm) throws IllegalActionException, ResourceNotFoundException, RuntimeException {
         //HttpSession should exist
         IndexForm indexForm = (IndexForm) httpSession.getAttribute("process_indexForm");
         Long carBaseId = (Long) httpSession.getAttribute("process_carBaseId");
@@ -191,7 +191,7 @@ public class LocalReservationController {
         LocalDateTime dateTime2 = (LocalDateTime) httpSession.getAttribute("process_step2_time");
         LocalDateTime htmlTime1 = LocalDateTime.parse(htmlTime1Raw);
         LocalDateTime htmlTime2 = LocalDateTime.parse(htmlTime2Raw);
-        if (indexForm == null ||  !dateTime1.isEqual(htmlTime1) || !dateTime2.isEqual(htmlTime2) || !dateTime2.isAfter(dateTime1)) throw new IllegalActionException();
+        if (indexForm == null || !dateTime1.isEqual(htmlTime1) || !dateTime2.isEqual(htmlTime2) || !dateTime2.isAfter(dateTime1)) throw new IllegalActionException();
 
         if (!reservationService.isValidRequest(indexForm, carBaseId, dateTime1, dateTime2)) throw new ResourceNotFoundException();
 

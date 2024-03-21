@@ -50,7 +50,7 @@ public class ManageDepositController {
             map.addAttribute("searchDepositsForm", map.getOrDefault("searchDepositsForm", new SearchDepositsForm()));
 
             return "management/searchDeposits";
-        } catch (RuntimeException err) {
+        } catch (RuntimeException e) {
             redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
             return "redirect:/";
         }
@@ -76,10 +76,10 @@ public class ManageDepositController {
 
             map.addAttribute("form", new DepositForm());
             return "management/viewDeposit";
-        } catch (ResourceNotFoundException err) {
+        } catch (ResourceNotFoundException e) {
             redAtt.addFlashAttribute(MSG_KEY, MSG_NO_RESOURCE);
             return "redirect:/mg-depo";
-        } catch (RuntimeException err) {
+        } catch (RuntimeException e) {
             redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
             return "redirect:/";
         }

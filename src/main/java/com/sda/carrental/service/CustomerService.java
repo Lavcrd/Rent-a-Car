@@ -1,6 +1,8 @@
 package com.sda.carrental.service;
 
 import com.sda.carrental.exceptions.ResourceNotFoundException;
+import com.sda.carrental.global.Encryption;
+import com.sda.carrental.global.Utility;
 import com.sda.carrental.model.property.department.Country;
 import com.sda.carrental.model.operational.Reservation;
 import com.sda.carrental.model.users.Customer;
@@ -33,19 +35,21 @@ public class CustomerService {
     private final CountryService countryService;
     private final ReservationService reservationService;
     private final EmployeeService employeeService;
+    private final Encryption e;
+    private final Utility u;
 
-    public Customer findById(Long customerId) throws ResourceNotFoundException {
-        return repository.findById(customerId).orElseThrow(ResourceNotFoundException::new);
+    public Customer findById(Long customerId) throws RuntimeException {
+        return decrypt(repository.findById(customerId).orElseThrow(ResourceNotFoundException::new));
     }
 
     @Transactional(rollbackFor = {Exception.class})
     public HttpStatus createCustomer(RegisterCustomerForm form) {
         try {
             Customer customer = CustomerMapper.toRegisteredEntity(form);
-            repository.save(customer);
+            save(customer);
             credentialsService.createCredentials(customer.getId(), form.getUsername(), form.getPassword());
             return HttpStatus.CREATED;
-        } catch (Exception err) {
+        } catch (Exception e) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return HttpStatus.INTERNAL_SERVER_ERROR;
         }
@@ -54,7 +58,7 @@ public class CustomerService {
     private Customer redactCustomer(Customer customer) {
         customer.setName("—");
         customer.setSurname("—");
-        customer.setContactNumber("—");
+        customer.setContactNumber(u.generateRandomString(10));
         customer.setTerminationDate(LocalDate.now());
         customer.setStatus(Customer.Status.STATUS_DELETED);
 
@@ -72,10 +76,10 @@ public class CustomerService {
                 repository.save(redactCustomer(customer));
             }
             return HttpStatus.OK;
-        } catch (ResourceNotFoundException err) {
+        } catch (ResourceNotFoundException e) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return HttpStatus.NOT_FOUND;
-        } catch (RuntimeException err) {
+        } catch (RuntimeException e) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return HttpStatus.INTERNAL_SERVER_ERROR;
         }
@@ -91,17 +95,19 @@ public class CustomerService {
     }
 
     @Transactional
-    public Customer createGuest(LocalReservationForm form) {
+    public Customer createGuest(LocalReservationForm form) throws RuntimeException {
         Customer customer = CustomerMapper.toGuestEntity(form);
-        return repository.save(customer);
+        return save(customer);
     }
 
-    public Customer findCustomerByVerification(FindVerifiedForm form) throws ResourceNotFoundException {
-        return repository.findByVerification(form.getCountry(), form.getPersonalId()).orElseThrow(ResourceNotFoundException::new);
+    public Customer findCustomerByVerification(FindVerifiedForm form) throws RuntimeException {
+        Customer customer = repository.findByVerification(form.getCountry(), e.encrypt(form.getPersonalId())).orElseThrow(ResourceNotFoundException::new);
+        return decrypt(customer);
     }
 
-    public Customer findCustomerByVerification(LocalReservationForm form) throws ResourceNotFoundException {
-        return repository.findByVerification(form.getCountry(), form.getPersonalId()).orElseThrow(ResourceNotFoundException::new);
+    public Customer findCustomerByVerification(LocalReservationForm form) throws RuntimeException {
+        Customer customer = repository.findByVerification(form.getCountry(), e.encrypt(form.getPersonalId())).orElseThrow(ResourceNotFoundException::new);
+        return decrypt(customer);
     }
 
     @Transactional
@@ -109,9 +115,12 @@ public class CustomerService {
         try {
             Customer customer = findById(customerId);
             return reservationService.createReservation(customer, form);
-        } catch (ResourceNotFoundException err) {
+        } catch (ResourceNotFoundException e) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return HttpStatus.NOT_FOUND;
+        } catch (RuntimeException e) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            return HttpStatus.INTERNAL_SERVER_ERROR;
         }
     }
 
@@ -133,8 +142,7 @@ public class CustomerService {
                 if (status.equals(HttpStatus.CREATED)) return HttpStatus.OK;
                 return status;
             }
-
-        } catch (RuntimeException err) {
+        } catch (RuntimeException e) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return HttpStatus.INTERNAL_SERVER_ERROR;
         }
@@ -148,22 +156,42 @@ public class CustomerService {
 
             verificationService.duplicateVerification(mainCustomerId, usedCustomerId);
             return deleteCustomer(usedCustomerId, reservationService.transferReservations(mainCustomer, usedCustomer));
-        } catch (RuntimeException err) {
+        } catch (RuntimeException e) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return HttpStatus.INTERNAL_SERVER_ERROR;
         }
     }
 
-    public Map<Customer, Long> findCustomersWithResults(SearchCustomersForm form, boolean isArrival) {
+    public Map<Customer, Long> findCustomersWithResults(SearchCustomersForm form, boolean isArrival) throws RuntimeException {
         Reservation.ReservationStatus status = null;
         if (!form.getStatus().isEmpty()) {
             status = Reservation.ReservationStatus.valueOf(form.getStatus());
         }
 
+        Map<Customer, Long> results;
+
         if (isArrival) {
-            return reservationService.findArrivalsByDetails(form, status).stream().collect(Collectors.groupingBy(Reservation::getCustomer, Collectors.counting()));
+            results = reservationService.findArrivalsByDetails(form, status).stream().collect(Collectors.groupingBy(Reservation::getCustomer, Collectors.counting()));
         } else {
-            return reservationService.findDeparturesByDetails(form, status).stream().collect(Collectors.groupingBy(Reservation::getCustomer, Collectors.counting()));
+            results = reservationService.findDeparturesByDetails(form, status).stream().collect(Collectors.groupingBy(Reservation::getCustomer, Collectors.counting()));
         }
+
+        results.forEach((customer, aLong) -> decrypt(customer));
+        return results;
+    }
+
+    @Transactional
+    private Customer save(Customer customer) throws RuntimeException {
+        return repository.save(encrypt(customer));
+    }
+
+    private Customer decrypt(Customer customer) throws RuntimeException {
+        customer.setContactNumber(e.decrypt(customer.getContactNumber()));
+        return customer;
+    }
+
+    private Customer encrypt(Customer customer) throws RuntimeException {
+        customer.setContactNumber(e.encrypt(customer.getContactNumber()));
+        return customer;
     }
 }

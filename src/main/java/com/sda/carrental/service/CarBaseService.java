@@ -144,7 +144,7 @@ public class CarBaseService {
             String image = "/cars/i30.png"; // Car base image hardcoded due to absence of external storage system and need of demo
             repository.save(new CarBase(image, form.getBrand(), form.getModel(), form.getYear(), CarBase.CarType.valueOf(form.getType()), form.getSeats(), form.getPrice(), form.getDeposit()));
             return HttpStatus.CREATED;
-        } catch (RuntimeException err) {
+        } catch (RuntimeException e) {
             return HttpStatus.BAD_REQUEST;
         }
     }
@@ -157,7 +157,7 @@ public class CarBaseService {
 
             repository.delete(carBase);
             return HttpStatus.ACCEPTED;
-        } catch (RuntimeException err) {
+        } catch (RuntimeException e) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return HttpStatus.INTERNAL_SERVER_ERROR;
         }
@@ -170,7 +170,7 @@ public class CarBaseService {
             // After successfully replacing files it would update CarBase in database with new image reference
             repository.save(cb);
             return HttpStatus.ACCEPTED;
-        } catch (RuntimeException err) {
+        } catch (RuntimeException e) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return HttpStatus.INTERNAL_SERVER_ERROR;
         }
@@ -183,7 +183,7 @@ public class CarBaseService {
             cb.setDepositValue(Double.parseDouble(form.getDeposit()));
             repository.save(cb);
             return HttpStatus.ACCEPTED;
-        } catch (RuntimeException err) {
+        } catch (RuntimeException e) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return HttpStatus.INTERNAL_SERVER_ERROR;
         }

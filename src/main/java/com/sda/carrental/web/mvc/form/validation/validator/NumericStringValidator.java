@@ -34,7 +34,7 @@ public class NumericStringValidator implements ConstraintValidator<NumericString
                 return check(value);
             }
             return false;
-        } catch (RuntimeException err) {
+        } catch (RuntimeException e) {
             return false;
         }
     }

@@ -26,7 +26,7 @@ public class CompanyService {
             // Method would add new file and replace company image address with new one (external storage system)
             repository.updateLogotypeReference(image.getName() + " reference");
             return HttpStatus.ACCEPTED;
-        } catch (RuntimeException err) {
+        } catch (RuntimeException e) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return HttpStatus.INTERNAL_SERVER_ERROR;
         }
@@ -37,7 +37,7 @@ public class CompanyService {
         try {
             repository.updateDetails(form.getName(), form.getOwner(), form.getWebsite());
             return HttpStatus.ACCEPTED;
-        } catch (RuntimeException err) {
+        } catch (RuntimeException e) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return HttpStatus.INTERNAL_SERVER_ERROR;
         }

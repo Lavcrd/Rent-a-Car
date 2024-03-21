@@ -49,7 +49,7 @@ public class ManageCurrenciesController {
             map.addAttribute("register_form", map.getOrDefault("register_form", new RegisterCurrencyForm()));
 
             return "management/searchCurrencies";
-        } catch (RuntimeException err) {
+        } catch (RuntimeException e) {
             redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
             return "redirect:/";
         }
@@ -68,7 +68,7 @@ public class ManageCurrenciesController {
             map.addAttribute("confirm_form", new ConfirmationForm());
 
             return "management/viewCurrency";
-        } catch (RuntimeException err) {
+        } catch (RuntimeException e) {
             redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
             return "redirect:/";
         }

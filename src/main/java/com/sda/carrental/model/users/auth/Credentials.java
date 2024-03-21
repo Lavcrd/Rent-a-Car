@@ -12,7 +12,7 @@ import javax.persistence.Id;
 @Getter
 @NoArgsConstructor
 public class Credentials {
-    public Credentials(Long userId, String username, String password) { //todo encrypted
+    public Credentials(Long userId, String username, String password) {
         this.id = userId;
         this.username = username;
         this.password = password;

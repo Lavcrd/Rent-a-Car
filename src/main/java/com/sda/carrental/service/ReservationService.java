@@ -70,9 +70,9 @@ public class ReservationService {
             paymentDetailsService.createReservationPayment(reservation, payment, deposit);
 
             return HttpStatus.CREATED;
-        } catch (ResourceNotFoundException err) {
+        } catch (ResourceNotFoundException e) {
             return HttpStatus.NOT_FOUND;
-        } catch (Exception err) {
+        } catch (Exception e) {
             return HttpStatus.INTERNAL_SERVER_ERROR;
         }
     }
@@ -139,10 +139,10 @@ public class ReservationService {
             }
 
             return HttpStatus.BAD_REQUEST;
-        } catch (ResourceNotFoundException err) {
+        } catch (ResourceNotFoundException e) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return HttpStatus.NOT_FOUND;
-        } catch (RuntimeException err) {
+        } catch (RuntimeException e) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return HttpStatus.INTERNAL_SERVER_ERROR;
         }
@@ -175,7 +175,7 @@ public class ReservationService {
         try {
             return repository
                     .findAllByCustomerIdAndDepartmentTakeId(customerId, departmentId);
-        } catch (RuntimeException err) {
+        } catch (RuntimeException e) {
             throw new ResourceNotFoundException();
         }
     }
@@ -184,7 +184,7 @@ public class ReservationService {
         try {
             return repository
                     .findAllByCustomerIdAndDepartmentBackId(customerId, departmentId);
-        } catch (RuntimeException err) {
+        } catch (RuntimeException e) {
             throw new ResourceNotFoundException();
         }
     }
@@ -217,9 +217,9 @@ public class ReservationService {
             repository.save(r);
             paymentDetailsService.adjustRequiredDeposit(r, deposit);
             return HttpStatus.ACCEPTED;
-        } catch (IllegalActionException err) {
+        } catch (IllegalActionException e) {
             return HttpStatus.CONFLICT;
-        } catch (RuntimeException err) {
+        } catch (RuntimeException e) {
             return HttpStatus.NOT_FOUND;
         }
     }
@@ -237,7 +237,7 @@ public class ReservationService {
             }
             repository.saveAll(reservations);
             return true;
-        } catch (RuntimeException err) {
+        } catch (RuntimeException e) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return false;
         }
@@ -266,7 +266,7 @@ public class ReservationService {
                     departmentFrom.getCountry());
 
             return carBaseList.contains(carBase);
-        } catch (RuntimeException err) {
+        } catch (RuntimeException e) {
             return false;
         }
     }

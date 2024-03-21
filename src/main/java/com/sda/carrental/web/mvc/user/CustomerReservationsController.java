@@ -85,7 +85,7 @@ public class CustomerReservationsController {
             map.addAttribute("refund_fee_days", cs.getRefundSubtractDaysDuration());
             map.addAttribute("deposit_deadline", cs.getRefundDepositDeadlineDays());
             return "user/reservationDetailsCustomer";
-        } catch (ResourceNotFoundException err) {
+        } catch (ResourceNotFoundException e) {
             redAtt.addFlashAttribute(MSG_KEY, MSG_CUSTOMER_GENERIC_EXCEPTION);
             return "redirect:/reservations";
         }

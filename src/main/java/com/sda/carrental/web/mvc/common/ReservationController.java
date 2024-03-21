@@ -89,11 +89,11 @@ public class ReservationController {
             map.addAttribute("deposit_deadline", cs.getRefundDepositDeadlineDays());
 
             return "common/reservationRecap";
-        } catch (IllegalActionException err) {
+        } catch (IllegalActionException e) {
             redAtt.addFlashAttribute(MSG_KEY, MSG_SESSION_EXPIRED);
             clearSessionValues(httpSession);
             return "redirect:/";
-        } catch (RuntimeException err) {
+        } catch (RuntimeException e) {
             redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
             clearSessionValues(httpSession);
             return "redirect:/";
@@ -142,11 +142,11 @@ public class ReservationController {
                 redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
                 return "redirect:/";
             }
-        } catch (IllegalActionException err) {
+        } catch (IllegalActionException e) {
             redAtt.addFlashAttribute(MSG_KEY, MSG_SESSION_EXPIRED);
             clearSessionValues(httpSession);
             return "redirect:/";
-        } catch (RuntimeException err) {
+        } catch (RuntimeException e) {
             redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
             clearSessionValues(httpSession);
             return "redirect:/";

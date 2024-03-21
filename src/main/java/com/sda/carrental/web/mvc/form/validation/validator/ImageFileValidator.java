@@ -17,7 +17,7 @@ public class ImageFileValidator implements ConstraintValidator<ImageFile, Multip
         try {
             String filename = input.getOriginalFilename();
             return filename.toLowerCase().endsWith(".jpg") || filename.toLowerCase().endsWith(".png");
-        } catch (RuntimeException err) {
+        } catch (RuntimeException e) {
             return false;
         }
     }

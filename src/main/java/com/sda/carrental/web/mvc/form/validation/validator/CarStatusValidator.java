@@ -21,7 +21,7 @@ public class CarStatusValidator implements ConstraintValidator<CarStatus, String
             if (canBeEmpty && input.isEmpty()) return true;
             Car.CarStatus.valueOf(Car.CarStatus.class, input);
             return true;
-        } catch (RuntimeException err) {
+        } catch (RuntimeException e) {
             return false;
         }
     }
