@@ -81,6 +81,7 @@ public class UserService {
         }
     }
 
+    @Transactional
     private void save(User user) throws RuntimeException {
         repository.save(encrypt(user));
     }
