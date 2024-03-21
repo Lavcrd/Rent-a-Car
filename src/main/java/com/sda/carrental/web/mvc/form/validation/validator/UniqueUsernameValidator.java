@@ -18,6 +18,10 @@ public class UniqueUsernameValidator implements ConstraintValidator<UniqueUserna
 
     @Override
     public boolean isValid(String input, ConstraintValidatorContext cvc) {
-        return credentialsService.isUsernameUnique(input);
+        try {
+            return credentialsService.isUsernameUnique(input);
+        } catch (RuntimeException e) {
+            return false;
+        }
     }
 }

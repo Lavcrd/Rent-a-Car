@@ -1,5 +1,6 @@
 package com.sda.carrental.clr;
 
+import com.sda.carrental.global.Encryption;
 import com.sda.carrental.global.enums.Role;
 import com.sda.carrental.model.property.company.Company;
 import com.sda.carrental.model.property.department.Country;
@@ -47,7 +48,7 @@ public class PredefiniedData implements CommandLineRunner {
     private final VerificationRepository verificationRepository;
     private final CredentialsRepository credentialsRepository;
     private final RetrieveRepository retrieveRepository;
-
+    private final Encryption e;
 
     static {
         currencies = List.of(
@@ -66,7 +67,7 @@ public class PredefiniedData implements CommandLineRunner {
 
 
     @Override
-    public void run(String... args) {
+    public void run(String... args) throws RuntimeException {
         createCurrencies();
         createCountries();
 
@@ -98,16 +99,23 @@ public class PredefiniedData implements CommandLineRunner {
         }
     };
 
-    private void createUsers() {
-        userRepository.save(new Customer("Anna", "Nazwiskowa", Customer.Status.STATUS_REGISTERED, "123312891"));
-        userRepository.save(new Customer("Jakub", "Kowalski", Customer.Status.STATUS_REGISTERED, "123312892"));
-        userRepository.save(new Customer("Maciek", "Masło", Customer.Status.STATUS_REGISTERED, "123312893"));
-        userRepository.save(new Customer("Jan", "Orzech", Customer.Status.STATUS_REGISTERED, "123312894"));
-        userRepository.save(new Customer("Katarzyna", "Kasztan", Customer.Status.STATUS_REGISTERED, "123312895"));
-        userRepository.save(new Customer("Igor", "Kasztan", Customer.Status.STATUS_REGISTERED, "123312896"));
-        userRepository.save(new Customer("Anna", "Kowalska", Customer.Status.STATUS_UNREGISTERED, "123312897"));
+    private void createUsers() throws RuntimeException {
+        List<Customer> customers = List.of(
+                new Customer("Anna", "Nazwiskowa", Customer.Status.STATUS_REGISTERED, "123312891"),
+                new Customer("Jakub", "Kowalski", Customer.Status.STATUS_REGISTERED, "123312892"),
+                new Customer("Maciek", "Masło", Customer.Status.STATUS_REGISTERED, "123312893"),
+                new Customer("Jan", "Orzech", Customer.Status.STATUS_REGISTERED, "123312894"),
+                new Customer("Katarzyna", "Kasztan", Customer.Status.STATUS_REGISTERED, "123312895"),
+                new Customer("Igor", "Kasztan", Customer.Status.STATUS_REGISTERED, "123312896"),
+                new Customer("Anna", "Kowalska", Customer.Status.STATUS_UNREGISTERED, "123312897")
+        );
 
-        List<Employee> list = List.of(
+        for (Customer customer:customers) {
+            customer.setContactNumber(e.encrypt(customer.getContactNumber()));
+            userRepository.save(customer);
+        }
+
+        List<Employee> employees = List.of(
                 new Employee("Maria", "Fajna", "1231231111", List.of(departmentRepository.findById(1L).orElse(null)), LocalDate.ofYearDay(9999, 1), "111222333"),
                 new Employee("Aleksandra", "Ładna", "1231232222", List.of(departmentRepository.findById(2L).orElse(null)), LocalDate.ofYearDay(9999, 1), "111222444"),
                 new Employee("Katarzyna", "Nieładna", "1231233333", List.of(departmentRepository.findById(3L).orElse(null)), LocalDate.ofYearDay(9999, 1), "111222555"),
@@ -118,39 +126,51 @@ public class PredefiniedData implements CommandLineRunner {
                 new Employee("Tomasz", "Sążny", "1231237778", departmentRepository.findDepartmentsByCountry(countries.get(0)), LocalDate.ofYearDay(9999, 1), "111222883")
         );
 
-        for (int i = 0; i < list.size(); i++) {
-            Employee e = list.get(i);
-            if (i < 3) e.setRole(Role.ROLE_MANAGER);
-            if (i == list.size() - 2) e.setRole(Role.ROLE_COORDINATOR);
-            if (i == list.size() - 1) e.setRole(Role.ROLE_DIRECTOR);
+        for (int i = 0; i < employees.size(); i++) {
+            Employee employee = employees.get(i);
+            if (i < 3) employee.setRole(Role.ROLE_MANAGER);
+            if (i == employees.size() - 2) employee.setRole(Role.ROLE_COORDINATOR);
+            if (i == employees.size() - 1) employee.setRole(Role.ROLE_DIRECTOR);
 
-            userRepository.save(e);
+            employee.setPersonalId(e.encrypt(employee.getPersonalId()));
+            employee.setContactNumber(e.encrypt(employee.getContactNumber()));
+
+            userRepository.save(employee);
         }
 
-        userRepository.save(new Admin("name", "surname", "000111000"));
+        userRepository.save(new Admin("name", "surname", e.encrypt("100100100")));
     }
 
-    private void createCredentials() {
-        credentialsRepository.save(new Credentials(1L, "user1@gmail.com", encoder.encode("password1")));
-        credentialsRepository.save(new Credentials(2L, "user2@gmail.com", encoder.encode("password1")));
-        credentialsRepository.save(new Credentials(3L, "user3@gmail.com", encoder.encode("password1")));
-        credentialsRepository.save(new Credentials(4L, "user4@gmail.com", encoder.encode("password1")));
-        credentialsRepository.save(new Credentials(5L, "user5@gmail.com", encoder.encode("password1")));
-        credentialsRepository.save(new Credentials(6L, "user6@gmail.com", encoder.encode("password1")));
+    private void createCredentials() throws RuntimeException {
+        List<Credentials> credentials = List.of(
+                new Credentials(1L, "user1@gmail.com", "password1"),
+                new Credentials(2L, "user2@gmail.com", "password1"),
+                new Credentials(3L, "user3@gmail.com", "password1"),
+                new Credentials(4L, "user4@gmail.com", "password1"),
+                new Credentials(5L, "user5@gmail.com", "password1"),
+                new Credentials(6L, "user6@gmail.com", "password1"),
 
-        credentialsRepository.save(new Credentials(8L, "manager1@gmail.com", encoder.encode("password1")));
-        credentialsRepository.save(new Credentials(9L, "manager2@gmail.com", encoder.encode("password1")));
-        credentialsRepository.save(new Credentials(10L, "manager3@gmail.com", encoder.encode("password1")));
+                new Credentials(8L, "manager1@gmail.com", "password1"),
+                new Credentials(9L, "manager2@gmail.com", "password1"),
+                new Credentials(10L, "manager3@gmail.com", "password1"),
 
-        credentialsRepository.save(new Credentials(11L, "employee1@gmail.com", encoder.encode("password1")));
-        credentialsRepository.save(new Credentials(12L, "employee2@gmail.com", encoder.encode("password1")));
-        credentialsRepository.save(new Credentials(13L, "employee3@gmail.com", encoder.encode("password1")));
+                new Credentials(11L, "employee1@gmail.com", "password1"),
+                new Credentials(12L, "employee2@gmail.com", "password1"),
+                new Credentials(13L, "employee3@gmail.com", "password1"),
 
-        credentialsRepository.save(new Credentials(14L, "coordinator1@gmail.com", encoder.encode("password1")));
+                new Credentials(14L, "coordinator1@gmail.com", "password1"),
 
-        credentialsRepository.save(new Credentials(15L, "director1@gmail.com", encoder.encode("password1")));
+                new Credentials(15L, "director1@gmail.com", "password1"),
 
-        credentialsRepository.save(new Credentials(16L, "admin@gmail.com", encoder.encode("password1")));
+                new Credentials(16L, "admin@gmail.com", "password1")
+        );
+
+        for (Credentials credential:credentials) {
+            credential.setUsername(e.encrypt(credential.getUsername()));
+            credential.setPassword(encoder.encode(credential.getPassword()));
+
+            credentialsRepository.save(credential);
+        }
     }
 
     private void createCompany() {
@@ -290,7 +310,13 @@ public class PredefiniedData implements CommandLineRunner {
         paymentDetailsRepository.save(pd10);
     }
 
-    private void createVerification() {
-        verificationRepository.save(new Verification(1L, countries.get(0), "123123123", "678678"));
+    private void createVerification() throws RuntimeException {
+        List<Verification> verifications = List.of(new Verification(1L, countries.get(0), "123123123", "678678"));
+
+        for (Verification verification:verifications) {
+            verification.setDriverId(e.encrypt(verification.getDriverId()));
+            verification.setPersonalId(e.encrypt(verification.getPersonalId()));
+            verificationRepository.save(verification);
+        }
     }
 }

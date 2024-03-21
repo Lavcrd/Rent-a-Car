@@ -49,13 +49,13 @@ public class RentService {
                 return status;
             }
             return response;
-        } catch (DataAccessException err) {
+        } catch (DataAccessException e) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return HttpStatus.INTERNAL_SERVER_ERROR;
-        } catch (IllegalActionException err) {
+        } catch (IllegalActionException e) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return HttpStatus.CONFLICT;
-        } catch (ResourceNotFoundException err) {
+        } catch (ResourceNotFoundException e) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return HttpStatus.NOT_FOUND;
         }

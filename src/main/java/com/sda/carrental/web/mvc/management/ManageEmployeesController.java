@@ -49,7 +49,7 @@ public class ManageEmployeesController {
             map.addAttribute("register_form", map.getOrDefault("register_form", new RegisterEmployeeForm()));
 
             return "management/searchEmployees";
-        } catch (RuntimeException err) {
+        } catch (RuntimeException e) {
             redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
             return "redirect:/";
         }
@@ -82,10 +82,10 @@ public class ManageEmployeesController {
             map.addAttribute("delete_form", new ConfirmationForm());
 
             return "management/viewEmployee";
-        } catch (ResourceNotFoundException err) {
+        } catch (ResourceNotFoundException e) {
             redAtt.addFlashAttribute(MSG_KEY, MSG_NO_RESOURCE);
             return "redirect:/mg-emp";
-        } catch (RuntimeException err) {
+        } catch (RuntimeException e) {
             redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
             return "redirect:/mg-emp";
         }
@@ -112,7 +112,6 @@ public class ManageEmployeesController {
 
             return "redirect:/mg-emp";
         } catch (RuntimeException e) {
-            e.printStackTrace();
             redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
             return "redirect:/mg-emp";
         }

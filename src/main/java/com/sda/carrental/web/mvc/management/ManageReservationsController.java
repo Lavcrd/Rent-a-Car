@@ -85,10 +85,10 @@ public class ManageReservationsController {
                 map.addAttribute("verification", new Verification(customerId, countryService.placeholder(), "N/D", "N/D"));
             }
             return "management/viewCustomerReservations";
-        } catch (ResourceNotFoundException err) {
+        } catch (ResourceNotFoundException e) {
             redAtt.addFlashAttribute(MSG_KEY, MSG_NO_RESOURCE);
             return "redirect:/mg-cus";
-        } catch (RuntimeException err) {
+        } catch (RuntimeException e) {
             redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
             return "redirect:/mg-cus";
         }
@@ -160,10 +160,10 @@ public class ManageReservationsController {
                 map.addAttribute("retrieve_details", retrieveService.findById(reservation.getId()).orElseThrow(ResourceNotFoundException::new));
             }
             return "management/viewReservation";
-        } catch (ResourceNotFoundException err) {
+        } catch (ResourceNotFoundException e) {
             redAtt.addFlashAttribute(MSG_KEY, MSG_NO_RESOURCE);
             return "redirect:/mg-cus";
-        } catch (RuntimeException err) {
+        } catch (RuntimeException e) {
             redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
             return "redirect:/mg-cus";
         }
@@ -207,16 +207,16 @@ public class ManageReservationsController {
             map.addAttribute("confirmation_form", new ConfirmationForm());
             map.addAttribute("carFilterForm", map.getOrDefault("carFilterForm", new SubstituteCarBaseFilterForm(department.getId())));
             return "management/substituteCar";
-        } catch (ResourceNotFoundException err) {
+        } catch (ResourceNotFoundException e) {
             redAtt.addFlashAttribute(MSG_KEY, MSG_NO_RESOURCE);
             return "redirect:/mg-cus";
-        } catch (IllegalActionException err) {
+        } catch (IllegalActionException e) {
             redAtt.addAttribute("customer", customerId);
             redAtt.addAttribute("reservation", reservationId);
             redAtt.addAttribute("department", departmentId);
             redAtt.addFlashAttribute(MSG_KEY, "No cars available for selected department and dates.");
             return "redirect:/mg-res/{department}-{customer}/{reservation}";
-        } catch (RuntimeException err) {
+        } catch (RuntimeException e) {
             redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
             return "redirect:/mg-cus";
         }

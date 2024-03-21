@@ -70,13 +70,13 @@ public class SelectCarController {
             map.addAttribute("carFilterForm", map.getOrDefault("carFilterForm", new SelectCarBaseFilterForm()));
 
             return "common/selectCar";
-        }  catch (ResourceNotFoundException err) {
+        }  catch (ResourceNotFoundException e) {
             redAtt.addFlashAttribute(MSG_KEY, "No cars available for selected department and dates.");
             return "redirect:/";
-        } catch (IllegalActionException | NullPointerException err) {
+        } catch (IllegalActionException | NullPointerException e) {
             redAtt.addFlashAttribute(MSG_KEY, MSG_SESSION_EXPIRED);
             return "redirect:/";
-        } catch (RuntimeException err) {
+        } catch (RuntimeException e) {
             redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
             return "redirect:/";
         }
@@ -90,7 +90,7 @@ public class SelectCarController {
             LocalDateTime dateTime = (LocalDateTime) httpSession.getAttribute("process_step1_time");
             LocalDateTime htmlTime1 = LocalDateTime.parse(htmlTime1Raw);
             if (indexForm == null || dateTime == null || !dateTime.isEqual(htmlTime1)) throw new IllegalActionException();
-        } catch (RuntimeException err) {
+        } catch (RuntimeException e) {
             redAtt.addFlashAttribute(MSG_KEY, MSG_SESSION_EXPIRED);
             return "redirect:/";
         }
@@ -115,10 +115,10 @@ public class SelectCarController {
             redAtt.addFlashAttribute("filteredCarBases", carBaseService.findCarBasesByForm(queryForm));
             redAtt.addFlashAttribute("carFilterForm", filterData);
             return "redirect:/cars";
-        } catch (IllegalActionException | NullPointerException err) {
+        } catch (IllegalActionException | NullPointerException e) {
             redAtt.addFlashAttribute(MSG_KEY, MSG_SESSION_EXPIRED);
             return "redirect:/";
-        } catch (RuntimeException err) {
+        } catch (RuntimeException e) {
             redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
             return "redirect:/";
         }

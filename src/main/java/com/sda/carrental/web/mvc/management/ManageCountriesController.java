@@ -54,7 +54,7 @@ public class ManageCountriesController {
             map.addAttribute("currencies", currencyService.findAll());
 
             return "management/searchCountries";
-        } catch (RuntimeException err) {
+        } catch (RuntimeException e) {
             redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
             return "redirect:/";
         }
@@ -78,7 +78,7 @@ public class ManageCountriesController {
             map.addAttribute("confirm_form", map.getOrDefault("confirm_form", new ConfirmationForm()));
 
             return "management/viewCountry";
-        } catch (RuntimeException err) {
+        } catch (RuntimeException e) {
             redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
             return "redirect:/";
         }

@@ -16,7 +16,7 @@ public class PastOrPresentYearValidator implements ConstraintValidator<PastOrPre
     public boolean isValid(Integer input, ConstraintValidatorContext cvc) {
         try {
             return input <= LocalDate.now().getYear();
-        } catch (RuntimeException err) {
+        } catch (RuntimeException e) {
             return false;
         }
     }

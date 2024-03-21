@@ -21,7 +21,7 @@ public class UserRoleValidator implements ConstraintValidator<UserRole, String> 
             if (input.isBlank() && canBeUnselected) return true;
             Role.valueOf(Role.class, input);
             return true;
-        } catch (RuntimeException err) {
+        } catch (RuntimeException e) {
             return false;
         }
     }

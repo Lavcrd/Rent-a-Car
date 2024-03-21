@@ -3,6 +3,7 @@ package com.sda.carrental.service;
 
 import com.sda.carrental.exceptions.IllegalActionException;
 import com.sda.carrental.exceptions.ResourceNotFoundException;
+import com.sda.carrental.global.Encryption;
 import com.sda.carrental.model.operational.Reservation;
 import com.sda.carrental.model.property.department.Department;
 import com.sda.carrental.model.property.car.CarBase;
@@ -30,9 +31,11 @@ public class ReservationService {
     private final DepartmentService departmentService;
     private final PaymentDetailsService paymentDetailsService;
     private final VerificationService verificationService;
+    private final Encryption e;
 
-    public Reservation findById(Long id) throws ResourceNotFoundException {
-        return repository.findById(id).orElseThrow(ResourceNotFoundException::new);
+    public Reservation findById(Long id) throws RuntimeException {
+        Reservation reservation = repository.findById(id).orElseThrow(ResourceNotFoundException::new);
+        return decrypt(reservation);
     }
 
     @Transactional
@@ -55,6 +58,8 @@ public class ReservationService {
             //Assume customer pays at reservation process - until that moment status should be ReservationStatus.STATUS_PENDING by default
             //Payment method here linked with methods below this comment vvv
             reservation.setStatus(Reservation.ReservationStatus.STATUS_RESERVED);
+
+            encrypt(reservation);
             repository.save(reservation);
             // ^^^
 
@@ -70,9 +75,9 @@ public class ReservationService {
             paymentDetailsService.createReservationPayment(reservation, payment, deposit);
 
             return HttpStatus.CREATED;
-        } catch (ResourceNotFoundException err) {
+        } catch (ResourceNotFoundException e) {
             return HttpStatus.NOT_FOUND;
-        } catch (Exception err) {
+        } catch (RuntimeException e) {
             return HttpStatus.INTERNAL_SERVER_ERROR;
         }
     }
@@ -89,9 +94,9 @@ public class ReservationService {
     }
 
     @Transactional
-    private void updateReservationStatus(Reservation reservation, Reservation.ReservationStatus newStatus) {
+    private void updateReservationStatus(Reservation reservation, Reservation.ReservationStatus newStatus) throws RuntimeException {
         reservation.setStatus(newStatus);
-        repository.save(reservation);
+        repository.save(encrypt(reservation));
     }
 
     @Transactional
@@ -139,10 +144,10 @@ public class ReservationService {
             }
 
             return HttpStatus.BAD_REQUEST;
-        } catch (ResourceNotFoundException err) {
+        } catch (ResourceNotFoundException e) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return HttpStatus.NOT_FOUND;
-        } catch (RuntimeException err) {
+        } catch (RuntimeException e) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return HttpStatus.INTERNAL_SERVER_ERROR;
         }
@@ -175,7 +180,7 @@ public class ReservationService {
         try {
             return repository
                     .findAllByCustomerIdAndDepartmentTakeId(customerId, departmentId);
-        } catch (RuntimeException err) {
+        } catch (RuntimeException e) {
             throw new ResourceNotFoundException();
         }
     }
@@ -184,7 +189,7 @@ public class ReservationService {
         try {
             return repository
                     .findAllByCustomerIdAndDepartmentBackId(customerId, departmentId);
-        } catch (RuntimeException err) {
+        } catch (RuntimeException e) {
             throw new ResourceNotFoundException();
         }
     }
@@ -214,12 +219,13 @@ public class ReservationService {
             Double deposit = cb.getDepositValue() * department.getMultiplier() * department.getCountry().getCurrency().getExchange();
 
             r.setCarBase(cb);
+            encrypt(r);
             repository.save(r);
             paymentDetailsService.adjustRequiredDeposit(r, deposit);
             return HttpStatus.ACCEPTED;
-        } catch (IllegalActionException err) {
+        } catch (IllegalActionException e) {
             return HttpStatus.CONFLICT;
-        } catch (RuntimeException err) {
+        } catch (RuntimeException e) {
             return HttpStatus.NOT_FOUND;
         }
     }
@@ -234,10 +240,11 @@ public class ReservationService {
             List<Reservation> reservations = findCustomerReservations(usedCustomer.getId());
             for (Reservation reservation : reservations) {
                 reservation.setCustomer(mainCustomer);
+                encrypt(reservation);
             }
             repository.saveAll(reservations);
             return true;
-        } catch (RuntimeException err) {
+        } catch (RuntimeException e) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return false;
         }
@@ -266,8 +273,20 @@ public class ReservationService {
                     departmentFrom.getCountry());
 
             return carBaseList.contains(carBase);
-        } catch (RuntimeException err) {
+        } catch (RuntimeException e) {
             return false;
         }
+    }
+
+    private Reservation encrypt(Reservation reservation) throws RuntimeException {
+        Customer customer = reservation.getCustomer();
+        customer.setContactNumber(e.encrypt(customer.getContactNumber()));
+        return reservation;
+    }
+
+    private Reservation decrypt(Reservation reservation) throws RuntimeException {
+        Customer customer = reservation.getCustomer();
+        customer.setContactNumber(e.decrypt(customer.getContactNumber()));
+        return  reservation;
     }
 }

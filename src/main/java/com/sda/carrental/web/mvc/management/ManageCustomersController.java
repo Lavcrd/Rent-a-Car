@@ -54,7 +54,7 @@ public class ManageCustomersController {
             map.addAttribute("isArrival", map.getOrDefault("isArrival", false));
 
             return "management/searchCustomers";
-        } catch (RuntimeException err) {
+        } catch (RuntimeException e) {
             redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
             return "redirect:/";
         }
@@ -92,10 +92,10 @@ public class ManageCustomersController {
                 map.addAttribute("is_deleted", true);
             }
             return "management/viewCustomer";
-        } catch (ResourceNotFoundException err) {
+        } catch (ResourceNotFoundException e) {
             redAtt.addFlashAttribute(MSG_KEY, MSG_NO_RESOURCE);
             return "redirect:/mg-cus";
-        } catch (RuntimeException err) {
+        } catch (RuntimeException e) {
             redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
             return "redirect:/mg-cus";
         }
@@ -114,12 +114,12 @@ public class ManageCustomersController {
             map.addAttribute("verified_customer", customerService.findCustomerByVerification(verificationData));
             map.addAttribute("confirmation_form", new ConfirmationForm());
             return "management/mergeCustomer";
-        } catch (ResourceNotFoundException err) {
+        } catch (ResourceNotFoundException e) {
             redAtt.addFlashAttribute(MSG_KEY, MSG_NO_RESOURCE);
             redAtt.addAttribute("customer", customerId);
             redAtt.addAttribute("department", departmentId);
             return "redirect:/mg-cus/{department}-{customer}";
-        } catch (RuntimeException err) {
+        } catch (RuntimeException e) {
             redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
             return "redirect:/mg-cus";
         }
@@ -206,7 +206,7 @@ public class ManageCustomersController {
             return "redirect:/mg-cus/{department}-{customer}";
         }
 
-        HttpStatus status = verificationService.createVerification(customerId, form);
+        HttpStatus status = verificationService.appendVerification(customerId, form);
         if (status.equals(HttpStatus.CREATED)) {
             redAtt.addFlashAttribute(MSG_KEY, "Success: Verification registered");
         } else if (status.equals(HttpStatus.EXPECTATION_FAILED)) {

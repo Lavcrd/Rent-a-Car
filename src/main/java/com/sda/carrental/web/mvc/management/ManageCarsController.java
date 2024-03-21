@@ -65,7 +65,7 @@ public class ManageCarsController {
             map.addAttribute("register_form", map.getOrDefault("register_form", new RegisterCarForm()));
 
             return "management/searchCars";
-        } catch (RuntimeException err) {
+        } catch (RuntimeException e) {
             redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
             return "redirect:/";
         }
@@ -107,10 +107,10 @@ public class ManageCarsController {
 
             map.addAttribute("car", car);
             return "management/viewCar";
-        } catch (ResourceNotFoundException err) {
+        } catch (ResourceNotFoundException e) {
             redAtt.addFlashAttribute(MSG_KEY, MSG_NO_RESOURCE);
             return "redirect:/mg-car";
-        } catch (RuntimeException err) {
+        } catch (RuntimeException e) {
             redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
             return "redirect:/mg-car";
         }
@@ -123,8 +123,11 @@ public class ManageCarsController {
         if (err.hasErrors()) {
             return "redirect:/mg-car";
         }
-
-        redAtt.addFlashAttribute("results", carService.findByCriteria(form));
+        try {
+            redAtt.addFlashAttribute("results", carService.findByCriteria(form));
+        } catch (RuntimeException e) {
+            redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
+        }
         return "redirect:/mg-car";
     }
 
@@ -172,9 +175,9 @@ public class ManageCarsController {
             } else if (status.equals(HttpStatus.PRECONDITION_FAILED)) {
                 redAtt.addFlashAttribute(MSG_KEY, "Failure: Rejected due to active reservation.");
             }
-        } catch (ResourceNotFoundException err) {
+        } catch (ResourceNotFoundException e) {
             redAtt.addFlashAttribute(MSG_KEY, MSG_NO_RESOURCE);
-        } catch (RuntimeException err) {
+        } catch (RuntimeException e) {
             redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
         }
         return "redirect:/mg-car/{carId}";
@@ -203,9 +206,9 @@ public class ManageCarsController {
             if (status.equals(HttpStatus.OK)) {
                 redAtt.addFlashAttribute(MSG_KEY, "Success: Car mileage successfully changed to - " + form.getMileage());
             }
-        } catch (ResourceNotFoundException err) {
+        } catch (ResourceNotFoundException e) {
             redAtt.addFlashAttribute(MSG_KEY, MSG_NO_RESOURCE);
-        } catch (RuntimeException err) {
+        } catch (RuntimeException e) {
             redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
         }
         return "redirect:/mg-car/{carId}";
@@ -235,9 +238,9 @@ public class ManageCarsController {
             if (status.equals(HttpStatus.OK)) {
                 redAtt.addFlashAttribute(MSG_KEY, "Success: Car location successfully changed to - " + department.getCity() + ", " + department.getStreet() + " " + department.getBuilding());
             }
-        } catch (ResourceNotFoundException err) {
+        } catch (ResourceNotFoundException e) {
             redAtt.addFlashAttribute(MSG_KEY, MSG_NO_RESOURCE);
-        } catch (RuntimeException err) {
+        } catch (RuntimeException e) {
             redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
         }
         return "redirect:/mg-car/{carId}";
@@ -269,9 +272,9 @@ public class ManageCarsController {
                 redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
             }
             return "redirect:/mg-car/{carId}";
-        } catch (ResourceNotFoundException err) {
+        } catch (ResourceNotFoundException e) {
             redAtt.addFlashAttribute(MSG_KEY, MSG_NO_RESOURCE);
-        } catch (RuntimeException err) {
+        } catch (RuntimeException e) {
             redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
         }
 

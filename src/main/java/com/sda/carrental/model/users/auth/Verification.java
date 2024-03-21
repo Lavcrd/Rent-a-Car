@@ -13,7 +13,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 public class Verification {
 
-    public Verification(Long customerId, Country country, String personalId, String driverId) {  //TODO should be encrypted
+    public Verification(Long customerId, Country country, String personalId, String driverId) {
         this.id = customerId;
         this.country = country;
         this.personalId = personalId;

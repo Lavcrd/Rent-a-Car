@@ -41,7 +41,7 @@ public class CarService {
         return repository.findCarByIdAndAvailability(carId, departmentId).orElseThrow(ResourceNotFoundException::new);
     }
 
-    public List<Car> findByCriteria(SearchCarsForm f) {
+    public List<Car> findByCriteria(SearchCarsForm f) throws RuntimeException {
         CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         List<Department> departments;
         if (f.getDepartment() == null) {
@@ -175,9 +175,9 @@ public class CarService {
 
             repository.save(new Car(carBase, department, department.getCountry().getCode() + "-" + form.getPlate().toUpperCase(), form.getMileage(), Car.CarStatus.STATUS_UNAVAILABLE));
             return HttpStatus.CREATED;
-        } catch (ResourceNotFoundException err) {
+        } catch (ResourceNotFoundException e) {
             return HttpStatus.NOT_FOUND;
-        } catch (RuntimeException err) {
+        } catch (RuntimeException e) {
             return HttpStatus.BAD_REQUEST;
         }
     }
@@ -199,7 +199,7 @@ public class CarService {
         try {
             repository.delete(car);
             return HttpStatus.ACCEPTED;
-        } catch (RuntimeException err) {
+        } catch (RuntimeException e) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return HttpStatus.INTERNAL_SERVER_ERROR;
         }
@@ -233,10 +233,10 @@ public class CarService {
                 throw new IllegalActionException();
             }
             return HttpStatus.ACCEPTED;
-        } catch (IllegalActionException err) {
+        } catch (IllegalActionException e) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return HttpStatus.CONFLICT;
-        } catch (RuntimeException err) {
+        } catch (RuntimeException e) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return HttpStatus.INTERNAL_SERVER_ERROR;
         }

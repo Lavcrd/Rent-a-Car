@@ -69,10 +69,10 @@ public class CarRetrieveController {
                 map.addAttribute("refund_fee_days", cs.getRefundSubtractDaysDuration());
             }
             return "management/carRetrieve";
-        } catch (ResourceNotFoundException err) {
+        } catch (ResourceNotFoundException e) {
             redAtt.addFlashAttribute(MSG_KEY, MSG_NO_RESOURCE);
             return "redirect:/c-ret";
-        } catch (RuntimeException err) {
+        } catch (RuntimeException e) {
             redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
             return "redirect:/";
         }
@@ -93,10 +93,10 @@ public class CarRetrieveController {
             redAtt.addFlashAttribute("rent_details", rent);
             redAtt.addFlashAttribute("reservation", rent.getReservation());
             return "redirect:/c-ret";
-        } catch (ResourceNotFoundException err) {
+        } catch (ResourceNotFoundException e) {
             redAtt.addFlashAttribute(MSG_KEY, "Failed: No active rent found for: " + form.getCountry() + '-' + form.getPlate());
             return "redirect:/c-ret";
-        } catch (RuntimeException err) {
+        } catch (RuntimeException e) {
             redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
             return "redirect:/";
         }

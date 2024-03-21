@@ -41,7 +41,7 @@ public class ProfileController {
 
         try {
             map.addAttribute("user", userService.findById(cud.getId()));
-        } catch (RuntimeException err) {
+        } catch (RuntimeException e) {
             SecurityContextHolder.getContext().setAuthentication(null);
             redAtt.addFlashAttribute(MSG_KEY, "Something went wrong. Please login again.");
             return "redirect:/";

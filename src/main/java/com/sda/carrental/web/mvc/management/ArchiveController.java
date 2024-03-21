@@ -53,7 +53,7 @@ public class ArchiveController {
             map.addAttribute("searchArchiveForm", map.getOrDefault("searchArchiveForm", defaultForm));
 
             return "management/searchArchive";
-        } catch (RuntimeException err) {
+        } catch (RuntimeException e) {
             redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
             return "redirect:/";
         }
@@ -87,10 +87,10 @@ public class ArchiveController {
             map.addAttribute("rent_employee", userService.findById(rent.getEmployeeId()));
 
             return "management/viewOperation";
-        } catch (ResourceNotFoundException err) {
+        } catch (ResourceNotFoundException e) {
             redAtt.addFlashAttribute(MSG_KEY, MSG_NO_RESOURCE);
             return "redirect:/";
-        } catch (RuntimeException err) {
+        } catch (RuntimeException e) {
             redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
             return "redirect:/";
         }
