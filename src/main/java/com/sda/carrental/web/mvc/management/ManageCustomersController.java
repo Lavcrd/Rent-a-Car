@@ -143,7 +143,7 @@ public class ManageCustomersController {
                 return "redirect:/mg-cus";
             }
 
-            redAtt.addFlashAttribute("results", customerService.findCustomersWithResults(form, false));
+            redAtt.addFlashAttribute("results", customerService.findCustomersWithReservationCount(form, false));
             return "redirect:/mg-cus";
         } catch (RuntimeException e) {
             redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
@@ -168,7 +168,7 @@ public class ManageCustomersController {
                 return "redirect:/mg-cus";
             }
 
-            redAtt.addFlashAttribute("results", customerService.findCustomersWithResults(form, true));
+            redAtt.addFlashAttribute("results", customerService.findCustomersWithReservationCount(form, true));
             return "redirect:/mg-cus";
         } catch (RuntimeException e) {
             redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);

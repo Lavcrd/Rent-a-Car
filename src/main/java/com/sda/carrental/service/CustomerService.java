@@ -22,9 +22,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import java.time.LocalDate;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -162,22 +163,39 @@ public class CustomerService {
         }
     }
 
-    public Map<Customer, Long> findCustomersWithResults(SearchCustomersForm form, boolean isArrival) throws RuntimeException {
+    public Map<Customer, Long> findCustomersWithReservationCount(SearchCustomersForm form, boolean isArrival) throws RuntimeException {
         Reservation.ReservationStatus status = null;
         if (!form.getStatus().isEmpty()) {
             status = Reservation.ReservationStatus.valueOf(form.getStatus());
         }
 
-        Map<Customer, Long> results;
+        List<Object[]> results;
 
         if (isArrival) {
-            results = reservationService.findArrivalsByDetails(form, status).stream().collect(Collectors.groupingBy(Reservation::getCustomer, Collectors.counting()));
+            results = repository.findCustomersArrivalCounts(
+                    form.getCustomerName(), form.getCustomerSurname(),
+                    form.getPrimaryDepartment(), form.getSecondaryDepartment(),
+                    form.getDateFrom(), form.getDateTo(),
+                    status
+            );
         } else {
-            results = reservationService.findDeparturesByDetails(form, status).stream().collect(Collectors.groupingBy(Reservation::getCustomer, Collectors.counting()));
+            results = repository.findCustomersDepartureCounts(
+                    form.getCustomerName(), form.getCustomerSurname(),
+                    form.getPrimaryDepartment(), form.getSecondaryDepartment(),
+                    form.getDateFrom(), form.getDateTo(),
+                    status
+            );
         }
 
-        results.forEach((customer, aLong) -> decrypt(customer));
-        return results;
+        Map<Customer, Long> map = new LinkedHashMap<>();
+        for (Object[] result : results) {
+            Customer customer = (Customer) result[0];
+            Long count = (Long) result[1];
+            map.put(customer, count);
+        }
+
+        map.forEach((customer, aLong) -> decrypt(customer));
+        return map;
     }
 
     @Transactional
