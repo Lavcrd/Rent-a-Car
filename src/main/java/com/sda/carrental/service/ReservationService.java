@@ -10,7 +10,6 @@ import com.sda.carrental.model.property.car.CarBase;
 import com.sda.carrental.model.users.Customer;
 import com.sda.carrental.repository.ReservationRepository;
 import com.sda.carrental.web.mvc.form.operational.IndexForm;
-import com.sda.carrental.web.mvc.form.users.customer.SearchCustomersForm;
 import com.sda.carrental.web.mvc.form.operational.ReservationForm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -59,8 +58,7 @@ public class ReservationService {
             //Payment method here linked with methods below this comment vvv
             reservation.setStatus(Reservation.ReservationStatus.STATUS_RESERVED);
 
-            encrypt(reservation);
-            repository.save(reservation);
+            save(reservation);
             // ^^^
 
             //Placeholder payment values
@@ -96,7 +94,7 @@ public class ReservationService {
     @Transactional
     private void updateReservationStatus(Reservation reservation, Reservation.ReservationStatus newStatus) throws RuntimeException {
         reservation.setStatus(newStatus);
-        repository.save(encrypt(reservation));
+        save(reservation);
     }
 
     @Transactional
@@ -194,22 +192,6 @@ public class ReservationService {
         }
     }
 
-    public List<Reservation> findDeparturesByDetails(SearchCustomersForm reservationsData, Reservation.ReservationStatus status) {
-        return repository.findDeparturesByDetails(
-                reservationsData.getCustomerName(), reservationsData.getCustomerSurname(),
-                reservationsData.getPrimaryDepartment(), reservationsData.getSecondaryDepartment(),
-                reservationsData.getDateFrom(), reservationsData.getDateTo(),
-                status);
-    }
-
-    public List<Reservation> findArrivalsByDetails(SearchCustomersForm reservationsData, Reservation.ReservationStatus status) {
-        return repository.findArrivalsByDetails(
-                reservationsData.getCustomerName(), reservationsData.getCustomerSurname(),
-                reservationsData.getPrimaryDepartment(), reservationsData.getSecondaryDepartment(),
-                reservationsData.getDateFrom(), reservationsData.getDateTo(),
-                status);
-    }
-
     @Transactional
     public HttpStatus substituteCarBase(Reservation r, Long carBaseId) {
         try {
@@ -219,9 +201,8 @@ public class ReservationService {
             Double deposit = cb.getDepositValue() * department.getMultiplier() * department.getCountry().getCurrency().getExchange();
 
             r.setCarBase(cb);
-            encrypt(r);
-            repository.save(r);
-            paymentDetailsService.adjustRequiredDeposit(r, deposit);
+            paymentDetailsService.adjustRequiredDeposit(r.getId(), deposit);
+            save(r);
             return HttpStatus.ACCEPTED;
         } catch (IllegalActionException e) {
             return HttpStatus.CONFLICT;
@@ -240,9 +221,8 @@ public class ReservationService {
             List<Reservation> reservations = findCustomerReservations(usedCustomer.getId());
             for (Reservation reservation : reservations) {
                 reservation.setCustomer(mainCustomer);
-                encrypt(reservation);
             }
-            repository.saveAll(reservations);
+            saveAll(reservations);
             return true;
         } catch (RuntimeException e) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
@@ -276,6 +256,19 @@ public class ReservationService {
         } catch (RuntimeException e) {
             return false;
         }
+    }
+
+    @Transactional
+    private void save(Reservation reservation) {
+        repository.save(encrypt(reservation));
+    }
+
+    @Transactional
+    private void saveAll(List<Reservation> reservations) {
+        for (Reservation reservation:reservations) {
+            encrypt(reservation);
+        }
+        repository.saveAll(reservations);
     }
 
     private Reservation encrypt(Reservation reservation) throws RuntimeException {

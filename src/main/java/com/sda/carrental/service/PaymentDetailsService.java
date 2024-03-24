@@ -107,8 +107,8 @@ public class PaymentDetailsService {
     }
 
     @Transactional
-    public void adjustRequiredDeposit(Reservation r, Double depositValue) {
-        Optional<PaymentDetails> opd = repository.findByOperationId(r.getId());
+    public void adjustRequiredDeposit(Long operationId, Double depositValue) {
+        Optional<PaymentDetails> opd = repository.findByOperationId(operationId);
         if (opd.isEmpty()) return;
 
         PaymentDetails pd = opd.get();
