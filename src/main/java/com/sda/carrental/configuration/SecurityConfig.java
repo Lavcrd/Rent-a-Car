@@ -32,6 +32,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/mg-res/**").hasAnyAuthority(Role.ROLE_EMPLOYEE.name(), Role.ROLE_MANAGER.name(), Role.ROLE_COORDINATOR.name(), Role.ROLE_DIRECTOR.name(), Role.ROLE_ADMIN.name())
                 .antMatchers("/loc-res/**").hasAnyAuthority(Role.ROLE_EMPLOYEE.name(), Role.ROLE_MANAGER.name(), Role.ROLE_COORDINATOR.name(), Role.ROLE_DIRECTOR.name(), Role.ROLE_ADMIN.name())
                 .antMatchers("/c-ret/**").hasAnyAuthority(Role.ROLE_EMPLOYEE.name(), Role.ROLE_MANAGER.name(), Role.ROLE_COORDINATOR.name(), Role.ROLE_DIRECTOR.name(), Role.ROLE_ADMIN.name())
+                .antMatchers("/overview/**").hasAnyAuthority(Role.ROLE_EMPLOYEE.name(), Role.ROLE_MANAGER.name(), Role.ROLE_COORDINATOR.name(), Role.ROLE_DIRECTOR.name(), Role.ROLE_ADMIN.name())
                 .antMatchers("/mg-depo/**").hasAnyAuthority(Role.ROLE_MANAGER.name(), Role.ROLE_COORDINATOR.name(), Role.ROLE_DIRECTOR.name(), Role.ROLE_ADMIN.name())
                 .antMatchers("/mg-car/car-bases/**").hasAnyAuthority(Role.ROLE_COORDINATOR.name(), Role.ROLE_DIRECTOR.name(), Role.ROLE_ADMIN.name())
                 .antMatchers("/mg-car/**").hasAnyAuthority(Role.ROLE_MANAGER.name(), Role.ROLE_COORDINATOR.name(), Role.ROLE_DIRECTOR.name(), Role.ROLE_ADMIN.name())
