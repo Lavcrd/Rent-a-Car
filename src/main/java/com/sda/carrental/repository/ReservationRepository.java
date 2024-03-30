@@ -23,4 +23,10 @@ public interface ReservationRepository extends CrudRepository<Reservation, Long>
 
     @Query(value = "SELECT r FROM reservation r WHERE r.customer.id = :customerId AND r.status IN (1, 3) ")
     List<Reservation> findAllActiveByCustomerId(@Param("customerId") Long customerId);
+
+    @Query("SELECT r FROM reservation r " +
+            "WHERE r.departmentTake.id = :department " +
+            "AND r.status IN (2, 3) " +
+            "ORDER BY r.dateFrom ASC")
+    List<Reservation> findExpectedDeparturesByDepartment(@Param("department") Long department);
 }

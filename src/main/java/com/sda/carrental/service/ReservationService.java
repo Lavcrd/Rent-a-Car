@@ -20,6 +20,7 @@ import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -74,8 +75,10 @@ public class ReservationService {
 
             return HttpStatus.CREATED;
         } catch (ResourceNotFoundException e) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return HttpStatus.NOT_FOUND;
         } catch (RuntimeException e) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return HttpStatus.INTERNAL_SERVER_ERROR;
         }
     }
@@ -259,12 +262,12 @@ public class ReservationService {
     }
 
     @Transactional
-    private void save(Reservation reservation) {
+    private void save(Reservation reservation) throws RuntimeException {
         repository.save(encrypt(reservation));
     }
 
     @Transactional
-    private void saveAll(List<Reservation> reservations) {
+    private void saveAll(List<Reservation> reservations) throws RuntimeException {
         for (Reservation reservation:reservations) {
             encrypt(reservation);
         }
@@ -281,5 +284,13 @@ public class ReservationService {
         Customer customer = reservation.getCustomer();
         customer.setContactNumber(e.decrypt(customer.getContactNumber()));
         return  reservation;
+    }
+
+    public List<Reservation> findExpectedDeparturesByDepartment(Long departmentId) {
+        try {
+            return repository.findExpectedDeparturesByDepartment(departmentId);
+        } catch (RuntimeException e) {
+            return Collections.emptyList();
+        }
     }
 }

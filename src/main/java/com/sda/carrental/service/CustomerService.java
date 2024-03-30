@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
+import javax.persistence.EntityManager;
 import java.time.LocalDate;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -30,6 +31,7 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class CustomerService {
+    private final EntityManager entityManager;
     private final CustomerRepository repository;
     private final CredentialsService credentialsService;
     private final VerificationService verificationService;
@@ -98,7 +100,8 @@ public class CustomerService {
     @Transactional
     public Customer createGuest(LocalReservationForm form) throws RuntimeException {
         Customer customer = CustomerMapper.toGuestEntity(form);
-        return save(customer);
+        Customer result = save(customer);
+        return decrypt(result);
     }
 
     public Customer findCustomerByVerification(FindVerifiedForm form) throws RuntimeException {
@@ -140,7 +143,11 @@ public class CustomerService {
             } else {
                 Customer customer = findById(verification.get().getId());
                 HttpStatus status = reservationService.createReservation(customer, form.getReservationForm());
-                if (status.equals(HttpStatus.CREATED)) return HttpStatus.OK;
+
+                if (status.equals(HttpStatus.CREATED)) {
+                    entityManager.detach(verification.get());
+                    return HttpStatus.OK;
+                }
                 return status;
             }
         } catch (RuntimeException e) {

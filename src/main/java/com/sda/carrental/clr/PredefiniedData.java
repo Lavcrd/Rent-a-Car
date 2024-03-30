@@ -123,7 +123,7 @@ public class PredefiniedData implements CommandLineRunner {
                 new Employee("Magda", "Piąta", "1231235555", List.of(departmentRepository.findById(2L).orElse(null)), LocalDate.ofYearDay(9999, 1), "111222881"),
                 new Employee("Wioletta", "Fioletowa", "1231236666", List.of(departmentRepository.findById(3L).orElse(null)), LocalDate.ofYearDay(9999, 1), "111222882"),
                 new Employee("Jacek", "Gruby", "1231237777", departmentRepository.findDepartmentsByCountry(countries.get(0)), LocalDate.ofYearDay(9999, 1), "111222883"),
-                new Employee("Tomasz", "Sążny", "1231237778", departmentRepository.findDepartmentsByCountry(countries.get(0)), LocalDate.ofYearDay(9999, 1), "111222883")
+                new Employee("Tomasz", "Sążny", "1231237778", departmentRepository.findDepartmentsByCountry(countries.get(0)), LocalDate.ofYearDay(9999, 1), "111222884")
         );
 
         for (int i = 0; i < employees.size(); i++) {
