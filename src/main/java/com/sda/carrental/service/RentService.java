@@ -16,6 +16,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -67,6 +69,14 @@ public class RentService {
 
     public Rent findActiveOperationByCarPlate(String plate) throws ResourceNotFoundException {
         return repository.findActiveOperationByCarPlate(plate).orElseThrow(ResourceNotFoundException::new);
+    }
+
+    public List<Rent> findIncomingByDepartment(Long departmentId) {
+        try {
+            return repository.findIncomingByDepartmentAndStatus(departmentId, Reservation.ReservationStatus.STATUS_PROGRESS);
+        } catch (RuntimeException e) {
+            return Collections.emptyList();
+        }
     }
 
 }

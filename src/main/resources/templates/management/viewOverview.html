@@ -21,66 +21,189 @@
                 <div class="col-md-2 p-0 mt-3 mb-5">
                     <table class="table table-borderless table-fixed" style="text-align:start;">
                         <tbody>
-                        <tr class="table-dark">
-                            <td>Overview</td>
-                        </tr>
-                        <tr>
-                            <td class="px-0">
-                                <a href="/overview/statistics" class="btn btn-dark w-100 def-button-text mb-3">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard-data" viewBox="0 0 16 16">
-                                        <path d="M4 11a1 1 0 1 1 2 0v1a1 1 0 1 1-2 0zm6-4a1 1 0 1 1 2 0v5a1 1 0 1 1-2 0zM7 9a1 1 0 0 1 2 0v3a1 1 0 1 1-2 0z"/>
-                                        <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1z"/>
-                                        <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0z"/>
-                                    </svg>
-                                    Statistics
-                                </a>
-                            </td>
-                        </tr>
+                        <th:block th:if="${hasAuthority}">
+                            <tr class="table-dark">
+                                <td>View</td>
+                            </tr>
+                            <tr>
+                                <td class="px-0">
+                                    <a href="/overview/statistics" class="btn btn-dark w-100 def-button-text mb-3">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                             fill="currentColor" class="bi bi-clipboard-data" viewBox="0 0 16 16">
+                                            <path d="M4 11a1 1 0 1 1 2 0v1a1 1 0 1 1-2 0zm6-4a1 1 0 1 1 2 0v5a1 1 0 1 1-2 0zM7 9a1 1 0 0 1 2 0v3a1 1 0 1 1-2 0z"/>
+                                            <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1z"/>
+                                            <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0z"/>
+                                        </svg>
+                                        Statistics
+                                    </a>
+                                </td>
+                            </tr>
+                        </th:block>
                         <tr class="table-dark">
                             <td>Department:</td>
                         </tr>
-                        <tr>
-                            <td class="px-0">
-                                <button type="button" class="btn btn-dark w-100 def-button-text">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
-                                        <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2z"/>
-                                        <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466"/>
-                                    </svg>
-                                    Refresh
-                                </button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="p-0">
-                                <select class="form-select">
-                                    <option th:each="department: ${departments}"
-                                            th:value="${department.id}"
-                                            th:text="${department.city} + ', ' + ${department.street} + ' ' + ${department.building}"></option>
-                                </select>
-                            </td>
-                        </tr>
+                        <form th:method="POST" th:action="@{/overview/refresh}" th:object="${refresh_form}">
+                            <tr>
+                                <td class="px-0">
+                                    <button type="submit" class="btn btn-dark w-100 def-button-text">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                             fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
+                                            <path fill-rule="evenodd"
+                                                  d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2z"/>
+                                            <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466"/>
+                                        </svg>
+                                        Refresh
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="p-0">
+                                    <select class="form-select" th:field="*{departmentId}">
+                                        <option th:each="department: ${departments}"
+                                                th:value="${department.id}"
+                                                th:text="${department.city} + ', ' + ${department.street} + ' ' + ${department.building}"></option>
+                                    </select>
+                                </td>
+                            </tr>
+                        </form>
                         </tbody>
                     </table>
                 </div>
                 <div class="col-md-10 mt-3 mb-5" style="padding-left:1em;">
                     <div class="row bg-dark">
-                        <div class="py-2" style="text-align:start;color:#fff;" th:text="'Department - ' + ${department.city} + ', ' + ${department.street} + ' ' + ${department.building}"></div>
+                        <div class="py-2" style="text-align:start;color:#fff;"
+                             th:text="'Department - ' + ${department.city} + ', ' + ${department.street} + ' ' + ${department.building}"></div>
                     </div>
                     <div class="row">
-                        <div class="col-md-6 p-1 mt-3 mb-5">
+                        <div class="row my-2 mx-0">
                             <h5 class="px-1" style="text-align: start;">Arrivals:</h5>
-                            <div class="scroll-35 border">
-                                List of planned arrivals
+                            <table class="table table-borderless table-hover table-fixed"
+                                   style="text-align: center; vertical-align: middle;margin-bottom: 0;">
+                                <thead class="table-dark">
+                                <tr>
+                                    <th scope="row">From</th>
+                                    <th scope="row">Name</th>
+                                    <th scope="row">Expected</th>
+                                    <th scope="row">Plate</th>
+                                    <th scope="row" style="width:15%">Customer</th>
+                                </tr>
+                                </thead>
+                            </table>
+
+                            <div class="scroll-35 border px-0" style="min-height:20vh;">
+                                <table class="table table-borderless table-hover table-fixed"
+                                       style="text-align: center; vertical-align: middle;">
+                                    <tbody style="font-size:small;">
+                                    <tr th:if="${#lists.isEmpty(incoming_rents)}">
+                                        <td th:text="'—'"></td>
+                                        <td th:text="'—'"></td>
+                                        <td th:text="'—'"></td>
+                                        <td th:text="'—'"></td>
+                                        <td style="width:15%;"></td>
+                                    </tr>
+                                    <tr th:each="rent: ${incoming_rents}">
+                                        <td>
+                                            <div class="overflow-cell-hidden"
+                                                 th:text="${rent.reservation.departmentTake.city}"></div>
+                                        </td>
+                                        <td>
+                                            <div class="overflow-cell-hidden"
+                                                 th:text="${rent.reservation.customer.name} + ' ' + ${rent.reservation.customer.surname.charAt(0)} + '.'"></div>
+                                        </td>
+                                        <td>
+                                            <div class="overflow-cell-hidden"
+                                                 th:text="${rent.reservation.dateTo}"></div>
+                                        </td>
+                                        <td>
+                                            <div class="overflow-cell-hidden"
+                                                 th:text="${rent.car.plate}"></div>
+                                        </td>
+                                        <td style="width:15%;text-align:end;">
+                                            <a type="button" class="btn btn-dark btn-sm" th:name="details_button"
+                                               style="width: 70%;"
+                                               th:href="'/mg-cus/' + ${department.id} + '-' + ${rent.reservation.customer.id}">
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor"
+                                                     class="bi bi-box-arrow-in-right"
+                                                     viewBox="0 0 20 20" height="20" width="20">
+                                                    <path fill-rule="evenodd"
+                                                          d="M6 3.5a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-2a.5.5 0 0 0-1 0v2A1.5 1.5 0 0 0 6.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2h-8A1.5 1.5 0 0 0 5 3.5v2a.5.5 0 0 0 1 0z"></path>
+                                                    <path fill-rule="evenodd"
+                                                          d="M11.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H1.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3z"></path>
+                                                </svg>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
-                        <div class="col-md-6 p-1 mt-3 mb-5">
+                        <div class="row my-2 mx-0">
                             <h5 class="px-1" style="text-align: start;">Departures:</h5>
-                            <div class="scroll-35 border">
-                                List of planned departures
+                            <table class="table table-borderless table-hover table-fixed" style="text-align: center; vertical-align: middle;margin-bottom: 0;">
+                                <thead class="table-dark">
+                                <tr>
+                                    <th scope="row">To</th>
+                                    <th scope="row">Name</th>
+                                    <th scope="row">Date</th>
+                                    <th scope="row">Car</th>
+                                    <th scope="row">Status</th>
+                                    <th scope="row" style="width:15%">Customer</th>
+                                </tr>
+                                </thead>
+                            </table>
+                            <div class="scroll-35 border px-0" style="min-height:20vh;">
+                                <table class="table table-borderless table-hover table-fixed" style="text-align: center; vertical-align: middle;">
+                                    <tbody style="font-size:small;">
+                                    <tr th:if="${#lists.isEmpty(incoming_reservations)}">
+                                        <td th:text="'—'"></td>
+                                        <td th:text="'—'"></td>
+                                        <td th:text="'—'"></td>
+                                        <td th:text="'—'"></td>
+                                        <td th:text="'—'"></td>
+                                        <td style="width:15%;"></td>
+                                    </tr>
+                                    <tr th:each="reservation: ${incoming_reservations}">
+                                        <td>
+                                            <div class="overflow-cell-hidden"
+                                                 th:text="${reservation.departmentBack.city}"></div>
+                                        </td>
+                                        <td>
+                                            <div class="overflow-cell-hidden"
+                                                 th:text="${reservation.customer.name} + ' ' + ${reservation.customer.surname.charAt(0)} + '.'"></div>
+                                        </td>
+                                        <td>
+                                            <div class="overflow-cell-hidden"
+                                                 th:text="${reservation.dateFrom}"></div>
+                                        </td>
+                                        <td>
+                                            <div class="overflow-cell-hidden"
+                                                 th:text="${reservation.carBase.brand} + ' ' + ${reservation.carBase.model}"></div>
+                                        </td>
+                                        <td>
+                                            <div class="overflow-cell-hidden"
+                                                 th:text="${reservation.status.getText()}"></div>
+                                        </td>
+                                        <td style="width:15%;text-align:end;">
+                                            <a type="button" class="btn btn-dark btn-sm" th:name="details_button"
+                                               style="width: 70%;"
+                                               th:href="'/mg-cus/' + ${department.id} + '-' + ${reservation.customer.id}">
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor"
+                                                     class="bi bi-box-arrow-in-right"
+                                                     viewBox="0 0 20 20" height="20" width="20">
+                                                    <path fill-rule="evenodd"
+                                                          d="M6 3.5a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-2a.5.5 0 0 0-1 0v2A1.5 1.5 0 0 0 6.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2h-8A1.5 1.5 0 0 0 5 3.5v2a.5.5 0 0 0 1 0z"></path>
+                                                    <path fill-rule="evenodd"
+                                                          d="M11.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H1.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3z"></path>
+                                                </svg>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
-                    <div class="row bg-dark">
+                    <div class="row bg-dark mt-3">
                         <div class="py-2" style="text-align:start;color:#fff;" th:text="'Info: '"></div>
                     </div>
                 </div>
