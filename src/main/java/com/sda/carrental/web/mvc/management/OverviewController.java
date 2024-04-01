@@ -3,10 +3,7 @@ package com.sda.carrental.web.mvc.management;
 import com.sda.carrental.exceptions.ResourceNotFoundException;
 import com.sda.carrental.global.enums.Role;
 import com.sda.carrental.model.property.department.Department;
-import com.sda.carrental.service.DepartmentService;
-import com.sda.carrental.service.EmployeeService;
-import com.sda.carrental.service.RentService;
-import com.sda.carrental.service.ReservationService;
+import com.sda.carrental.service.*;
 import com.sda.carrental.service.auth.CustomUserDetails;
 import com.sda.carrental.web.mvc.form.property.departments.RefreshOverviewForm;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +24,7 @@ public class OverviewController {
     private final DepartmentService departmentService;
     private final EmployeeService employeeService;
     private final RentService rentService;
+    private final CarBaseService carBaseService;
     private final ReservationService reservationService;
 
     private final String MSG_KEY = "message";
@@ -60,6 +58,8 @@ public class OverviewController {
 
             map.addAttribute("incoming_rents", rentService.findIncomingByDepartment(departmentId));
             map.addAttribute("incoming_reservations", reservationService.findExpectedDeparturesByDepartment(departmentId));
+
+            map.addAttribute("cars_info", carBaseService.getStatistics(departmentId));
 
             map.addAttribute("hasAuthority", employeeService.hasMinimumAuthority(cud, Role.ROLE_COORDINATOR));
             map.addAttribute("departments", departments);
