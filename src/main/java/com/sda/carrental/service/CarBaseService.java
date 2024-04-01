@@ -13,6 +13,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -187,5 +189,25 @@ public class CarBaseService {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return HttpStatus.INTERNAL_SERVER_ERROR;
         }
+    }
+
+    public Map<String, long[]> getStatistics(long departmentId) {
+        List<Object[]> results = repository.getCarBaseStatisticsByDepartment(departmentId, LocalDate.now().plusWeeks(1));
+
+        Map<String, long[]> statistics = new HashMap<>();
+        for (Object[] result:results) {
+            long[] counts = new long[7];
+            counts[0] = ((BigDecimal) result[1]).longValue(); // Open
+            counts[1] = ((BigDecimal) result[2]).longValue(); // Rented
+            counts[2] = ((BigDecimal) result[3]).longValue(); // Unavailable
+            counts[3] = ((BigInteger) result[4]).longValue(); // Dep (Week)
+            counts[4] = ((BigInteger) result[5]).longValue(); // Dep (All)
+            counts[5] = ((BigInteger) result[6]).longValue(); // Arr (Week)
+            counts[6] = ((BigInteger) result[7]).longValue(); // Arr (All)
+
+            statistics.put(String.valueOf(result[0]), counts);
+        }
+
+        return statistics;
     }
 }
