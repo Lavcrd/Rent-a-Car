@@ -13,16 +13,20 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+
 @Service
 @RequiredArgsConstructor
 public class CredentialsService {
     private final CredentialsRepository repository;
     private final BCryptPasswordEncoder encoder;
     private final Utility utility;
+    private final EntityManager entityManager;
     private final Encryption e;
 
     public Credentials findById(Long id) throws RuntimeException {
         Credentials credentials = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Credentials", "ID", id));
+        entityManager.detach(credentials);
         return decrypt(credentials);
     }
 

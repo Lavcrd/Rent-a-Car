@@ -42,7 +42,9 @@ public class CustomerService {
     private final Utility u;
 
     public Customer findById(Long customerId) throws RuntimeException {
-        return decrypt(repository.findById(customerId).orElseThrow(ResourceNotFoundException::new));
+        Customer customer = repository.findById(customerId).orElseThrow(ResourceNotFoundException::new);
+        entityManager.detach(customer);
+        return decrypt(customer);
     }
 
     @Transactional(rollbackFor = {Exception.class})
@@ -145,7 +147,6 @@ public class CustomerService {
                 HttpStatus status = reservationService.createReservation(customer, form.getReservationForm());
 
                 if (status.equals(HttpStatus.CREATED)) {
-                    entityManager.detach(verification.get());
                     return HttpStatus.OK;
                 }
                 return status;

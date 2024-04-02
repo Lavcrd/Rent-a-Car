@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
+import javax.persistence.EntityManager;
 import java.time.LocalDate;
 
 
@@ -23,11 +24,13 @@ public class UserService {
     private final CustomerService customerService;
     private final ReservationService reservationService;
     private final CredentialsService credentialsService;
+    private final EntityManager entityManager;
     private final Encryption e;
     private final Utility u;
 
     public User findById(Long id) throws RuntimeException {
         User user = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User", "ID", id));
+        entityManager.detach(user);
         return decrypt(user);
 
     }

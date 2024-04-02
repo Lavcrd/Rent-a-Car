@@ -32,9 +32,9 @@ public class OverviewController {
     private final String MSG_NO_RESOURCE = "Failure: Resource not found";
     private final String MSG_ACCESS_REJECTED = "Failure: Access rejected";
 
-    //Pages
+    // Redirections
     @RequestMapping(method = RequestMethod.GET)
-    public String requestOverviewPage(ModelMap map, RedirectAttributes redAtt) {
+    public String requestOverviewPage(RedirectAttributes redAtt) {
         try {
             CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             List<Department> departments = employeeService.getDepartmentsByUserContext(cud);
@@ -45,6 +45,22 @@ public class OverviewController {
         }
     }
 
+    @RequestMapping(method = RequestMethod.GET, value = "/statistics")
+    public String requestStatisticsPage(RedirectAttributes redAtt) {
+        try {
+            CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            if (employeeService.hasMinimumAuthority(cud, Role.ROLE_COORDINATOR)) {
+                List<Department> departments = employeeService.getDepartmentsByUserContext(cud);
+                return "redirect:/overview/statistics/" + departments.get(0).getId();
+            }
+            redAtt.addFlashAttribute(MSG_KEY, MSG_ACCESS_REJECTED);
+        } catch (RuntimeException e) {
+            redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
+        }
+        return "redirect:/";
+    }
+
+    // Pages
     @RequestMapping(method = RequestMethod.GET, value = "/{departmentId}")
     public String viewOverviewPage(@PathVariable("departmentId") Long departmentId, ModelMap map, RedirectAttributes redAtt) {
         try {
@@ -74,13 +90,47 @@ public class OverviewController {
         return "redirect:/";
     }
 
+    @RequestMapping(method = RequestMethod.GET, value = "/statistics/{departmentId}")
+    public String viewStatisticsPage(@PathVariable("departmentId") Long departmentId, ModelMap map, RedirectAttributes redAtt) {
+        try {
+            CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            if (employeeService.departmentAccess(cud, departmentId).equals(HttpStatus.FORBIDDEN) || !employeeService.hasMinimumAuthority(cud, Role.ROLE_COORDINATOR)) {
+                redAtt.addFlashAttribute(MSG_KEY, MSG_ACCESS_REJECTED);
+                return "redirect:/";
+            }
+            map.addAttribute("username", cud.getUsername());
+
+            List<Department> departments = employeeService.getDepartmentsByUserContext(cud);
+
+            map.addAttribute("departments", departments);
+            map.addAttribute("department", departmentService.findById(departmentId));
+            map.addAttribute("refresh_form", new RefreshOverviewForm(departmentId));
+            return "management/viewStatistics";
+        } catch (ResourceNotFoundException e) {
+            redAtt.addFlashAttribute(MSG_KEY, MSG_NO_RESOURCE);
+        } catch (RuntimeException e) {
+            redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
+        }
+        return "redirect:/";
+    }
+
     // Overview page buttons
     @RequestMapping(method = RequestMethod.POST, value = "/refresh")
-    public String refreshDepartmentButton(@ModelAttribute(value = "refresh_form") RefreshOverviewForm form, Errors err, RedirectAttributes redAtt) {
+    public String refreshOverviewButton(@ModelAttribute(value = "refresh_form") RefreshOverviewForm form, Errors err, RedirectAttributes redAtt) {
         if (err.hasErrors()) {
             redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
             return "redirect:/";
         }
         return "redirect:/overview/" + form.getDepartmentId();
+    }
+
+    // Statistics page buttons
+    @RequestMapping(method = RequestMethod.POST, value = "/statistics/refresh")
+    public String refreshStatisticsButton(@ModelAttribute(value = "refresh_form") RefreshOverviewForm form, Errors err, RedirectAttributes redAtt) {
+        if (err.hasErrors()) {
+            redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
+            return "redirect:/";
+        }
+        return "redirect:/overview/statistics/" + form.getDepartmentId();
     }
 }
