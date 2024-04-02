@@ -13,12 +13,15 @@ import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
 
+import javax.persistence.EntityManager;
+
 
 @Service
 @RequiredArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
     private final CredentialsRepository credentialsRepository;
     private final UserRepository userRepository;
+    private final EntityManager entityManager;
     private final Encryption e;
 
     @Override
@@ -28,6 +31,9 @@ public class CustomUserDetailsService implements UserDetailsService {
 
         User user = userRepository.findById(credentials.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("User", "ID", credentials.getId()));
+
+        entityManager.detach(credentials);
+        entityManager.detach(user);
 
         return new CustomUserDetails(decrypt(credentials), decrypt(user));
     }

@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
+import javax.persistence.EntityManager;
 import java.util.Optional;
 
 @Service
@@ -20,6 +21,7 @@ import java.util.Optional;
 public class VerificationService {
     private final VerificationRepository repository;
     private final CountryService countryService;
+    private final EntityManager entityManager;
     private final Encryption e;
 
     @Transactional
@@ -35,7 +37,10 @@ public class VerificationService {
 
     public Optional<Verification> getOptionalVerificationByCustomer(Long customerId) throws RuntimeException {
         Optional<Verification> ov = repository.findById(customerId);
-        return ov.map(this::decrypt);
+        return ov.map(verification -> {
+            entityManager.detach(verification);
+            return decrypt(verification);
+        });
     }
 
     public Verification maskVerification(Verification verification) {
@@ -69,7 +74,10 @@ public class VerificationService {
 
     public Optional<Verification> getOptionalVerification(Country country, String personalId) throws RuntimeException {
        Optional<Verification> ov = repository.findByVerificationFields(country, e.encrypt(personalId));
-        return ov.map(this::decrypt);
+        return ov.map(verification -> {
+            entityManager.detach(verification);
+            return decrypt(verification);
+        });
     }
 
     @Transactional

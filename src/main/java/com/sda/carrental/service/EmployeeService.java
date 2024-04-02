@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
+import javax.persistence.EntityManager;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
@@ -33,10 +34,12 @@ public class EmployeeService {
     private final DepartmentService departmentService;
     private final ReservationService reservationService;
     private final CredentialsService credentialsService;
+    private final EntityManager entityManager;
     private final Encryption e;
 
     public Employee findById(Long id) throws RuntimeException {
         Employee employee = repository.findEmployeeById(id).orElseThrow(ResourceNotFoundException::new);
+        entityManager.detach(employee);
         return decrypt(employee);
     }
 
@@ -70,7 +73,8 @@ public class EmployeeService {
         if (cud.getAuthorities().contains(new SimpleGrantedAuthority(Role.ROLE_ADMIN.name()))) {
             return departmentService.findAll();
         }
-        return findById(cud.getId()).getDepartments();
+        Employee employee = findById(cud.getId());
+        return employee.getDepartments();
     }
 
     public HttpStatus departmentAccess(CustomUserDetails cud, Long departmentId) throws RuntimeException {

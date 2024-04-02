@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
+import javax.persistence.EntityManager;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -31,6 +32,7 @@ public class ReservationService {
     private final DepartmentService departmentService;
     private final PaymentDetailsService paymentDetailsService;
     private final VerificationService verificationService;
+    private final EntityManager entityManager;
     private final Encryption e;
 
     public Reservation findById(Long id) throws RuntimeException {
@@ -276,12 +278,14 @@ public class ReservationService {
 
     private Reservation encrypt(Reservation reservation) throws RuntimeException {
         Customer customer = reservation.getCustomer();
+        entityManager.detach(customer);
         customer.setContactNumber(e.encrypt(customer.getContactNumber()));
         return reservation;
     }
 
     private Reservation decrypt(Reservation reservation) throws RuntimeException {
         Customer customer = reservation.getCustomer();
+        entityManager.detach(customer);
         customer.setContactNumber(e.decrypt(customer.getContactNumber()));
         return  reservation;
     }

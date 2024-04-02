@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="Content-Type" content="text/html"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    <title>Rent-a-Car</title>
+    <link rel="stylesheet" type="text/css" href="/css/styles.css"/>
+    <link rel="stylesheet" href="/webjars/bootstrap/5.2.3/css/bootstrap.min.css">
+</head>
+
+<body>
+<div id="container">
+    <div th:include="fragments/top::top-menu"></div>
+    <div th:include="fragments/top::reg-options"></div>
+
+    <div class="main">
+        <div class="container text-center">
+            <div class="row">
+                <div class="col-md-2 p-0 mt-3 mb-5">
+                    <table class="table table-borderless table-fixed" style="text-align:start;">
+                        <tbody>
+                        <tr class="table-dark">
+                            <td>View</td>
+                        </tr>
+                        <tr>
+                            <td class="px-0">
+                                <a th:href="'/overview/' + ${department.id}"
+                                   class="btn btn-dark w-100 def-button-text mb-3">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left-circle" viewBox="0 0 16 16">
+                                        <path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8m15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-4.5-.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5z"/>
+                                    </svg>
+                                    Back
+                                </a>
+                            </td>
+                        </tr>
+                        <tr class="table-dark">
+                            <td>Department:</td>
+                        </tr>
+                        <form th:method="POST" th:action="@{/overview/statistics/refresh}" th:object="${refresh_form}">
+                            <tr>
+                                <td class="px-0">
+                                    <button type="submit" class="btn btn-dark w-100 def-button-text">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                             fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
+                                            <path fill-rule="evenodd"
+                                                  d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2z"/>
+                                            <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466"/>
+                                        </svg>
+                                        Refresh
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="p-0">
+                                    <select class="form-select" th:field="*{departmentId}">
+                                        <option th:each="department: ${departments}"
+                                                th:value="${department.id}"
+                                                th:text="${department.city} + ', ' + ${department.street} + ' ' + ${department.building}"></option>
+                                    </select>
+                                </td>
+                            </tr>
+                        </form>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col-md-10 mt-3 mb-5" style="padding-left:1em;">
+                    <div class="row bg-dark">
+                        <div class="py-2" style="text-align:start;color:#fff;"
+                             th:text="'Department - ' + ${department.city} + ', ' + ${department.street} + ' ' + ${department.building}"></div>
+                    </div>
+                    <div class="row">
+                        <div class="row my-2 mx-0">
+                            <table class="table table-borderless table-hover table-fixed"
+                                   style="text-align: center; vertical-align: middle;margin-bottom: 0;">
+                                <thead class="table-dark">
+                                <tr>
+                                    <th scope="row">Col</th>
+                                    <th scope="row">Col</th>
+                                    <th scope="row">Col</th>
+                                    <th scope="row">Col</th>
+                                    <th scope="row">Col</th>
+                                </tr>
+                                </thead>
+                            </table>
+
+                            <div class="scroll-35 border px-0" style="min-height:20vh;">
+                                <table class="table table-borderless table-hover table-fixed"
+                                       style="text-align: center; vertical-align: middle;">
+                                    <tbody style="font-size:small;">
+                                    <tr>
+                                        <td th:text="'—'"></td>
+                                        <td th:text="'—'"></td>
+                                        <td th:text="'—'"></td>
+                                        <td th:text="'—'"></td>
+                                        <td th:text="'—'"></td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="row my-2 mx-0">
+                            <h5 class="px-1" style="text-align: start;" th:text="'Assigned to ' + ${username}"></h5>
+                            <table class="table table-borderless table-hover table-fixed"
+                                   style="text-align: center; vertical-align: middle;margin-bottom: 0;">
+                                <thead class="table-dark">
+                                <tr>
+                                    <th scope="row">Col</th>
+                                    <th scope="row">Col</th>
+                                    <th scope="row">Col</th>
+                                    <th scope="row">Col</th>
+                                    <th scope="row">Col</th>
+                                </tr>
+                                </thead>
+                            </table>
+                            <div class="scroll-35 border px-0" style="min-height:20vh;">
+                                <table class="table table-borderless table-hover table-fixed"
+                                       style="text-align: center; vertical-align: middle;">
+                                    <tbody style="font-size:small;">
+                                    <tr>
+                                        <td th:text="'—'"></td>
+                                        <td th:text="'—'"></td>
+                                        <td th:text="'—'"></td>
+                                        <td th:text="'—'"></td>
+                                        <td th:text="'—'"></td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="row my-2 mx-0">
+                            <h5 class="px-1" style="text-align: start;" th:text="'Global: '"></h5>
+                            <table class="table table-borderless table-hover table-fixed"
+                                   style="text-align: center; vertical-align: middle;margin-bottom: 0;">
+                                <thead class="table-dark">
+                                <tr>
+                                    <th scope="row">Col</th>
+                                    <th scope="row">Col</th>
+                                    <th scope="row">Col</th>
+                                    <th scope="row">Col</th>
+                                    <th scope="row">Col</th>
+                                </tr>
+                                </thead>
+                            </table>
+                            <div class="scroll-35 border px-0" style="min-height:20vh;">
+                                <table class="table table-borderless table-hover table-fixed"
+                                       style="text-align: center; vertical-align: middle;">
+                                    <tbody style="font-size:small;">
+                                    <tr>
+                                        <td th:text="'—'"></td>
+                                        <td th:text="'—'"></td>
+                                        <td th:text="'—'"></td>
+                                        <td th:text="'—'"></td>
+                                        <td th:text="'—'"></td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:include="fragments/bottom::bottom-footer"></div>
+    <div th:insert="fragments/bottom::message-handler"></div>
+</div>
+<div th:include="fragments/bottom::common-scripts"></div>
+</body>
+</html>
