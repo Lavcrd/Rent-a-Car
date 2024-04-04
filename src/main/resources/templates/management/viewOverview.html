@@ -27,7 +27,8 @@
                             </tr>
                             <tr>
                                 <td class="px-0">
-                                    <a th:href="'/overview/statistics/' + ${department.id}" class="btn btn-dark w-100 def-button-text mb-3">
+                                    <a th:href="'/overview/statistics/' + ${department.id}"
+                                       class="btn btn-dark w-100 def-button-text mb-3">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                                              fill="currentColor" class="bi bi-clipboard-data" viewBox="0 0 16 16">
                                             <path d="M4 11a1 1 0 1 1 2 0v1a1 1 0 1 1-2 0zm6-4a1 1 0 1 1 2 0v5a1 1 0 1 1-2 0zM7 9a1 1 0 0 1 2 0v3a1 1 0 1 1-2 0z"/>
@@ -75,7 +76,7 @@
                              th:text="'Department - ' + ${department.city} + ', ' + ${department.street} + ' ' + ${department.building}"></div>
                     </div>
                     <div class="row">
-                        <div class="row my-2 mx-0">
+                        <div class="row my-2 mx-0" style="padding-right:0;">
                             <h5 class="px-1" style="text-align: start;">Arrivals:</h5>
                             <table class="table table-borderless table-hover table-fixed"
                                    style="text-align: center; vertical-align: middle;margin-bottom: 0;">
@@ -143,7 +144,7 @@
                                 </table>
                             </div>
                         </div>
-                        <div class="row my-2 mx-0">
+                        <div class="row my-2 mx-0" style="padding-right:0;">
                             <h5 class="px-1" style="text-align: start;">Departures:</h5>
                             <table class="table table-borderless table-hover table-fixed"
                                    style="text-align: center; vertical-align: middle;margin-bottom: 0;">
@@ -210,12 +211,11 @@
                                 </table>
                             </div>
                         </div>
-                    </div>
-                    <div class="row mt-3">
-                        <div class="mx-0">
-                            <div class="bg-dark p-2" style="text-align:start;color:#fff;font-weight:bold;" th:text="'Info: '"></div>
+                        <div class="row mt-3 mx-0" style="padding-right:0;">
+                            <div class="bg-dark p-2" style="text-align:start;color:#fff;font-weight:bold;"
+                                 th:text="'Info: '"></div>
                             <table class="table table-borderless table-hover table-fixed"
-                                   style="text-align: center; vertical-align: middle;margin-bottom: 0;">
+                                   style="text-align: center; vertical-align: middle;margin-bottom: 0;border-style:none;border-top-style:solid;border-color:white;">
                                 <thead class="table-dark" style="font-size: small;">
                                 <tr>
                                     <th scope="row">Car</th>
@@ -231,7 +231,8 @@
                             </table>
                             <div class="scroll-70 px-0">
                                 <table class="table table-bordered table-hover table-fixed"
-                                       style="text-align: center; vertical-align: middle;font-size:small;">
+                                       style="text-align: center; vertical-align: middle;font-size:small;border-style:outset;border-top-style:none;border-color:darkgray;">
+                                    <tbody>
                                     <tr th:if="${#maps.isEmpty(cars_info)}">
                                         <td th:text="'—'"></td>
                                         <td th:text="'—'"></td>
@@ -243,7 +244,7 @@
                                         <td th:text="'—'"></td>
                                     </tr>
                                     <tr th:each="map: ${cars_info}">
-                                        <td>
+                                        <td class="border-right border-left border-secondary">
                                             <div class="overflow-cell-hidden" style="font-size:smaller;"
                                                  th:text="${map.key}"></div>
                                         </td>
