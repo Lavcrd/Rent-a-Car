@@ -28,8 +28,10 @@
                             <td class="px-0">
                                 <a th:href="'/overview/' + ${department.id}"
                                    class="btn btn-dark w-100 def-button-text mb-3">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left-circle" viewBox="0 0 16 16">
-                                        <path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8m15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-4.5-.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5z"/>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                         class="bi bi-arrow-left-circle" viewBox="0 0 16 16">
+                                        <path fill-rule="evenodd"
+                                              d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8m15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-4.5-.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5z"/>
                                     </svg>
                                     Back
                                 </a>
@@ -71,90 +73,249 @@
                              th:text="'Department - ' + ${department.city} + ', ' + ${department.street} + ' ' + ${department.building}"></div>
                     </div>
                     <div class="row">
-                        <div class="row my-2 mx-0">
+                        <div class="row mt-3 mx-0" style="padding-right: 0;">
+                            <div class="bg-dark p-2" style="text-align:start;color:#fff;font-weight:bold;"
+                                 th:text="'Revenue'"></div>
                             <table class="table table-borderless table-hover table-fixed"
-                                   style="text-align: center; vertical-align: middle;margin-bottom: 0;">
-                                <thead class="table-dark">
+                                   style="text-align: center; vertical-align: middle;margin-bottom: 0;border-style:none;border-top-style:solid;border-color:white;">
+                                <thead class="table-dark" style="font-size: small;">
                                 <tr>
-                                    <th scope="row">Col</th>
-                                    <th scope="row">Col</th>
-                                    <th scope="row">Col</th>
-                                    <th scope="row">Col</th>
-                                    <th scope="row">Col</th>
+                                    <th scope="row" colspan="1"></th>
+                                    <th scope="row" colspan="1">Current</th>
+                                    <th scope="row" colspan="1">Account (Avg)</th>
+                                    <th scope="row" colspan="1">All (Avg)</th>
                                 </tr>
                                 </thead>
                             </table>
-
-                            <div class="scroll-35 border px-0" style="min-height:20vh;">
-                                <table class="table table-borderless table-hover table-fixed"
-                                       style="text-align: center; vertical-align: middle;">
-                                    <tbody style="font-size:small;">
+                            <div class="scroll-70 px-0">
+                                <table class="table table-bordered table-hover table-fixed"
+                                       style="text-align: center; vertical-align: middle;font-size:small;border-style:outset;border-top-style:none;border-color:darkgray;">
+                                    <tbody>
                                     <tr>
-                                        <td th:text="'—'"></td>
-                                        <td th:text="'—'"></td>
-                                        <td th:text="'—'"></td>
-                                        <td th:text="'—'"></td>
-                                        <td th:text="'—'"></td>
+                                        <td class="border-right border-left border-dark">
+                                            <div class="overflow-cell-hidden" style="font-size:smaller;"
+                                                 th:text="'Income'"></div>
+                                        </td>
+                                        <td class="border-right border-dark">
+                                            <div class="overflow-cell-hidden"
+                                                 th:text="'—'"></div>
+                                        </td>
+                                        <td class="border-right border-dark">
+                                            <div class="overflow-cell-hidden"
+                                                 th:text="'—'"></div>
+                                        </td>
+                                        <td>
+                                            <div class="overflow-cell-hidden"
+                                                 th:text="'—'"></div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="border-right border-left border-dark">
+                                            <div class="overflow-cell-hidden" style="font-size:smaller;"
+                                                 th:text="'Car fees'"></div>
+                                        </td>
+                                        <td class="border-right border-dark">
+                                            <div class="overflow-cell-hidden"
+                                                 th:text="'—'"></div>
+                                        </td>
+                                        <td class="border-right border-dark">
+                                            <div class="overflow-cell-hidden"
+                                                 th:text="'—'"></div>
+                                        </td>
+                                        <td>
+                                            <div class="overflow-cell-hidden"
+                                                 th:text="'—'"></div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="border-right border-left border-dark">
+                                            <div class="overflow-cell-hidden" style="font-size:smaller;"
+                                                 th:text="'Divergence fees'"></div>
+                                        </td>
+                                        <td class="border-right border-dark">
+                                            <div class="overflow-cell-hidden"
+                                                 th:text="'—'"></div>
+                                        </td>
+                                        <td class="border-right border-dark">
+                                            <div class="overflow-cell-hidden"
+                                                 th:text="'—'"></div>
+                                        </td>
+                                        <td>
+                                            <div class="overflow-cell-hidden"
+                                                 th:text="'—'"></div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="border-right border-left border-dark">
+                                            <div class="overflow-cell-hidden" style="font-size:smaller;"
+                                                 th:text="'Additional charges'"></div>
+                                        </td>
+                                        <td class="border-right border-dark">
+                                            <div class="overflow-cell-hidden"
+                                                 th:text="'—'"></div>
+                                        </td>
+                                        <td class="border-right border-dark">
+                                            <div class="overflow-cell-hidden"
+                                                 th:text="'—'"></div>
+                                        </td>
+                                        <td>
+                                            <div class="overflow-cell-hidden"
+                                                 th:text="'—'"></div>
+                                        </td>
                                     </tr>
                                     </tbody>
                                 </table>
                             </div>
                         </div>
 
-                        <div class="row my-2 mx-0">
-                            <h5 class="px-1" style="text-align: start;" th:text="'Assigned to ' + ${username}"></h5>
+                        <div class="row mt-3 mx-0" style="padding-right: 0;">
+                            <div class="bg-dark p-2" style="text-align:start;color:#fff;font-weight:bold;"
+                                 th:text="'Rentals'"></div>
                             <table class="table table-borderless table-hover table-fixed"
-                                   style="text-align: center; vertical-align: middle;margin-bottom: 0;">
-                                <thead class="table-dark">
+                                   style="text-align: center; vertical-align: middle;margin-bottom: 0;border-style:none;border-top-style:solid;border-color:white;">
+                                <thead class="table-dark" style="font-size: small;">
                                 <tr>
-                                    <th scope="row">Col</th>
-                                    <th scope="row">Col</th>
-                                    <th scope="row">Col</th>
-                                    <th scope="row">Col</th>
-                                    <th scope="row">Col</th>
+                                    <th scope="row" colspan="1"></th>
+                                    <th scope="row" colspan="1">Current</th>
+                                    <th scope="row" colspan="1">Account (Avg)</th>
+                                    <th scope="row" colspan="1">All (Avg)</th>
                                 </tr>
                                 </thead>
                             </table>
-                            <div class="scroll-35 border px-0" style="min-height:20vh;">
-                                <table class="table table-borderless table-hover table-fixed"
-                                       style="text-align: center; vertical-align: middle;">
-                                    <tbody style="font-size:small;">
+                            <div class="scroll-70 px-0">
+                                <table class="table table-bordered table-hover table-fixed"
+                                       style="text-align: center; vertical-align: middle;font-size:small;border-style:outset;border-top-style:none;border-color:darkgray;">
+                                    <tbody>
                                     <tr>
-                                        <td th:text="'—'"></td>
-                                        <td th:text="'—'"></td>
-                                        <td th:text="'—'"></td>
-                                        <td th:text="'—'"></td>
-                                        <td th:text="'—'"></td>
+                                        <td class="border-right border-left border-dark">
+                                            <div class="overflow-cell-hidden" style="font-size:smaller;"
+                                                 th:text="'Reserved'"></div>
+                                        </td>
+                                        <td class="border-right border-dark">
+                                            <div class="overflow-cell-hidden"
+                                                 th:text="'—'"></div>
+                                        </td>
+                                        <td class="border-right border-dark">
+                                            <div class="overflow-cell-hidden"
+                                                 th:text="'—'"></div>
+                                        </td>
+                                        <td>
+                                            <div class="overflow-cell-hidden"
+                                                 th:text="'—'"></div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="border-right border-left border-dark">
+                                            <div class="overflow-cell-hidden" style="font-size:smaller;"
+                                                 th:text="'Rented'"></div>
+                                        </td>
+                                        <td class="border-right border-dark">
+                                            <div class="overflow-cell-hidden"
+                                                 th:text="'—'"></div>
+                                        </td>
+                                        <td class="border-right border-dark">
+                                            <div class="overflow-cell-hidden"
+                                                 th:text="'—'"></div>
+                                        </td>
+                                        <td>
+                                            <div class="overflow-cell-hidden"
+                                                 th:text="'—'"></div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="border-right border-left border-dark">
+                                            <div class="overflow-cell-hidden" style="font-size:smaller;"
+                                                 th:text="'% Cancellation'"></div>
+                                        </td>
+                                        <td class="border-right border-dark">
+                                            <div class="overflow-cell-hidden"
+                                                 th:text="'—'"></div>
+                                        </td>
+                                        <td class="border-right border-dark">
+                                            <div class="overflow-cell-hidden"
+                                                 th:text="'—'"></div>
+                                        </td>
+                                        <td>
+                                            <div class="overflow-cell-hidden"
+                                                 th:text="'—'"></div>
+                                        </td>
                                     </tr>
                                     </tbody>
                                 </table>
                             </div>
                         </div>
 
-                        <div class="row my-2 mx-0">
-                            <h5 class="px-1" style="text-align: start;" th:text="'Global: '"></h5>
+                        <div class="row mt-3 mx-0" style="padding-right: 0;">
+                            <div class="bg-dark p-2" style="text-align:start;color:#fff;font-weight:bold;"
+                                 th:text="'Retrievals'"></div>
                             <table class="table table-borderless table-hover table-fixed"
-                                   style="text-align: center; vertical-align: middle;margin-bottom: 0;">
-                                <thead class="table-dark">
+                                   style="text-align: center; vertical-align: middle;margin-bottom: 0;border-style:none;border-top-style:solid;border-color:white;">
+                                <thead class="table-dark" style="font-size: small;">
                                 <tr>
-                                    <th scope="row">Col</th>
-                                    <th scope="row">Col</th>
-                                    <th scope="row">Col</th>
-                                    <th scope="row">Col</th>
-                                    <th scope="row">Col</th>
+                                    <th scope="row" colspan="1"></th>
+                                    <th scope="row" colspan="1">Current</th>
+                                    <th scope="row" colspan="1">Account (Avg)</th>
+                                    <th scope="row" colspan="1">All (Avg)</th>
                                 </tr>
                                 </thead>
                             </table>
-                            <div class="scroll-35 border px-0" style="min-height:20vh;">
-                                <table class="table table-borderless table-hover table-fixed"
-                                       style="text-align: center; vertical-align: middle;">
-                                    <tbody style="font-size:small;">
+                            <div class="scroll-70 px-0">
+                                <table class="table table-bordered table-hover table-fixed"
+                                       style="text-align: center; vertical-align: middle;font-size:small;border-style:outset;border-top-style:none;border-color:darkgray;">
+                                    <tbody>
                                     <tr>
-                                        <td th:text="'—'"></td>
-                                        <td th:text="'—'"></td>
-                                        <td th:text="'—'"></td>
-                                        <td th:text="'—'"></td>
-                                        <td th:text="'—'"></td>
+                                        <td class="border-right border-left border-dark">
+                                            <div class="overflow-cell-hidden" style="font-size:smaller;"
+                                                 th:text="'Completed'"></div>
+                                        </td>
+                                        <td class="border-right border-dark">
+                                            <div class="overflow-cell-hidden"
+                                                 th:text="'—'"></div>
+                                        </td>
+                                        <td class="border-right border-dark">
+                                            <div class="overflow-cell-hidden"
+                                                 th:text="'—'"></div>
+                                        </td>
+                                        <td>
+                                            <div class="overflow-cell-hidden"
+                                                 th:text="'—'"></div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="border-right border-left border-dark">
+                                            <div class="overflow-cell-hidden" style="font-size:smaller;"
+                                                 th:text="'Avg. Duration'"></div>
+                                        </td>
+                                        <td class="border-right border-dark">
+                                            <div class="overflow-cell-hidden"
+                                                 th:text="'—'"></div>
+                                        </td>
+                                        <td class="border-right border-dark">
+                                            <div class="overflow-cell-hidden"
+                                                 th:text="'—'"></div>
+                                        </td>
+                                        <td>
+                                            <div class="overflow-cell-hidden"
+                                                 th:text="'—'"></div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="border-right border-left border-dark">
+                                            <div class="overflow-cell-hidden" style="font-size:smaller;"
+                                                 th:text="'Avg. Mileage'"></div>
+                                        </td>
+                                        <td class="border-right border-dark">
+                                            <div class="overflow-cell-hidden"
+                                                 th:text="'—'"></div>
+                                        </td>
+                                        <td class="border-right border-dark">
+                                            <div class="overflow-cell-hidden"
+                                                 th:text="'—'"></div>
+                                        </td>
+                                        <td>
+                                            <div class="overflow-cell-hidden"
+                                                 th:text="'—'"></div>
+                                        </td>
                                     </tr>
                                     </tbody>
                                 </table>
