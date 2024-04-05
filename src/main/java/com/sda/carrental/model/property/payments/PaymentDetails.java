@@ -27,6 +27,7 @@ public class PaymentDetails {
     @Column(name = "id", nullable = false)
     private Long id;
 
+    @Setter
     @Column(name = "initial_car_fee", nullable = false)
     private double initialCarFee;
 
