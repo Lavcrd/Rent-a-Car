@@ -47,12 +47,12 @@ public class ReservationService {
 
             if (index.getDateFrom().isAfter(index.getDateTo())) throw new ResourceNotFoundException();
             CarBase carBase = carBaseService.findById(form.getCarBaseId());
-            Department depRepFrom = departmentService.findById(index.getDepartmentIdFrom());
-            Department depRepTo = departmentService.findById(index.getDepartmentIdTo());
+            Department depFrom = departmentService.findById(index.getDepartmentIdFrom());
+            Department depTo = departmentService.findById(index.getDepartmentIdTo());
 
             Reservation reservation = new Reservation(
                     customer, carBase,
-                    depRepFrom, depRepTo,
+                    depFrom, depTo,
                     index.getDateFrom(), index.getDateTo(),
                     LocalDate.now());
 
@@ -62,7 +62,7 @@ public class ReservationService {
             reservation.setStatus(Reservation.ReservationStatus.STATUS_RESERVED);
 
             save(reservation);
-            // ^^^
+            //
 
             //Placeholder payment values
             long days = reservation.getDateFrom().until(reservation.getDateTo(), ChronoUnit.DAYS) + 1;
@@ -70,10 +70,16 @@ public class ReservationService {
             Double exchange = reservation.getDepartmentTake().getCountry().getCurrency().getExchange();
             Double multiplier = exchange * reservation.getDepartmentTake().getMultiplier();
 
-            double payment = days * reservation.getCarBase().getPriceDay() * multiplier;
+            double payment;
+            if (!depFrom.equals(depTo)) {
+                payment = (days * reservation.getCarBase().getPriceDay() + depFrom.getCountry().getRelocateCarPrice()) * multiplier;
+            } else {
+                payment = days * reservation.getCarBase().getPriceDay() * multiplier;
+            }
             double deposit = reservation.getCarBase().getDepositValue() * exchange;
-            //^^^
+
             paymentDetailsService.createReservationPayment(reservation, payment, deposit);
+            //
 
             return HttpStatus.CREATED;
         } catch (ResourceNotFoundException e) {
@@ -201,12 +207,10 @@ public class ReservationService {
     public HttpStatus substituteCarBase(Reservation r, Long carBaseId) {
         try {
             if (!r.getStatus().equals(Reservation.ReservationStatus.STATUS_RESERVED)) throw new IllegalArgumentException();
-            Department department = r.getDepartmentTake();
-            CarBase cb = carBaseService.findAvailableCarBaseInDepartment(carBaseId, department.getId());
-            Double deposit = cb.getDepositValue() * department.getMultiplier() * department.getCountry().getCurrency().getExchange();
+            CarBase cb = carBaseService.findAvailableCarBaseInDepartment(carBaseId, r.getDepartmentTake().getId());
 
             r.setCarBase(cb);
-            paymentDetailsService.adjustRequiredDeposit(r.getId(), deposit);
+            paymentDetailsService.adjustPaymentDetails(r, cb);
             save(r);
             return HttpStatus.ACCEPTED;
         } catch (IllegalActionException e) {

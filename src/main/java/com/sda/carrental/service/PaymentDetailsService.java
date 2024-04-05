@@ -2,11 +2,13 @@ package com.sda.carrental.service;
 
 import com.sda.carrental.exceptions.IllegalActionException;
 import com.sda.carrental.exceptions.ResourceNotFoundException;
+import com.sda.carrental.model.property.car.CarBase;
 import com.sda.carrental.model.property.company.Settings;
 import com.sda.carrental.global.Utility;
 import com.sda.carrental.global.enums.Role;
 import com.sda.carrental.model.operational.Reservation;
 import com.sda.carrental.model.property.department.Country;
+import com.sda.carrental.model.property.department.Department;
 import com.sda.carrental.model.property.payments.Currency;
 import com.sda.carrental.model.property.payments.PaymentDetails;
 import com.sda.carrental.repository.PaymentDetailsRepository;
@@ -41,7 +43,7 @@ public class PaymentDetailsService {
         Double exchange = country.getCurrency().getExchange();
         Double multiplier = exchange * reservation.getDepartmentTake().getMultiplier();
 
-        double rawValue = u.roundCurrency(days * reservation.getCarBase().getPriceDay() * multiplier);
+        double carPrice = u.roundCurrency(days * reservation.getCarBase().getPriceDay() * multiplier);
         double depositValue = u.roundCurrency(reservation.getCarBase().getDepositValue() * exchange);
 
         payment = u.roundCurrency(payment);
@@ -49,9 +51,9 @@ public class PaymentDetailsService {
 
         if (!reservation.getDepartmentBack().equals(reservation.getDepartmentTake())) {
             double returnPrice = u.roundCurrency(country.getRelocateCarPrice() * multiplier);
-            repository.save(new PaymentDetails(rawValue, returnPrice, depositValue, payment, deposit, reservation.getId(), currency));
+            repository.save(new PaymentDetails(carPrice, returnPrice, depositValue, payment, deposit, reservation.getId(), currency));
         } else {
-            repository.save(new PaymentDetails(rawValue, 0.0, depositValue, payment, deposit, reservation.getId(), currency));
+            repository.save(new PaymentDetails(carPrice, 0.0, depositValue, payment, deposit, reservation.getId(), currency));
         }
     }
 
@@ -107,12 +109,22 @@ public class PaymentDetailsService {
     }
 
     @Transactional
-    public void adjustRequiredDeposit(Long operationId, Double depositValue) {
-        Optional<PaymentDetails> opd = repository.findByOperationId(operationId);
+    public void adjustPaymentDetails(Reservation reservation, CarBase carBase) {
+        Optional<PaymentDetails> opd = repository.findByOperationId(reservation.getId());
         if (opd.isEmpty()) return;
 
+        long days = reservation.getDateFrom().until(reservation.getDateTo(), ChronoUnit.DAYS) + 1;
+        Department department = reservation.getDepartmentTake();
+
+        Double multiplier = department.getMultiplier() * department.getCountry().getCurrency().getExchange();
+
+        Double carPrice = carBase.getPriceDay() * days * multiplier;
+        Double depositValue = carBase.getDepositValue() * multiplier;
+
         PaymentDetails pd = opd.get();
+
         pd.setInitialDeposit(u.roundCurrency(depositValue));
+        pd.setInitialCarFee(u.roundCurrency(carPrice));
         repository.save(pd);
     }
 

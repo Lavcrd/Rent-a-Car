@@ -17,7 +17,7 @@ public @interface NumericString {
     boolean allowedZero() default true;
     boolean allowedNegative() default true;
     boolean allowedDouble() default true;
-    double min() default Double.MIN_VALUE;
+    double min() default -Double.MAX_VALUE;
     double max() default Double.MAX_VALUE;
 
     String message() default "Failure: Value is not valid.";

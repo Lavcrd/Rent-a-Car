@@ -375,7 +375,7 @@ public class ManageReservationsController {
             if (response.equals(HttpStatus.CREATED)) {
                 redAtt.addFlashAttribute(MSG_KEY, "Success: Payment registered.");
             } else if (response.equals(HttpStatus.ACCEPTED)) {
-                redAtt.addFlashAttribute(MSG_KEY, "Success: Payment received.");
+                redAtt.addFlashAttribute(MSG_KEY, "Success: Payment updated.");
             } else if (response.equals(HttpStatus.NOT_ACCEPTABLE)) {
                 redAtt.addFlashAttribute(MSG_KEY, "Failure: Action rejected - Insufficient resources.");
             } else {
@@ -397,7 +397,7 @@ public class ManageReservationsController {
             CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             Reservation r = reservationService.findCustomerReservation(customerId, reservationId);
 
-            if (!r.getDepartmentTake().getId().equals(departmentId) ||
+            if (!r.getDepartmentBack().getId().equals(departmentId) ||
                     employeeService.departmentAccess(cud, r.getDepartmentBack().getId()).equals(HttpStatus.FORBIDDEN)) {
                 redAtt.addFlashAttribute(MSG_KEY, MSG_ACCESS_REJECTED);
                 return "redirect:/mg-cus";
