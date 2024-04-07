@@ -252,7 +252,8 @@ public class PredefiniedData implements CommandLineRunner {
         byte i = 0;
         for (Reservation r : reservationList) {
             r.setStatus(Reservation.ReservationStatus.STATUS_RESERVED);
-            if (i == 4 || i == 9) r.setStatus(Reservation.ReservationStatus.STATUS_PROGRESS);
+            if (i <= 4 || i == 9) r.setStatus(Reservation.ReservationStatus.STATUS_COMPLETED);
+            if (i == 5 || i == 10) r.setStatus(Reservation.ReservationStatus.STATUS_PROGRESS);
             reservationRepository.save(r);
             i++;
         }
@@ -292,6 +293,14 @@ public class PredefiniedData implements CommandLineRunner {
         pd5.setSecured(800D);
         pd9.setSecured(800D);
         pd10.setSecured(800D);
+
+        pd1.setPaymentAccepted(720D);
+        pd2.setPaymentAccepted(500D);
+        pd3.setPaymentAccepted(820D);
+        pd4.setPaymentAccepted(800D);
+        pd5.setPaymentAccepted(800D);
+        pd9.setPaymentAccepted(800D);
+        pd10.setPaymentAccepted(800D);
 
         pd1.setReleasedDeposit(0);
         pd2.setReleasedDeposit(100);

@@ -67,12 +67,14 @@ public class PaymentDetailsService {
         }
         PaymentDetails paymentDetails = paymentDetailsOptional.get();
         if (LocalDate.now().isAfter(reservation.getDateFrom().minusDays(cs.getRefundSubtractDaysDuration())) && requestType.equals(Reservation.ReservationStatus.STATUS_REFUNDED)) {
-            paymentDetails.setSecured(paymentDetails.getPayment() * cs.getCancellationFeePercentage());
+            double cancellationFee = paymentDetails.getPaymentBalance() * cs.getCancellationFeePercentage();
+            paymentDetails.setSecured(cancellationFee);
+            paymentDetails.setPaymentAccepted(cancellationFee);
         }
 
         //some method here that would return money to the customer
 
-        paymentDetails.setPayment(0);
+        paymentDetails.setPaymentBalance(0);
         paymentDetails.setDeposit(0);
         repository.save(paymentDetails);
     }
@@ -82,16 +84,16 @@ public class PaymentDetailsService {
     }
 
     public double calculateOvercharge(PaymentDetails paymentDetails) {
-        double payment = paymentDetails.getInitialCarFee() + paymentDetails.getInitialDivergenceFee();
-        return paymentDetails.getSecured() - payment;
+        return paymentDetails.getSecured() - paymentDetails.getPaymentAccepted();
     }
 
     @Transactional
     public HttpStatus processPayment(PaymentDetails pd) {
         try {
             // Would require method to actually send money back to customer account
-            pd.setSecured(pd.getPayment());
-            pd.setPayment(0);
+            pd.setSecured(pd.getPaymentBalance());
+            pd.setPaymentAccepted(pd.getPaymentBalance());
+            pd.setPaymentBalance(0);
 
             double excessDeposit = pd.getDeposit() - pd.getInitialDeposit();
 
@@ -185,9 +187,9 @@ public class PaymentDetailsService {
             }
 
             PaymentDetails pd = opd.get();
-            pd.setPayment(pd.getPayment() + payment);
+            pd.setPaymentBalance(pd.getPaymentBalance() + payment);
             pd.setDeposit(pd.getDeposit() + deposit);
-            if (pd.getDeposit() < 0 || pd.getPayment() < 0) throw new IllegalActionException();
+            if (pd.getDeposit() < 0 || pd.getPaymentBalance() < 0) throw new IllegalActionException();
 
             return HttpStatus.ACCEPTED;
         } catch (NumberFormatException e) {
@@ -216,9 +218,9 @@ public class PaymentDetailsService {
             }
 
             PaymentDetails pd = opd.get();
-            pd.setPayment(pd.getPayment() + payment);
+            pd.setPaymentBalance(pd.getPaymentBalance() + payment);
             pd.setDeposit(pd.getDeposit() + deposit);
-            if (pd.getDeposit() < 0 || pd.getPayment() < 0) throw new IllegalActionException();
+            if (pd.getDeposit() < 0 || pd.getPaymentBalance() < 0) throw new IllegalActionException();
 
             return HttpStatus.ACCEPTED;
         } catch (NumberFormatException e) {
@@ -240,8 +242,8 @@ public class PaymentDetailsService {
         }
 
         PaymentDetails pd = opd.get();
-        boolean isPaid = pd.getPayment() >= (pd.getInitialCarFee() + pd.getInitialDivergenceFee()) && pd.getDeposit() >= pd.getInitialDeposit();
-        String payment = pd.getPayment() + " / " + (pd.getInitialCarFee() + pd.getInitialDivergenceFee());
+        boolean isPaid = pd.getPaymentBalance() >= (pd.getInitialCarFee() + pd.getInitialDivergenceFee()) && pd.getDeposit() >= pd.getInitialDeposit();
+        String payment = pd.getPaymentBalance() + " / " + (pd.getInitialCarFee() + pd.getInitialDivergenceFee());
         String deposit = pd.getDeposit() + " / " + pd.getInitialDeposit();
         if (isPaid) {
             return new String[]{"Paid", payment, deposit};
@@ -252,7 +254,7 @@ public class PaymentDetailsService {
     public boolean isDenied(PaymentDetails p, boolean isBypassed) {
         CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         boolean hasAuthority = Role.valueOf(cud.getAuthorities().toArray()[0].toString()).ordinal() >= Role.ROLE_MANAGER.ordinal();
-        boolean isPaid = p.getPayment() >= (p.getInitialCarFee() + p.getInitialDivergenceFee()) && p.getDeposit() >= p.getInitialDeposit();
+        boolean isPaid = p.getPaymentBalance() >= (p.getInitialCarFee() + p.getInitialDivergenceFee()) && p.getDeposit() >= p.getInitialDeposit();
         if (!isPaid) {
             return !isBypassed || !hasAuthority;
         }

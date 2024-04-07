@@ -14,7 +14,8 @@ public class PaymentDetails {
         this.initialCarFee = carFee;
         this.initialDivergenceFee = divergenceFee;
         this.initialDeposit = requiredDeposit;
-        this.payment = payment;
+        this.paymentBalance = payment;
+        this.paymentAccepted = 0.0;
         this.deposit = deposit;
         this.secured = 0.0;
         this.releasedDeposit = 0.0;
@@ -40,7 +41,11 @@ public class PaymentDetails {
 
     @Setter
     @Column(name = "payment_balance", nullable = false)
-    private double payment;
+    private double paymentBalance;
+
+    @Setter
+    @Column(name = "payment_accepted", nullable = false)
+    private double paymentAccepted;
 
     @Setter
     @Column(name = "deposit", nullable = false)
