@@ -15,7 +15,10 @@ import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequiredArgsConstructor
@@ -23,6 +26,7 @@ import java.util.List;
 public class OverviewController {
     private final DepartmentService departmentService;
     private final EmployeeService employeeService;
+    private final PaymentDetailsService paymentDetailsService;
     private final RentService rentService;
     private final CarBaseService carBaseService;
     private final ReservationService reservationService;
@@ -101,6 +105,11 @@ public class OverviewController {
             map.addAttribute("username", cud.getUsername());
 
             List<Department> departments = employeeService.getDepartmentsByUserContext(cud);
+
+            Map<String, Double> departmentStatistics = new HashMap<>();
+            paymentDetailsService.addDepartmentStatics(departmentStatistics, departmentId, LocalDate.now().minusMonths(2), LocalDate.now().plusMonths(1));
+
+            map.addAttribute("department_statistics", departmentStatistics);
 
             map.addAttribute("departments", departments);
             map.addAttribute("department", departmentService.findById(departmentId));

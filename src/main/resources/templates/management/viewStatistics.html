@@ -116,7 +116,7 @@
                                         </td>
                                         <td class="border-right border-dark">
                                             <div class="overflow-cell-hidden"
-                                                 th:text="'—'"></div>
+                                                 th:text="${department_statistics['summary_payment']}"></div>
                                         </td>
                                         <td class="border-right border-dark">
                                             <div class="overflow-cell-hidden"
@@ -134,7 +134,7 @@
                                         </td>
                                         <td class="border-right border-dark">
                                             <div class="overflow-cell-hidden"
-                                                 th:text="'—'"></div>
+                                                 th:text="${department_statistics['car_fees']}"></div>
                                         </td>
                                         <td class="border-right border-dark">
                                             <div class="overflow-cell-hidden"
@@ -152,7 +152,7 @@
                                         </td>
                                         <td class="border-right border-dark">
                                             <div class="overflow-cell-hidden"
-                                                 th:text="'—'"></div>
+                                                 th:text="${department_statistics['divergence_fees']}"></div>
                                         </td>
                                         <td class="border-right border-dark">
                                             <div class="overflow-cell-hidden"
@@ -170,7 +170,7 @@
                                         </td>
                                         <td class="border-right border-dark">
                                             <div class="overflow-cell-hidden"
-                                                 th:text="'—'"></div>
+                                                 th:text="${department_statistics['cancellation_payment']}"></div>
                                         </td>
                                         <td class="border-right border-dark">
                                             <div class="overflow-cell-hidden"
@@ -181,14 +181,32 @@
                                                   th:text="'—'"></div>
                                         </td>
                                     </tr>
-                                    <tr class="border-3 border-bottom border-dark">
+                                    <tr>
                                         <td class="border-right border-dark">
                                             <div class="overflow-cell-hidden" style="font-size:smaller;"
-                                                 th:text="'Discounts'"></div>
+                                                 th:text="'Add. Positives'"></div>
+                                        </td>
+                                        <td class="border-right border-dark">
+                                            <div class="overflow-cell-hidden"
+                                                 th:text="${department_statistics['add_positives']}"></div>
                                         </td>
                                         <td class="border-right border-dark">
                                             <div class="overflow-cell-hidden"
                                                  th:text="'—'"></div>
+                                        </td>
+                                        <td>
+                                            <div class="overflow-cell-hidden"
+                                                 th:text="'—'"></div>
+                                        </td>
+                                    </tr>
+                                    <tr class="border-3 border-bottom border-dark">
+                                        <td class="border-right border-dark">
+                                            <div class="overflow-cell-hidden" style="font-size:smaller;"
+                                                 th:text="'Add. Negatives'"></div>
+                                        </td>
+                                        <td class="border-right border-dark">
+                                            <div class="overflow-cell-hidden"
+                                                 th:text="${department_statistics['add_negatives']}"></div>
                                         </td>
                                         <td class="border-right border-dark">
                                             <div class="overflow-cell-hidden"
