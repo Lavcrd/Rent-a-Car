@@ -23,6 +23,7 @@ import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.Map;
 import java.util.Optional;
 
 
@@ -271,5 +272,26 @@ public class PaymentDetailsService {
         if (isDenied(p, isBypassed)) return HttpStatus.FORBIDDEN;
 
         return processPayment(p);
+    }
+
+    public void addDepartmentStatics(Map<String, Double> map, Long departmentId, LocalDate dateFrom, LocalDate dateTo) {
+        Object[] results = (Object[]) repository.getDepartmentStatistics(departmentId, dateFrom, dateTo);
+
+        double rentalPayment = results[0] != null ? (double) results[0] : 0.0;
+        double cancellationPayment = results[1] != null ? (double) results[1] : 0.0;
+        double additionalNegative = results[2] != null ? (double) results[2] : 0.0;
+        double additionalPositive = results[3] != null ? (double) results[3] : 0.0;
+        double carFees = results[4] != null ? (double) results[4] : 0.0;
+        double divergenceFees = results[5] != null ? (double) results[5] : 0.0;
+
+        double revenue = rentalPayment + cancellationPayment;
+        double cad = carFees + divergenceFees;
+
+        map.put("summary_payment", revenue);
+        map.put("cancellation_payment", cancellationPayment);
+        map.put("car_fees", cad == 0 ? 0 : carFees / cad * revenue);
+        map.put("divergence_fees", cad == 0 ? 0 : divergenceFees / cad * revenue);
+        map.put("add_negatives", additionalNegative);
+        map.put("add_positives", additionalPositive);
     }
 }
