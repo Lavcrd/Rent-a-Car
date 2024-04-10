@@ -275,18 +275,28 @@ public class PaymentDetailsService {
     }
 
     public void addDepartmentStatics(Map<String, Double> map, Long departmentId, LocalDate dateFrom, LocalDate dateTo) {
-        Object[] results = (Object[]) repository.getDepartmentStatistics(departmentId, dateFrom, dateTo);
+        Object[] sr = (Object[]) repository.getDepartmentServiceStatistics(departmentId, dateFrom, dateTo);
+        Object[] dr = (Object[]) repository.getDepartmentDepositStatistics(departmentId, dateFrom, dateTo);
 
-        double rentalPayment = results[0] != null ? (double) results[0] : 0.0;
-        double cancellationPayment = results[1] != null ? (double) results[1] : 0.0;
-        double additionalNegative = results[2] != null ? (double) results[2] : 0.0;
-        double additionalPositive = results[3] != null ? (double) results[3] : 0.0;
-        double carFees = results[4] != null ? (double) results[4] : 0.0;
-        double divergenceFees = results[5] != null ? (double) results[5] : 0.0;
+        double rentalPayment = sr[0] != null ? (double) sr[0] : 0.0;
+        double cancellationPayment = sr[1] != null ? (double) sr[1] : 0.0;
+        double additionalNegative = sr[2] != null ? (double) sr[2] : 0.0;
+        double additionalPositive = sr[3] != null ? (double) sr[3] : 0.0;
+        double carFees = sr[4] != null ? (double) sr[4] : 0.0;
+        double divergenceFees = sr[5] != null ? (double) sr[5] : 0.0;
+
+        double pendingDeposit = dr[0] != null ? (double) dr[0] : 0.0;
+        double releasedDeposit = dr[0] != null ? (double) dr[1] : 0.0;
+        double chargedDeposit = dr[0] != null ? (double) dr[2] : 0.0;
 
         double revenue = rentalPayment + cancellationPayment;
+        double totalRevenue = revenue + chargedDeposit;
         double cad = carFees + divergenceFees;
 
+        map.put("total_revenue", totalRevenue);
+        map.put("pending_deposit", pendingDeposit);
+        map.put("released_deposit", releasedDeposit);
+        map.put("charged_deposit", chargedDeposit);
         map.put("summary_payment", revenue);
         map.put("cancellation_payment", cancellationPayment);
         map.put("car_fees", cad == 0 ? 0 : carFees / cad * revenue);
