@@ -14,8 +14,8 @@ import java.util.List;
 public interface RetrieveRepository extends CrudRepository<Retrieve, Long> {
 
     @Query("SELECT r FROM retrieve r " +
-            "WHERE r.rent.reservation.departmentBack IN (:departments) " +
-            "AND r.rent.reservation.id IN " +
+            "WHERE r.department IN (:departments) " +
+            "AND r.id IN " +
             "(SELECT p.reservationId FROM payment_details p WHERE p.deposit <> 0) " +
             "ORDER BY r.dateTo ASC")
     List<Retrieve> findAllUnresolvedByDepartments(@Param("departments") List<Department> departments);
@@ -23,12 +23,12 @@ public interface RetrieveRepository extends CrudRepository<Retrieve, Long> {
     @Query("SELECT r FROM retrieve r " +
             "JOIN customer u ON u.id = r.rent.reservation.customer " +
             "JOIN car c ON c.id = r.rent.car " +
-            "WHERE r.rent.reservation.departmentBack IN (:departments) " +
+            "WHERE r.department IN (:departments) " +
             "AND (:name IS NULL OR LOWER(u.name) LIKE LOWER(CONCAT(:name, '%'))) " +
             "AND (:surname IS NULL OR LOWER(u.surname) LIKE LOWER(CONCAT(:surname, '%'))) " +
             "AND (:country IS NULL OR (:country = '' OR LOWER(c.plate) LIKE LOWER(CONCAT(:country, '-%')))) " +
             "AND (:plate IS NULL OR LOWER(c.plate) LIKE LOWER(CONCAT('%-%', :plate, '%'))) " +
-            "AND r.rent.reservation.id IN " +
+            "AND r.id IN " +
             "(SELECT p.reservationId FROM payment_details p WHERE p.deposit <> 0) " +
             "ORDER BY r.dateTo ASC"
     )

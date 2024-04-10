@@ -62,7 +62,7 @@ public class ManageDepositController {
             CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             Retrieve retrieve = retrieveService.findById(retrieveId).orElseThrow(ResourceNotFoundException::new);
             PaymentDetails paymentDetails = paymentDetailsService.getOptionalPaymentDetails(retrieve.getId()).orElseThrow(ResourceNotFoundException::new);
-            if (employeeService.departmentAccess(cud, retrieve.getRent().getReservation().getDepartmentBack().getId()).equals(HttpStatus.FORBIDDEN)) {
+            if (employeeService.departmentAccess(cud, retrieve.getDepartment().getId()).equals(HttpStatus.FORBIDDEN)) {
                 redAtt.addFlashAttribute(MSG_KEY, MSG_ACCESS_REJECTED);
                 return "redirect:/";
             }
@@ -108,7 +108,7 @@ public class ManageDepositController {
 
     //Check page buttons
     @RequestMapping(method = RequestMethod.POST, value = "/release")
-    public String checkReleaseButton(@ModelAttribute("form") @Valid DepositForm form, Errors err, RedirectAttributes redAtt, @RequestParam("retrieve") Long retrieveId, @RequestParam("customer") Long customerId) {
+    public String depositReleaseButton(@ModelAttribute("form") @Valid DepositForm form, Errors err, RedirectAttributes redAtt, @RequestParam("retrieve") Long retrieveId, @RequestParam("customer") Long customerId) {
         CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (employeeService.hasNoAccessToCustomerOperation(cud, customerId, retrieveId)) {
             redAtt.addFlashAttribute(MSG_KEY, MSG_ACCESS_REJECTED);
@@ -136,7 +136,7 @@ public class ManageDepositController {
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/charge")
-    public String checkChargeButton(@ModelAttribute("form") @Valid DepositForm form, Errors err, RedirectAttributes redAtt, @RequestParam("retrieve") Long retrieveId, @RequestParam("customer") Long customerId) {
+    public String depositChargeButton(@ModelAttribute("form") @Valid DepositForm form, Errors err, RedirectAttributes redAtt, @RequestParam("retrieve") Long retrieveId, @RequestParam("customer") Long customerId) {
         CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (employeeService.hasNoAccessToCustomerOperation(cud, customerId, retrieveId)) {
             redAtt.addFlashAttribute(MSG_KEY, MSG_ACCESS_REJECTED);
