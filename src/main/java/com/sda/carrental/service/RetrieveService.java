@@ -20,8 +20,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -133,5 +137,17 @@ public class RetrieveService {
         } catch (RuntimeException e) {
             return Collections.emptyList();
         }
+    }
+
+    public void addDepartmentStatics(Map<String, Double> map, Long departmentId, LocalDate dateFrom, LocalDate dateTo) {
+        Object[] rr = (Object[]) repository.getDepartmentRetrieveStatistics(departmentId, dateFrom, dateTo);
+
+        double retrieveCompleted = rr[0] != null ? ((BigInteger) rr[0]).doubleValue() : 0.0;
+        double retrieveDuration = rr[1] != null ? ((BigDecimal) rr[1]).doubleValue() : 0.0;
+        double retrieveMileage = rr[2] != null ? ((BigDecimal) rr[2]).doubleValue() : 0.0;
+
+        map.put("retrieve_completed", retrieveCompleted);
+        map.put("retrieve_avg_duration", retrieveDuration);
+        map.put("retrieve_avg_mileage", retrieveMileage);
     }
 }

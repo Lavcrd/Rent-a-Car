@@ -30,6 +30,7 @@ public class OverviewController {
     private final RentService rentService;
     private final CarBaseService carBaseService;
     private final ReservationService reservationService;
+    private final RetrieveService retrieveService;
 
     private final String MSG_KEY = "message";
     private final String MSG_GENERIC_EXCEPTION = "Failure: An unexpected error occurred";
@@ -108,6 +109,8 @@ public class OverviewController {
 
             Map<String, Double> departmentStatistics = new HashMap<>();
             paymentDetailsService.addDepartmentStatics(departmentStatistics, departmentId, LocalDate.now().minusMonths(2), LocalDate.now().plusMonths(1));
+            reservationService.addDepartmentStatics(departmentStatistics, departmentId, LocalDate.now().minusMonths(2), LocalDate.now().plusMonths(1));
+            retrieveService.addDepartmentStatics(departmentStatistics, departmentId, LocalDate.now().minusMonths(2), LocalDate.now().plusMonths(1));
 
             map.addAttribute("department_statistics", departmentStatistics);
 

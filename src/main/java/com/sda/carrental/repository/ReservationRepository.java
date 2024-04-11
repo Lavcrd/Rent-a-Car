@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,4 +30,15 @@ public interface ReservationRepository extends CrudRepository<Reservation, Long>
             "AND r.status IN (2, 3) " +
             "ORDER BY r.dateFrom ASC")
     List<Reservation> findExpectedDeparturesByDepartment(@Param("department") Long department);
+
+    @Query(value = "SELECT " +
+            "   COUNT(CASE WHEN r.status != '2' THEN 1 ELSE null END) AS reserved_size, " +
+            "   COUNT(CASE WHEN r.status IN (0, 1) THEN 1 ELSE null END) AS rented_size, " +
+            "   COUNT(CASE WHEN r.status IN (4, 5) THEN 1 ELSE null END) AS cancel_size " +
+            "FROM reservation r  " +
+            "WHERE r.date_from >= :dateFrom " +
+            "   AND r.date_from <= :dateTo " +
+            "   AND r.department_id IN (:departmentId);"
+    , nativeQuery = true)
+    Object getDepartmentReservationStatistics(@Param("departmentId") Long departmentId, @Param("dateFrom") LocalDate dateFrom, @Param("dateTo") LocalDate dateTo);
 }

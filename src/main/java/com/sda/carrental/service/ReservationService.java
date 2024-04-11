@@ -18,11 +18,13 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import javax.persistence.EntityManager;
+import java.math.BigInteger;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -300,5 +302,17 @@ public class ReservationService {
         } catch (RuntimeException e) {
             return Collections.emptyList();
         }
+    }
+
+    public void addDepartmentStatics(Map<String, Double> map, Long departmentId, LocalDate dateFrom, LocalDate dateTo) {
+        Object[] rr = (Object[]) repository.getDepartmentReservationStatistics(departmentId, dateFrom, dateTo);
+
+        double reservationSize = rr[0] != null ? ((BigInteger) rr[0]).doubleValue() : 0.0;
+        double rentedSize = rr[1] != null ? ((BigInteger) rr[1]).doubleValue() : 0.0;
+        double cancelSize = rr[2] != null ? ((BigInteger) rr[2]).doubleValue() : 0.0;
+
+        map.put("reservation_size", reservationSize);
+        map.put("rented_size", rentedSize);
+        map.put("cancel_size", cancelSize);
     }
 }
