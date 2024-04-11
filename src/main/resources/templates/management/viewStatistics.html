@@ -183,7 +183,7 @@
                                     </tr>
                                     <tr>
                                         <td class="border-right border-dark">
-                                            <div class="overflow-cell-hidden" style="font-size:smaller;"
+                                            <div class="overflow-cell-hidden def-button-text" style="font-size:smaller;"
                                                  th:utext="'<svg xmlns=&quot;http://www.w3.org/2000/svg&quot; width=&quot;16&quot; height=&quot;16&quot; fill=&quot;currentColor&quot; class=&quot;bi bi-info-circle&quot; viewBox=&quot;0 0 16 16&quot; data-toggle=&quot;tooltip&quot; data-placement=&quot;top&quot; title=&quot;Sum of payments above base price of rental service. (ex. Utilities)&quot;><path d=&quot;M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z&quot;/>
 <path d=&quot;m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z&quot;/></svg> ' + 'Add. Positives:'"></div>
                                         </td>
@@ -202,7 +202,7 @@
                                     </tr>
                                     <tr class="border-3 border-bottom border-dark">
                                         <td class="border-right border-dark">
-                                            <div class="overflow-cell-hidden" style="font-size:smaller;"
+                                            <div class="overflow-cell-hidden def-button-text" style="font-size:smaller;"
                                                  th:utext="'<svg xmlns=&quot;http://www.w3.org/2000/svg&quot; width=&quot;16&quot; height=&quot;16&quot; fill=&quot;currentColor&quot; class=&quot;bi bi-info-circle&quot; viewBox=&quot;0 0 16 16&quot; data-toggle=&quot;tooltip&quot; data-placement=&quot;top&quot; title=&quot;Sum of missing payments below base price of rental service. (ex. Discounts, Benefits)&quot;><path d=&quot;M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z&quot;/>
 <path d=&quot;m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z&quot;/></svg> ' + 'Add. Negatives:'"></div>
                                         </td>
@@ -303,7 +303,7 @@
                                         </td>
                                         <td class="border-right border-dark">
                                             <div class="overflow-cell-hidden"
-                                                 th:text="'—'"></div>
+                                                 th:text="${department_statistics['reservation_size']}"></div>
                                         </td>
                                         <td class="border-right border-dark">
                                             <div class="overflow-cell-hidden"
@@ -321,7 +321,7 @@
                                         </td>
                                         <td class="border-right border-dark">
                                             <div class="overflow-cell-hidden"
-                                                 th:text="'—'"></div>
+                                                 th:text="${department_statistics['rented_size']}"></div>
                                         </td>
                                         <td class="border-right border-dark">
                                             <div class="overflow-cell-hidden"
@@ -335,11 +335,11 @@
                                     <tr>
                                         <td class="border-right border-left border-dark">
                                             <div class="overflow-cell-hidden" style="font-size:smaller;"
-                                                 th:text="'% Cancellation'"></div>
+                                                 th:text="'Cancelled'"></div>
                                         </td>
                                         <td class="border-right border-dark">
                                             <div class="overflow-cell-hidden"
-                                                 th:text="'—'"></div>
+                                                 th:text="${department_statistics['cancel_size']}"></div>
                                         </td>
                                         <td class="border-right border-dark">
                                             <div class="overflow-cell-hidden"
@@ -380,7 +380,7 @@
                                         </td>
                                         <td class="border-right border-dark">
                                             <div class="overflow-cell-hidden"
-                                                 th:text="'—'"></div>
+                                                 th:text="${department_statistics['retrieve_completed']}"></div>
                                         </td>
                                         <td class="border-right border-dark">
                                             <div class="overflow-cell-hidden"
@@ -398,7 +398,7 @@
                                         </td>
                                         <td class="border-right border-dark">
                                             <div class="overflow-cell-hidden"
-                                                 th:text="'—'"></div>
+                                                 th:text="${department_statistics['retrieve_avg_duration']}"></div>
                                         </td>
                                         <td class="border-right border-dark">
                                             <div class="overflow-cell-hidden"
@@ -416,7 +416,7 @@
                                         </td>
                                         <td class="border-right border-dark">
                                             <div class="overflow-cell-hidden"
-                                                 th:text="'—'"></div>
+                                                 th:text="${department_statistics['retrieve_avg_mileage']}"></div>
                                         </td>
                                         <td class="border-right border-dark">
                                             <div class="overflow-cell-hidden"

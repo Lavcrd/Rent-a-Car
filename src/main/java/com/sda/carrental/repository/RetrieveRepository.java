@@ -57,4 +57,16 @@ public interface RetrieveRepository extends CrudRepository<Retrieve, Long> {
                                            @Param("country") String country, @Param("plate") String plate,
                                            @Param("dateFrom") LocalDate dateFrom, @Param("dateTo") LocalDate dateTo,
                                            @Param("departments") List<Department> departments, @Param("isArrival") boolean isArrival);
+
+    @Query(value = "SELECT " +
+            "   COUNT(*) AS completed, " +
+            "   AVG(DATEDIFF(r1.actual_date_end, r2.actual_date_from)) AS avg_duration, " +
+            "   AVG(r1.mileage - r2.mileage) AS avg_mileage " +
+            "FROM retrieve r1  " +
+            "LEFT JOIN rent r2 ON r1.id = r2.id  " +
+            "WHERE r1.actual_date_end >= :dateFrom " +
+            "   AND r1.actual_date_end <= :dateTo " +
+            "   AND r1.department_id IN (:departmentId);"
+            , nativeQuery = true)
+    Object getDepartmentRetrieveStatistics(@Param("departmentId") Long departmentId, @Param("dateFrom") LocalDate dateFrom, @Param("dateTo") LocalDate dateTo);
 }
