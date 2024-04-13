@@ -25,9 +25,9 @@
                             <td>View</td>
                         </tr>
                         <tr>
-                            <td class="px-0">
+                            <td class="px-0 pb-0">
                                 <a th:href="'/overview/' + ${department.id}"
-                                   class="btn btn-dark w-100 def-button-text mb-3">
+                                   class="btn btn-dark w-100 def-button-text">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                                          class="bi bi-arrow-left-circle" viewBox="0 0 16 16">
                                         <path fill-rule="evenodd"
@@ -37,30 +37,48 @@
                                 </a>
                             </td>
                         </tr>
+                        <form th:method="POST" th:action="@{/overview/statistics/refresh}" th:object="${refresh_form}">
+                        <tr>
+                            <td class="px-0">
+                                <button type="submit" class="btn btn-dark w-100 def-button-text mb-3">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                         fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
+                                        <path fill-rule="evenodd"
+                                              d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2z"/>
+                                        <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466"/>
+                                    </svg>
+                                    Refresh
+                                </button>
+                            </td>
+                        </tr>
                         <tr class="table-dark">
                             <td>Department:</td>
                         </tr>
-                        <form th:method="POST" th:action="@{/overview/statistics/refresh}" th:object="${refresh_form}">
                             <tr>
                                 <td class="px-0">
-                                    <button type="submit" class="btn btn-dark w-100 def-button-text">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                             fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
-                                            <path fill-rule="evenodd"
-                                                  d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2z"/>
-                                            <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466"/>
-                                        </svg>
-                                        Refresh
-                                    </button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="p-0">
-                                    <select class="form-select" th:field="*{departmentId}">
+                                    <select class="form-select mb-4" th:field="*{departmentId}">
                                         <option th:each="department: ${departments}"
                                                 th:value="${department.id}"
                                                 th:text="${department.city} + ', ' + ${department.street} + ' ' + ${department.building}"></option>
                                     </select>
+                                    <input type="hidden" name="previousId" th:value="${department.id}">
+                                </td>
+                            </tr>
+                            <tr class="table-dark">
+                                <td>Date range:</td>
+                            </tr>
+                            <tr>
+                                <td class="px-0">
+                                    <input id="dateFrom" class="form-control w-100"
+                                             style="width:revert;display:revert;"
+                                             th:type="date" th:field="*{dateFrom}" required/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="px-0">
+                                    <input id="dateTo" class="form-control w-100"
+                                             style="width:revert;display:revert;"
+                                             th:type="date" th:field="*{dateTo}" required/>
                                 </td>
                             </tr>
                         </form>
@@ -178,7 +196,7 @@
                                         </td>
                                         <td>
                                             <div class="overflow-cell-hidden"
-                                                  th:text="'—'"></div>
+                                                 th:text="'—'"></div>
                                         </td>
                                     </tr>
                                     <tr>

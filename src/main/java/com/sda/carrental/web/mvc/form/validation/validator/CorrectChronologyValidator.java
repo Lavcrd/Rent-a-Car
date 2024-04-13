@@ -1,6 +1,7 @@
 package com.sda.carrental.web.mvc.form.validation.validator;
 
 import com.sda.carrental.web.mvc.form.operational.IndexForm;
+import com.sda.carrental.web.mvc.form.property.departments.RefreshStatisticsForm;
 import com.sda.carrental.web.mvc.form.users.customer.SearchCustomersForm;
 import com.sda.carrental.web.mvc.form.validation.constraint.CorrectChronology;
 
@@ -18,6 +19,8 @@ public class CorrectChronologyValidator implements ConstraintValidator<CorrectCh
         if (form instanceof IndexForm f) {
             return !f.getDateFrom().isAfter(f.getDateTo());
         } else if (form instanceof SearchCustomersForm f) {
+            return !f.getDateFrom().isAfter(f.getDateTo());
+        } else if (form instanceof RefreshStatisticsForm f) {
             return !f.getDateFrom().isAfter(f.getDateTo());
         } else {
             return false;
