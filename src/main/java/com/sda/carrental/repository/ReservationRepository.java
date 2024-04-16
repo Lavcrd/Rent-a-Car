@@ -41,4 +41,25 @@ public interface ReservationRepository extends CrudRepository<Reservation, Long>
             "   AND r.department_id IN (:departmentId);"
     , nativeQuery = true)
     Object getDepartmentReservationStatistics(@Param("departmentId") Long departmentId, @Param("dateFrom") LocalDate dateFrom, @Param("dateTo") LocalDate dateTo);
+
+    @Query(value = "SELECT " +
+            "   COUNT(CASE WHEN r.status != '2' THEN 1 ELSE null END) / COUNT(DISTINCT(r.department_id)) AS account_reserved_size, " +
+            "   COUNT(CASE WHEN r.status IN (0, 1) THEN 1 ELSE null END) / COUNT(DISTINCT(r.department_id)) AS account_rented_size, " +
+            "   COUNT(CASE WHEN r.status IN (4, 5) THEN 1 ELSE null END) / COUNT(DISTINCT(r.department_id)) AS account_cancel_size " +
+            "FROM reservation r  " +
+            "WHERE r.date_from >= :dateFrom " +
+            "   AND r.date_from <= :dateTo " +
+            "   AND r.department_id IN (SELECT ed.departments_id FROM employee_departments ed WHERE ed.employee_id = :employeeId);"
+            , nativeQuery = true)
+    Object getAccountReservationStatistics(@Param("employeeId") Long employeeId, @Param("dateFrom") LocalDate dateFrom, @Param("dateTo") LocalDate dateTo);
+
+    @Query(value = "SELECT " +
+            "   COUNT(CASE WHEN r.status != '2' THEN 1 ELSE null END) / COUNT(DISTINCT(r.department_id)) AS global_reserved_size, " +
+            "   COUNT(CASE WHEN r.status IN (0, 1) THEN 1 ELSE null END) / COUNT(DISTINCT(r.department_id)) AS global_rented_size, " +
+            "   COUNT(CASE WHEN r.status IN (4, 5) THEN 1 ELSE null END) / COUNT(DISTINCT(r.department_id)) AS global_cancel_size " +
+            "FROM reservation r  " +
+            "WHERE (r.date_from >= :dateFrom) " +
+            "   AND (r.date_from <= :dateTo);"
+            , nativeQuery = true)
+    Object getGlobalReservationStatistics(@Param("dateFrom") LocalDate dateFrom, @Param("dateTo") LocalDate dateTo);
 }

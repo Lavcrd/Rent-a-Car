@@ -113,11 +113,11 @@ public class OverviewController {
             LocalDate dateTo = session.getAttribute("stat_to") != null ? (LocalDate) session.getAttribute("stat_to") : LocalDate.now();
 
             Map<String, Double> departmentStatistics = new HashMap<>();
-            paymentDetailsService.addDepartmentStatics(departmentStatistics, departmentId, dateFrom, dateTo);
-            reservationService.addDepartmentStatics(departmentStatistics, departmentId, dateFrom, dateTo);
-            retrieveService.addDepartmentStatics(departmentStatistics, departmentId, dateFrom, dateTo);
+            paymentDetailsService.mapStatistics(departmentStatistics, departmentId, dateFrom, dateTo);
+            reservationService.mapStatistics(departmentStatistics, departmentId, dateFrom, dateTo);
+            retrieveService.mapStatistics(departmentStatistics, departmentId, dateFrom, dateTo);
 
-            map.addAttribute("department_statistics", departmentStatistics);
+            map.addAttribute("statistics", departmentStatistics);
 
             map.addAttribute("departments", departments);
             map.addAttribute("department", departmentService.findById(departmentId));
@@ -126,6 +126,7 @@ public class OverviewController {
         } catch (ResourceNotFoundException e) {
             redAtt.addFlashAttribute(MSG_KEY, MSG_NO_RESOURCE);
         } catch (RuntimeException e) {
+            e.printStackTrace();
             redAtt.addFlashAttribute(MSG_KEY, MSG_GENERIC_EXCEPTION);
         }
         return "redirect:/";

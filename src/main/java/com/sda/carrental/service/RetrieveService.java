@@ -139,15 +139,45 @@ public class RetrieveService {
         }
     }
 
-    public void addDepartmentStatics(Map<String, Double> map, Long departmentId, LocalDate dateFrom, LocalDate dateTo) {
-        Object[] rr = (Object[]) repository.getDepartmentRetrieveStatistics(departmentId, dateFrom, dateTo);
+    public void mapStatistics(Map<String, Double> map, Long departmentId, LocalDate dateFrom, LocalDate dateTo) {
+        CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        double retrieveCompleted = rr[0] != null ? ((BigInteger) rr[0]).doubleValue() : 0.0;
-        double retrieveDuration = rr[1] != null ? ((BigDecimal) rr[1]).doubleValue() : 0.0;
-        double retrieveMileage = rr[2] != null ? ((BigDecimal) rr[2]).doubleValue() : 0.0;
+        Object[] dr = (Object[]) repository.getDepartmentRetrieveStatistics(departmentId, dateFrom, dateTo);
+        Object[] ar = (Object[]) repository.getAccountRetrieveStatistics(cud.getId(), dateFrom, dateTo);
+        Object[] gr = (Object[]) repository.getGlobalRetrieveStatistics(dateFrom, dateTo);
+
+        mapDepartmentStatistics(map, dr);
+        mapAccountStatistics(map, ar);
+        mapGlobalStatistics(map, gr);
+    }
+
+    private void mapDepartmentStatistics(Map<String, Double> map, Object[] dr) {
+        double retrieveCompleted = dr[0] != null ? ((BigInteger) dr[0]).doubleValue() : 0.0;
+        double retrieveDuration = dr[1] != null ? ((BigDecimal) dr[1]).doubleValue() : 0.0;
+        double retrieveMileage = dr[2] != null ? ((BigDecimal) dr[2]).doubleValue() : 0.0;
 
         map.put("retrieve_completed", retrieveCompleted);
         map.put("retrieve_avg_duration", retrieveDuration);
         map.put("retrieve_avg_mileage", retrieveMileage);
+    }
+
+    private void mapAccountStatistics(Map<String, Double> map, Object[] ar) {
+        double accountRetrieveCompleted = ar[0] != null ? ((BigDecimal) ar[0]).doubleValue() : 0.0;
+        double accountRetrieveDuration = ar[1] != null ? ((BigDecimal) ar[1]).doubleValue() : 0.0;
+        double accountRetrieveMileage = ar[2] != null ? ((BigDecimal) ar[2]).doubleValue() : 0.0;
+
+        map.put("account_retrieve_completed", accountRetrieveCompleted);
+        map.put("account_retrieve_avg_duration", accountRetrieveDuration);
+        map.put("account_retrieve_avg_mileage", accountRetrieveMileage);
+    }
+
+    private void mapGlobalStatistics(Map<String, Double> map, Object[] gr) {
+        double globalRetrieveCompleted = gr[0] != null ? ((BigDecimal) gr[0]).doubleValue() : 0.0;
+        double globalRetrieveDuration = gr[1] != null ? ((BigDecimal) gr[1]).doubleValue() : 0.0;
+        double globalRetrieveMileage = gr[2] != null ? ((BigDecimal) gr[2]).doubleValue() : 0.0;
+
+        map.put("global_retrieve_completed", globalRetrieveCompleted);
+        map.put("global_retrieve_avg_duration", globalRetrieveDuration);
+        map.put("global_retrieve_avg_mileage", globalRetrieveMileage);
     }
 }

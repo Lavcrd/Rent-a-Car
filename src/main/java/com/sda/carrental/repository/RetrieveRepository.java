@@ -69,4 +69,27 @@ public interface RetrieveRepository extends CrudRepository<Retrieve, Long> {
             "   AND r1.department_id IN (:departmentId);"
             , nativeQuery = true)
     Object getDepartmentRetrieveStatistics(@Param("departmentId") Long departmentId, @Param("dateFrom") LocalDate dateFrom, @Param("dateTo") LocalDate dateTo);
+
+    @Query(value = "SELECT " +
+            "   COUNT(*) / COUNT(DISTINCT(r1.department_id)) AS account_completed, " +
+            "   AVG(DATEDIFF(r1.actual_date_end, r2.actual_date_from)) AS account_avg_duration, " +
+            "   AVG(r1.mileage - r2.mileage) AS account_avg_mileage " +
+            "FROM retrieve r1  " +
+            "LEFT JOIN rent r2 ON r1.id = r2.id  " +
+            "WHERE r1.actual_date_end >= :dateFrom " +
+            "   AND r1.actual_date_end <= :dateTo " +
+            "   AND r1.department_id IN (SELECT ed.departments_id FROM employee_departments ed WHERE ed.employee_id = :employeeId);"
+            , nativeQuery = true)
+    Object getAccountRetrieveStatistics(@Param("employeeId") Long employeeId, @Param("dateFrom") LocalDate dateFrom, @Param("dateTo") LocalDate dateTo);
+
+    @Query(value = "SELECT " +
+            "   COUNT(*) / COUNT(DISTINCT(r1.department_id)) AS global_completed, " +
+            "   AVG(DATEDIFF(r1.actual_date_end, r2.actual_date_from)) AS global_avg_duration, " +
+            "   AVG(r1.mileage - r2.mileage) AS global_avg_mileage " +
+            "FROM retrieve r1  " +
+            "LEFT JOIN rent r2 ON r1.id = r2.id  " +
+            "WHERE (r1.actual_date_end >= :dateFrom) " +
+            "   AND (r1.actual_date_end <= :dateTo);"
+            , nativeQuery = true)
+    Object getGlobalRetrieveStatistics(@Param("dateFrom") LocalDate dateFrom, @Param("dateTo") LocalDate dateTo);
 }

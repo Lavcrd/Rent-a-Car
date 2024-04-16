@@ -9,14 +9,18 @@ import com.sda.carrental.service.auth.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityManager;
+
 @Service
 @RequiredArgsConstructor
 public class AdminService {
     private final AdminRepository repository;
+    private final EntityManager entityManager;
     private final Encryption e;
 
     public Admin findById(Long id) throws RuntimeException {
         Admin admin = repository.findById(id).orElseThrow(ResourceNotFoundException::new);
+        entityManager.detach(admin);
         return decrypt(admin);
     }
 

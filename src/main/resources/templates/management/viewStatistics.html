@@ -116,15 +116,15 @@
                                         </td>
                                         <td class="border-right border-dark">
                                             <div class="overflow-cell-hidden"
-                                                 th:text="${department_statistics['total_revenue']}"></div>
+                                                 th:text="${statistics['total_revenue']}"></div>
                                         </td>
                                         <td class="border-right border-dark">
                                             <div class="overflow-cell-hidden"
-                                                 th:text="'—'"></div>
+                                                 th:text="${statistics['account_total_revenue']}"></div>
                                         </td>
                                         <td>
                                             <div class="overflow-cell-hidden"
-                                                 th:text="'—'"></div>
+                                                 th:text="${statistics['global_total_revenue']}"></div>
                                         </td>
                                     </tr>
                                     <tr>
@@ -134,15 +134,15 @@
                                         </td>
                                         <td class="border-right border-dark">
                                             <div class="overflow-cell-hidden"
-                                                 th:text="${department_statistics['summary_payment']}"></div>
+                                                 th:text="${statistics['summary_payment']}"></div>
                                         </td>
                                         <td class="border-right border-dark">
                                             <div class="overflow-cell-hidden"
-                                                 th:text="'—'"></div>
+                                                 th:text="${statistics['account_summary_payment']}"></div>
                                         </td>
                                         <td>
                                             <div class="overflow-cell-hidden"
-                                                 th:text="'—'"></div>
+                                                 th:text="${statistics['global_summary_payment']}"></div>
                                         </td>
                                     </tr>
                                     <tr>
@@ -152,15 +152,15 @@
                                         </td>
                                         <td class="border-right border-dark">
                                             <div class="overflow-cell-hidden"
-                                                 th:text="${department_statistics['car_fees']}"></div>
+                                                 th:text="${statistics['car_fees']}"></div>
                                         </td>
                                         <td class="border-right border-dark">
                                             <div class="overflow-cell-hidden"
-                                                 th:text="'—'"></div>
+                                                 th:text="${statistics['account_car_fees']}"></div>
                                         </td>
                                         <td>
                                             <div class="overflow-cell-hidden"
-                                                 th:text="'—'"></div>
+                                                 th:text="${statistics['global_car_fees']}"></div>
                                         </td>
                                     </tr>
                                     <tr>
@@ -170,15 +170,15 @@
                                         </td>
                                         <td class="border-right border-dark">
                                             <div class="overflow-cell-hidden"
-                                                 th:text="${department_statistics['divergence_fees']}"></div>
+                                                 th:text="${statistics['divergence_fees']}"></div>
                                         </td>
                                         <td class="border-right border-dark">
                                             <div class="overflow-cell-hidden"
-                                                 th:text="'—'"></div>
+                                                 th:text="${statistics['account_divergence_fees']}"></div>
                                         </td>
                                         <td>
                                             <div class="overflow-cell-hidden"
-                                                 th:text="'—'"></div>
+                                                 th:text="${statistics['global_divergence_fees']}"></div>
                                         </td>
                                     </tr>
                                     <tr>
@@ -188,15 +188,15 @@
                                         </td>
                                         <td class="border-right border-dark">
                                             <div class="overflow-cell-hidden"
-                                                 th:text="${department_statistics['cancellation_payment']}"></div>
+                                                 th:text="${statistics['cancellation_payment']}"></div>
                                         </td>
                                         <td class="border-right border-dark">
                                             <div class="overflow-cell-hidden"
-                                                 th:text="'—'"></div>
+                                                 th:text="${statistics['account_cancellation_payment']}"></div>
                                         </td>
                                         <td>
                                             <div class="overflow-cell-hidden"
-                                                 th:text="'—'"></div>
+                                                 th:text="${statistics['global_cancellation_payment']}"></div>
                                         </td>
                                     </tr>
                                     <tr>
@@ -207,15 +207,15 @@
                                         </td>
                                         <td class="border-right border-dark">
                                             <div class="overflow-cell-hidden"
-                                                 th:text="${department_statistics['add_positives']}"></div>
+                                                 th:text="${statistics['add_positives']}"></div>
                                         </td>
                                         <td class="border-right border-dark">
                                             <div class="overflow-cell-hidden"
-                                                 th:text="'—'"></div>
+                                                 th:text="${statistics['account_add_positives']}"></div>
                                         </td>
                                         <td>
                                             <div class="overflow-cell-hidden"
-                                                 th:text="'—'"></div>
+                                                 th:text="${statistics['global_add_positives']}"></div>
                                         </td>
                                     </tr>
                                     <tr class="border-3 border-bottom border-dark">
@@ -226,15 +226,15 @@
                                         </td>
                                         <td class="border-right border-dark">
                                             <div class="overflow-cell-hidden"
-                                                 th:text="${department_statistics['add_negatives']}"></div>
+                                                 th:text="${statistics['add_negatives']}"></div>
                                         </td>
                                         <td class="border-right border-dark">
                                             <div class="overflow-cell-hidden"
-                                                 th:text="'—'"></div>
+                                                 th:text="${statistics['account_add_negatives']}"></div>
                                         </td>
                                         <td>
                                             <div class="overflow-cell-hidden"
-                                                 th:text="'—'"></div>
+                                                 th:text="${statistics['global_add_negatives']}"></div>
                                         </td>
                                     </tr>
                                     <tr>
@@ -244,15 +244,15 @@
                                         </td>
                                         <td class="border-right border-dark">
                                             <div class="overflow-cell-hidden"
-                                                 th:text="${department_statistics['pending_deposit']}"></div>
+                                                 th:text="${statistics['pending_deposit']}"></div>
                                         </td>
                                         <td class="border-right border-dark">
                                             <div class="overflow-cell-hidden"
-                                                 th:text="'—'"></div>
+                                                 th:text="${statistics['account_pending_deposit']}"></div>
                                         </td>
                                         <td>
                                             <div class="overflow-cell-hidden"
-                                                 th:text="'—'"></div>
+                                                 th:text="${statistics['global_pending_deposit']}"></div>
                                         </td>
                                     </tr>
                                     <tr>
@@ -262,15 +262,15 @@
                                         </td>
                                         <td class="border-right border-dark">
                                             <div class="overflow-cell-hidden"
-                                                 th:text="${department_statistics['released_deposit']}"></div>
+                                                 th:text="${statistics['released_deposit']}"></div>
                                         </td>
                                         <td class="border-right border-dark">
                                             <div class="overflow-cell-hidden"
-                                                 th:text="'—'"></div>
+                                                 th:text="${statistics['account_released_deposit']}"></div>
                                         </td>
                                         <td>
                                             <div class="overflow-cell-hidden"
-                                                 th:text="'—'"></div>
+                                                 th:text="${statistics['global_released_deposit']}"></div>
                                         </td>
                                     </tr>
                                     <tr>
@@ -280,15 +280,15 @@
                                         </td>
                                         <td class="border-right border-dark">
                                             <div class="overflow-cell-hidden"
-                                                 th:text="${department_statistics['charged_deposit']}"></div>
+                                                 th:text="${statistics['charged_deposit']}"></div>
                                         </td>
                                         <td class="border-right border-dark">
                                             <div class="overflow-cell-hidden"
-                                                 th:text="'—'"></div>
+                                                 th:text="${statistics['account_charged_deposit']}"></div>
                                         </td>
                                         <td>
                                             <div class="overflow-cell-hidden"
-                                                 th:text="'—'"></div>
+                                                 th:text="${statistics['global_charged_deposit']}"></div>
                                         </td>
                                     </tr>
                                     </tbody>
@@ -321,15 +321,15 @@
                                         </td>
                                         <td class="border-right border-dark">
                                             <div class="overflow-cell-hidden"
-                                                 th:text="${department_statistics['reservation_size']}"></div>
+                                                 th:text="${statistics['reservation_size']}"></div>
                                         </td>
                                         <td class="border-right border-dark">
                                             <div class="overflow-cell-hidden"
-                                                 th:text="'—'"></div>
+                                                 th:text="${statistics['account_reservation_size']}"></div>
                                         </td>
                                         <td>
                                             <div class="overflow-cell-hidden"
-                                                 th:text="'—'"></div>
+                                                 th:text="${statistics['global_reservation_size']}"></div>
                                         </td>
                                     </tr>
                                     <tr>
@@ -339,15 +339,15 @@
                                         </td>
                                         <td class="border-right border-dark">
                                             <div class="overflow-cell-hidden"
-                                                 th:text="${department_statistics['rented_size']}"></div>
+                                                 th:text="${statistics['rented_size']}"></div>
                                         </td>
                                         <td class="border-right border-dark">
                                             <div class="overflow-cell-hidden"
-                                                 th:text="'—'"></div>
+                                                 th:text="${statistics['account_rented_size']}"></div>
                                         </td>
                                         <td>
                                             <div class="overflow-cell-hidden"
-                                                 th:text="'—'"></div>
+                                                 th:text="${statistics['global_rented_size']}"></div>
                                         </td>
                                     </tr>
                                     <tr>
@@ -357,15 +357,15 @@
                                         </td>
                                         <td class="border-right border-dark">
                                             <div class="overflow-cell-hidden"
-                                                 th:text="${department_statistics['cancel_size']}"></div>
+                                                 th:text="${statistics['cancel_size']}"></div>
                                         </td>
                                         <td class="border-right border-dark">
                                             <div class="overflow-cell-hidden"
-                                                 th:text="'—'"></div>
+                                                 th:text="${statistics['account_cancel_size']}"></div>
                                         </td>
                                         <td>
                                             <div class="overflow-cell-hidden"
-                                                 th:text="'—'"></div>
+                                                 th:text="${statistics['global_cancel_size']}"></div>
                                         </td>
                                     </tr>
                                     </tbody>
@@ -398,15 +398,15 @@
                                         </td>
                                         <td class="border-right border-dark">
                                             <div class="overflow-cell-hidden"
-                                                 th:text="${department_statistics['retrieve_completed']}"></div>
+                                                 th:text="${statistics['retrieve_completed']}"></div>
                                         </td>
                                         <td class="border-right border-dark">
                                             <div class="overflow-cell-hidden"
-                                                 th:text="'—'"></div>
+                                                 th:text="${statistics['account_retrieve_completed']}"></div>
                                         </td>
                                         <td>
                                             <div class="overflow-cell-hidden"
-                                                 th:text="'—'"></div>
+                                                 th:text="${statistics['global_retrieve_completed']}"></div>
                                         </td>
                                     </tr>
                                     <tr>
@@ -416,15 +416,15 @@
                                         </td>
                                         <td class="border-right border-dark">
                                             <div class="overflow-cell-hidden"
-                                                 th:text="${department_statistics['retrieve_avg_duration']}"></div>
+                                                 th:text="${statistics['retrieve_avg_duration']}"></div>
                                         </td>
                                         <td class="border-right border-dark">
                                             <div class="overflow-cell-hidden"
-                                                 th:text="'—'"></div>
+                                                 th:text="${statistics['account_retrieve_avg_duration']}"></div>
                                         </td>
                                         <td>
                                             <div class="overflow-cell-hidden"
-                                                 th:text="'—'"></div>
+                                                 th:text="${statistics['global_retrieve_avg_duration']}"></div>
                                         </td>
                                     </tr>
                                     <tr>
@@ -434,15 +434,15 @@
                                         </td>
                                         <td class="border-right border-dark">
                                             <div class="overflow-cell-hidden"
-                                                 th:text="${department_statistics['retrieve_avg_mileage']}"></div>
+                                                 th:text="${statistics['retrieve_avg_mileage']}"></div>
                                         </td>
                                         <td class="border-right border-dark">
                                             <div class="overflow-cell-hidden"
-                                                 th:text="'—'"></div>
+                                                 th:text="${statistics['account_retrieve_avg_mileage']}"></div>
                                         </td>
                                         <td>
                                             <div class="overflow-cell-hidden"
-                                                 th:text="'—'"></div>
+                                                 th:text="${statistics['global_retrieve_avg_mileage']}"></div>
                                         </td>
                                     </tr>
                                     </tbody>
