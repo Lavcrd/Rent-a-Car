@@ -274,10 +274,24 @@ public class PaymentDetailsService {
         return processPayment(p);
     }
 
-    public void addDepartmentStatics(Map<String, Double> map, Long departmentId, LocalDate dateFrom, LocalDate dateTo) {
+    public void mapStatistics(Map<String, Double> map, Long departmentId, LocalDate dateFrom, LocalDate dateTo) {
+        CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
         Object[] sr = (Object[]) repository.getDepartmentServiceStatistics(departmentId, dateFrom, dateTo);
         Object[] dr = (Object[]) repository.getDepartmentDepositStatistics(departmentId, dateFrom, dateTo);
 
+        Object[] asr = (Object[]) repository.getAccountServiceStatistics(cud.getId(), dateFrom, dateTo);
+        Object[] adr = (Object[]) repository.getAccountDepositStatistics(cud.getId(), dateFrom, dateTo);
+
+        Object[] gsr = (Object[]) repository.getGlobalServiceStatistics(dateFrom, dateTo);
+        Object[] gdr = (Object[]) repository.getGlobalDepositStatistics(dateFrom, dateTo);
+
+        mapDepartmentStatistics(map, sr, dr);
+        mapAccountStatistics(map, asr, adr);
+        mapGlobalStatistics(map, gsr, gdr);
+    }
+
+    private void mapDepartmentStatistics(Map<String, Double> map, Object[] sr, Object[] dr) {
         double rentalPayment = sr[0] != null ? (double) sr[0] : 0.0;
         double cancellationPayment = sr[1] != null ? (double) sr[1] : 0.0;
         double additionalNegative = sr[2] != null ? (double) sr[2] : 0.0;
@@ -303,5 +317,61 @@ public class PaymentDetailsService {
         map.put("divergence_fees", cad == 0 ? 0 : divergenceFees / cad * revenue);
         map.put("add_negatives", additionalNegative);
         map.put("add_positives", additionalPositive);
+    }
+
+    private void mapAccountStatistics(Map<String, Double> map, Object[] asr, Object[] adr) {
+        double accountRentalPayment = asr[0] != null ? (double) asr[0] : 0.0;
+        double accountCancellationPayment = asr[1] != null ? (double) asr[1] : 0.0;
+        double accountAdditionalNegative = asr[2] != null ? (double) asr[2] : 0.0;
+        double accountAdditionalPositive = asr[3] != null ? (double) asr[3] : 0.0;
+        double accountCarFees = asr[4] != null ? (double) asr[4] : 0.0;
+        double accountDivergenceFees = asr[5] != null ? (double) asr[5] : 0.0;
+
+        double accountPendingDeposit = adr[0] != null ? (double) adr[0] : 0.0;
+        double accountReleasedDeposit = adr[0] != null ? (double) adr[1] : 0.0;
+        double accountChargedDeposit = adr[0] != null ? (double) adr[2] : 0.0;
+
+        double accountRevenue = accountRentalPayment + accountCancellationPayment;
+        double accountTotalRevenue = accountRevenue + accountChargedDeposit;
+        double acad = accountCarFees + accountDivergenceFees;
+
+        map.put("account_total_revenue", accountTotalRevenue);
+        map.put("account_pending_deposit", accountPendingDeposit);
+        map.put("account_released_deposit", accountReleasedDeposit);
+        map.put("account_charged_deposit", accountChargedDeposit);
+        map.put("account_summary_payment", accountRevenue);
+        map.put("account_cancellation_payment", accountCancellationPayment);
+        map.put("account_car_fees", acad == 0 ? 0 : accountCarFees / acad * accountRevenue);
+        map.put("account_divergence_fees", acad == 0 ? 0 : accountDivergenceFees / acad * accountRevenue);
+        map.put("account_add_negatives", accountAdditionalNegative);
+        map.put("account_add_positives", accountAdditionalPositive);
+    }
+
+    private void mapGlobalStatistics(Map<String, Double> map, Object[] gsr, Object[] gdr) {
+        double globalRentalPayment = gsr[0] != null ? (double) gsr[0] : 0.0;
+        double globalCancellationPayment = gsr[1] != null ? (double) gsr[1] : 0.0;
+        double globalAdditionalNegative = gsr[2] != null ? (double) gsr[2] : 0.0;
+        double globalAdditionalPositive = gsr[3] != null ? (double) gsr[3] : 0.0;
+        double globalCarFees = gsr[4] != null ? (double) gsr[4] : 0.0;
+        double globalDivergenceFees = gsr[5] != null ? (double) gsr[5] : 0.0;
+
+        double globalPendingDeposit = gdr[0] != null ? (double) gdr[0] : 0.0;
+        double globalReleasedDeposit = gdr[0] != null ? (double) gdr[1] : 0.0;
+        double globalChargedDeposit = gdr[0] != null ? (double) gdr[2] : 0.0;
+
+        double globalRevenue = globalRentalPayment + globalCancellationPayment;
+        double globalTotalRevenue = globalRevenue + globalChargedDeposit;
+        double gcad = globalCarFees + globalDivergenceFees;
+
+        map.put("global_total_revenue", globalTotalRevenue);
+        map.put("global_pending_deposit", globalPendingDeposit);
+        map.put("global_released_deposit", globalReleasedDeposit);
+        map.put("global_charged_deposit", globalChargedDeposit);
+        map.put("global_summary_payment", globalRevenue);
+        map.put("global_cancellation_payment", globalCancellationPayment);
+        map.put("global_car_fees", gcad == 0 ? 0 : globalCarFees / gcad * globalRevenue);
+        map.put("global_divergence_fees", gcad == 0 ? 0 : globalDivergenceFees / gcad * globalRevenue);
+        map.put("global_add_negatives", globalAdditionalNegative);
+        map.put("global_add_positives", globalAdditionalPositive);
     }
 }

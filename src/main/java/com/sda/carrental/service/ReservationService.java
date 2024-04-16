@@ -9,15 +9,18 @@ import com.sda.carrental.model.property.department.Department;
 import com.sda.carrental.model.property.car.CarBase;
 import com.sda.carrental.model.users.Customer;
 import com.sda.carrental.repository.ReservationRepository;
+import com.sda.carrental.service.auth.CustomUserDetails;
 import com.sda.carrental.web.mvc.form.operational.IndexForm;
 import com.sda.carrental.web.mvc.form.operational.ReservationForm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import javax.persistence.EntityManager;
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -304,15 +307,45 @@ public class ReservationService {
         }
     }
 
-    public void addDepartmentStatics(Map<String, Double> map, Long departmentId, LocalDate dateFrom, LocalDate dateTo) {
-        Object[] rr = (Object[]) repository.getDepartmentReservationStatistics(departmentId, dateFrom, dateTo);
+    public void mapStatistics(Map<String, Double> map, Long departmentId, LocalDate dateFrom, LocalDate dateTo) {
+        CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        double reservationSize = rr[0] != null ? ((BigInteger) rr[0]).doubleValue() : 0.0;
-        double rentedSize = rr[1] != null ? ((BigInteger) rr[1]).doubleValue() : 0.0;
-        double cancelSize = rr[2] != null ? ((BigInteger) rr[2]).doubleValue() : 0.0;
+        Object[] dr = (Object[]) repository.getDepartmentReservationStatistics(departmentId, dateFrom, dateTo);
+        Object[] ar = (Object[]) repository.getAccountReservationStatistics(cud.getId(), dateFrom, dateTo);
+        Object[] gr = (Object[]) repository.getGlobalReservationStatistics(dateFrom, dateTo);
+
+        mapDepartmentStatistics(map, dr);
+        mapAccountStatistics(map, ar);
+        mapGlobalStatistics(map, gr);
+    }
+
+    private void mapDepartmentStatistics(Map<String, Double> map, Object[] dr) {
+        double reservationSize = dr[0] != null ? ((BigInteger) dr[0]).doubleValue() : 0.0;
+        double rentedSize = dr[1] != null ? ((BigInteger) dr[1]).doubleValue() : 0.0;
+        double cancelSize = dr[2] != null ? ((BigInteger) dr[2]).doubleValue() : 0.0;
 
         map.put("reservation_size", reservationSize);
         map.put("rented_size", rentedSize);
         map.put("cancel_size", cancelSize);
+    }
+
+    private void mapAccountStatistics(Map<String, Double> map, Object[] ar) {
+        double accountReservationSize = ar[0] != null ? ((BigDecimal) ar[0]).doubleValue() : 0.0;
+        double accountRentedSize = ar[1] != null ? ((BigDecimal) ar[1]).doubleValue() : 0.0;
+        double accountCancelSize = ar[2] != null ? ((BigDecimal) ar[2]).doubleValue() : 0.0;
+
+        map.put("account_reservation_size", accountReservationSize);
+        map.put("account_rented_size", accountRentedSize);
+        map.put("account_cancel_size", accountCancelSize);
+    }
+
+    private void mapGlobalStatistics(Map<String, Double> map, Object[] gr) {
+        double globalReservationSize = gr[0] != null ? ((BigDecimal) gr[0]).doubleValue() : 0.0;
+        double globalRentedSize = gr[1] != null ? ((BigDecimal) gr[1]).doubleValue() : 0.0;
+        double globalCancelSize = gr[2] != null ? ((BigDecimal) gr[2]).doubleValue() : 0.0;
+
+        map.put("global_reservation_size", globalReservationSize);
+        map.put("global_rented_size", globalRentedSize);
+        map.put("global_cancel_size", globalCancelSize);
     }
 }
