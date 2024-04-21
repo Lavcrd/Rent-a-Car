@@ -1,10 +1,12 @@
 package com.sda.carrental.web.mvc.management;
 
 import com.sda.carrental.exceptions.ResourceNotFoundException;
+import com.sda.carrental.global.Utility;
 import com.sda.carrental.model.operational.Rent;
 import com.sda.carrental.model.operational.Retrieve;
 import com.sda.carrental.model.property.car.Car;
 import com.sda.carrental.model.property.department.Department;
+import com.sda.carrental.model.property.payments.Currency;
 import com.sda.carrental.service.*;
 import com.sda.carrental.service.auth.CustomUserDetails;
 import com.sda.carrental.web.mvc.form.common.ConfirmationForm;
@@ -32,7 +34,9 @@ public class ManageCarsController {
     private final RentService rentService;
     private final RetrieveService retrieveService;
     private final EmployeeService employeeService;
+    private final CurrencyService currencyService;
     private final CountryService countryService;
+    private final Utility u;
 
     private final String MSG_KEY = "message";
     private final String MSG_ACCESS_REJECTED = "Failure: Access rejected";
@@ -81,9 +85,20 @@ public class ManageCarsController {
                 return "redirect:/mg-car";
             }
 
+            Department department = car.getDepartment();
+            Currency currency = department.getCountry().getCurrency();
+
+            Double exchange = currency.getExchange();
+            Double multiplier = exchange * department.getMultiplier();
+
+            map.addAttribute("currency", currency.getCode());
+            map.addAttribute("price_day", u.roundCurrency(car.getCarBase().getPriceDay() * multiplier));
+            map.addAttribute("price_deposit", u.roundCurrency(car.getCarBase().getDepositValue() * exchange));
+
+
             map.addAttribute("mileage_form", map.getOrDefault("mileage_form", new ChangeCarMileageForm(car.getMileage())));
 
-            map.addAttribute("department_form", map.getOrDefault("department_form", new ChangeCarDepartmentForm(car.getDepartment().getId())));
+            map.addAttribute("department_form", map.getOrDefault("department_form", new ChangeCarDepartmentForm(department.getId())));
             map.addAttribute("departments", departmentService.findAll());
 
             map.addAttribute("status_form", map.getOrDefault("status_form", new ChangeCarStatusForm(car.getCarStatus().name())));
