@@ -107,7 +107,7 @@
                             </td>
                         </tr>
                         <tr class="table-dark">
-                            <td>Pricing:</td>
+                            <td th:text="'Pricing [' + ${currency} + ']:'"></td>
                         </tr>
                         <tr>
                             <td>
@@ -120,7 +120,7 @@
                                         </td>
                                         <td>
                                             <div class="overflow-cell-hs" style="text-align:end;"
-                                                 th:text="${car.carBase.priceDay}">
+                                                 th:text="${price_day}">
                                             </div>
                                         </td>
 
@@ -133,7 +133,7 @@
                                         </td>
                                         <td>
                                             <div class="overflow-cell-hs" style="text-align:end;"
-                                                 th:text="${car.carBase.depositValue}">
+                                                 th:text="${price_deposit}">
                                             </div>
                                         </td>
                                     </tr>

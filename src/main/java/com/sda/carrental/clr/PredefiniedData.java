@@ -252,8 +252,8 @@ public class PredefiniedData implements CommandLineRunner {
         byte i = 0;
         for (Reservation r : reservationList) {
             r.setStatus(Reservation.ReservationStatus.STATUS_RESERVED);
-            if (i <= 4 || i == 9) r.setStatus(Reservation.ReservationStatus.STATUS_COMPLETED);
-            if (i == 5 || i == 10) r.setStatus(Reservation.ReservationStatus.STATUS_PROGRESS);
+            if (i <= 3 || i == 8) r.setStatus(Reservation.ReservationStatus.STATUS_COMPLETED);
+            if (i == 4 || i == 9) r.setStatus(Reservation.ReservationStatus.STATUS_PROGRESS);
             reservationRepository.save(r);
             i++;
         }

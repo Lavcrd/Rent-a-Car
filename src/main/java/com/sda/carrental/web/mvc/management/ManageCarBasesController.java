@@ -75,7 +75,7 @@ public class ManageCarBasesController {
             CustomUserDetails cud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             List<Department> departments = employeeService.getDepartmentsByUserContext(cud);
             map.addAttribute("departments", departments);
-            map.addAttribute("currency", currencyService.placeholder());
+            map.addAttribute("currency", currencyService.placeholder().getCode());
 
             utility.retrieveSessionMessage(map, req);
 
