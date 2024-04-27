@@ -6,6 +6,7 @@ import com.sda.rentacar.model.users.User;
 import com.sda.rentacar.model.users.auth.Credentials;
 import com.sda.rentacar.repository.CredentialsRepository;
 import com.sda.rentacar.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -18,6 +19,7 @@ import javax.persistence.EntityManager;
 
 @Service
 @RequiredArgsConstructor
+@Qualifier("customUserDetailsService")
 public class CustomUserDetailsService implements UserDetailsService {
     private final CredentialsRepository credentialsRepository;
     private final UserRepository userRepository;
