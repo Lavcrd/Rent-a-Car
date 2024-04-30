@@ -22,12 +22,15 @@ public class IndexForm {
     @NotNull(message = "No arrival location selected")
     private Long departmentIdTo;
 
+    @NotNull(message = "Invalid field value")
     private boolean differentDepartment;
 
+    @NotNull(message = "No start date provided")
     @FutureOrPresent(message = "Rental date is out of date")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate dateFrom;
 
+    @NotNull(message = "No end date provided")
     @FutureOrPresent(message = "Return date is out of date")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate dateTo;
