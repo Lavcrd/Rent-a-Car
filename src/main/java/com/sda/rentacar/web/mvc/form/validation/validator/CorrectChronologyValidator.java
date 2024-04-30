@@ -17,10 +17,13 @@ public class CorrectChronologyValidator implements ConstraintValidator<CorrectCh
     @Override
     public boolean isValid(Object form, ConstraintValidatorContext cvc) {
         if (form instanceof IndexForm f) {
+            if (f.getDateFrom() == null || f.getDateTo() == null) return false;
             return !f.getDateFrom().isAfter(f.getDateTo());
         } else if (form instanceof SearchCustomersForm f) {
+            if (f.getDateFrom() == null || f.getDateTo() == null) return false;
             return !f.getDateFrom().isAfter(f.getDateTo());
         } else if (form instanceof RefreshStatisticsForm f) {
+            if (f.getDateFrom() == null || f.getDateTo() == null) return false;
             return !f.getDateFrom().isAfter(f.getDateTo());
         } else {
             return false;

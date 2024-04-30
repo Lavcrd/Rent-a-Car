@@ -25,8 +25,8 @@ public class IndexController {
 
     //Pages
     @RequestMapping(method = RequestMethod.GET)
-    public String indexPage(final ModelMap map, HttpServletRequest res) {
-        utility.retrieveSessionMessage(map, res);
+    public String indexPage(final ModelMap map, HttpServletRequest req) {
+        utility.retrieveSessionMessage(map, req);
         map.addAttribute("departments", departmentService.findAll());
         map.addAttribute("indexForm", new IndexForm(LocalDate.now(), LocalDate.now().plusDays(2)));
         return "common/index";

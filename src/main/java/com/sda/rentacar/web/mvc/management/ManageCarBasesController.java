@@ -43,10 +43,10 @@ public class ManageCarBasesController {
 
     //Pages
     @RequestMapping(method = RequestMethod.GET)
-    public String searchCarBasesPage(ModelMap map, HttpServletRequest res, RedirectAttributes redAtt) {
+    public String searchCarBasesPage(ModelMap map, HttpServletRequest req, RedirectAttributes redAtt) {
         try {
             List<CarBase> carBases = carBaseService.findAllSorted();
-            utility.retrieveSessionMessage(map, res);
+            utility.retrieveSessionMessage(map, req);
 
             map.addAttribute("results", map.getOrDefault("results", carBases));
             map.addAttribute("currency", currencyService.placeholder().getCode());
