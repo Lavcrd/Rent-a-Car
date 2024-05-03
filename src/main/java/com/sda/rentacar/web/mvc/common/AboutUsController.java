@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public class AboutUsController
 {
     @RequestMapping(method = RequestMethod.GET)
-    public String welcomePage()
+    public String aboutPage()
     {
         return "common/about";
     }

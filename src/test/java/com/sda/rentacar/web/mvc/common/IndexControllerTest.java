@@ -27,11 +27,12 @@ public class IndexControllerTest extends BaseControllerTest {
     private DepartmentService departmentService;
 
     @Test
-    void shouldReturnHtmlPageWithForm() throws Exception {
+    void shouldReturnValidHtmlDoc() throws Exception {
         mvc.perform(get("/"))
                 .andExpect(status().isOk())
                 .andExpect(content().string(
-                        containsString("<form action=\"/\" method=\"POST\">")));
+                        containsString("<!DOCTYPE html>")))
+                .andExpect(view().name("common/index"));
     }
 
     @Test
