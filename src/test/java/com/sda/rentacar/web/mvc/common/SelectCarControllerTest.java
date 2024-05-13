@@ -21,7 +21,10 @@ import java.util.*;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.mockito.Mockito.*;
+import static org.springframework.test.util.AssertionErrors.assertNotNull;
+import static org.springframework.test.util.AssertionErrors.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(controllers = SelectCarController.class)
@@ -80,6 +83,8 @@ public class SelectCarControllerTest extends BaseControllerTest {
         when(carBaseService.findAvailableCarBasesInCountry(any(), any(), any())).thenReturn(getCarBases());
         when(carBaseService.getFilterProperties(anyList(), eq(false))).thenReturn(getFilterMap());
     }
+
+    // RequestMethod.GET - default
 
     @Test
     void shouldReturnValidHtmlDoc() throws Exception {
@@ -177,5 +182,56 @@ public class SelectCarControllerTest extends BaseControllerTest {
                         "days",
                         "carFilterForm"))
                 .andExpect(view().name("common/selectCar"));
+    }
+
+    // RequestMethod.POST - proceed
+
+    @Test
+    void shouldProceedSuccessfully() throws Exception {
+        mvc.perform(post("/cars/proceed")
+                        .param("select", "1")
+                        .param("s1_time", session.getValue("process_step1_time").toString())
+                        .session(session))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/reservation"));
+    }
+
+    @Test
+    void shouldProceedFailDueToExpiredSession() throws Exception {
+        mvc.perform(post("/cars/proceed")
+                        .param("select", "1")
+                        .param("s1_time", String.valueOf(LocalDateTime.now()))
+                        .session(new MockHttpSession()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(flash().attributeExists("message"))
+                .andExpect(view().name("redirect:/"));
+    }
+
+    @Test
+    void shouldProceedFailDueToBrowserTabMismatch() throws Exception {
+        mvc.perform(post("/cars/proceed")
+                        .param("select", "1")
+                        .param("s1_time", String.valueOf(LocalDateTime.now()))
+                        .session(session))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(flash().attributeExists("message"))
+                .andExpect(view().name("redirect:/"));
+    }
+
+    @Test
+    void shouldProceedSuccessfullyWithValidMapAndSession() throws Exception {
+        mvc.perform(post("/cars/proceed")
+                        .param("select", "1")
+                        .param("s1_time", session.getValue("process_step1_time").toString())
+                        .session(session))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(flash().attributeExists("s1_time"))
+                .andExpect(view().name("redirect:/reservation"));
+
+        // Session checks
+        assertNotNull("process_carBaseId was not added to session", session.getAttribute("process_carBaseId"));
+        assertTrue("process_carBaseId was incorrectly added (value: " + session.getAttribute("process_carBaseId") + ")", ((Long) session.getAttribute("process_carBaseId")).equals(1L));
+        assertNotNull("process_step2_time was not added to session", session.getAttribute("process_step2_time"));
+        assertTrue("process_step2_time was incorrectly added (value: " + session.getAttribute("process_step2_time") + ")", ((LocalDateTime) session.getAttribute("process_step2_time")).isAfter((LocalDateTime) session.getValue("process_step1_time")));
     }
 }
