@@ -9,6 +9,8 @@ import com.sda.rentacar.model.property.payments.Currency;
 import com.sda.rentacar.service.CarBaseService;
 import com.sda.rentacar.service.DepartmentService;
 import com.sda.rentacar.web.mvc.form.operational.IndexForm;
+import com.sda.rentacar.web.mvc.form.property.cars.GenericCarForm;
+import com.sda.rentacar.web.mvc.form.property.cars.SelectCarBaseFilterForm;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -38,7 +40,7 @@ public class SelectCarControllerTest extends BaseControllerTest {
     @MockBean
     private CarBaseService carBaseService;
 
-    private IndexForm getValidForm() {
+    private IndexForm getValidIndexForm() {
         IndexForm form = new IndexForm();
         form.setDepartmentIdFrom(1L);
         form.setDepartmentIdTo(1L);
@@ -76,7 +78,7 @@ public class SelectCarControllerTest extends BaseControllerTest {
     @BeforeEach
     void setup() {
         session = new MockHttpSession();
-        session.setAttribute("process_indexForm", getValidForm());
+        session.setAttribute("process_indexForm", getValidIndexForm());
         session.setAttribute("process_step1_time", LocalDateTime.now().minusMinutes(5));
 
         when(departmentService.findById(anyLong())).thenReturn(getDepartment());
@@ -197,10 +199,23 @@ public class SelectCarControllerTest extends BaseControllerTest {
     }
 
     @Test
+    void shouldProceedFailDueToNoIndexForm() throws Exception {
+        session.removeAttribute("process_indexForm");
+
+        mvc.perform(post("/cars/proceed")
+                        .param("select", "1")
+                        .param("s1_time", session.getValue("process_step1_time").toString())
+                        .session(session))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(flash().attributeExists("message"))
+                .andExpect(view().name("redirect:/"));
+    }
+
+    @Test
     void shouldProceedFailDueToExpiredSession() throws Exception {
         mvc.perform(post("/cars/proceed")
                         .param("select", "1")
-                        .param("s1_time", String.valueOf(LocalDateTime.now()))
+                        .param("s1_time", session.getValue("process_step1_time").toString())
                         .session(new MockHttpSession()))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(flash().attributeExists("message"))
@@ -233,5 +248,81 @@ public class SelectCarControllerTest extends BaseControllerTest {
         assertTrue("process_carBaseId was incorrectly added (value: " + session.getAttribute("process_carBaseId") + ")", ((Long) session.getAttribute("process_carBaseId")).equals(1L));
         assertNotNull("process_step2_time was not added to session", session.getAttribute("process_step2_time"));
         assertTrue("process_step2_time was incorrectly added (value: " + session.getAttribute("process_step2_time") + ")", ((LocalDateTime) session.getAttribute("process_step2_time")).isAfter((LocalDateTime) session.getValue("process_step1_time")));
+    }
+
+    // RequestMethod.POST - filter
+
+    @Test
+    void shouldFilterSuccessfully() throws Exception {
+        mvc.perform(post("/cars/filter")
+                        .param("carFilterForm", String.valueOf(new SelectCarBaseFilterForm()))
+                        .param("s1_time", session.getValue("process_step1_time").toString())
+                        .session(session))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/cars"));
+    }
+
+    @Test
+    void shouldFilterFailDueToExpiredSession() throws Exception {
+        mvc.perform(post("/cars/filter")
+                        .param("carFilterForm", String.valueOf(new SelectCarBaseFilterForm()))
+                        .param("s1_time", session.getValue("process_step1_time").toString())
+                        .session(new MockHttpSession()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(flash().attributeExists("message"))
+                .andExpect(view().name("redirect:/"));
+    }
+
+    @Test
+    void shouldFilterFailDueToBrowserTabMismatch() throws Exception {
+        mvc.perform(post("/cars/filter")
+                        .param("carFilterForm", String.valueOf(new SelectCarBaseFilterForm()))
+                        .param("s1_time", String.valueOf(LocalDateTime.now()))
+                        .session(session))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(flash().attributeExists("message"))
+                .andExpect(view().name("redirect:/"));
+    }
+
+    @Test
+    void shouldFilterFailDueToNoDepartment() throws Exception {
+        when(carBaseService.findCarBasesByForm(any())).thenThrow(new ResourceNotFoundException());
+
+        mvc.perform(post("/cars/filter")
+                        .param("carFilterForm", String.valueOf(new SelectCarBaseFilterForm()))
+                        .param("s1_time", session.getValue("process_step1_time").toString())
+                        .session(session))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(flash().attributeExists("message"))
+                .andExpect(view().name("redirect:/"));
+    }
+
+    @Test
+    void shouldFilterFailDueToNoIndexForm() throws Exception {
+        session.removeAttribute("process_indexForm");
+
+        mvc.perform(post("/cars/filter")
+                        .param("carFilterForm", String.valueOf(new SelectCarBaseFilterForm()))
+                        .param("s1_time", session.getValue("process_step1_time").toString())
+                        .session(session))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(flash().attributeExists("message"))
+                .andExpect(view().name("redirect:/"));
+    }
+
+    @Test
+    void shouldFilterSuccessfullyWithValidMapAndSession() throws Exception {
+        mvc.perform(post("/cars/filter")
+                        .param("carFilterForm", String.valueOf(new SelectCarBaseFilterForm()))
+                        .param("s1_time", session.getValue("process_step1_time").toString())
+                        .session(session))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(flash().attributeExists("s1_time"))
+                .andExpect(flash().attributeExists("filteredCarBases"))
+                .andExpect(flash().attributeExists("carFilterForm"))
+                .andExpect(view().name("redirect:/cars"));
+
+        // Additional checks
+        verify(carBaseService, times(1)).findCarBasesByForm(any());
     }
 }
