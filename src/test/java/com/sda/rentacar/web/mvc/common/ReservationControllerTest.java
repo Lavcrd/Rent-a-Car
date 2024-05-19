@@ -26,6 +26,7 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.util.AssertionErrors.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(controllers = ReservationController.class)
@@ -249,5 +250,20 @@ public class ReservationControllerTest extends BaseControllerTest {
         }
 
         assertFalse("Incorrect session", hasKeys);
+    }
+
+    // RequestMethod.POST - back
+
+    @Test
+    void shouldProperlyRedirectBackToCars() throws Exception {
+        mvc.perform(post("/reservation/back")
+                        .session(session)
+                        .param("s1_time", time1.toString()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(flash().attributeExists("s1_time"))
+                .andExpect(view().name("redirect:/cars"));
+
+        assertNull("Session is unmodified.", session.getValue("process_step2_time"));
+        assertNull("Session is unmodified.", session.getValue("process_carBaseId"));
     }
 }
