@@ -7,23 +7,33 @@ import com.sda.rentacar.model.property.company.Settings;
 import com.sda.rentacar.model.property.department.Country;
 import com.sda.rentacar.model.property.department.Department;
 import com.sda.rentacar.model.property.payments.Currency;
+import com.sda.rentacar.model.users.Customer;
+import com.sda.rentacar.model.users.Employee;
+import com.sda.rentacar.model.users.auth.Credentials;
 import com.sda.rentacar.service.*;
+import com.sda.rentacar.service.auth.CustomUserDetails;
 import com.sda.rentacar.web.mvc.form.operational.IndexForm;
+import com.sda.rentacar.web.mvc.form.operational.ReservationForm;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpSession;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+
 import org.springframework.test.web.servlet.MvcResult;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.Collections;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
 import static org.springframework.test.util.AssertionErrors.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -35,6 +45,18 @@ public class ReservationControllerTest extends BaseControllerTest {
     private static MockHttpSession session;
 
     private static LocalDateTime time1;
+
+    private static LocalDateTime time2;
+
+    private static final CustomUserDetails ecud = new CustomUserDetails(
+            new Credentials(1L, "", ""),
+            new Employee("", "", "", Collections.emptyList(),LocalDate.of(9999, 1, 1), "")
+    );
+
+    private static final CustomUserDetails ccud = new CustomUserDetails(
+            new Credentials(1L, "", ""),
+            new Customer("", "", Customer.Status.STATUS_REGISTERED, "")
+    );
 
     @MockBean
     private CarBaseService carBaseService;
@@ -75,11 +97,12 @@ public class ReservationControllerTest extends BaseControllerTest {
     void setup() {
         session = new MockHttpSession();
         time1 = LocalDateTime.now().minusMinutes(5);
+        time2 = LocalDateTime.now().minusMinutes(1);
 
         session.setAttribute("process_indexForm", getValidIndexForm());
         session.setAttribute("process_carBaseId", 1L);
         session.setAttribute("process_step1_time", time1);
-        session.setAttribute("process_step2_time", LocalDateTime.now().minusMinutes(1));
+        session.setAttribute("process_step2_time", time2);
 
         when(reservationService.isValidRequest(any(), any(), any(), any())).thenReturn(true);
         when(carBaseService.findById(anyLong())).thenReturn(getCarBase());
@@ -265,5 +288,56 @@ public class ReservationControllerTest extends BaseControllerTest {
 
         assertNull("Session is unmodified.", session.getValue("process_step2_time"));
         assertNull("Session is unmodified.", session.getValue("process_carBaseId"));
+    }
+
+    // RequestMethod.POST - confirm
+
+    @Test
+    void shouldConfirmBeUnauthorized() throws Exception {
+        mvc.perform(post("/reservation/confirm")
+                        .session(session)
+                        .param("s1_time", time1.toString())
+                        .param("s2_time", time2.toString()))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void shouldEmployeeConfirmBeAuthorized() throws Exception {
+        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(ecud, ecud.getPassword(), ecud.getAuthorities());
+
+        mvc.perform(post("/reservation/confirm")
+                        .with(authentication(auth))
+                        .session(session)
+                        .param("carBaseId", "1")
+                        .param("indexData.departmentIdFrom", String.valueOf(getValidIndexForm().getDepartmentIdFrom()))
+                        .param("indexData.departmentIdTo", String.valueOf(getValidIndexForm().getDepartmentIdTo()))
+                        .param("indexData.differentDepartment", String.valueOf(getValidIndexForm().isDifferentDepartment()))
+                        .param("indexData.dateFrom", String.valueOf(getValidIndexForm().getDateFrom()))
+                        .param("indexData.dateTo", String.valueOf(getValidIndexForm().getDateTo()))
+                        .param("s1_time", time1.toString())
+                        .param("s2_time", time2.toString()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/loc-res"));
+    }
+
+    @Test
+    void shouldCustomerConfirmBeAuthorized() throws Exception {
+        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(ccud, ccud.getPassword(), ccud.getAuthorities());
+        when(customerService.appendReservationToCustomer(eq(ccud.getId()), any(ReservationForm.class))).thenReturn(HttpStatus.CREATED);
+
+        mvc.perform(post("/reservation/confirm")
+                        .with(authentication(auth))
+                        .session(session)
+                        .param("carBaseId", "1")
+                        .param("indexData.departmentIdFrom", String.valueOf(getValidIndexForm().getDepartmentIdFrom()))
+                        .param("indexData.departmentIdTo", String.valueOf(getValidIndexForm().getDepartmentIdTo()))
+                        .param("indexData.differentDepartment", String.valueOf(getValidIndexForm().isDifferentDepartment()))
+                        .param("indexData.dateFrom", String.valueOf(getValidIndexForm().getDateFrom()))
+                        .param("indexData.dateTo", String.valueOf(getValidIndexForm().getDateTo()))
+                        .param("s1_time", time1.toString())
+                        .param("s2_time", time2.toString()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(flash().attributeExists("message"))
+                .andExpect(view().name("redirect:/reservations"));
     }
 }
