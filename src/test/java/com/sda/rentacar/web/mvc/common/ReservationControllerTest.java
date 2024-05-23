@@ -20,7 +20,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpSession;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 
 import org.springframework.test.web.servlet.MvcResult;
 
@@ -33,7 +32,7 @@ import static org.hamcrest.CoreMatchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.util.AssertionErrors.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -48,12 +47,12 @@ public class ReservationControllerTest extends BaseControllerTest {
 
     private static LocalDateTime time2;
 
-    private static final CustomUserDetails ecud = new CustomUserDetails(
+    private static final CustomUserDetails employee = new CustomUserDetails(
             new Credentials(1L, "", ""),
             new Employee("", "", "", Collections.emptyList(),LocalDate.of(9999, 1, 1), "")
     );
 
-    private static final CustomUserDetails ccud = new CustomUserDetails(
+    private static final CustomUserDetails customer = new CustomUserDetails(
             new Credentials(1L, "", ""),
             new Customer("", "", Customer.Status.STATUS_REGISTERED, "")
     );
@@ -303,10 +302,8 @@ public class ReservationControllerTest extends BaseControllerTest {
 
     @Test
     void shouldEmployeeConfirmBeAuthorized() throws Exception {
-        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(ecud, ecud.getPassword(), ecud.getAuthorities());
-
         mvc.perform(post("/reservation/confirm")
-                        .with(authentication(auth))
+                        .with(user(employee))
                         .session(session)
                         .param("carBaseId", "1")
                         .param("indexData.departmentIdFrom", String.valueOf(getValidIndexForm().getDepartmentIdFrom()))
@@ -322,11 +319,10 @@ public class ReservationControllerTest extends BaseControllerTest {
 
     @Test
     void shouldCustomerConfirmBeAuthorized() throws Exception {
-        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(ccud, ccud.getPassword(), ccud.getAuthorities());
-        when(customerService.appendReservationToCustomer(eq(ccud.getId()), any(ReservationForm.class))).thenReturn(HttpStatus.CREATED);
+        when(customerService.appendReservationToCustomer(eq(customer.getId()), any(ReservationForm.class))).thenReturn(HttpStatus.CREATED);
 
         mvc.perform(post("/reservation/confirm")
-                        .with(authentication(auth))
+                        .with(user(customer))
                         .session(session)
                         .param("carBaseId", "1")
                         .param("indexData.departmentIdFrom", String.valueOf(getValidIndexForm().getDepartmentIdFrom()))
@@ -339,5 +335,174 @@ public class ReservationControllerTest extends BaseControllerTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(flash().attributeExists("message"))
                 .andExpect(view().name("redirect:/reservations"));
+    }
+
+    @Test
+    void shouldEmployeeConfirmHaveValidResult() throws Exception {
+        MvcResult result = mvc.perform(post("/reservation/confirm")
+                        .with(user(employee))
+                        .session(session)
+                        .param("carBaseId", "1")
+                        .param("indexData.departmentIdFrom", String.valueOf(getValidIndexForm().getDepartmentIdFrom()))
+                        .param("indexData.departmentIdTo", String.valueOf(getValidIndexForm().getDepartmentIdTo()))
+                        .param("indexData.differentDepartment", String.valueOf(getValidIndexForm().isDifferentDepartment()))
+                        .param("indexData.dateFrom", String.valueOf(getValidIndexForm().getDateFrom()))
+                        .param("indexData.dateTo", String.valueOf(getValidIndexForm().getDateTo()))
+                        .param("s1_time", time1.toString())
+                        .param("s2_time", time2.toString()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/loc-res"))
+                .andReturn();
+
+        assertNotNull("'reservationDetails' aren't present.", result.getFlashMap().get("reservationDetails"));
+        assertNotNull("'s1_time' is not present.", result.getFlashMap().get("s1_time"));
+        assertNotNull("'s2_time' is not present.", result.getFlashMap().get("s2_time"));
+    }
+
+    @Test
+    void shouldCustomerConfirmHaveValidResult() throws Exception {
+        when(customerService.appendReservationToCustomer(eq(customer.getId()), any(ReservationForm.class))).thenReturn(HttpStatus.CREATED);
+
+        MvcResult result = mvc.perform(post("/reservation/confirm")
+                        .with(user(customer))
+                        .session(session)
+                        .param("carBaseId", "1")
+                        .param("indexData.departmentIdFrom", String.valueOf(getValidIndexForm().getDepartmentIdFrom()))
+                        .param("indexData.departmentIdTo", String.valueOf(getValidIndexForm().getDepartmentIdTo()))
+                        .param("indexData.differentDepartment", String.valueOf(getValidIndexForm().isDifferentDepartment()))
+                        .param("indexData.dateFrom", String.valueOf(getValidIndexForm().getDateFrom()))
+                        .param("indexData.dateTo", String.valueOf(getValidIndexForm().getDateTo()))
+                        .param("s1_time", time1.toString())
+                        .param("s2_time", time2.toString()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(flash().attributeExists("message"))
+                .andExpect(view().name("redirect:/reservations"))
+                .andReturn();
+
+        assertNull("'reservationDetails' are present.", result.getFlashMap().get("reservationDetails"));
+        assertNull("'s1_time' is present.", result.getFlashMap().get("s1_time"));
+        assertNull("'s2_time' is present.", result.getFlashMap().get("s2_time"));
+        assertNull("'process_indexForm' is present.", session.getAttribute("process_indexForm"));
+        assertNull("'process_carBaseId' is present.", session.getAttribute("process_carBaseId"));
+        assertNull("'process_step1_time' is present.", session.getAttribute("process_step1_time"));
+        assertNull("'process_step2_time' is present.", session.getAttribute("process_step2_time"));
+    }
+
+    @Test
+    void shouldCustomerAuthorizedConfirmFailDueToService() throws Exception {
+        when(customerService.appendReservationToCustomer(eq(customer.getId()), any(ReservationForm.class))).thenReturn(HttpStatus.NOT_FOUND);
+
+        mvc.perform(post("/reservation/confirm")
+                        .with(user(customer))
+                        .session(session)
+                        .param("carBaseId", "1")
+                        .param("indexData.departmentIdFrom", String.valueOf(getValidIndexForm().getDepartmentIdFrom()))
+                        .param("indexData.departmentIdTo", String.valueOf(getValidIndexForm().getDepartmentIdTo()))
+                        .param("indexData.differentDepartment", String.valueOf(getValidIndexForm().isDifferentDepartment()))
+                        .param("indexData.dateFrom", String.valueOf(getValidIndexForm().getDateFrom()))
+                        .param("indexData.dateTo", String.valueOf(getValidIndexForm().getDateTo()))
+                        .param("s1_time", time1.toString())
+                        .param("s2_time", time2.toString()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(flash().attributeExists("message"))
+                .andExpect(view().name("redirect:/"));
+    }
+
+    @Test
+    void shouldCustomerAuthorizedConfirmFailDueToInvalidParam() throws Exception {
+        when(customerService.appendReservationToCustomer(eq(customer.getId()), any(ReservationForm.class))).thenReturn(HttpStatus.CREATED);
+
+        mvc.perform(post("/reservation/confirm")
+                        .with(user(customer))
+                        .session(session)
+                        .param("carBaseId", "1")
+                        .param("indexData.departmentIdFrom", String.valueOf(getValidIndexForm().getDepartmentIdFrom()))
+                        .param("indexData.departmentIdTo", String.valueOf(getValidIndexForm().getDepartmentIdTo() + 1L))
+                        .param("indexData.differentDepartment", String.valueOf(getValidIndexForm().isDifferentDepartment()))
+                        .param("indexData.dateFrom", String.valueOf(getValidIndexForm().getDateFrom()))
+                        .param("indexData.dateTo", String.valueOf(getValidIndexForm().getDateTo()))
+                        .param("s1_time", time1.toString())
+                        .param("s2_time", time2.toString()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(flash().attributeExists("message"))
+                .andExpect(view().name("redirect:/"));
+    }
+
+    @Test
+    void shouldCustomerAuthorizedConfirmFailDueToNullParam() throws Exception {
+        when(customerService.appendReservationToCustomer(eq(customer.getId()), any(ReservationForm.class))).thenReturn(HttpStatus.CREATED);
+
+        mvc.perform(post("/reservation/confirm")
+                        .with(user(customer))
+                        .session(session)
+                        .param("carBaseId", "1")
+                        .param("s1_time", time1.toString())
+                        .param("s2_time", time2.toString()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(flash().attributeExists("message"))
+                .andExpect(view().name("redirect:/"));
+    }
+
+    @Test
+    void shouldCustomerAuthorizedConfirmFailDueToInvalidRequest() throws Exception {
+        when(reservationService.isValidRequest(any(), any(), any(), any())).thenReturn(false);
+        when(customerService.appendReservationToCustomer(eq(customer.getId()), any(ReservationForm.class))).thenReturn(HttpStatus.CREATED);
+
+        mvc.perform(post("/reservation/confirm")
+                        .with(user(customer))
+                        .session(session)
+                        .param("carBaseId", "1")
+                        .param("indexData.departmentIdFrom", String.valueOf(getValidIndexForm().getDepartmentIdFrom()))
+                        .param("indexData.departmentIdTo", String.valueOf(getValidIndexForm().getDepartmentIdTo() + 1L))
+                        .param("indexData.differentDepartment", String.valueOf(getValidIndexForm().isDifferentDepartment()))
+                        .param("indexData.dateFrom", String.valueOf(getValidIndexForm().getDateFrom()))
+                        .param("indexData.dateTo", String.valueOf(getValidIndexForm().getDateTo()))
+                        .param("s1_time", time1.toString())
+                        .param("s2_time", time2.toString()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(flash().attributeExists("message"))
+                .andExpect(view().name("redirect:/"));
+    }
+
+    @Test
+    void shouldCustomerAuthorizedConfirmFailDueToInvalidSession() throws Exception {
+        when(customerService.appendReservationToCustomer(eq(customer.getId()), any(ReservationForm.class))).thenReturn(HttpStatus.CREATED);
+        session.removeAttribute("process_indexForm");
+
+        mvc.perform(post("/reservation/confirm")
+                        .with(user(customer))
+                        .session(session)
+                        .param("carBaseId", "1")
+                        .param("indexData.departmentIdFrom", String.valueOf(getValidIndexForm().getDepartmentIdFrom()))
+                        .param("indexData.departmentIdTo", String.valueOf(getValidIndexForm().getDepartmentIdTo() + 1L))
+                        .param("indexData.differentDepartment", String.valueOf(getValidIndexForm().isDifferentDepartment()))
+                        .param("indexData.dateFrom", String.valueOf(getValidIndexForm().getDateFrom()))
+                        .param("indexData.dateTo", String.valueOf(getValidIndexForm().getDateTo()))
+                        .param("s1_time", time1.toString())
+                        .param("s2_time", time2.toString()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(flash().attributeExists("message"))
+                .andExpect(view().name("redirect:/"));
+    }
+
+    @Test
+    void shouldCustomerAuthorizedConfirmFailDueToInvalidBrowserTab() throws Exception {
+        when(customerService.appendReservationToCustomer(eq(customer.getId()), any(ReservationForm.class))).thenReturn(HttpStatus.CREATED);
+        session.setAttribute("process_step2_time", LocalDateTime.now());
+
+        mvc.perform(post("/reservation/confirm")
+                        .with(user(customer))
+                        .session(session)
+                        .param("carBaseId", "1")
+                        .param("indexData.departmentIdFrom", String.valueOf(getValidIndexForm().getDepartmentIdFrom()))
+                        .param("indexData.departmentIdTo", String.valueOf(getValidIndexForm().getDepartmentIdTo() + 1L))
+                        .param("indexData.differentDepartment", String.valueOf(getValidIndexForm().isDifferentDepartment()))
+                        .param("indexData.dateFrom", String.valueOf(getValidIndexForm().getDateFrom()))
+                        .param("indexData.dateTo", String.valueOf(getValidIndexForm().getDateTo()))
+                        .param("s1_time", time1.toString())
+                        .param("s2_time", time2.toString()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(flash().attributeExists("message"))
+                .andExpect(view().name("redirect:/"));
     }
 }
